@@ -65,7 +65,7 @@ export const AVATAR_PATTERNS = [
   "conic-gradient(from 0deg, #ff00aa, #00ddff, #b700ff, #00ff66, #ff00aa)",
 ];
 
-// Sound effects for different question types
+// Sound effects for different slot types
 export const SUCCESS_SOUNDS = ["success1", "success2", "success3", "correct"];
 
 // Game timing constants

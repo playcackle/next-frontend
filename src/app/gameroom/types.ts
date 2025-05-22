@@ -19,7 +19,7 @@ export type GameroomData = {
   description: string;
   color: string;
   difficulty: string;
-  questions: number;
+  slots: number;
   capacity: number;
   activePlayers: number;
 };

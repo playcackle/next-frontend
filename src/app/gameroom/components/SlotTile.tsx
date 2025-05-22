@@ -46,7 +46,7 @@ const SlotTile: React.FC<SlotTileProps> = ({
 
   return (
     <div
-      id={`question-${slot.id}`}
+      id={`slot-${slot.id}`}
       className={tileClassNames}
       style={
         {

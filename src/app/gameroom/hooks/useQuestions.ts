@@ -10,17 +10,17 @@ import {
 } from "../utils";
 
 export const useSlots = (roundNumber: number) => {
-  // Initialize questions with random entrance animations and staggered delays
-  const [questions, setQuestions] = useState<Slot[]>(() =>
+  // Initialize slots with random entrance animations and staggered delays
+  const [slots, setQuestions] = useState<Slot[]>(() =>
     initializeQuestions(8, [], roundNumber)
   );
 
-  // Initialize bonus questions with random entrance animations and staggered delays
+  // Initialize bonus slots with random entrance animations and staggered delays
   const [bonusQuestions, setBonusQuestions] = useState<Slot[]>(() =>
     initializeBonusQuestions(9, 2, [], roundNumber)
   );
 
-  // Mark question as answered
+  // Mark slot as answered
   const markQuestionAsAnswered = useCallback(
     (
       questionId: number,
@@ -71,7 +71,7 @@ export const useSlots = (roundNumber: number) => {
     []
   );
 
-  // Reveal all unanswered questions (for time expiration)
+  // Reveal all unanswered slots (for time expiration)
   const revealAllUnansweredQuestions = useCallback((players: Player[]) => {
     setQuestions((prev) =>
       prev.map((q) => {
@@ -106,30 +106,30 @@ export const useSlots = (roundNumber: number) => {
     );
   }, []);
 
-  // Check if all questions are answered
+  // Check if all slots are answered
   const areAllQuestionsAnswered = useCallback(() => {
-    return [...questions, ...bonusQuestions].every((q) => q.answered);
-  }, [questions, bonusQuestions]);
+    return [...slots, ...bonusQuestions].every((q) => q.answered);
+  }, [slots, bonusQuestions]);
 
-  // Get unanswered questions
+  // Get unanswered slots
   const getUnansweredQuestions = useCallback(() => {
-    return [...questions, ...bonusQuestions].filter((q) => !q.answered);
-  }, [questions, bonusQuestions]);
+    return [...slots, ...bonusQuestions].filter((q) => !q.answered);
+  }, [slots, bonusQuestions]);
 
-  // Get question by ID
+  // Get slot by ID
   const getQuestionById = useCallback(
     (id: number) => {
       if (id <= 8) {
-        return questions.find((q) => q.id === id);
+        return slots.find((q) => q.id === id);
       } else {
         return bonusQuestions.find((q) => q.id === id);
       }
     },
-    [questions, bonusQuestions]
+    [slots, bonusQuestions]
   );
 
   return {
-    questions,
+    slots,
     bonusQuestions,
     markQuestionAsAnswered,
     revealAllUnansweredQuestions,

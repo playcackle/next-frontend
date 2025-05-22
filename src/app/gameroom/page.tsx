@@ -134,7 +134,7 @@ export default function GameroomPage() {
           nameFlash={animationState.nameFlash}
         />
 
-        {/* Second row: Questions grid and chat */}
+        {/* Second row: Slots grid and chat */}
         <div className={styles.contentRow}>
           <SlotGrid
             slots={[]}

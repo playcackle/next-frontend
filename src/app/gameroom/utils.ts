@@ -61,7 +61,7 @@ export const playSound = (type: SoundType): void => {
 };
 
 /**
- * Initialize questions with random animations and staggered delays
+ * Initialize slots with random animations and staggered delays
  */
 export const initializeSlots = (
   count: number,
@@ -86,7 +86,7 @@ export const initializeSlots = (
 };
 
 /**
- * Initialize bonus questions with random animations and staggered delays
+ * Initialize bonus slots with random animations and staggered delays
  */
 export const initializeBonusQuestions = (
   startId: number,

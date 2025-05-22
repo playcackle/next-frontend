@@ -53,7 +53,7 @@ export default function ConfettiExplosion({
     return matches || [];
   };
 
-  // Use different colors and more particles for bonus questions
+  // Use different colors and more particles for bonus slots
   const bonusColors = [
     "#ffd700",
     "#ffcc00",

@@ -240,7 +240,7 @@
   font-family: var(--retro-font-alt);
 }
 
-/* Second row: Questions grid and chat */
+/* Second row: Slots grid and chat */
 .contentRow {
   display: grid;
   grid-template-columns: 2fr 1fr;
@@ -256,7 +256,7 @@
   backdrop-filter: blur(5px);
 }
 
-/* Update the questions grid to 2x5 layout (2 rows, 5 columns) */
+/* Update the slots grid to 2x5 layout (2 rows, 5 columns) */
 .slotGrid {
   display: grid;
   grid-template-columns: repeat(5, 1fr); /* 5 columns */
@@ -428,7 +428,7 @@
   font-family: var(--retro-font-alt);
 }
 
-/* Make the question tiles larger again */
+/* Make the slot tiles larger again */
 .questionTile {
   background-color: var(--neon-pink);
   border-radius: 8px; /* Increased border radius */
@@ -482,7 +482,7 @@
   filter: brightness(1);
 }
 
-/* Make question mark larger */
+/* Make slot mark larger */
 .questionMark {
   font-size: 3.5rem; /* Increased font size */
   font-weight: bold;
@@ -1387,7 +1387,7 @@
   }
 }
 
-/* Add a highlight effect for the question being answered by another player */
+/* Add a highlight effect for the slot being answered by another player */
 .questionTile.otherPlayerAnswering {
   animation: otherPlayerAnswering 1.5s ease-in-out;
   box-shadow: 0 0 20px rgba(255, 255, 255, 0.8);
@@ -1439,7 +1439,7 @@
   filter: brightness(1.2);
 }
 
-/* Add a special glow effect for bonus questions */
+/* Add a special glow effect for bonus slots */
 .bonusTile.answered {
   animation: bonusGlow 2s ease-in-out infinite alternate;
 }

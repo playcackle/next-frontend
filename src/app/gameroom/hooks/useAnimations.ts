@@ -28,7 +28,7 @@ export const useAnimations = () => {
       mainRef: React.RefObject<HTMLDivElement | null>,
       playerColor?: string
     ) => {
-      // Determine if it's a bonus question
+      // Determine if it's a bonus slot
       const isCurrentBonus = questionId > 8;
 
       setAnimationState((prev) => ({
@@ -52,7 +52,7 @@ export const useAnimations = () => {
           : null,
       }));
 
-      // Play sound - bonus sound for bonus questions, random success sound for regular questions
+      // Play sound - bonus sound for bonus slots, random success sound for regular slots
       if (isCurrentBonus) {
         playSound("bonus");
       } else {
