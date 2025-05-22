@@ -1,12 +1,12 @@
-import React from "react"
-import styles from "../quiz-room.module.css"
-import { formatTime } from "../utils"
+import React from "react";
+import styles from "../gameroom.module.css";
+import { formatTime } from "../utils";
 
 interface FeedbackTileProps {
-  feedback: string
-  isIntermission: boolean
-  intermissionTimeRemaining: number
-  roundNumber: number
+  feedback: string;
+  isIntermission: boolean;
+  intermissionTimeRemaining: number;
+  roundNumber: number;
 }
 
 const FeedbackTile: React.FC<FeedbackTileProps> = ({
@@ -21,7 +21,8 @@ const FeedbackTile: React.FC<FeedbackTileProps> = ({
         {isIntermission ? (
           <>
             <div className={styles.intermissionText}>
-              Intermission: Next round starts in {formatTime(intermissionTimeRemaining)}
+              Intermission: Next round starts in{" "}
+              {formatTime(intermissionTimeRemaining)}
             </div>
             <div className={styles.roundInfo}>
               Round {roundNumber} completed • Round {roundNumber + 1} coming up
@@ -32,7 +33,7 @@ const FeedbackTile: React.FC<FeedbackTileProps> = ({
         )}
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default React.memo(FeedbackTile)
+export default React.memo(FeedbackTile);

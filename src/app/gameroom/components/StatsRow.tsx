@@ -1,15 +1,15 @@
-import React from "react"
-import styles from "../quiz-room.module.css"
-import type { Player } from "../types"
-import { formatTime } from "../utils"
+import React from "react";
+import styles from "../gameroom.module.css";
+import type { Player } from "../types";
+import { formatTime } from "../utils";
 
 interface StatsRowProps {
-  activePlayers: number
-  isIntermission: boolean
-  timeRemaining: number
-  intermissionTimeRemaining: number
-  players: Player[]
-  nameFlash: boolean
+  activePlayers: number;
+  isIntermission: boolean;
+  timeRemaining: number;
+  intermissionTimeRemaining: number;
+  players: Player[];
+  nameFlash: boolean;
 }
 
 const StatsRow: React.FC<StatsRowProps> = ({
@@ -28,9 +28,17 @@ const StatsRow: React.FC<StatsRowProps> = ({
       </div>
 
       <div className={styles.statsTile}>
-        <h3 className={styles.statsTitle}>{isIntermission ? "Intermission" : "Time Remaining"}</h3>
-        <div className={`${styles.statsValue} ${!isIntermission && timeRemaining <= 30 ? styles.timerWarning : ""}`}>
-          {isIntermission ? formatTime(intermissionTimeRemaining) : formatTime(timeRemaining)}
+        <h3 className={styles.statsTitle}>
+          {isIntermission ? "Intermission" : "Time Remaining"}
+        </h3>
+        <div
+          className={`${styles.statsValue} ${
+            !isIntermission && timeRemaining <= 30 ? styles.timerWarning : ""
+          }`}
+        >
+          {isIntermission
+            ? formatTime(intermissionTimeRemaining)
+            : formatTime(timeRemaining)}
         </div>
       </div>
 
@@ -40,10 +48,15 @@ const StatsRow: React.FC<StatsRowProps> = ({
           {players.slice(0, 5).map((player, index) => (
             <div
               key={player.id}
-              className={`${styles.leaderboardItem} ${player.name === "You" && nameFlash ? styles.nameFlash : ""}`}
+              className={`${styles.leaderboardItem} ${
+                player.name === "You" && nameFlash ? styles.nameFlash : ""
+              }`}
             >
               <div className={styles.playerRank}>{index + 1}</div>
-              <div className={styles.playerAvatar} style={{ background: player.color }}>
+              <div
+                className={styles.playerAvatar}
+                style={{ background: player.color }}
+              >
                 {player.avatar}
               </div>
               <div className={styles.playerName}>{player.name}</div>
@@ -53,7 +66,7 @@ const StatsRow: React.FC<StatsRowProps> = ({
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default React.memo(StatsRow)
+export default React.memo(StatsRow);

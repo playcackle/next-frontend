@@ -15,7 +15,7 @@ export function AuthButtons() {
       </div>
 
       <div className={styles.buttonsContainer}>
-        <Link href="/login" className={styles.signupButton}>
+        <Link href="/register" className={styles.signupButton}>
           <div className={styles.buttonContent}>
             <span className={styles.buttonIcon}>✨</span>
             <div className={styles.buttonTextContainer}>
@@ -27,12 +27,12 @@ export function AuthButtons() {
           </div>
         </Link>
 
-        <Link href="/register" className={styles.loginButton}>
+        <Link href="/login" className={styles.loginButton}>
           <div className={styles.buttonContent}>
             <span className={styles.buttonIcon}>🔑</span>
             <div className={styles.buttonTextContainer}>
-              <span className={styles.buttonTitle}>LOG IN</span>
-              <span className={styles.buttonSubtitle}>Access your account</span>
+              <span className={styles.buttonTitle}>LOGIN</span>
+              <span className={styles.buttonSubtitle}>Join the chaos!</span>
             </div>
           </div>
         </Link>

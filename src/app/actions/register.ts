@@ -1,27 +1,43 @@
 "use server";
-import User from "@/db-schemas/User";
-import { connectDB } from "@/lib/mongoose";
 import bcrypt from "bcryptjs";
+import { signIn } from "next-auth/react";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const register = async (values: any) => {
   const { email, password, name } = values;
+  const encryptedPassword = await bcrypt.hash(password, 10);
+  // Make the API request
   try {
-    await connectDB();
-    const userFound = await User.findOne({ email });
-    if (userFound) {
+    const response = await fetch(`${process.env.BACKEND_URL}/players`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        name,
+        email,
+        encrypted_password: encryptedPassword,
+      }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
       return {
-        error: "Email already exists!",
+        error: errorData.message || "Registration failed!",
       };
     }
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const user = new User({
-      name,
-      email,
-      password: hashedPassword,
+    const res = await signIn("credentials", {
+      name: name,
+      password: password,
+      redirect: false,
     });
-    await user.save();
-  } catch (e) {
-    console.log(e);
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Registration error:", error);
+    return {
+      error: "An unexpected error occurred during registration.",
+    };
   }
 };

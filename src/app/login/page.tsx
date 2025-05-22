@@ -9,7 +9,6 @@ import styles from "../login/auth.module.css";
 
 export default function RegisterPage() {
   const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const router = useRouter();
@@ -19,7 +18,7 @@ export default function RegisterPage() {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
     const res = await signIn("credentials", {
-      email: formData.get("email"),
+      name: formData.get("name"),
       password: formData.get("password"),
       redirect: false,
     });
@@ -42,19 +41,19 @@ export default function RegisterPage() {
 
         <Box className={styles.form}>
           <div className={styles.inputGroup}>
-            <label htmlFor="email" className={styles.label}>
-              Email
+            <label htmlFor="name" className={styles.label}>
+              Name
             </label>
             <div className={styles.inputWrapper}>
               <AtSign className={styles.inputIcon} size={18} />
               <input
-                id="email"
-                type="email"
-                name="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                id="name"
+                type="name"
+                name="name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
                 className={styles.input}
-                placeholder="your@email.com"
+                placeholder="robocop_1984"
                 required
               />
             </div>

@@ -3,7 +3,7 @@ import {
   ENTRANCE_ANIMATIONS,
   SUCCESS_SOUNDS,
 } from "./constants";
-import type { Question, SoundType } from "./types";
+import type { Slot, SoundType } from "./types";
 
 /**
  * Format time as MM:SS
@@ -67,7 +67,7 @@ export const initializeSlots = (
   count: number,
   answers: string[],
   roundNumber = 1
-): Question[] => {
+): Slot[] => {
   return Array.from({ length: count }, (_, i) => {
     const randomAnimation = getRandomEntranceAnimation();
     const answerIndex = (i + roundNumber - 1) % answers.length;
@@ -93,7 +93,7 @@ export const initializeBonusQuestions = (
   count: number,
   answers: string[],
   roundNumber = 1
-): Question[] => {
+): Slot[] => {
   return Array.from({ length: count }, (_, i) => {
     const id = startId + i;
     const randomAnimation = getRandomEntranceAnimation();

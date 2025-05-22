@@ -1,13 +1,13 @@
-import React from "react"
-import styles from "../quiz-room.module.css"
+import React from "react";
+import styles from "../gameroom.module.css";
 
 interface CountdownOverlayProps {
-  show: boolean
-  value: number
+  show: boolean;
+  value: number;
 }
 
 const CountdownOverlay: React.FC<CountdownOverlayProps> = ({ show, value }) => {
-  if (!show) return null
+  if (!show) return null;
 
   return (
     <div className={styles.countdownOverlay}>
@@ -16,7 +16,7 @@ const CountdownOverlay: React.FC<CountdownOverlayProps> = ({ show, value }) => {
         <div className={styles.countdownText}>SECONDS REMAINING</div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default React.memo(CountdownOverlay)
+export default React.memo(CountdownOverlay);

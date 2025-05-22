@@ -1,32 +1,51 @@
-import User from '@/db-schemas/User';
-import { connectDB } from '@/lib/mongoose';
-import bcrypt from 'bcryptjs';
-import type { NextAuthOptions } from 'next-auth';
-import credentials from 'next-auth/providers/credentials';
+import bcrypt from "bcryptjs";
+import type { NextAuthOptions } from "next-auth";
+import credentials from "next-auth/providers/credentials";
 
 export const authOptions: NextAuthOptions = {
   providers: [
     credentials({
-      name: 'Credentials',
-      id: 'credentials',
+      name: "Credentials",
+      id: "credentials",
       credentials: {
-        email: { label: 'Email', type: 'text' },
-        password: { label: 'Password', type: 'password' }
+        name: { label: "Name", type: "text" },
+        password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
-        await connectDB();
-        const user = await User.findOne({
-          email: credentials?.email
-        }).select('+password');
-        if (!user) throw new Error('Wrong Email');
-        const passwordMatch = await bcrypt.compare(credentials!.password, user.password);
-        if (!passwordMatch) throw new Error('Wrong Password');
-        return user;
-      }
-    })
+        try {
+          const name = credentials!.name;
+          const password = credentials!.password;
+
+          const res = await fetch(
+            `${process.env.BACKEND_URL}/players/by-name/${encodeURIComponent(
+              name
+            )}`
+          );
+
+          if (!res.ok) {
+            throw new Error("User not found");
+          }
+
+          const user = await res.json();
+
+          const passwordMatch = await bcrypt.compare(
+            password,
+            user.encrypted_password
+          );
+          if (!passwordMatch) {
+            throw new Error("Wrong Password");
+          }
+
+          return user;
+        } catch (error) {
+          console.error("Authorization error:", error);
+          throw new Error("Authorization failed");
+        }
+      },
+    }),
   ],
   session: {
-    strategy: 'jwt'
+    strategy: "jwt",
   },
   callbacks: {
     jwt({ token, account, user }) {
@@ -40,6 +59,6 @@ export const authOptions: NextAuthOptions = {
       session.user.id = token.id as string;
 
       return session;
-    }
-  }
+    },
+  },
 };

@@ -1,24 +1,22 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import styles from "../quiz-room.module.css";
-import type { Question } from "../types";
+import styles from "../gameroom.module.css";
+import type { Slot } from "../types";
 
-interface QuestionTileProps {
-  question: Question;
+interface SlotTileProps {
+  slot: Slot;
   isAnimating: boolean;
   timeExpired: boolean;
   isIntermission: boolean;
-  onClick: (question: Question, event: React.MouseEvent) => void;
   isBonus?: boolean;
 }
 
-const QuestionTile: React.FC<QuestionTileProps> = ({
-  question,
+const SlotTile: React.FC<SlotTileProps> = ({
+  slot,
   isAnimating,
   timeExpired,
   isIntermission,
-  onClick,
   isBonus = false,
 }) => {
   const [mounted, setMounted] = useState(false);
@@ -29,28 +27,26 @@ const QuestionTile: React.FC<QuestionTileProps> = ({
 
   // Prepare animationDelay only after mount to avoid SSR mismatch
   const animationDelay = mounted
-    ? timeExpired && !question.answered
-      ? `${question.revealDelay}s`
-      : `${question.entranceDelay}s`
+    ? timeExpired && !slot.answered
+      ? `${slot.revealDelay}s`
+      : `${slot.entranceDelay}s`
     : undefined;
 
   const tileClassNames = [
     styles.questionTile,
     isBonus ? styles.bonusTile : "",
-    question.answered ? styles.answered : "",
+    slot.answered ? styles.answered : "",
     mounted && isAnimating ? styles.correctPulse : "",
-    mounted ? question.animation : "",
-    mounted ? question.entranceAnimation : "",
-    mounted && timeExpired && !question.answered
-      ? question.revealAnimation
-      : "",
+    mounted ? slot.animation : "",
+    mounted ? slot.entranceAnimation : "",
+    mounted && timeExpired && !slot.answered ? slot.revealAnimation : "",
   ]
     .filter(Boolean)
     .join(" ");
 
   return (
     <div
-      id={`question-${question.id}`}
+      id={`question-${slot.id}`}
       className={tileClassNames}
       style={
         {
@@ -59,22 +55,20 @@ const QuestionTile: React.FC<QuestionTileProps> = ({
         } as React.CSSProperties
       }
     >
-      {question.answered || (timeExpired && !question.answered) ? (
+      {slot.answered || (timeExpired && !slot.answered) ? (
         <div className={styles.answeredContent}>
-          <div className={styles.correctAnswer}>{question.correctAnswer}</div>
-          {question.answeredBy && (
+          <div className={styles.correctAnswer}>{slot.correctAnswer}</div>
+          {slot.answeredBy && (
             <div className={styles.playerBadge}>
               <div
                 className={styles.playerBadgeAvatar}
                 style={{
-                  background: question.playerColor || "var(--neon-blue)",
+                  background: slot.playerColor || "var(--neon-blue)",
                 }}
               >
-                {question.playerAvatar || question.answeredBy.substring(0, 2)}
+                {slot.playerAvatar || slot.answeredBy.substring(0, 2)}
               </div>
-              <div className={styles.playerBadgeName}>
-                {question.answeredBy}
-              </div>
+              <div className={styles.playerBadgeName}>{slot.answeredBy}</div>
             </div>
           )}
         </div>
@@ -85,4 +79,4 @@ const QuestionTile: React.FC<QuestionTileProps> = ({
   );
 };
 
-export default React.memo(QuestionTile);
+export default React.memo(SlotTile);

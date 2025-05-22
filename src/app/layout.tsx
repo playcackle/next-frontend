@@ -6,8 +6,6 @@ import "@radix-ui/themes/styles.css";
 import "animate.css";
 import type { Metadata } from "next";
 import type React from "react";
-import { Suspense } from "react";
-import Progress from "./components/progress";
 import "./globals.css";
 import { Provider } from "./provider";
 
@@ -41,9 +39,7 @@ export default function RootLayout({
                 <SynthwaveBackground />
                 <Header />
                 <main>
-                  <Suspense fallback={<Progress />}>
-                    <Container>{children}</Container>
-                  </Suspense>
+                  <Container>{children}</Container>
                 </main>
               </Provider>
             </div>

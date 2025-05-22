@@ -1,5 +1,6 @@
 "use client";
 
+import { Provider as JotaiProvider } from "jotai";
 import { SessionProvider } from "next-auth/react";
 import React from "react";
 
@@ -8,5 +9,9 @@ type Props = {
 };
 
 export const Provider = ({ children }: Props) => {
-  return <SessionProvider>{children}</SessionProvider>;
+  return (
+    <SessionProvider>
+      <JotaiProvider>{children}</JotaiProvider>
+    </SessionProvider>
+  );
 };

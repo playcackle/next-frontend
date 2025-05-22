@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useState } from "react";
-import type { Player, Question } from "../types";
+import type { Player, Slot } from "../types";
 import {
   getRandomAttentionAnimation,
   getRandomPlayer,
@@ -11,12 +11,12 @@ import {
 
 export const useSlots = (roundNumber: number) => {
   // Initialize questions with random entrance animations and staggered delays
-  const [questions, setQuestions] = useState<Question[]>(() =>
+  const [questions, setQuestions] = useState<Slot[]>(() =>
     initializeQuestions(8, [], roundNumber)
   );
 
   // Initialize bonus questions with random entrance animations and staggered delays
-  const [bonusQuestions, setBonusQuestions] = useState<Question[]>(() =>
+  const [bonusQuestions, setBonusQuestions] = useState<Slot[]>(() =>
     initializeBonusQuestions(9, 2, [], roundNumber)
   );
 

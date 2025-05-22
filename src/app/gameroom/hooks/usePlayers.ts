@@ -1,57 +1,11 @@
 "use client";
 
 import { useCallback, useState } from "react";
-import { AVATAR_PATTERNS } from "../[id]/constants";
-import type { Player, PlayerAction } from "../types";
-
-// Initial players data
-const initialPlayers: Player[] = [
-  {
-    id: 1,
-    name: "SynthWave84",
-    score: 850,
-    avatar: "SW",
-    color: AVATAR_PATTERNS[0],
-  },
-  {
-    id: 2,
-    name: "RetroGamer",
-    score: 720,
-    avatar: "RG",
-    color: AVATAR_PATTERNS[1],
-  },
-  {
-    id: 3,
-    name: "NeonRider",
-    score: 690,
-    avatar: "NR",
-    color: AVATAR_PATTERNS[2],
-  },
-  {
-    id: 4,
-    name: "Arcade_Master",
-    score: 650,
-    avatar: "AM",
-    color: AVATAR_PATTERNS[3],
-  },
-  {
-    id: 5,
-    name: "VHS_Collector",
-    score: 620,
-    avatar: "VC",
-    color: AVATAR_PATTERNS[4],
-  },
-  {
-    id: 6,
-    name: "You",
-    score: 580,
-    avatar: "YO",
-    color: AVATAR_PATTERNS[5],
-  },
-];
+import { Player } from "../../models/player";
+import type { PlayerAction } from "../types";
 
 export const usePlayers = () => {
-  const [players, setPlayers] = useState<Player[]>(initialPlayers);
+  const [players, setPlayers] = useState<Player[]>([]);
   const [playerActions, setPlayerActions] = useState<PlayerAction[]>([]);
   const [lastAnsweringPlayer, setLastAnsweringPlayer] = useState<Player | null>(
     null
@@ -59,7 +13,7 @@ export const usePlayers = () => {
   const [playerName] = useState<string>("You");
 
   // Update player score
-  const updatePlayerScore = useCallback((playerId: number, points: number) => {
+  const updatePlayerScore = useCallback((playerId: string, points: number) => {
     setPlayers((prev) => {
       const updatedPlayers = [...prev];
       const playerIndex = updatedPlayers.findIndex((p) => p.id === playerId);
@@ -108,7 +62,7 @@ export const usePlayers = () => {
 
   // Get player by ID
   const getPlayerById = useCallback(
-    (id: number) => {
+    (id: string) => {
       return players.find((p) => p.id === id);
     },
     [players]

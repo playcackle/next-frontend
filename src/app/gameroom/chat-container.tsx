@@ -4,7 +4,7 @@ import type React from "react";
 
 import { Button } from "@radix-ui/themes";
 import { useEffect, useRef } from "react";
-import styles from "./quiz-room.module.css";
+import styles from "./gameroom.module.css";
 
 type Message = {
   user: string;

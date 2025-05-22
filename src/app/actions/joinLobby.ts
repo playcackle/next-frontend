@@ -1,11 +1,20 @@
 "use server";
 
-export const joinLobby = async (playerId: string) => {
+export const joinGameroom = async (playerId: string) => {
   const response = await fetch(`${process.env.BACKEND_JOIN_URL}/join`, {
     method: "POST",
-    body: JSON.stringify({ player_id: "player123" }),
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ player_id: playerId }),
     // …
   });
-  const lobby = await response.json();
-  return lobby;
+  if (!response.ok) {
+    const errorData = await response.json();
+    return {
+      error: errorData.message || "Registration failed!",
+    };
+  }
+  const gameroom = await response.json();
+  return gameroom;
 };
