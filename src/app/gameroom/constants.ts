@@ -69,6 +69,4 @@ export const AVATAR_PATTERNS = [
 export const SUCCESS_SOUNDS = ["success1", "success2", "success3", "correct"];
 
 // Game timing constants
-export const ROUND_TIME = 150; // 2:30 in seconds
-export const INTERMISSION_TIME = 90; // 1:30 in seconds
 export const COUNTDOWN_THRESHOLD = 10; // Show countdown when 10 seconds or less remain

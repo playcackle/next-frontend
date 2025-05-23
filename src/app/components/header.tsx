@@ -1,11 +1,15 @@
 "use client";
 
-import { useSession } from "next-auth/react";
+import { Session } from "next-auth";
 import Link from "next/link";
 import styles from "./header.module.css";
 
-export default function Header() {
-  const { data, status } = useSession();
+type Props = {
+  session: Session;
+};
+
+export default function Header(props: Props) {
+  const { session } = props;
   return (
     <header className={styles.header}>
       <div className={styles.logo}>
@@ -30,10 +34,10 @@ export default function Header() {
         </ul> */}
       </nav>
       <div className={styles.auth}>
-        {status === "authenticated" && (
-          <div className={styles.playerName}>{data.user?.name}</div>
+        {session.user && (
+          <div className={styles.playerName}>{session.user?.name}</div>
         )}
-        {status === "unauthenticated" && (
+        {!session.user && (
           <>
             <Link href="/login" className={styles.loginLink}>
               Login

@@ -1,13 +1,8 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import {
-  COUNTDOWN_THRESHOLD,
-  INTERMISSION_TIME,
-  ROUND_TIME,
-} from "../[id]/constants";
-import type { Message } from "../types";
-import { getCurrentTime, playSound } from "../utils";
+import { COUNTDOWN_THRESHOLD } from "../constants";
+import { playSound } from "../utils";
 
 // Update the GameState type to include confetti position
 export type GameState = {
@@ -25,20 +20,22 @@ export type GameState = {
 interface UseGameStateProps {
   onTimeExpired: () => void;
   onIntermissionEnd: () => void;
-  addMessage: (message: Message) => void;
+  roundTime: number;
+  breakTime: number;
 }
 
 export const useGameState = ({
   onTimeExpired,
   onIntermissionEnd,
-  addMessage,
+  roundTime,
+  breakTime,
 }: UseGameStateProps) => {
   // Update the initial state in useGameState
   const [gameState, setGameState] = useState<GameState>({
-    timeRemaining: ROUND_TIME,
+    timeRemaining: roundTime,
     timeExpired: false,
     isIntermission: false,
-    intermissionTimeRemaining: INTERMISSION_TIME,
+    intermissionTimeRemaining: breakTime,
     roundNumber: 1,
     showCountdown: false,
     countdownValue: 0,
@@ -114,10 +111,10 @@ export const useGameState = ({
     setGameState((prev) => ({
       ...prev,
       isIntermission: true,
-      intermissionTimeRemaining: INTERMISSION_TIME,
+      intermissionTimeRemaining: breakTime,
       showCountdown: false,
     }));
-  }, [addMessage]);
+  }, []);
 
   // Start new round
   const startNewRound = useCallback(() => {
@@ -125,23 +122,16 @@ export const useGameState = ({
       ...prev,
       timeExpired: false,
       isIntermission: false,
-      timeRemaining: ROUND_TIME,
+      timeRemaining: roundTime,
       showConfetti: false,
       showCountdown: false,
       otherPlayerAnswering: false,
       roundNumber: prev.roundNumber + 1,
     }));
 
-    // Add message to chat
-    addMessage({
-      user: "System",
-      text: `Round ${gameState.roundNumber + 1} starting! Get ready!`,
-      time: getCurrentTime(),
-    });
-
     // Play a sound to signal the start
     playSound("success3");
-  }, [gameState.roundNumber, addMessage]);
+  }, [gameState.roundNumber]);
 
   // Handle time expiration
   const handleTimeExpired = useCallback(() => {
@@ -154,7 +144,7 @@ export const useGameState = ({
 
     // Play a sound effect
     playSound("timeUp");
-  }, [addMessage]);
+  }, []);
 
   // Set other player answering state
   const setOtherPlayerAnswering = useCallback((value: boolean) => {

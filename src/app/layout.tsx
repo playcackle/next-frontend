@@ -1,11 +1,13 @@
 import CRTEffect from "@/app/components/crt-effect";
 import Header from "@/app/components/header";
 import SynthwaveBackground from "@/app/components/synthwave-background";
-import { Container, Theme } from "@radix-ui/themes";
+import { Container, Progress, Theme } from "@radix-ui/themes";
 import "@radix-ui/themes/styles.css";
 import "animate.css";
 import type { Metadata } from "next";
+import { getServerSession } from "next-auth";
 import type React from "react";
+import { Suspense } from "react";
 import "./globals.css";
 import { Provider } from "./provider";
 
@@ -15,11 +17,12 @@ export const metadata: Metadata = {
   generator: "v0.dev",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const session = await getServerSession();
   return (
     <html lang="en">
       <body
@@ -35,11 +38,13 @@ export default function RootLayout({
           <div className="crt-container">
             <div className="crt-content">
               <Provider>
-                <SynthwaveBackground />
-                <Header />
-                <main>
-                  <Container>{children}</Container>
-                </main>
+                <Suspense fallback={<Progress />}>
+                  <SynthwaveBackground />
+                  <Header session={session!} />
+                  <main>
+                    <Container>{children}</Container>
+                  </main>
+                </Suspense>
               </Provider>
             </div>
           </div>

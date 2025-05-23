@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import LoadingGrid from "./components/loading-grid";
 import styles from "./loading.module.css";
 
 const Progress = () => {
@@ -92,8 +93,7 @@ const Progress = () => {
           <div className={styles.progressText}>{progress}%</div>
         </div>
       </div>
-
-      <div className={styles.gridBackground}></div>
+      <LoadingGrid />
     </div>
   );
 };

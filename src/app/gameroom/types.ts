@@ -1,8 +1,69 @@
+// ========================
+// Base Types
+// ========================
+
+export type GameEvent =
+  | "connection_success"
+  | "game_starting_soon"
+  | "waiting_for_players"
+  | "game_start_cancelled"
+  | "lobby_tick"
+  | "new_round_starting"
+  | "slot_snapped"
+  | "round_over_timeout"
+  | "round_over_all_snapped"
+  | "break_starting"
+  | "game_over"
+  | "lobby_resetting_for_new_game"
+  | "submission_feedback";
+
+// ========================
+// Payload Types
+// ========================
+
+export type ConnectionSuccessPayload = {
+  message: string;
+};
+
+export type GameStartingSoonPayload = {
+  message: string;
+  countdown_seconds: number;
+  start_timestamp_utc: string;
+};
+
+export type WaitingForPlayersPayload = {
+  message: string;
+  current_players: number;
+  min_players_needed: number;
+};
+
+export type GameStartCancelledPayload = {
+  message: string;
+};
+
+export type LobbyTickPayload = {
+  status:
+    | "WAITING"
+    | "STARTING_SOON"
+    | "IN_ROUND"
+    | "ROUND_BREAK"
+    | "POST_GAME_SHOWCASE"
+    | "GAME_OVER_NO_NEW_GAME";
+  current_round: number;
+  time_remaining_seconds: number | null;
+  player_count: number;
+  topic_name: string | null;
+  lobby_id: string;
+  timestamp_utc: string;
+};
+
 export type Slot = {
-  id: number;
-  answered: boolean;
+  slot_id: string;
   points: number;
-  answeredBy?: string;
+  is_snapped: boolean;
+  snapped_by_player_id: string | null;
+  snapped_by_display_name: string | null;
+  text_preview: string;
   animation?: string;
   entranceAnimation?: string;
   entranceDelay?: number;
@@ -11,6 +72,122 @@ export type Slot = {
   revealDelay?: number;
   playerAvatar?: string;
   playerColor?: string;
+};
+
+export type NewRoundStartingPayload = {
+  round_number: number;
+  topic_name: string;
+  round_duration_seconds: number;
+  answer_slots: Slot[];
+  round_end_timestamp_utc: string;
+};
+
+export type SlotSnappedPayload = {
+  slot_id: string;
+  player_id: string;
+  display_name: string;
+  text: string;
+  points_awarded: number;
+  player_score: number;
+  is_round_over: boolean;
+};
+
+export type UnrevealedAnswer = {
+  slot_id: string;
+  text: string;
+  points: number;
+};
+
+export type PlayerScore = {
+  player_id: string;
+  display_name: string;
+  score: number;
+  round_score: number;
+};
+
+export type RoundOverTimeoutPayload = {
+  round_number: number;
+  message: string;
+  unrevealed_answers: UnrevealedAnswer[];
+  player_scores: PlayerScore[];
+};
+
+export type RoundOverAllSnappedPayload = {
+  round_number: number;
+  message: string;
+  player_scores: PlayerScore[];
+};
+
+export type PodiumPlayer = {
+  rank: number;
+  player_id: string;
+  display_name: string;
+  score: number;
+};
+
+export type BreakStartingPayload = {
+  round_number_ended: number;
+  break_duration_seconds: number;
+  next_round_number: number;
+  break_end_timestamp_utc: string;
+  podium: PodiumPlayer[];
+};
+
+export type GameOverPayload = {
+  message: string;
+  final_scores: {
+    player_id: string;
+    display_name: string;
+    score: number;
+    rank: number;
+  }[];
+  post_game_showcase_duration_seconds: number;
+  new_game_cycle_start_timestamp_utc: string;
+};
+
+export type LobbyResettingForNewGamePayload = {
+  message: string;
+};
+
+export type SubmissionFeedbackPayload =
+  | {
+      status: "correct";
+      message: string;
+      slot_id: string;
+      points_awarded: number;
+      your_score: number;
+    }
+  | {
+      status: "incorrect" | "not_in_play" | "already_snapped";
+      message: string;
+    }
+  | {
+      status: "too_slow" | "round_not_active";
+      message: string;
+    }
+  | {
+      status: "error";
+      message: string;
+    };
+
+// ========================
+// Event-to-Payload Mapping
+// ========================
+
+export type EventPayloadMap = {
+  connection_success: ConnectionSuccessPayload;
+  game_starting_soon: GameStartingSoonPayload;
+  waiting_for_players: WaitingForPlayersPayload;
+  game_start_cancelled: GameStartCancelledPayload;
+  lobby_tick: LobbyTickPayload;
+  new_round_starting: NewRoundStartingPayload;
+  slot_snapped: SlotSnappedPayload;
+  round_over_timeout: RoundOverTimeoutPayload;
+  round_over_all_snapped: RoundOverAllSnappedPayload;
+  break_starting: BreakStartingPayload;
+  game_over: GameOverPayload;
+  lobby_resetting_for_new_game: LobbyResettingForNewGamePayload;
+  submission_feedback: SubmissionFeedbackPayload;
 };
 
 export type GameroomData = {
@@ -69,3 +246,25 @@ export type SoundType =
   | "success2"
   | "success3"
   | "timeUp";
+
+// All possible chat event names
+export type ChatEvent = "connection_success_chat" | "new_message";
+
+// Payload for successful connection
+export type ConnectionSuccessChatPayload = {
+  message: string; // "Successfully connected to chat. Player ID: {player_id}"
+};
+
+// Payload for a new message
+export type ChatMessagePayload = {
+  player_id: string;
+  display_name: string;
+  text: string;
+  timestamp: string; // ISO datetime string
+};
+
+// Mapping of chat events to their payloads
+export type ChatEventPayloadMap = {
+  connection_success_chat: ConnectionSuccessChatPayload;
+  new_message: ChatMessagePayload;
+};

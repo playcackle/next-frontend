@@ -1,34 +1,33 @@
 "use client";
 
-import type React from "react";
-
 import { Button } from "@radix-ui/themes";
-import { useEffect, useRef } from "react";
+import { useAtomValue } from "jotai";
+import { useSession } from "next-auth/react";
+import { useEffect, useRef, useState } from "react";
+import { gameRoomAtom } from "../store/lobby";
 import styles from "./gameroom.module.css";
+import { useChatSocket } from "./hooks/useChatWs";
 
-type Message = {
-  user: string;
-  text: string;
-  time: string;
-};
-
-type ChatContainerProps = {
-  chatInput: string;
-  setChatInput: (value: string) => void;
-  handleSendMessage: (e: React.FormEvent) => void;
-};
-
-export default function ChatContainer({
-  chatInput,
-  setChatInput,
-  handleSendMessage,
-}: ChatContainerProps) {
+export default function ChatContainer() {
+  const { data } = useSession();
+  const [input, setInput] = useState("");
+  const gameroom = useAtomValue(gameRoomAtom);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  const { messages, sendMessage } = useChatSocket(gameroom!.chat_ws_url);
 
   // Auto-scroll to bottom when messages change
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (input.trim()) {
+      sendMessage(input.trim());
+      setInput("");
+    }
+  };
 
   return (
     <div className={styles.chatContainer}>
@@ -40,22 +39,22 @@ export default function ChatContainer({
           <div
             key={index}
             className={`${styles.chatMessage} ${
-              msg.user === "You" ? styles.ownMessage : ""
+              msg.player_id === data?.user.id ? styles.ownMessage : ""
             }`}
           >
-            <span className={styles.messageTime}>{msg.time}</span>
-            <span className={styles.messageUser}>{msg.user}:</span>
+            <span className={styles.messageTime}>{msg.timestamp}</span>
+            <span className={styles.messageUser}>{msg.display_name}:</span>
             <span className={styles.messageText}>{msg.text}</span>
           </div>
         ))}
         <div ref={messagesEndRef} />
       </div>
       <div className={styles.chatInput}>
-        <form onSubmit={handleSendMessage} className={styles.chatInputForm}>
+        <form onSubmit={handleSubmit} className={styles.chatInputForm}>
           <input
             type="text"
-            value={chatInput}
-            onChange={(e) => setChatInput(e.target.value)}
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
             placeholder="Type a message..."
             className={styles.chatInputField}
           />

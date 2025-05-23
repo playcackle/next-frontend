@@ -2,7 +2,7 @@
 
 import SoundEffects from "@/app/components/sound-effects";
 import { useSearchParams } from "next/navigation";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import ConfettiExplosion from "./confetti-explosion";
 import styles from "./gameroom.module.css";
 import ParticleExplosion from "./particle-explosion";
@@ -14,50 +14,21 @@ import { usePlayers } from "./hooks/usePlayers";
 // Import components
 import { useAtomValue } from "jotai";
 import { gameRoomAtom } from "../store/lobby";
+import ChatContainer from "./chat-container";
 import AnswerForm from "./components/AnswerForm";
 import CountdownOverlay from "./components/CountdownOverlay";
 import RoomHeader from "./components/RoomHeader";
 import SlotGrid from "./components/SlotGrid";
 import StatsRow from "./components/StatsRow";
+import { useGameSocket } from "./hooks/useGameWs";
 
 export default function GameroomPage() {
   const searchParams = useSearchParams();
   const name = searchParams.get("name");
   const [answer, setAnswer] = useState<string>("");
   const gameroom = useAtomValue(gameRoomAtom);
-  const ws = useRef<WebSocket | null>(null);
 
-  useEffect(() => {
-    ws.current = new WebSocket(
-      `${gameroom?.game_ws_url!}?token=${gameroom?.token}`
-    );
-
-    ws.current.onopen = () => {
-      console.log("✅ WebSocket connected");
-    };
-
-    ws.current.onmessage = (event) => {
-      try {
-        const data = event.data;
-        debugger;
-        console.log("🎮 Received:", data);
-      } catch (err) {
-        console.error("❌ Failed to parse message:", err);
-      }
-    };
-
-    ws.current.onerror = (error) => {
-      console.error("WebSocket error:", error);
-    };
-
-    ws.current.onclose = () => {
-      console.log("❎ WebSocket disconnected");
-    };
-
-    return () => {
-      ws.current?.close();
-    };
-  }, [gameroom]);
+  const gameRoomWs = useGameSocket(gameroom!.game_ws_url);
 
   // Refs
   const mainRef = useRef<HTMLDivElement>(null);
@@ -90,7 +61,7 @@ export default function GameroomPage() {
           x={confettiPosition.x}
           y={confettiPosition.y}
           centered={false}
-          playerColor={getCurrentPlayer().color} // Add player color
+          playerColor={"--neon-blue"} // Add player color
         />
       )}
 
@@ -143,6 +114,7 @@ export default function GameroomPage() {
             timeExpired={false}
             isIntermission={false}
           />
+          <ChatContainer />
         </div>
 
         {/* Third row: Answer input and feedback */}
