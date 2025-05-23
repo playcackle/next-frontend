@@ -19,7 +19,7 @@ export const useGameSocket = (baseUrl: string, token: string) => {
   }>({});
 
   useEffect(() => {
-    const url = toHttpUrl(baseUrl.replace(/\/gameroom$/, "")) + "/game";
+    const url = toHttpUrl(baseUrl) + "/game";
     const socket = io(url, {
       transports: ["websocket"],
       auth: { token },

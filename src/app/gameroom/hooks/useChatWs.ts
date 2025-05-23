@@ -6,6 +6,7 @@ import { ChatEvent, ChatEventPayloadMap } from "../types";
 
 type ChatMessage = ChatEventPayloadMap["new_message"];
 
+// This should not be needed anymore
 function toHttpUrl(wsUrl: string) {
   if (wsUrl.startsWith("ws://")) return "http://" + wsUrl.slice(5);
   if (wsUrl.startsWith("wss://")) return "https://" + wsUrl.slice(6);
@@ -18,7 +19,7 @@ export const useChatSocket = (baseUrl: string, token: string) => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const url = toHttpUrl(baseUrl.replace(/\/gameroom$/, "")) + "/chat";
+    const url = toHttpUrl(baseUrl) + "/chat";
     const socket = io(url, {
       transports: ["websocket"],
       auth: { token },
