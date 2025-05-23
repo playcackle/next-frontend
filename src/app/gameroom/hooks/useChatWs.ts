@@ -1,25 +1,29 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { io } from "socket.io-client";
 import { ChatEvent, ChatEventPayloadMap } from "../types";
 
 type ChatMessage = ChatEventPayloadMap["new_message"];
 
-export const useChatSocket = (url: string) => {
-  const socketRef = useRef<WebSocket | null>(null);
+export const useChatSocket = (url: string, token: string) => {
+  const socketRef = useRef<any>(null);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
 
   useEffect(() => {
-    const socket = new WebSocket(url);
+    const socket = io(url, {
+      transports: ["websocket"],
+      auth: { token },
+    });
     socketRef.current = socket;
 
-    socket.onopen = () => {
+    socket.on("connect", () => {
       console.log("Chat socket connected.");
-    };
+    });
 
-    socket.onmessage = (event) => {
+    socket.on("message", (event) => {
       try {
-        const parsed = JSON.parse(event.data) as {
+        const parsed = JSON.parse(event) as {
           event: ChatEvent;
           data: ChatEventPayloadMap[ChatEvent];
         };
@@ -30,32 +34,30 @@ export const useChatSocket = (url: string) => {
           console.log("connection_success_chat");
         }
       } catch (err) {
-        console.error("Error parsing chat event:", event.data);
+        console.error("Error parsing chat event:", event);
       }
-    };
+    });
 
-    socket.onerror = (err) => {
+    socket.on("error", (err) => {
       console.error("Chat socket error:", err);
-    };
+    });
 
-    socket.onclose = () => {
+    socket.on("disconnect", () => {
       console.warn("Chat socket closed.");
-    };
+    });
 
     return () => {
-      socket.close();
+      socket.disconnect();
     };
-  }, [url]);
+  }, [url, token]);
 
   const sendMessage = (text: string) => {
     const socket = socketRef.current;
-    if (socket?.readyState === WebSocket.OPEN) {
-      socket.send(
-        JSON.stringify({
-          event: "send_message",
-          data: { text },
-        })
-      );
+    if (socket?.connected) {
+      socket.emit("message", JSON.stringify({
+        event: "send_message",
+        data: { text },
+      }));
     }
   };
 

@@ -28,7 +28,7 @@ export default function GameroomPage() {
   const [answer, setAnswer] = useState<string>("");
   const gameroom = useAtomValue(gameRoomAtom);
 
-  const gameRoomWs = useGameSocket(gameroom!.game_ws_url);
+  const gameRoomWs = useGameSocket(gameroom!.game_ws_url, gameroom!.token);
 
   // Refs
   const mainRef = useRef<HTMLDivElement>(null);

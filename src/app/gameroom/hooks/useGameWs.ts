@@ -1,27 +1,31 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { io } from "socket.io-client";
 import { EventPayloadMap, GameEvent } from "../types";
 
 type EventListener<T extends GameEvent> = (data: EventPayloadMap[T]) => void;
 
-export const useGameSocket = (url: string) => {
-  const socketRef = useRef<WebSocket | null>(null);
+export const useGameSocket = (url: string, token: string) => {
+  const socketRef = useRef<any>(null);
   const listenersRef = useRef<{
     [K in GameEvent]?: EventListener<K>[];
   }>({});
 
   useEffect(() => {
-    const socket = new WebSocket(url);
+    const socket = io(url, {
+      transports: ["websocket"],
+      auth: { token },
+    });
     socketRef.current = socket;
 
-    socket.onopen = () => {
+    socket.on("connect", () => {
       console.log("Game socket connected.");
-    };
+    });
 
-    socket.onmessage = (event) => {
+    socket.on("message", (event) => {
       try {
-        const parsed = JSON.parse(event.data) as {
+        const parsed = JSON.parse(event) as {
           event: GameEvent;
           data: EventPayloadMap[GameEvent];
         };
@@ -33,37 +37,35 @@ export const useGameSocket = (url: string) => {
           listeners.forEach((cb) => cb(data as any));
         }
       } catch (err) {
-        console.error("Invalid game socket message:", event.data);
+        console.error("Invalid game socket message:", event);
       }
-    };
+    });
 
-    socket.onerror = (err) => {
+    socket.on("error", (err) => {
       console.error("Game socket error:", err);
-    };
+    });
 
-    socket.onclose = () => {
+    socket.on("disconnect", () => {
       console.warn("Game socket closed.");
-    };
+    });
 
     return () => {
-      socket.close();
+      socket.disconnect();
     };
-  }, [url]);
+  }, [url, token]);
 
-  // Allow component to send an event
   const sendEvent = <T extends GameEvent>(
     event: T,
     data: EventPayloadMap[T]
   ) => {
     const socket = socketRef.current;
-    if (socket?.readyState === WebSocket.OPEN) {
-      socket.send(JSON.stringify({ event, data }));
+    if (socket?.connected) {
+      socket.emit("message", JSON.stringify({ event, data }));
     } else {
       console.warn("Socket not ready. Can't send:", event);
     }
   };
 
-  // Allow component to listen to a specific event
   const onEvent = <T extends GameEvent>(
     event: T,
     callback: EventListener<T>

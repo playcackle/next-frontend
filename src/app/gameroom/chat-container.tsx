@@ -14,7 +14,7 @@ export default function ChatContainer() {
   const gameroom = useAtomValue(gameRoomAtom);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  const { messages, sendMessage } = useChatSocket(gameroom!.chat_ws_url);
+  const { messages, sendMessage } = useChatSocket(gameroom!.chat_ws_url, gameroom!.token);
 
   // Auto-scroll to bottom when messages change
   useEffect(() => {
