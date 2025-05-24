@@ -1,6 +1,8 @@
 "use client";
 
+import { Button } from "@radix-ui/themes";
 import { Session } from "next-auth";
+import { signOut } from "next-auth/react";
 import Link from "next/link";
 import styles from "./header.module.css";
 
@@ -34,10 +36,18 @@ export default function Header(props: Props) {
         </ul> */}
       </nav>
       <div className={styles.auth}>
-        {session.user && (
-          <div className={styles.playerName}>{session.user?.name}</div>
+        {session?.user && (
+          <>
+            <div className={styles.playerName}>{session.user?.name}</div>
+            <Button
+              className={styles.signOutButton}
+              onClick={() => signOut({ callbackUrl: "/" })}
+            >
+              Sign Out
+            </Button>
+          </>
         )}
-        {!session.user && (
+        {!session?.user && (
           <>
             <Link href="/login" className={styles.loginLink}>
               Login

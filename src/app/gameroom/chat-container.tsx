@@ -14,7 +14,12 @@ export default function ChatContainer() {
   const gameroom = useAtomValue(gameRoomAtom);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  const { messages, sendMessage } = useChatSocket(gameroom!.chat_ws_url);
+  // Helper to get base URL (strip /game or /chat if present)
+  function getBaseWsUrl(url: string) {
+    return url.replace(/\/(game|chat)$/, "");
+  }
+  const baseWsUrl = getBaseWsUrl(gameroom!.game_ws_url);
+  const { messages, error, sendMessage } = useChatSocket(baseWsUrl, gameroom!.token);
 
   // Auto-scroll to bottom when messages change
   useEffect(() => {
@@ -29,24 +34,44 @@ export default function ChatContainer() {
     }
   };
 
+  const formatTimestamp = (timestamp: string) => {
+    try {
+      const date = new Date(timestamp);
+      return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    } catch (e) {
+      return timestamp;
+    }
+  };
+
   return (
     <div className={styles.chatContainer}>
       <div className={styles.chatHeader}>
         <h3>Chat Room</h3>
+        {error && <div className={styles.chatError}>{error}</div>}
       </div>
       <div className={styles.chatMessages}>
-        {messages.map((msg, index) => (
-          <div
-            key={index}
-            className={`${styles.chatMessage} ${
-              msg.player_id === data?.user.id ? styles.ownMessage : ""
-            }`}
-          >
-            <span className={styles.messageTime}>{msg.timestamp}</span>
-            <span className={styles.messageUser}>{msg.display_name}:</span>
-            <span className={styles.messageText}>{msg.text}</span>
+        {messages.length === 0 ? (
+          <div className={styles.chatEmpty}>
+            No messages yet. Start the conversation!
           </div>
-        ))}
+        ) : (
+          messages.map((msg, index) => (
+            <div
+              key={index}
+              className={`${styles.chatMessage} ${
+                msg.player_id === data?.user.id ? styles.ownMessage : ""
+              }`}
+            >
+              <div className={styles.messageHeader}>
+                <span className={styles.messageUser}>{msg.display_name}</span>
+                <span className={styles.messageTime}>
+                  {formatTimestamp(msg.timestamp)}
+                </span>
+              </div>
+              <div className={styles.messageContent}>{msg.text}</div>
+            </div>
+          ))
+        )}
         <div ref={messagesEndRef} />
       </div>
       <div className={styles.chatInput}>
@@ -57,8 +82,13 @@ export default function ChatContainer() {
             onChange={(e) => setInput(e.target.value)}
             placeholder="Type a message..."
             className={styles.chatInputField}
+            disabled={!!error}
           />
-          <Button type="submit" className={styles.chatSendButton}>
+          <Button 
+            type="submit" 
+            className={styles.chatSendButton}
+            disabled={!!error || !input.trim()}
+          >
             Send
           </Button>
         </form>

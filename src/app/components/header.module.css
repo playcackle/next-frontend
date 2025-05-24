@@ -138,3 +138,29 @@
   align-items: center;
   justify-content: center;
 }
+
+.signOutButton {
+  background: linear-gradient(45deg, #ff3366, #ff6b6b);
+  border: none;
+  color: white;
+  padding: 0.5rem 1.5rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  font-family: var(--retro-font);
+  box-shadow: 0 0 5px rgba(255, 51, 102, 0.3);
+}
+
+.signOutButton:hover {
+  box-shadow: 0 0 15px rgba(255, 51, 102, 0.7), 0 0 25px rgba(255, 51, 102, 0.4);
+  transform: translateY(-2px);
+  background: linear-gradient(45deg, #ff1a4d, #ff5252);
+}
+
+.signOutButton:active {
+  transform: translateY(0);
+  box-shadow: 0 0 10px rgba(255, 51, 102, 0.5);
+}

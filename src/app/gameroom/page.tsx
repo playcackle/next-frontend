@@ -2,7 +2,7 @@
 
 import SoundEffects from "@/app/components/sound-effects";
 import { useSearchParams } from "next/navigation";
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import ConfettiExplosion from "./confetti-explosion";
 import styles from "./gameroom.module.css";
 import ParticleExplosion from "./particle-explosion";
@@ -21,6 +21,7 @@ import RoomHeader from "./components/RoomHeader";
 import SlotGrid from "./components/SlotGrid";
 import StatsRow from "./components/StatsRow";
 import { useGameSocket } from "./hooks/useGameWs";
+import { GameEvent } from "./types";
 
 export default function GameroomPage() {
   const searchParams = useSearchParams();
@@ -28,15 +29,17 @@ export default function GameroomPage() {
   const [answer, setAnswer] = useState<string>("");
   const gameroom = useAtomValue(gameRoomAtom);
 
-  const gameRoomWs = useGameSocket(gameroom!.game_ws_url);
+  if (!gameroom) {
+    return <div>Loading gameroom...</div>;
+  }
+
+  const gameRoomWs = useGameSocket(gameroom.game_ws_url, gameroom.token);
 
   // Refs
   const mainRef = useRef<HTMLDivElement>(null);
 
   // Custom hooks
-
-  const { players, getCurrentPlayer } = usePlayers();
-
+  const { players: initialPlayers, getCurrentPlayer } = usePlayers();
   const { animationState, triggerCorrectAnimations } = useAnimations();
 
   // State for sound loading
@@ -48,6 +51,54 @@ export default function GameroomPage() {
     x: number;
     y: number;
   } | null>(null);
+
+  const [activePlayers, setActivePlayers] = useState(1);
+  const [timeRemaining, setTimeRemaining] = useState(45);
+  const [players, setPlayers] = useState<any[]>([]); // Replace any with Player type if available
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+    if (!gameRoomWs) return;
+    // Listen for lobby_tick to update activePlayers and timeRemaining
+    gameRoomWs.onEvent("lobby_tick", (data) => {
+      console.log("[Game WS] lobby_tick event received:", data);
+      setActivePlayers(data.player_count);
+      setTimeRemaining(data.time_remaining_seconds ?? 0);
+    });
+    // Listen for round_over_timeout to update leaderboard
+    gameRoomWs.onEvent("round_over_timeout", (data) => {
+      setPlayers(data.player_scores);
+    });
+    // Listen for round_over_all_snapped to update leaderboard
+    gameRoomWs.onEvent("round_over_all_snapped", (data) => {
+      setPlayers(data.player_scores);
+    });
+    // Listen for game_over to update leaderboard
+    gameRoomWs.onEvent("game_over", (data) => {
+      setPlayers(data.final_scores);
+    });
+    // Listen for submission feedback
+    gameRoomWs.onEvent("submission_feedback", (data) => {
+      console.log("[Game WS] Submission feedback:", data);
+      setIsSubmitting(false);
+      if (data.status === "correct") {
+        // Trigger animations for correct answer
+        triggerCorrectAnimations(parseInt(data.slot_id!), null, mainRef);
+        // Play success sound
+        if (typeof window !== 'undefined' && 'playFallbackAudio' in window) {
+          (window as any).playFallbackAudio();
+        }
+      }
+    });
+  }, [gameRoomWs, triggerCorrectAnimations]);
+
+  const handleSubmitAnswer = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!answer.trim() || isSubmitting || !gameRoomWs) return;
+    setIsSubmitting(true);
+    gameRoomWs.sendEvent("submit_answer", answer);
+    setAnswer(""); // Clear the input after submission
+  };
 
   return (
     <div className={styles.container}>
@@ -97,9 +148,9 @@ export default function GameroomPage() {
 
         {/* First row: Stats tiles */}
         <StatsRow
-          activePlayers={1}
+          activePlayers={activePlayers}
           isIntermission={false}
-          timeRemaining={45}
+          timeRemaining={timeRemaining}
           intermissionTimeRemaining={90}
           players={players}
           nameFlash={animationState.nameFlash}
@@ -125,7 +176,7 @@ export default function GameroomPage() {
             timeExpired={false}
             isIntermission={false}
             intermissionTimeRemaining={10}
-            onSubmit={() => console.log()}
+            onSubmit={handleSubmitAnswer}
           />
         </div>
       </main>

@@ -15,10 +15,13 @@ export type GameEvent =
   | "break_starting"
   | "game_over"
   | "lobby_resetting_for_new_game"
-  | "submission_feedback";
+  | "submission_feedback"
+  | "submit_answer";
+
+export type ChatEvent = "connection_success_chat" | "new_message" | "message_error";
 
 // ========================
-// Payload Types
+// Game Event Payloads
 // ========================
 
 export type ConnectionSuccessPayload = {
@@ -42,13 +45,7 @@ export type GameStartCancelledPayload = {
 };
 
 export type LobbyTickPayload = {
-  status:
-    | "WAITING"
-    | "STARTING_SOON"
-    | "IN_ROUND"
-    | "ROUND_BREAK"
-    | "POST_GAME_SHOWCASE"
-    | "GAME_OVER_NO_NEW_GAME";
+  status: "WAITING" | "STARTING_SOON" | "IN_ROUND" | "ROUND_BREAK" | "POST_GAME_SHOWCASE" | "GAME_OVER_NO_NEW_GAME";
   current_round: number;
   time_remaining_seconds: number | null;
   player_count: number;
@@ -57,28 +54,20 @@ export type LobbyTickPayload = {
   timestamp_utc: string;
 };
 
-export type Slot = {
+export type AnswerSlot = {
   slot_id: string;
   points: number;
   is_snapped: boolean;
   snapped_by_player_id: string | null;
   snapped_by_display_name: string | null;
   text_preview: string;
-  animation?: string;
-  entranceAnimation?: string;
-  entranceDelay?: number;
-  correctAnswer: string;
-  revealAnimation?: string;
-  revealDelay?: number;
-  playerAvatar?: string;
-  playerColor?: string;
 };
 
 export type NewRoundStartingPayload = {
   round_number: number;
   topic_name: string;
   round_duration_seconds: number;
-  answer_slots: Slot[];
+  answer_slots: AnswerSlot[];
   round_end_timestamp_utc: string;
 };
 
@@ -133,14 +122,16 @@ export type BreakStartingPayload = {
   podium: PodiumPlayer[];
 };
 
+export type FinalScore = {
+  player_id: string;
+  display_name: string;
+  score: number;
+  rank: number;
+};
+
 export type GameOverPayload = {
   message: string;
-  final_scores: {
-    player_id: string;
-    display_name: string;
-    score: number;
-    rank: number;
-  }[];
+  final_scores: FinalScore[];
   post_game_showcase_duration_seconds: number;
   new_game_cycle_start_timestamp_utc: string;
 };
@@ -149,26 +140,30 @@ export type LobbyResettingForNewGamePayload = {
   message: string;
 };
 
-export type SubmissionFeedbackPayload =
-  | {
-      status: "correct";
-      message: string;
-      slot_id: string;
-      points_awarded: number;
-      your_score: number;
-    }
-  | {
-      status: "incorrect" | "not_in_play" | "already_snapped";
-      message: string;
-    }
-  | {
-      status: "too_slow" | "round_not_active";
-      message: string;
-    }
-  | {
-      status: "error";
-      message: string;
-    };
+export type SubmissionFeedbackPayload = {
+  status: "correct" | "incorrect" | "already_snapped" | "too_slow" | "round_not_active" | "not_in_play" | "error";
+  message: string;
+  slot_id?: string;
+  points_awarded?: number;
+  your_score?: number;
+};
+
+// ========================
+// Chat Event Payloads
+// ========================
+
+export type ChatMessageData = {
+  player_id: string;
+  display_name: string;
+  text: string;
+  timestamp: string;
+};
+
+export type ChatEventPayloadMap = {
+  connection_success_chat: { message: string };
+  new_message: ChatMessageData;
+  message_error: { error: string };
+};
 
 // ========================
 // Event-to-Payload Mapping
@@ -247,9 +242,6 @@ export type SoundType =
   | "success3"
   | "timeUp";
 
-// All possible chat event names
-export type ChatEvent = "connection_success_chat" | "new_message";
-
 // Payload for successful connection
 export type ConnectionSuccessChatPayload = {
   message: string; // "Successfully connected to chat. Player ID: {player_id}"
@@ -261,10 +253,4 @@ export type ChatMessagePayload = {
   display_name: string;
   text: string;
   timestamp: string; // ISO datetime string
-};
-
-// Mapping of chat events to their payloads
-export type ChatEventPayloadMap = {
-  connection_success_chat: ConnectionSuccessChatPayload;
-  new_message: ChatMessagePayload;
 };
