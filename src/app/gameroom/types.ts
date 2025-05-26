@@ -61,6 +61,7 @@ export type LobbyTickPayload = {
   topic_name: string | null;
   lobby_id: string;
   timestamp_utc: string;
+  slots: Slot[];
 };
 
 export type Slot = {
@@ -199,6 +200,7 @@ export type EventPayloadMap = {
   game_over: GameOverPayload;
   lobby_resetting_for_new_game: LobbyResettingForNewGamePayload;
   submission_feedback: SubmissionFeedbackPayload;
+  submit_answer: any;
 };
 
 export type GameroomData = {

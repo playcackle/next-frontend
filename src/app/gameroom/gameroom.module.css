@@ -1086,12 +1086,6 @@
   --animate-duration: 0.5s;
 }
 
-/* Ensure animations don't break the layout */
-.questionTile.animate__animated {
-  z-index: 10;
-  position: relative;
-}
-
 /* Countdown animation styles */
 .countdownOverlay {
   position: fixed;

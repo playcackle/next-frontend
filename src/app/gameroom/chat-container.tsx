@@ -14,6 +14,7 @@ export default function ChatContainer() {
   const gameroom = useAtomValue(gameRoomAtom);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
+  if (!gameroom) return;
   // Helper to get base URL (strip /game or /chat if present)
   function getBaseWsUrl(url: string) {
     return url.replace(/\/(game|chat)$/, "");

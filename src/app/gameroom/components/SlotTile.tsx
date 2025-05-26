@@ -58,7 +58,7 @@ const SlotTile: React.FC<SlotTileProps> = ({
   return (
     <div
       id={`slot-${slot.slot_id}`}
-      className={`${tileClassNames} {className}`}
+      className={`animated ${tileClassNames} {className}`}
       style={
         {
           "--room-color": isBonus ? "var(--neon-purple)" : "var(--neon-pink)",
