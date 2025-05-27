@@ -1,59 +1,41 @@
-// Animation constants for the quiz room
+// GAME_CONFIG
+export const MAX_RECONNECT_ATTEMPTS = 5;
+export const RECONNECT_DELAY_BASE = 1000;
+export const ANIMATION_DURATION = 2000;
+export const ENTRANCE_DELAY_BASE = 20;
+export const REVEAL_DELAY_BASE = 10;
+export const PARTICLE_DURATION = 1500;
 
-// Animate.css attention seeker animations
-export const ATTENTION_ANIMATIONS = [
-  "animate__bounce",
-  "animate__flash",
-  "animate__pulse",
-  "animate__rubberBand",
-  "animate__shakeX",
-  "animate__shakeY",
-  "animate__headShake",
-  "animate__swing",
-  "animate__tada",
-  "animate__wobble",
-  "animate__jello",
-  "animate__heartBeat",
-];
+// SOUND_EFFECTS
+export const SOUND_SUCCESS = ["success1", "success2", "success3"] as const;
+export const SOUND_BONUS = "bonus" as const;
+export const SOUND_ERROR = "error" as const;
+export const SOUND_COUNTDOWN = "countdown" as const;
 
-// Animate.css entrance animations
+// ANIMATIONS
 export const ENTRANCE_ANIMATIONS = [
-  "animate__backInDown",
-  "animate__backInLeft",
-  "animate__backInRight",
-  "animate__backInUp",
-  "animate__bounceIn",
-  "animate__bounceInDown",
-  "animate__bounceInLeft",
-  "animate__bounceInRight",
-  "animate__bounceInUp",
-  "animate__fadeIn",
-  "animate__fadeInDown",
-  "animate__fadeInLeft",
-  "animate__fadeInRight",
-  "animate__fadeInUp",
-  "animate__flipInX",
-  "animate__flipInY",
-  "animate__jackInTheBox",
-  "animate__lightSpeedInRight",
-  "animate__lightSpeedInLeft",
-  "animate__rotateIn",
-  "animate__rotateInDownLeft",
-  "animate__rotateInDownRight",
-  "animate__rotateInUpLeft",
-  "animate__rotateInUpRight",
-  "animate__zoomIn",
-  "animate__zoomInDown",
-  "animate__zoomInLeft",
-  "animate__zoomInRight",
-  "animate__zoomInUp",
-  "animate__slideInDown",
-  "animate__slideInLeft",
-  "animate__slideInRight",
-  "animate__slideInUp",
-];
+  "slideInUp",
+  "slideInDown",
+  "slideInLeft",
+  "slideInRight",
+  "fadeIn",
+  "bounceIn",
+  "zoomIn",
+  "rotateIn",
+] as const;
 
-// Avatar patterns for retro style
+export const ATTENTION_ANIMATIONS = [
+  "pulse",
+  "bounce",
+  "shake",
+  "wobble",
+  "swing",
+  "flash",
+  "rubberBand",
+  "tada",
+] as const;
+
+// AVATAR_PATTERNS
 export const AVATAR_PATTERNS = [
   "linear-gradient(45deg, #ff00aa, #00ddff)",
   "linear-gradient(135deg, #00ddff, #b700ff)",
@@ -63,10 +45,4 @@ export const AVATAR_PATTERNS = [
   "repeating-linear-gradient(45deg, #ff00aa, #ff00aa 5px, #00ddff 5px, #00ddff 10px)",
   "repeating-linear-gradient(90deg, #b700ff, #b700ff 5px, #00ff66 5px, #00ff66 10px)",
   "conic-gradient(from 0deg, #ff00aa, #00ddff, #b700ff, #00ff66, #ff00aa)",
-];
-
-// Sound effects for different slot types
-export const SUCCESS_SOUNDS = ["success1", "success2", "success3", "correct"];
-
-// Game timing constants
-export const COUNTDOWN_THRESHOLD = 10; // Show countdown when 10 seconds or less remain
+] as const;

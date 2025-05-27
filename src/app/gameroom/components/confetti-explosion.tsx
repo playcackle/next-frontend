@@ -3,7 +3,7 @@
 import type React from "react";
 
 import { useEffect, useRef, useState } from "react";
-import styles from "./gameroom.module.css";
+import styles from "./confetti.module.css";
 
 // Update the ConfettiProps type to include playerColor
 type ConfettiProps = {

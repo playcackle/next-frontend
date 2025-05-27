@@ -1,0 +1,71 @@
+/* Confetti styles */
+.confettiContainer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 150;
+  overflow: hidden;
+}
+
+/* Add a new class for positioned confetti */
+.confettiPositioned {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 150;
+  overflow: visible;
+}
+
+/* Update the confetti particle styles to work with both fixed and absolute positioning */
+.confettiParticle {
+  position: absolute;
+  border-radius: 2px;
+  will-change: transform, opacity;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+}
+
+/* Update the confetti particle styles to better match player colors */
+.confettiParticle {
+  position: absolute;
+  border-radius: 2px;
+  will-change: transform, opacity;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+  transition: background-color 0.3s ease;
+}
+
+/* Add a glow effect to the confetti particles */
+.confettiParticle::after {
+  content: "";
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  border-radius: 4px;
+  background: transparent;
+  z-index: -1;
+  opacity: 0.5;
+  filter: blur(2px);
+}
+
+/* Add a special style for bonus confetti to make it more visible */
+.bonusConfetti {
+  box-shadow: 0 0 10px rgba(255, 215, 0, 0.7);
+  filter: brightness(1.2);
+  z-index: 151; /* Ensure bonus confetti is on top */
+}
+
+/* Add a special glow effect for the confetti container */
+.confettiContainer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 150;
+  overflow: hidden;
+}

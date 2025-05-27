@@ -3,9 +3,9 @@
 import SoundEffects from "@/app/components/sound-effects";
 import { useSearchParams } from "next/navigation";
 import React, { useEffect, useRef, useState } from "react";
-import ConfettiExplosion from "./confetti-explosion";
+import ConfettiExplosion from "./components/confetti-explosion";
+import ParticleExplosion from "./components/particle-explosion";
 import styles from "./gameroom.module.css";
-import ParticleExplosion from "./particle-explosion";
 
 // Import custom hooks
 import { useAnimations } from "./hooks/useAnimations";
@@ -20,7 +20,7 @@ import CountdownOverlay from "./components/CountdownOverlay";
 import RoomHeader from "./components/RoomHeader";
 import SlotTile from "./components/SlotTile";
 import StatsRow from "./components/StatsRow";
-import { useGameSocket } from "./hooks/useGameWs";
+import { useGameSocket } from "./hooks/useGameSocket";
 import {
   FinalScore,
   NewRoundStartingPayload,
@@ -44,7 +44,10 @@ export default function GameroomPage() {
     return <div>Loading gameroom...</div>;
   }
 
-  const gameRoomWs = useGameSocket(gameroom.game_ws_url, gameroom.token);
+  const { isConnected, onEvent, sendEvent, connectionStatus } = useGameSocket(
+    gameroom.game_ws_url,
+    gameroom.token
+  );
 
   // Refs
   const mainRef = useRef<HTMLDivElement>(null);
@@ -60,86 +63,77 @@ export default function GameroomPage() {
     y: number;
   } | null>(null);
 
-  const [playerCount, setPlayerCount] = useState(1);
-  const [timeRemaining, setTimeRemaining] = useState(45);
+  const [playerCount, setPlayerCount] = useState(0);
+  const [timeRemaining, setTimeRemaining] = useState(250);
   const [playerScore, setPlayerScore] = useState<PlayerScore[]>([]); // Replace any with Player type if available
   const [finalScore, setFinalScore] = useState<FinalScore[]>([]);
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [entranceAnimation, setEntranceAnimation] = useState("");
   const [isIntermission, setIsIntermission] = useState(false);
   const [animatingTile, setAnimatingTile] = useState("");
+  const [roundName, setRoundName] = useState("");
   const [attentionAnimation, setAttentionAnimation] = useState("");
 
   useEffect(() => {
-    setLoading(!gameRoomWs);
-  }, [gameRoomWs]);
+    setLoading(!isConnected);
+  }, [connectionStatus]);
   useEffect(() => {
-    if (!gameRoomWs) return;
-    // Listen for lobby_tick to update activePlayers and timeRemaining
-    gameRoomWs.onEvent("lobby_tick", (data) => {
+    onEvent("lobby_tick", (data) => {
       if (slots.length === 0) {
-        setSlots([]);
+        console.log("set slots");
+        setSlots(data.slots);
       }
-      console.log("[Game WS] lobby_tick event received:", data);
+
+      if (roundName === "") setRoundName(data.topic_name!);
+
       setPlayerCount(data.player_count);
       setTimeRemaining(data.time_remaining_seconds ?? 0);
     });
     // Listen for round_over_timeout to update leaderboard
-    gameRoomWs.onEvent("round_over_timeout", (data) => {
+    onEvent("round_over_timeout", (data) => {
       setPlayerScore(data.player_scores);
       setIsIntermission(true);
     });
-    gameRoomWs.onEvent(
-      "new_round_starting",
-      (data: NewRoundStartingPayload) => {
-        debugger;
-        setEntranceAnimation(getRandomEntranceAnimation());
-        setSlots(data.answer_slots);
-        setIsIntermission(false);
-      }
-    );
+    onEvent("new_round_starting", (data: NewRoundStartingPayload) => {
+      debugger;
+      console.log("[Game WS] new_round_starting event received:", data);
+      setEntranceAnimation(getRandomEntranceAnimation());
+      setSlots(data.answer_slots);
+      setIsIntermission(false);
+      setRoundName(data.topic_name);
+    });
     // Listen for round_over_all_snapped to update leaderboard
-    gameRoomWs.onEvent("round_over_all_snapped", (data) => {
+    onEvent("round_over_all_snapped", (data) => {
       setPlayerScore(data.player_scores);
       setIsIntermission(true);
     });
 
     // Listen for game_over to update leaderboard
-    gameRoomWs.onEvent("game_over", (data) => {
+    onEvent("game_over", (data) => {
       setFinalScore(data.final_scores);
     });
     // Listen for submission feedback
-    gameRoomWs.onEvent(
-      "submission_feedback",
-      (data: SubmissionFeedbackPayload) => {
-        console.log("[Game WS] Submission feedback:", data);
-        setIsSubmitting(false);
-        if (data.status === "correct") {
-          const animation = getRandomAttentionAnimation();
-          setAttentionAnimation(animation);
-          setAnimatingTile(data.slot_id!);
-          // Trigger animations for correct answer
-          triggerCorrectAnimations(
-            parseInt(data.slot_id!),
-            null,
-            mainRef,
-            false
-          );
-          // Play success sound
-          if (typeof window !== "undefined" && "playFallbackAudio" in window) {
-            (window as any).playFallbackAudio();
-          }
-          setTimeout(() => {}, 300);
+    onEvent("submission_feedback", (data: SubmissionFeedbackPayload) => {
+      console.log("[Game WS] Submission feedback:", data);
+      debugger;
+      if (data.status === "correct") {
+        const animation = getRandomAttentionAnimation();
+        setAttentionAnimation(animation);
+        setAnimatingTile(data.slot_id!);
+        // Trigger animations for correct answer
+        triggerCorrectAnimations(parseInt(data.slot_id!), null, mainRef, false);
+        // Play success sound
+        if (typeof window !== "undefined" && "playFallbackAudio" in window) {
+          (window as any).playFallbackAudio();
         }
+        setTimeout(() => {}, 300);
       }
-    );
-  }, [gameRoomWs, triggerCorrectAnimations]);
+    });
+  }, [onEvent, triggerCorrectAnimations]);
 
   const handleSubmitAnswer = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!answer.trim() || isSubmitting || !gameRoomWs) return;
-    setIsSubmitting(true);
-    gameRoomWs.sendEvent("submit_answer", answer);
+    if (!answer.trim()) return;
+    sendEvent("submit_answer", answer);
     setAnswer(""); // Clear the input after submission
   };
 
@@ -176,7 +170,12 @@ export default function GameroomPage() {
         `}
           >
             {/* Room title */}
-            <RoomHeader name={name!} roundNumber={1} />
+            <RoomHeader
+              roundName={roundName}
+              roomName={name!}
+              roundNumber={1}
+              totalRounds={10}
+            />
 
             {/* Sound effects */}
             <SoundEffects onLoad={() => setSoundsLoaded(true)} />

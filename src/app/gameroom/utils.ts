@@ -1,7 +1,7 @@
 import {
   ATTENTION_ANIMATIONS,
   ENTRANCE_ANIMATIONS,
-  SUCCESS_SOUNDS,
+  SOUND_SUCCESS,
 } from "./constants";
 import type { SoundType } from "./types";
 
@@ -40,8 +40,8 @@ export const getRandomEntranceAnimation = (): string => {
  * Get a random success sound
  */
 export const getRandomSuccessSound = (): SoundType => {
-  return SUCCESS_SOUNDS[
-    Math.floor(Math.random() * SUCCESS_SOUNDS.length)
+  return SOUND_SUCCESS[
+    Math.floor(Math.random() * SOUND_SUCCESS.length)
   ] as SoundType;
 };
 
@@ -61,3 +61,18 @@ export const playSound = (type: SoundType): void => {
     console.error("Sound playback failed:", e);
   }
 };
+
+/**
+ * Debounce function to limit how often a function can be called
+ */
+export function debounce<T extends (...args: any[]) => any>(
+  func: T,
+  wait: number
+): (...args: Parameters<T>) => void {
+  let timeout: NodeJS.Timeout | null = null;
+
+  return (...args: Parameters<T>) => {
+    if (timeout) clearTimeout(timeout);
+    timeout = setTimeout(() => func(...args), wait);
+  };
+}

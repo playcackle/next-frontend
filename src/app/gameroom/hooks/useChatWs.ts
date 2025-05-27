@@ -1,38 +1,54 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { io } from "socket.io-client";
-import { ChatEvent, ChatEventPayloadMap } from "../types";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { io, Socket } from "socket.io-client";
+import { ChatEventPayloadMap } from "../types";
 
 type ChatMessage = ChatEventPayloadMap["new_message"];
 
-// This should not be needed anymore
-function toHttpUrl(wsUrl: string) {
+interface ChatState {
+  messages: ChatMessage[];
+  error: string | null;
+  isConnected: boolean;
+}
+
+function toHttpUrl(wsUrl: string): string {
   if (wsUrl.startsWith("ws://")) return "http://" + wsUrl.slice(5);
   if (wsUrl.startsWith("wss://")) return "https://" + wsUrl.slice(6);
   return wsUrl;
 }
 
 export const useChatSocket = (baseUrl: string, token: string) => {
-  const socketRef = useRef<any>(null);
-  const [messages, setMessages] = useState<ChatMessage[]>([]);
-  const [error, setError] = useState<string | null>(null);
+  const socketRef = useRef<Socket | null>(null);
+  const [chatState, setChatState] = useState<ChatState>({
+    messages: [],
+    error: null,
+    isConnected: false,
+  });
 
   useEffect(() => {
     const url = toHttpUrl(baseUrl) + "/chat";
     const socket = io(url, {
       transports: ["websocket"],
       auth: { token },
+      timeout: 10000,
     });
+
     socketRef.current = socket;
 
     socket.on("connect", () => {
-      console.log("Chat socket connected.");
-      setError(null);
+      setChatState((prev) => ({
+        ...prev,
+        isConnected: true,
+        error: null,
+      }));
     });
 
-    socket.on("new_message", (data) => {
-      setMessages((prev) => [...prev, data]);
+    socket.on("new_message", (data: ChatMessage) => {
+      setChatState((prev) => ({
+        ...prev,
+        messages: [...prev.messages, data],
+      }));
     });
 
     socket.on("connection_success_chat", (data) => {
@@ -40,36 +56,65 @@ export const useChatSocket = (baseUrl: string, token: string) => {
     });
 
     socket.on("message_error", (data) => {
-      setError(data.error);
+      setChatState((prev) => ({
+        ...prev,
+        error: data.error,
+      }));
     });
 
     socket.on("error", (err) => {
       console.error("Chat socket error:", err);
-      setError("Connection error");
+      setChatState((prev) => ({
+        ...prev,
+        error: "Connection error",
+        isConnected: false,
+      }));
     });
 
     socket.on("disconnect", () => {
-      console.warn("Chat socket closed.");
-      setError("Disconnected from chat");
+      setChatState((prev) => ({
+        ...prev,
+        isConnected: false,
+        error: "Disconnected from chat",
+      }));
     });
 
     return () => {
+      socket.removeAllListeners();
       socket.disconnect();
+      socketRef.current = null;
     };
   }, [baseUrl, token]);
 
-  const sendMessage = (text: string) => {
+  const sendMessage = useCallback((text: string) => {
     const socket = socketRef.current;
-    if (socket?.connected) {
-      socket.emit("send_message", text);
-    } else {
-      setError("Not connected to chat");
+    if (!socket?.connected) {
+      setChatState((prev) => ({
+        ...prev,
+        error: "Not connected to chat",
+      }));
+      return false;
     }
-  };
+
+    try {
+      socket.emit("send_message", text);
+      return true;
+    } catch (error) {
+      setChatState((prev) => ({
+        ...prev,
+        error: "Failed to send message",
+      }));
+      return false;
+    }
+  }, []);
+
+  const clearError = useCallback(() => {
+    setChatState((prev) => ({ ...prev, error: null }));
+  }, []);
 
   return {
-    messages,
-    error,
+    ...chatState,
     sendMessage,
+    clearError,
   };
 };

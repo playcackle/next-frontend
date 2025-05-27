@@ -44,7 +44,7 @@ const SlotTile: React.FC<SlotTileProps> = ({
     : undefined;
 
   const tileClassNames = [
-    styles.questionTile,
+    styles.slotTile,
     isBonus ? styles.bonusTile : "",
     slot.is_snapped ? styles.answered : "",
     mounted && isAnimating ? styles.correctPulse : "",

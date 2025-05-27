@@ -1,5 +1,5 @@
 import React from "react";
-import styles from "../gameroom.module.css";
+import styles from "./countdown.module.css";
 
 interface CountdownOverlayProps {
   show: boolean;

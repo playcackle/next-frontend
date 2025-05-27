@@ -2,17 +2,26 @@ import React from "react";
 import styles from "../gameroom.module.css";
 
 interface HeaderProps {
-  name: string;
+  roomName: string;
+  roundName: string;
   roundNumber: number;
+  totalRounds: number;
 }
 
-const RoomHeader: React.FC<HeaderProps> = ({ name, roundNumber }) => {
+const RoomHeader: React.FC<HeaderProps> = ({
+  roundName,
+  roomName,
+  roundNumber,
+  totalRounds,
+}) => {
   return (
     <div className={styles.roomTitle} style={{ color: "--neon-pink" }}>
       <h1>
-        <span className={styles.roomName}>{name}</span>
+        <span className={styles.roomName}>{roundName}</span>
       </h1>
-      <div className={styles.roomDifficulty}>Round {roundNumber}</div>
+      <div className={styles.roomDifficulty}>
+        {roomName} - Round {roundNumber}/{totalRounds}
+      </div>
     </div>
   );
 };

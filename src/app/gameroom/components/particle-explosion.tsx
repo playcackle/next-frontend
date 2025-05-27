@@ -3,7 +3,7 @@
 import type React from "react";
 
 import { useEffect, useState } from "react";
-import styles from "./gameroom.module.css";
+import styles from "./particle.module.css";
 
 type ParticleProps = {
   x: number;
