@@ -4,7 +4,7 @@ import Header from "@/app/components/header";
 import SynthwaveBackground from "@/app/components/synthwave-background";
 import { Button } from "@radix-ui/themes";
 import Link from "next/link";
-import styles from "../about.module.css";
+import styles from "./about.module.css";
 
 export default function AboutPage() {
   return (
