@@ -10,7 +10,7 @@ export type GameEvent =
   | "waiting_for_players"
   | "game_start_cancelled"
   | "lobby_tick"
-  | "new_round_starting"
+  | "round_starting_soon"
   | "new_round_started"
   | "slot_snapped"
   | "round_over"

@@ -42,7 +42,6 @@ export const useGameEvents = (gameWsUrl: string, token: string) => {
   useEffect(() => {
     // Lobby tick event
     onEvent("lobby_state_sync", (data: LobbyTickPayload) => {
-      debugger;
       updateGameState({
         roundNumber: data.current_round,
         playerCount: data.player_count,
@@ -62,16 +61,9 @@ export const useGameEvents = (gameWsUrl: string, token: string) => {
       updateGameState({
         playerCount: data.player_count,
         timeRemaining: data.time_remaining_seconds ?? 0,
-        roundName: data.topic_name || "",
-        showCountDown:
-          data.time_remaining_seconds! < 6 &&
-          data.time_remaining_seconds! > 0 &&
-          (data.status === "ROUND_BREAK" ||
-            data.status === "POST_GAME_SHOWCASE"),
         isRoundBreak: data.status === "ROUND_BREAK",
         scores: data.scores,
       });
-      console.log("slots: " + JSON.stringify(slots));
     });
 
     // Round over events
@@ -85,7 +77,6 @@ export const useGameEvents = (gameWsUrl: string, token: string) => {
     });
 
     onEvent("round_starting_soon", () => {
-      debugger;
       updateGameState({
         showCountDown: true,
         isRoundBreak: false,
@@ -114,7 +105,6 @@ export const useGameEvents = (gameWsUrl: string, token: string) => {
     });
 
     onEvent("slot_snapped", (data: SlotSnappedPayload) => {
-      debugger;
       const slot = slots.find((x) => x.id === data.id);
       if (slot) {
         const otherSlots = slots.filter((x: Slot) => x.id !== data.id);
@@ -125,7 +115,6 @@ export const useGameEvents = (gameWsUrl: string, token: string) => {
     // Submission feedback
     onEvent("submission_feedback", (data: SubmissionFeedbackPayload) => {
       if (data.status === "success") {
-        debugger;
         const animation = getRandomAttentionAnimation();
         updateAnimationState({
           attentionAnimation: animation,

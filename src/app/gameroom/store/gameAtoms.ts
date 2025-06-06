@@ -13,6 +13,7 @@ const initGameState = {
   scores: [],
   finalScore: [],
   showCountDown: false,
+  recentAnswers: [],
 };
 // Core game state atoms
 export const gameStateAtom = atom<GameState>(initGameState);

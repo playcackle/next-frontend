@@ -27,25 +27,27 @@ export default function AnswerForm({
   const isDisabled = timeExpired || isRoundBreak;
 
   return (
-    <Flex direction="column">
-      <AnswerBubbles bubbles={bubbles} onBubbleComplete={onBubbleComplete} />
-      <form className={styles.answerForm} onSubmit={onSubmit}>
-        <input
-          type="text"
-          value={answer}
-          onChange={(e) => setAnswer(e.target.value)}
-          className={styles.answerInput}
-          disabled={timeExpired || isRoundBreak}
-        />
-        <Button
-          type="submit"
-          className={styles.answerButton}
-          disabled={isDisabled || !answer.trim()}
-        >
-          Submit
-        </Button>
-      </form>
-      <AnswerChips answers={recentAnswers} />
-    </Flex>
+    <form className={styles.answerForm} onSubmit={onSubmit}>
+      <Flex direction="column" style={{ width: "100%" }}>
+        <AnswerBubbles bubbles={bubbles} onBubbleComplete={onBubbleComplete} />
+        <Flex direction="row" gap="2">
+          <input
+            type="text"
+            value={answer}
+            onChange={(e) => setAnswer(e.target.value)}
+            className={styles.answerInput}
+            disabled={timeExpired || isRoundBreak}
+          />
+          <Button
+            type="submit"
+            className={styles.answerButton}
+            disabled={isDisabled || !answer.trim()}
+          >
+            Submit
+          </Button>
+        </Flex>
+        <AnswerChips answers={recentAnswers} />
+      </Flex>
+    </form>
   );
 }

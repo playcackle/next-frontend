@@ -185,7 +185,7 @@ export const useGameSocket = (baseUrl: string, token: string) => {
       "game_starting_soon",
       "waiting_for_players",
       "game_start_cancelled",
-      "new_round_starting",
+      "round_starting_soon",
       "new_round_started",
       "slot_snapped",
       "round_over",
