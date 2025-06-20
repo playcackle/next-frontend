@@ -66,11 +66,6 @@ export const useGameEvents = (gameWsUrl: string, token: string) => {
         timeRemaining: data.time_remaining_seconds ?? 0,
         isRoundBreak: data.status === "ROUND_BREAK",
         scores: data.scores,
-        showCountDown:
-          data.time_remaining_seconds! < 5 &&
-          data.time_remaining_seconds! > 0 &&
-          (data.status === "ROUND_BREAK" ||
-            data.status === "POST_GAME_SHOWCASE"),
       });
     });
 

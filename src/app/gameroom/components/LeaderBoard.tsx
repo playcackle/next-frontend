@@ -3,15 +3,6 @@
 import { useGameState } from "../hooks/useGameState";
 import styles from "./leaderboard.module.css";
 
-type LeaderboardEntry = {
-  id: number;
-  rank?: number;
-  username: string;
-  score: number;
-  quizType: string;
-  date: string;
-};
-
 export default function Leaderboard() {
   const { scores } = useGameState();
   return (
