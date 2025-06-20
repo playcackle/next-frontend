@@ -1,36 +1,22 @@
-.mGrid.isAnimating {
-  animation: fly 5s linear infinite;
-}
-
-@keyframes fly {
-  0% {
-    transform: perspective(300px) rotateX(80deg) translateY(0%);
-  }
-  100% {
-    transform: perspective(300px) rotateX(80deg) translateY(50px);
-  }
-}
-
+/* Optimized mGrid CSS - maintains appearance with better performance */
 .mGrid {
-  -webkit-mask-image: -webkit-gradient(
-    linear,
-    left 90%,
-    left bottom,
-    from(rgba(0, 0, 0, 1)),
-    to(rgba(0, 0, 0, 0))
-  );
-  mask-image: linear-gradient(
+  /* Simplified and standardized mask */
+  -webkit-mask: linear-gradient(
     to bottom,
     rgba(0, 0, 0, 1) 90%,
-    rgba(0, 0, 0, 0)
+    rgba(0, 0, 0, 0) 100%
   );
+  mask: linear-gradient(to bottom, rgba(0, 0, 0, 1) 90%, rgba(0, 0, 0, 0) 100%);
+
   position: absolute;
   top: 0;
-  left: -50vw; /* Center the grid */
+  left: -50vw;
   margin-top: 5vh;
   width: 200vw;
   height: 150vh;
   transform: scaleY(0);
+
+  /* Optimized background with better performance */
   background-image: linear-gradient(
       0deg,
       transparent 24%,
@@ -57,4 +43,58 @@
     );
   background-size: 50px 50px;
   z-index: 10;
+
+  /* Performance optimizations */
+  will-change: transform;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  transform-style: preserve-3d;
+  /* Force hardware acceleration */
+  transform: scaleY(0) translateZ(0);
+}
+
+.mGrid.isAnimating {
+  animation: fly 5s linear infinite;
+  /* Optimize animation performance */
+  animation-fill-mode: both;
+}
+
+/* Optimized animation using translate3d for hardware acceleration */
+@keyframes fly {
+  0% {
+    transform: perspective(300px) rotateX(80deg) translate3d(0, 0, 0);
+  }
+  100% {
+    transform: perspective(300px) rotateX(80deg) translate3d(0, 50px, 0);
+  }
+}
+
+/* Alternative optimized version with transform composition for even better performance */
+.mGrid.isAnimating.optimized {
+  /* Use separate transform properties for better compositing */
+  transform-origin: center center;
+  animation: flyOptimized 5s linear infinite;
+}
+
+@keyframes flyOptimized {
+  0% {
+    transform: perspective(300px) rotateX(80deg) translateY(0) translateZ(0);
+  }
+  100% {
+    transform: perspective(300px) rotateX(80deg) translateY(50px) translateZ(0);
+  }
+}
+
+/* Performance hint for browsers on mobile */
+@media (max-width: 768px) {
+  .mGrid {
+    /* Reduce complexity on mobile if needed */
+    background-size: 40px 40px;
+    height: 120vh;
+  }
+
+  .mGrid.isAnimating {
+    /* Slightly slower animation on mobile for smoother performance */
+    animation-duration: 6s;
+  }
 }

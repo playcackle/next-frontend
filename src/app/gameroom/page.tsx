@@ -47,8 +47,7 @@ export default function GameroomPage() {
     updateGameState,
   } = useGameState();
   const { clearAnswer, answer } = useAnswer();
-  const { clearRecentAnswers, recentAnswers, setRecentAnswers } =
-    useRecentAnswers();
+  const { recentAnswers, setRecentAnswers } = useRecentAnswers();
 
   // Refs
   const mainRef = useRef<HTMLDivElement>(null);

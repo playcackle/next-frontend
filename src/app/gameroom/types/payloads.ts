@@ -75,11 +75,11 @@ export type LobbyTickPayload = {
   scores: scores[];
 };
 
-export type NewRoundStartingPayload = {
+export type NewRoundStartedPayload = {
   round_number: number;
   topic_name: string;
   round_duration_seconds: number;
-  active_slots: Slot[];
+  slots: Slot[];
   round_end_timestamp_utc: string;
 };
 
@@ -91,6 +91,7 @@ export type SlotSnappedPayload = {
   points_awarded: number;
   player_score: number;
   is_round_over: boolean;
+  slots: Slot[];
 };
 
 export type UnrevealedAnswer = {
@@ -169,7 +170,7 @@ export type EventPayloadMap = {
   waiting_for_players: WaitingForPlayersPayload;
   game_start_cancelled: GameStartCancelledPayload;
   lobby_tick: LobbyTickPayload;
-  new_round_starting: NewRoundStartingPayload;
+  new_round_starting: NewRoundStartedPayload;
   slot_snapped: SlotSnappedPayload;
   round_over: RoundOverPayload;
   break_starting: BreakStartingPayload;

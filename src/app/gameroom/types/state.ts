@@ -1,7 +1,7 @@
 export type Slot = {
   id: string;
   points: number;
-  taken: boolean;
+  is_snapped: boolean;
   snapped_by_player_id: string | null;
   snapped_by_display_name: string | null;
   text_preview: string;

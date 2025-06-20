@@ -1,12 +1,11 @@
 import { useEffect } from "react";
 import {
   LobbyTickPayload,
-  NewRoundStartingPayload,
+  NewRoundStartedPayload,
   RoundOverPayload,
   SlotSnappedPayload,
   SubmissionFeedbackPayload,
 } from "../types/payloads";
-import { Slot } from "../types/state";
 import {
   getRandomAttentionAnimation,
   getRandomEntranceAnimation,
@@ -77,7 +76,6 @@ export const useGameEvents = (gameWsUrl: string, token: string) => {
 
     // Round over events
     onEvent("round_over", (data: RoundOverPayload) => {
-      console.log("round over");
       updateGameState({
         isRoundBreak: true,
         slots: [],
@@ -93,14 +91,14 @@ export const useGameEvents = (gameWsUrl: string, token: string) => {
     });
 
     // New round starting
-    onEvent("new_round_started", (data: NewRoundStartingPayload) => {
+    onEvent("new_round_started", (data: NewRoundStartedPayload) => {
       setAnimationWithClear({
         entranceAnimation: getRandomEntranceAnimation(),
       });
       updateGameState({
         isRoundBreak: false,
         roundName: data.topic_name,
-        slots: data.active_slots,
+        slots: data.slots,
         roundNumber: data.round_number,
         showCountDown: false,
       });
@@ -114,15 +112,15 @@ export const useGameEvents = (gameWsUrl: string, token: string) => {
     });
 
     onEvent("slot_snapped", (data: SlotSnappedPayload) => {
-      const slot = slots.find((x) => x.id === data.id);
-      if (slot) {
-        const otherSlots = slots.filter((x: Slot) => x.id !== data.id);
-        updateGameState({ slots: [...otherSlots, slot] });
-      }
+      debugger;
+      updateGameState({
+        slots: data.slots,
+      });
     });
 
     // Submission feedback
     onEvent("submission_feedback", (data: SubmissionFeedbackPayload) => {
+      debugger;
       if (data.status === "success") {
         const animation = getRandomAttentionAnimation();
         updateAnimationState({

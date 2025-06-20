@@ -36,13 +36,8 @@ export default function AnswerForm({
             value={answer}
             onChange={(e) => setAnswer(e.target.value)}
             className={styles.answerInput}
-            disabled={timeExpired || isRoundBreak}
           />
-          <Button
-            type="submit"
-            className={styles.answerButton}
-            disabled={isDisabled || !answer.trim()}
-          >
+          <Button type="submit" className={styles.answerButton}>
             Submit
           </Button>
         </Flex>

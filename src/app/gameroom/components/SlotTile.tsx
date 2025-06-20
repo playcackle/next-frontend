@@ -28,29 +28,29 @@ const SlotTile: React.FC<SlotTileProps> = ({
 
   // Memoize all calculations based on props
   const displayState = useMemo(() => {
-    const shouldShowContent = slot.taken;
+    const shouldShowContent = slot.is_snapped;
     const shouldShowAttention =
-      slot.taken && slot.snapped_by_player_id === data?.user.id;
+      slot.is_snapped && slot.snapped_by_player_id === data?.user.id;
 
     return {
       shouldShowContent,
       shouldShowAttention,
-      roomColor: slot.taken ? "var(--neon-purple)" : "var(--neon-pink)",
+      roomColor: slot.is_snapped ? "var(--neon-purple)" : "var(--neon-pink)",
     };
-  }, [slot.taken]);
+  }, [slot.is_snapped]);
 
   const tileClassNames = useMemo(
     () =>
       [
         styles.slotTile,
         slot.is_rare ? styles.bonusTile : "",
-        slot.taken ? styles.answered : "",
+        slot.is_snapped ? styles.answered : "",
         slot.id === animatingTile ? styles.correctPulse : "",
         entranceAnimation,
         displayState.shouldShowAttention ? attentionAnimation : "",
       ].join(" "),
     [
-      slot.taken,
+      slot.is_snapped,
       slot.is_rare,
       slot.id,
       animatingTile,
@@ -108,7 +108,7 @@ const SlotTile: React.FC<SlotTileProps> = ({
 export default React.memo(SlotTile, (prevProps, nextProps) => {
   return (
     prevProps.slot.id === nextProps.slot.id &&
-    prevProps.slot.taken === nextProps.slot.taken &&
+    prevProps.slot.is_snapped === nextProps.slot.is_snapped &&
     prevProps.slot.text_preview === nextProps.slot.text_preview &&
     prevProps.slot.snapped_by_display_name ===
       nextProps.slot.snapped_by_display_name &&
