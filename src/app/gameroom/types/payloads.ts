@@ -57,7 +57,7 @@ export type GameStartCancelledPayload = {
   message: string;
 };
 
-export type LobbyTickPayload = {
+export type LobbySyncPayload = {
   status:
     | "WAITING"
     | "STARTING_SOON"
@@ -65,13 +65,19 @@ export type LobbyTickPayload = {
     | "ROUND_BREAK"
     | "POST_GAME_SHOWCASE"
     | "GAME_OVER_NO_NEW_GAME";
-  current_round: number;
+  round_number: number;
   time_remaining_seconds: number | null;
   player_count: number;
   topic_name: string | null;
   lobby_id: string;
   timestamp_utc: string;
   slots: Slot[];
+  scores: Scores[];
+};
+
+export type LobbyTickPayload = {
+  time_remaining_seconds: number | null;
+  player_count: number;
   scores: Scores[];
 };
 

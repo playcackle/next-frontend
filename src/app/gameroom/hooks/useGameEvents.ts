@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import {
+  LobbySyncPayload,
   LobbyTickPayload,
   NewRoundStartedPayload,
   RoundOverPayload,
@@ -44,9 +45,9 @@ export const useGameEvents = (gameWsUrl: string, token: string) => {
 
   useEffect(() => {
     // Lobby tick event
-    onEvent("lobby_state_sync", (data: LobbyTickPayload) => {
+    onEvent("lobby_state_sync", (data: LobbySyncPayload) => {
       updateGameState({
-        roundNumber: data.current_round,
+        roundNumber: data.round_number,
         playerCount: data.player_count,
         timeRemaining: data.time_remaining_seconds ?? 0,
         roundName: data.topic_name || "",
@@ -56,7 +57,7 @@ export const useGameEvents = (gameWsUrl: string, token: string) => {
           (data.status === "ROUND_BREAK" ||
             data.status === "POST_GAME_SHOWCASE"),
         isRoundBreak: data.status === "ROUND_BREAK",
-        scores: data.scores,
+        scores: data.scores ?? [],
         slots: data.slots ?? [],
       });
     });
@@ -73,7 +74,7 @@ export const useGameEvents = (gameWsUrl: string, token: string) => {
       updateGameState({
         isRoundBreak: true,
         slots: [],
-        scores: data.scores || [],
+        scores: data.scores ?? [],
       });
       clearRecentAnswers();
     });
