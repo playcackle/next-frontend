@@ -72,7 +72,7 @@ export const useGameEvents = (gameWsUrl: string, token: string) => {
       updateGameState({
         isRoundBreak: true,
         slots: [],
-        scores: data.player_scores || [],
+        scores: data.scores || [],
       });
       clearRecentAnswers();
     });
@@ -105,18 +105,15 @@ export const useGameEvents = (gameWsUrl: string, token: string) => {
     });
 
     onEvent("slot_snapped", (data: SlotSnappedPayload) => {
-      debugger;
-      console.log("slot snapped");
       updateGameState({
         slots: data.slots,
+        scores: data.scores,
       });
     });
 
     // Submission feedback
     onEvent("submission_feedback", (data: SubmissionFeedbackPayload) => {
-      console.log("submission feedback");
       if (data.status === "success") {
-        debugger;
         const animation = getRandomAttentionAnimation();
         updateAnimationState({
           attentionAnimation: animation,

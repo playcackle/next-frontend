@@ -9,7 +9,7 @@ export type Slot = {
   is_rare: boolean;
 };
 
-export type scores = {
+export type Scores = {
   player_id: string;
   display_name: string;
   score: number;
@@ -39,7 +39,7 @@ export type GameState = {
   loading: boolean;
   soundsLoaded: boolean;
   slots: Slot[];
-  scores: scores[];
+  scores: Scores[];
   finalScore: FinalScore[];
   showCountDown: boolean;
 };

@@ -2,7 +2,7 @@
 // Base Types
 // ========================
 
-import { FinalScore, PodiumPlayer, scores, Slot } from "./state";
+import { FinalScore, PodiumPlayer, Scores, Slot } from "./state";
 
 export type GameEvent =
   | "connection_success"
@@ -72,7 +72,7 @@ export type LobbyTickPayload = {
   lobby_id: string;
   timestamp_utc: string;
   slots: Slot[];
-  scores: scores[];
+  scores: Scores[];
 };
 
 export type NewRoundStartedPayload = {
@@ -92,6 +92,7 @@ export type SlotSnappedPayload = {
   player_score: number;
   is_round_over: boolean;
   slots: Slot[];
+  scores: Scores[];
 };
 
 export type UnrevealedAnswer = {
@@ -104,7 +105,7 @@ export type RoundOverPayload = {
   round_number: number;
   message: string;
   unrevealed_answers: UnrevealedAnswer[];
-  player_scores: scores[];
+  scores: Scores[];
   break_duration_seconds: number;
 };
 

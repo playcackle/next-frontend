@@ -104,8 +104,6 @@ const createSoundGenerators = () => {
       oscillator2.start();
       oscillator1.stop(context.currentTime + 0.5);
       oscillator2.stop(context.currentTime + 0.5);
-
-      console.log("Played celebratory correct sound effect");
     } catch (e) {
       console.error("Error playing sound effect:", e);
     }
