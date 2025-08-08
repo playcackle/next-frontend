@@ -2,19 +2,18 @@
 
 import SoundEffects from "@/app/components/sound-effects";
 import { useSearchParams } from "next/navigation";
-import React, { useRef } from "react";
+import React, { useRef, useEffect } from "react";
 import styles from "./gameroom.module.css";
 
 // Import custom hooks
-import { useAtomValue } from "jotai";
+import { useAtomValue, useSetAtom } from "jotai";
 import Progress from "../loading";
 import { gameRoomAtom } from "../store/gameRoom";
-import ChatContainer from "./chat-container";
 import CountdownOverlay from "./components/CountdownOverlay";
 import RoomHeader from "./components/RoomHeader";
+import UnifiedInput from "./components/UnifiedInput";
 
 // Import optimized components
-import AnswerForm from "./components/AnswerForm";
 import GameEffects from "./components/GameEffects";
 import SlotGrid from "./components/SlotGrid";
 import StatsRow from "./components/StatsRow";
@@ -24,11 +23,17 @@ import Leaderboard from "./components/LeaderBoard";
 import { useAnswerBubbles } from "./hooks/useAnswerBubbles";
 import { useGameActions } from "./hooks/useGameActions";
 import { useGameEvents } from "./hooks/useGameEvents";
+import { useChatSocket } from "./hooks/useChatWs";
 import {
   useAnswer,
   useGameState,
   useRecentAnswers,
 } from "./hooks/useGameState";
+import { 
+  UnifiedMessage,
+  addUnifiedMessageAtom,
+  setInputModeAtom
+} from "./store/gameAtoms";
 
 export default function GameroomPage() {
   const searchParams = useSearchParams();
@@ -49,6 +54,15 @@ export default function GameroomPage() {
   const { clearAnswer, answer } = useAnswer();
   const { recentAnswers, setRecentAnswers } = useRecentAnswers();
 
+  // Unified message system
+  const addUnifiedMessage = useSetAtom(addUnifiedMessageAtom);
+  const setInputMode = useSetAtom(setInputModeAtom);
+  
+  // Auto-set input mode based on game state
+  useEffect(() => {
+    setInputMode(isRoundBreak ? 'chat' : 'answer');
+  }, [isRoundBreak, setInputMode]);
+
   // Refs
   const mainRef = useRef<HTMLDivElement>(null);
 
@@ -59,17 +73,35 @@ export default function GameroomPage() {
     return <div>Loading gameroom...</div>;
   }
 
-  // Game events handling
+  // WebSocket connections
   const { sendEvent } = useGameEvents(gameroom.game_ws_url, gameroom.token);
+  
+  // Chat socket connection
+  function getBaseWsUrl(url: string) {
+    return url.replace(/\/(game|chat)$/, "");
+  }
+  const baseWsUrl = getBaseWsUrl(gameroom.game_ws_url);
+  const { messages: chatMessages, sendMessage: sendChatMessage } = useChatSocket(
+    baseWsUrl,
+    gameroom.token
+  );
 
-  const handleSubmitAnswer = (e: React.FormEvent) => {
-    addAnswerBubble(answer);
-    e.preventDefault();
-    submitAnswer(answer, sendEvent);
-    clearAnswer();
-    setRecentAnswers((prev) =>
-      [...prev, { id: Math.random().toString(), text: answer }].slice(0, 10)
-    );
+  // Unified submission handler
+  const handleUnifiedSubmit = (message: string, isAnswer: boolean) => {
+    if (isAnswer) {
+      // Answer submission logic
+      addAnswerBubble(message);
+      submitAnswer(message, sendEvent);
+      setRecentAnswers((prev) =>
+        [...prev, { id: Math.random().toString(), text: message }].slice(0, 10)
+      );
+      
+      // Add to unified messages as answer attempt (visible to all)
+      // This will be handled by backend cross-namespace emission
+    } else {
+      // Chat message logic
+      sendChatMessage(message);
+    }
   };
 
   const handleSoundsLoaded = () => {
@@ -118,16 +150,15 @@ export default function GameroomPage() {
                     <SlotGrid />
                   </div>
                 )}
-                <div className={styles.answerRow}>
-                  <AnswerForm
-                    onSubmit={handleSubmitAnswer}
-                    bubbles={bubbles}
-                    onBubbleComplete={removeBubble}
-                    recentAnswers={recentAnswers}
-                  />
-                </div>
               </Flex>
-              <ChatContainer />
+              <div className={styles.unifiedInputContainer}>
+                <UnifiedInput
+                  onSubmit={handleUnifiedSubmit}
+                  bubbles={bubbles}
+                  onBubbleComplete={removeBubble}
+                  recentAnswers={recentAnswers}
+                />
+              </div>
             </div>
           </div>
         </div>
