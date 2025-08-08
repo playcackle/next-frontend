@@ -667,11 +667,41 @@
   width: 100%;
 }
 
-.unifiedInputContainer {
+/* Updated: Messages container in chat position */
+.unifiedMessagesContainer {
   width: 300px;
   min-width: 300px;
   max-width: 400px;
-  height: 500px;
+  height: 600px; /* Taller than original */
+  background-color: rgba(20, 20, 40, 0.7);
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(183, 0, 255, 0.5);
+  border: 1px solid rgba(183, 0, 255, 0.3);
+  backdrop-filter: blur(5px);
+  display: flex;
+  flex-direction: column;
+  transition: all 0.3s ease;
+}
+
+/* Input form positioned where original answer form was */
+.unifiedInputFormOnly {
+  background-color: rgba(20, 20, 40, 0.7);
+  border-radius: 8px;
+  padding: 1.5rem;
+  box-shadow: 0 0 10px rgba(0, 255, 102, 0.5);
+  border: 1px solid rgba(0, 255, 102, 0.3);
+  backdrop-filter: blur(5px);
+  display: flex;
+  gap: 1rem;
+  width: 100%;
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+/* Chat mode styling for input form */
+.unifiedInputFormOnly:has(.chatMode) {
+  box-shadow: 0 0 10px rgba(183, 0, 255, 0.5);
+  border-color: rgba(183, 0, 255, 0.3);
 }
 
 .answerForm {
@@ -1363,7 +1393,7 @@
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-  max-height: 400px;
+  max-height: 520px; /* Increased for taller container */
   scroll-behavior: smooth;
   min-height: 0;
 }

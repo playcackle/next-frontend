@@ -11,7 +11,8 @@ import Progress from "../loading";
 import { gameRoomAtom } from "../store/gameRoom";
 import CountdownOverlay from "./components/CountdownOverlay";
 import RoomHeader from "./components/RoomHeader";
-import UnifiedInput from "./components/UnifiedInput";
+import UnifiedMessages from "./components/UnifiedMessages";
+import UnifiedInputForm from "./components/UnifiedInputForm";
 
 // Import optimized components
 import GameEffects from "./components/GameEffects";
@@ -150,15 +151,16 @@ export default function GameroomPage() {
                     <SlotGrid />
                   </div>
                 )}
+                <div className={styles.answerRow}>
+                  <UnifiedInputForm
+                    onSubmit={handleUnifiedSubmit}
+                    bubbles={bubbles}
+                    onBubbleComplete={removeBubble}
+                    recentAnswers={recentAnswers}
+                  />
+                </div>
               </Flex>
-              <div className={styles.unifiedInputContainer}>
-                <UnifiedInput
-                  onSubmit={handleUnifiedSubmit}
-                  bubbles={bubbles}
-                  onBubbleComplete={removeBubble}
-                  recentAnswers={recentAnswers}
-                />
-              </div>
+              <UnifiedMessages />
             </div>
           </div>
         </div>
