@@ -35,6 +35,7 @@ export type GameState = {
   timeRemaining: number;
   roundName: string;
   roundNumber: number;
+  totalRounds: number;
   isRoundBreak: boolean;
   loading: boolean;
   soundsLoaded: boolean;

@@ -39,6 +39,7 @@ export default function GameroomPage() {
     loading,
     roundName,
     roundNumber,
+    totalRounds,
     isRoundBreak,
     timeRemaining,
     showCountDown,
@@ -109,7 +110,7 @@ export default function GameroomPage() {
               roundName={roundName}
               roomName={name!}
               roundNumber={roundNumber}
-              totalRounds={10}
+              totalRounds={totalRounds}
             />
 
             <SoundEffects onLoad={handleSoundsLoaded} />

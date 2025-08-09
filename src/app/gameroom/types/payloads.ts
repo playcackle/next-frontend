@@ -66,6 +66,7 @@ export type LobbySyncPayload = {
     | "POST_GAME_SHOWCASE"
     | "GAME_OVER_NO_NEW_GAME";
   round_number: number;
+  total_rounds: number;
   time_remaining_seconds: number | null;
   player_count: number;
   topic_name: string | null;

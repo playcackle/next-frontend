@@ -43,6 +43,7 @@ export const useGameEvents = (gameWsUrl: string, token: string) => {
     onEvent("lobby_state_sync", (data: LobbySyncPayload) => {
       updateGameState({
         roundNumber: data.round_number,
+        totalRounds: data.total_rounds,
         playerCount: data.player_count,
         timeRemaining: data.time_remaining_seconds ?? 0,
         roundName: data.topic_name || "",

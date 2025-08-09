@@ -21,6 +21,7 @@ const initGameState = {
   timeRemaining: 150,
   roundName: "",
   roundNumber: 0,
+  totalRounds: 10, // Default value, will be overridden by backend
   isRoundBreak: false,
   loading: true,
   soundsLoaded: false,
