@@ -4,7 +4,7 @@ import { Button, Flex } from "@radix-ui/themes";
 import { useAtom } from "jotai";
 import React from "react";
 import styles from "../gameroom.module.css";
-import { useGameState } from "../hooks/useGameState";
+import { useAnswer, useGameState } from "../hooks/useGameState";
 import { unifiedInputAtom } from "../store/gameAtoms";
 import AnswerBubbles, { BubbleAnswer } from "./answerChips/AnswerBubbles";
 
@@ -21,6 +21,7 @@ export default function UnifiedInputForm({
 }: UnifiedInputFormProps) {
   const { timeRemaining, isRoundBreak } = useGameState();
   const [input, setInput] = useAtom(unifiedInputAtom);
+  const { clearAnswer } = useAnswer();
 
   const timeExpired = timeRemaining === 0;
   const isAnswerMode = !isRoundBreak && !timeExpired;
@@ -32,6 +33,7 @@ export default function UnifiedInputForm({
     if (input.trim()) {
       onSubmit(input.trim(), isAnswerMode);
       setInput("");
+      clearAnswer();
     }
   };
 
