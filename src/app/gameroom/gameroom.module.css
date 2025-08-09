@@ -630,9 +630,6 @@
 
 /* Updated: Messages container in chat position */
 .unifiedMessagesContainer {
-  width: 300px;
-  min-width: 300px;
-  max-width: 400px;
   height: 600px; /* Taller than original */
   background-color: rgba(20, 20, 40, 0.7);
   border-radius: 8px;
@@ -649,14 +646,29 @@
   background-color: rgba(20, 20, 40, 0.7);
   border-radius: 8px;
   padding: 1.5rem;
-  box-shadow: 0 0 10px rgba(0, 255, 102, 0.5);
-  border: 1px solid rgba(0, 255, 102, 0.3);
+  box-shadow: 0 0 10px rgba(183, 0, 255, 0.5);
+  border: 2px solid;
+  border-image: linear-gradient(135deg, #b700ff, #00ddff) 1;
   backdrop-filter: blur(5px);
   display: flex;
   gap: 1rem;
   width: 100%;
   position: relative;
-  transition: all 0.3s ease;
+  transition: all 0.5s ease;
+}
+
+.unifiedInputFormOnly::before {
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #b700ff, #7c3aed, #3b82f6, #00ddff);
+  background-size: 200% 200%;
+  z-index: -1;
+  opacity: 0.3;
+  animation: gradientShift 3s ease-in-out infinite;
 }
 
 /* Chat mode styling for input form */
@@ -1530,9 +1542,9 @@
 }
 
 .unifiedMessage {
-  padding: 0.75rem;
+  padding: 0.25rem;
   border-radius: 6px;
-  font-size: 0.9rem;
+  font-size: 0.7rem;
   animation: messageAppear 0.3s ease-out;
   font-family: var(--retro-font-alt);
   border-left: 3px solid transparent;
@@ -1612,14 +1624,29 @@
 
 .unifiedInput {
   flex: 1;
-  padding: 0.75rem 1rem;
+  padding: 1rem;
   border-radius: 4px;
-  border: 1px solid rgba(183, 0, 255, 0.3);
+  border-image: linear-gradient(135deg, #b700ff, #00ddff) 1;
   background-color: rgba(0, 0, 0, 0.3);
   color: white;
   font-family: var(--retro-font-alt);
-  font-size: 1rem;
-  transition: all 0.3s ease;
+  transition: all 0.5s ease;
+  position: relative;
+}
+
+.unifiedInput::before {
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  border-radius: 6px;
+  background: linear-gradient(135deg, #b700ff, #7c3aed, #3b82f6, #00ddff);
+  background-size: 200% 200%;
+  z-index: -1;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  animation: gradientShift 3s ease-in-out infinite;
 }
 
 .unifiedInput.answerMode {
@@ -1642,6 +1669,7 @@
 }
 
 .unifiedButton {
+  height: 100%;
   border: none;
   color: white;
   padding: 0.75rem 1.5rem;
@@ -1659,7 +1687,6 @@
 
 .unifiedButton.answerButton {
   background: linear-gradient(45deg, var(--neon-purple), var(--neon-blue));
-  height: 100%;
 }
 
 .unifiedButton.answerButton::before {
