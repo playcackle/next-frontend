@@ -72,13 +72,24 @@
   bottom: 0;
   left: 0;
   z-index: 4;
-  /* Use transform3d for hardware acceleration */
-  transform: translateZ(0);
-  will-change: transform;
 }
 
-/* Maximum glow grid - full synthwave aesthetic restored */
 .grid:after {
+  -webkit-mask-image: -webkit-gradient(
+    linear,
+    left 90%,
+    left top,
+    from(rgba(0, 0, 0, 1)),
+    to(rgba(0, 0, 0, 0))
+  );
+  mask-image: gradient(
+    linear,
+    left 90%,
+    left top,
+    from(rgba(0, 0, 0, 1)),
+    to(rgba(0, 0, 0, 0))
+  );
+  transform: perspective(200px) rotateX(40deg) scale(4, 3) translateZ(0);
   content: "";
   display: block;
   position: absolute;
@@ -87,8 +98,13 @@
   right: -50%;
   width: 200%;
   height: 150vh;
-  transform: perspective(200px) rotateX(40deg) scale(4, 3) translate3d(0, 0, 0);
+  padding: 1px;
+  -webkit-background-clip: content-box;
+  -webkit-backface-visibility: hidden;
+  outline: 1px solid transparent;
   transform-origin: bottom center;
+  will-change: transform;
+  background-position: center bottom;
   background-size: 40px 40px;
   background-image: linear-gradient(
       to right,
@@ -96,33 +112,57 @@
       transparent 2px
     ),
     linear-gradient(to bottom, rgba(255, 0, 255, 1) 1px, transparent 2px);
-
-  /* Restored original mask for maximum visibility */
-  -webkit-mask: linear-gradient(
-    to top,
-    rgba(0, 0, 0, 1) 0%,
-    rgba(0, 0, 0, 0) 90%
-  );
-  mask: linear-gradient(to top, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0) 90%);
-
-  /* MAXIMUM glow effects - full synthwave power */
-  box-shadow: 0 0 20px rgba(255, 0, 255, 0.5), 0 0 40px rgba(255, 0, 255, 0.3),
-    0 0 60px rgba(255, 0, 255, 0.2), 0 0 80px rgba(255, 0, 255, 0.1);
+  box-shadow: 0 0 20px rgba(255, 0, 255, 0.3), 0 0 40px rgba(255, 0, 255, 0.2),
+    0 0 60px rgba(255, 0, 255, 0.1);
   filter: drop-shadow(0 0 10px rgba(255, 0, 255, 0.4));
-
-  /* Original speed for that classic synthwave feel */
   animation: gridMove 15s linear infinite;
 }
 
-/* Simplified animation */
+.grid:before {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: -50%;
+  right: -50%;
+  width: 200%;
+  height: 150vh;
+  transform: perspective(200px) rotateX(40deg) scale(4, 3) translateZ(0);
+  transform-origin: bottom center;
+  background-position: center bottom;
+  background-size: 40px 40px;
+  background-image: linear-gradient(
+      to right,
+      rgba(255, 0, 255, 0.6) 4px,
+      transparent 4px
+    ),
+    linear-gradient(to bottom, rgba(255, 0, 255, 0.6) 2px, transparent 2px);
+  filter: blur(2px);
+  z-index: -1;
+  -webkit-mask-image: -webkit-gradient(
+    linear,
+    left 90%,
+    left top,
+    from(rgba(0, 0, 0, 1)),
+    to(rgba(0, 0, 0, 0))
+  );
+  mask-image: gradient(
+    linear,
+    left 90%,
+    left top,
+    from(rgba(0, 0, 0, 1)),
+    to(rgba(0, 0, 0, 0))
+  );
+  animation: gridMove 15s linear infinite;
+}
+
 @keyframes gridMove {
   0% {
-    transform: perspective(200px) rotateX(40deg) scale(4, 3)
-      translate3d(0, 0, 0);
+    transform: perspective(200px) rotateX(40deg) scale(4, 3) translateZ(0)
+      translateY(0);
   }
   100% {
-    transform: perspective(200px) rotateX(40deg) scale(4, 3)
-      translate3d(0, 40px, 0);
+    transform: perspective(200px) rotateX(40deg) scale(4, 3) translateZ(0)
+      translateY(40px);
   }
 }
 
