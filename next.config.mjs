@@ -12,10 +12,6 @@ const nextConfig = {
   transpilePackages: ['jotai-devtools'],
   // Enable standalone build for Docker
   output: 'standalone',
-  // Allow external connections
-  experimental: {
-    serverComponentsExternalPackages: [],
-  },
 }
 
 export default nextConfig
