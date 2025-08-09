@@ -1,13 +1,11 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { useSetAtom } from "jotai";
 import { io, Socket } from "socket.io-client";
-import { ChatEventPayloadMap } from "../types";
-
-type ChatMessage = ChatEventPayloadMap["new_message"];
+import { UnifiedMessage, addUnifiedMessageAtom } from "../store/gameAtoms";
 
 interface ChatState {
-  messages: ChatMessage[];
   error: string | null;
   isConnected: boolean;
 }
@@ -20,8 +18,8 @@ function toHttpUrl(wsUrl: string): string {
 
 export const useChatSocket = (baseUrl: string, token: string) => {
   const socketRef = useRef<Socket | null>(null);
+  const addUnifiedMessage = useSetAtom(addUnifiedMessageAtom);
   const [chatState, setChatState] = useState<ChatState>({
-    messages: [],
     error: null,
     isConnected: false,
   });
@@ -44,11 +42,11 @@ export const useChatSocket = (baseUrl: string, token: string) => {
       }));
     });
 
-    socket.on("new_message", (data: ChatMessage) => {
-      setChatState((prev) => ({
-        ...prev,
-        messages: [...prev.messages, data],
-      }));
+
+    // UNIFIED INPUT SYSTEM: Handle unified messages from backend
+    socket.on("unified_message", (data: UnifiedMessage) => {
+      // Add to unified message store
+      addUnifiedMessage(data);
     });
 
     socket.on("connection_success_chat", (data) => {

@@ -128,6 +128,42 @@ export const useGameActions = () => {
         particlePosition = { x: 100 / 2, y: 100 / 2 };
       }
 
+      // ENHANCED: Add color burst overlay effect
+      const colorBurstOverlay = document.createElement('div');
+      colorBurstOverlay.className = `colorBurstOverlay ${isBonus ? 'bonus' : ''}`;
+      document.body.appendChild(colorBurstOverlay);
+      
+      // Remove color burst after animation
+      setTimeout(() => {
+        if (colorBurstOverlay.parentNode) {
+          colorBurstOverlay.parentNode.removeChild(colorBurstOverlay);
+        }
+      }, 1200);
+
+      // ENHANCED: Add screen shake to the main container
+      const mainContainer = document.querySelector('.main') || document.body;
+      mainContainer.style.animation = 'fullScreenShake 0.6s ease-in-out';
+      
+      // Remove screen shake after animation
+      setTimeout(() => {
+        mainContainer.style.animation = '';
+      }, 600);
+
+      // ENHANCED: Add success glow to the slot element
+      if (element) {
+        const glowElement = document.createElement('div');
+        glowElement.className = `successGlow ${isBonus ? 'bonus' : ''}`;
+        element.style.position = 'relative';
+        element.appendChild(glowElement);
+        
+        // Remove glow after animation
+        setTimeout(() => {
+          if (glowElement.parentNode) {
+            glowElement.parentNode.removeChild(glowElement);
+          }
+        }, 1500);
+      }
+
       // Update both animation states
       setAnimationWithTimeout({
         attentionAnimation: animation,
@@ -142,21 +178,26 @@ export const useGameActions = () => {
         particlePosition,
         showGlitter: true,
         nameFlash: true,
-        shake: false,
+        shake: true, // ENHANCED: Now enable shake
         colorFlash: true,
         zoomEffect: true,
-        rotateEffect: false,
+        rotateEffect: true, // ENHANCED: Enable rotation for extra chaos
       });
 
       // Apply DOM animation
       applyDOMAnimation(slotId, animation);
 
-      // Play appropriate sound
+      // ENHANCED: Play appropriate sound with enhanced volume/effects
       try {
         if (isBonus) {
           playSound("bonus");
+          // Double sound for bonus slots
+          setTimeout(() => playSound("bonus"), 200);
         } else {
-          playSound(getRandomSuccessSound());
+          const sound = getRandomSuccessSound();
+          playSound(sound);
+          // Add a quick second sound for extra impact
+          setTimeout(() => playSound("ding"), 150);
         }
       } catch (error) {
         console.warn("Failed to play sound:", error);

@@ -34,7 +34,7 @@ type Particle = {
 // Update the component parameters to include playerColor
 export default function ConfettiExplosion({
   duration = 5000,
-  particleCount = 150,
+  particleCount = 300,
   colors = ["#ff00aa", "#00ddff", "#b700ff", "#00ff66", "#ffcc00", "#ff3366"],
   isBonus = false,
   x,
@@ -81,7 +81,7 @@ export default function ConfettiExplosion({
     finalColors = isBonus ? bonusColors : colors;
   }
 
-  const finalParticleCount = isBonus ? particleCount * 1.5 : particleCount;
+  const finalParticleCount = isBonus ? particleCount * 2 : particleCount * 1.5;
 
   // Initialize particles
   useEffect(() => {
@@ -91,9 +91,9 @@ export default function ConfettiExplosion({
     const particleCount = finalParticleCount;
 
     for (let i = 0; i < particleCount; i++) {
-      // Random angle and distance
+      // Random angle and distance - enhanced spread for more chaos
       const angle = Math.random() * Math.PI * 2;
-      const distance = 50 + Math.random() * 100;
+      const distance = isBonus ? 70 + Math.random() * 150 : 50 + Math.random() * 120;
 
       // Calculate end position
       const endX = Math.cos(angle) * distance;
@@ -103,7 +103,7 @@ export default function ConfettiExplosion({
         id: i,
         x: endX,
         y: endY,
-        size: isBonus ? 5 + Math.random() * 20 : 5 + Math.random() * 15, // Larger particles for bonus
+        size: isBonus ? 8 + Math.random() * 25 : 6 + Math.random() * 18, // Even larger particles
         color: finalColors[Math.floor(Math.random() * finalColors.length)],
         rotation: Math.random() * 360,
         rotationSpeed: (Math.random() - 0.5) * 10,
