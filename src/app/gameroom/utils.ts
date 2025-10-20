@@ -3,7 +3,7 @@ import {
   ENTRANCE_ANIMATIONS,
   SOUND_SUCCESS,
 } from "./constants";
-import type { SoundType } from "./types";
+import { SoundType } from "./types/state";
 
 /**
  * Format time as MM:SS
