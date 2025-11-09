@@ -99,7 +99,7 @@
   text-transform: uppercase;
   letter-spacing: 1px;
   font-family: var(--retro-font);
-  min-width: 24%;
+  min-width: 19%;
 }
 
 .leaderboardTile {
@@ -1244,8 +1244,7 @@
 
 /* Mobile responsiveness for the 2x5 grid */
 @media (max-width: 1024px) {
-  .statsRow,
-  .contentRow,
+  .statsRow .contentRow,
   .slotGrid {
     grid-template-columns: repeat(3, 1fr); /* 3 columns on medium screens */
     grid-template-rows: auto; /* Let rows adjust automatically */

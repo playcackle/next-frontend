@@ -25,6 +25,12 @@ export default function StatsRow({ nameFlash }: StatsRowProps) {
         <p className={styles.statsTitle}>Example: (example value)</p>
       </div>
       <div className={styles.statsTile}>
+        <h3 className={styles.statsTitle}>Explaination text:</h3>
+        <p className={styles.statsValue} style={{ fontSize: "14px" }}>
+          We are looking for the stuff that is correct
+        </p>
+      </div>
+      <div className={styles.statsTile}>
         <h3 className={styles.statsTitle}>
           {isRoundBreak ? "Intermission" : "Time Remaining:"}
         </h3>
