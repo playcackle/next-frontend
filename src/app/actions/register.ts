@@ -1,6 +1,5 @@
 "use server";
 import bcrypt from "bcryptjs";
-import { signIn } from "next-auth/react";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const register = async (values: any) => {
@@ -26,11 +25,6 @@ export const register = async (values: any) => {
         error: errorData.message || "Registration failed!",
       };
     }
-    const res = await signIn("credentials", {
-      name: name,
-      password: password,
-      redirect: false,
-    });
 
     const data = await response.json();
     return data;

@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect } from "react";
 
 type SoundEffectProps = {
   onLoad?: () => void;
@@ -18,7 +18,7 @@ export type SoundType =
 // Audio context singleton to prevent multiple instances
 let globalAudioContext: AudioContext | null = null;
 
-const getOrCreateAudioContext = (): AudioContext | null => {
+const getOrCreateAudioContext = async (): Promise<AudioContext | null> => {
   if (typeof window === "undefined") return null;
 
   try {
@@ -35,9 +35,12 @@ const getOrCreateAudioContext = (): AudioContext | null => {
 
     // Resume the audio context if it's suspended (browser autoplay policy)
     if (globalAudioContext.state === "suspended") {
-      globalAudioContext.resume().catch((e) => {
+      try {
+        await globalAudioContext.resume();
+        console.log("AudioContext resumed successfully");
+      } catch (e) {
         console.warn("Could not resume audio context:", e);
-      });
+      }
     }
 
     return globalAudioContext;
@@ -49,9 +52,9 @@ const getOrCreateAudioContext = (): AudioContext | null => {
 
 // Sound generation functions (memoized outside component to prevent recreation)
 const createSoundGenerators = () => {
-  const playCelebratoryCorrectSound = () => {
+  const playCelebratoryCorrectSound = async () => {
     try {
-      const context = getOrCreateAudioContext();
+      const context = await getOrCreateAudioContext();
       if (!context) return;
 
       const now = context.currentTime;
@@ -67,7 +70,7 @@ const createSoundGenerators = () => {
       const osc2 = context.createOscillator();
       osc2.type = "sawtooth";
       osc2.frequency.setValueAtTime(295.73, now); // D4 +12 cents
-      osc2.frequency.exponentialRampToValueAtTime(442.90, now + 0.2); // A4
+      osc2.frequency.exponentialRampToValueAtTime(442.9, now + 0.2); // A4
       osc2.frequency.exponentialRampToValueAtTime(591.11, now + 0.4); // D5
 
       // Filter
@@ -83,7 +86,7 @@ const createSoundGenerators = () => {
       gain1.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
 
       const gain2 = context.createGain();
-      gain2.gain.setValueAtTime(0.20, now);
+      gain2.gain.setValueAtTime(0.2, now);
       gain2.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
 
       // Connect
@@ -104,9 +107,9 @@ const createSoundGenerators = () => {
     }
   };
 
-  const playEpicBonusSound = () => {
+  const playEpicBonusSound = async () => {
     try {
-      const context = getOrCreateAudioContext();
+      const context = await getOrCreateAudioContext();
       if (!context) return;
 
       const now = context.currentTime;
@@ -140,7 +143,7 @@ const createSoundGenerators = () => {
       lead2.type = "sawtooth";
       lead2.frequency.setValueAtTime(295.73, now + 0.05); // D4 +12 cents
       lead2.frequency.exponentialRampToValueAtTime(351.65, now + 0.2); // F4
-      lead2.frequency.exponentialRampToValueAtTime(442.90, now + 0.4); // A4
+      lead2.frequency.exponentialRampToValueAtTime(442.9, now + 0.4); // A4
       lead2.frequency.exponentialRampToValueAtTime(591.11, now + 0.6); // D5
       lead2.frequency.exponentialRampToValueAtTime(703.34, now + 0.75); // F5
       lead2.frequency.exponentialRampToValueAtTime(886.36, now + 0.95); // A5
@@ -177,10 +180,15 @@ const createSoundGenerators = () => {
 
       // Snare with reverb at peak
       const snare = context.createBufferSource();
-      const snareBuffer = context.createBuffer(1, context.sampleRate * 0.1, context.sampleRate);
+      const snareBuffer = context.createBuffer(
+        1,
+        context.sampleRate * 0.1,
+        context.sampleRate
+      );
       const snareData = snareBuffer.getChannelData(0);
       for (let i = 0; i < snareBuffer.length; i++) {
-        snareData[i] = (Math.random() * 2 - 1) * Math.exp(-i / (snareBuffer.length / 4));
+        snareData[i] =
+          (Math.random() * 2 - 1) * Math.exp(-i / (snareBuffer.length / 4));
       }
       snare.buffer = snareBuffer;
 
@@ -200,7 +208,7 @@ const createSoundGenerators = () => {
 
       // Gain envelopes
       const leadGain1 = context.createGain();
-      leadGain1.gain.setValueAtTime(0.30, now + 0.05);
+      leadGain1.gain.setValueAtTime(0.3, now + 0.05);
       leadGain1.gain.exponentialRampToValueAtTime(0.01, now + 1.1);
 
       const leadGain2 = context.createGain();
@@ -208,7 +216,7 @@ const createSoundGenerators = () => {
       leadGain2.gain.exponentialRampToValueAtTime(0.01, now + 1.1);
 
       const topGain = context.createGain();
-      topGain.gain.setValueAtTime(0.20, now + 0.05);
+      topGain.gain.setValueAtTime(0.2, now + 0.05);
       topGain.gain.exponentialRampToValueAtTime(0.01, now + 1.1);
 
       const bassGain = context.createGain();
@@ -271,9 +279,9 @@ const createSoundGenerators = () => {
     }
   };
 
-  const playCelebratorySuccess1Sound = () => {
+  const playCelebratorySuccess1Sound = async () => {
     try {
-      const context = getOrCreateAudioContext();
+      const context = await getOrCreateAudioContext();
       if (!context) return;
 
       const now = context.currentTime;
@@ -292,7 +300,7 @@ const createSoundGenerators = () => {
       osc2.type = "sawtooth";
       osc2.frequency.setValueAtTime(295.73, now); // D4 +7 cents
       osc2.frequency.exponentialRampToValueAtTime(351.65, now + 0.15); // F4 +7 cents
-      osc2.frequency.exponentialRampToValueAtTime(442.90, now + 0.35); // A4 +7 cents
+      osc2.frequency.exponentialRampToValueAtTime(442.9, now + 0.35); // A4 +7 cents
       osc2.frequency.exponentialRampToValueAtTime(591.11, now + 0.55); // D5 +7 cents
 
       // Low-pass filter with opening sweep
@@ -338,9 +346,9 @@ const createSoundGenerators = () => {
     }
   };
 
-  const playCelebratorySuccess2Sound = () => {
+  const playCelebratorySuccess2Sound = async () => {
     try {
-      const context = getOrCreateAudioContext();
+      const context = await getOrCreateAudioContext();
       if (!context) return;
 
       const now = context.currentTime;
@@ -357,7 +365,7 @@ const createSoundGenerators = () => {
       // Slightly detuned square for PWM effect
       const osc2 = context.createOscillator();
       osc2.type = "square";
-      osc2.frequency.setValueAtTime(442.90, now); // A4 +12 cents
+      osc2.frequency.setValueAtTime(442.9, now); // A4 +12 cents
       osc2.frequency.exponentialRampToValueAtTime(394.74, now + 0.15); // G4 +12 cents
       osc2.frequency.exponentialRampToValueAtTime(351.65, now + 0.35); // F4 +12 cents
       osc2.frequency.exponentialRampToValueAtTime(295.73, now + 0.55); // D4 +12 cents
@@ -379,7 +387,7 @@ const createSoundGenerators = () => {
 
       // Gain envelopes - punchier, shorter decay
       const gain1 = context.createGain();
-      gain1.gain.setValueAtTime(0.30, now);
+      gain1.gain.setValueAtTime(0.3, now);
       gain1.gain.exponentialRampToValueAtTime(0.01, now + 0.6);
 
       const gain2 = context.createGain();
@@ -412,9 +420,9 @@ const createSoundGenerators = () => {
     }
   };
 
-  const playCelebratorySuccess3Sound = () => {
+  const playCelebratorySuccess3Sound = async () => {
     try {
-      const context = getOrCreateAudioContext();
+      const context = await getOrCreateAudioContext();
       if (!context) return;
 
       const now = context.currentTime;
@@ -459,7 +467,7 @@ const createSoundGenerators = () => {
       gain1.gain.exponentialRampToValueAtTime(0.01, now + 0.7);
 
       const gain2 = context.createGain();
-      gain2.gain.setValueAtTime(0.20, now);
+      gain2.gain.setValueAtTime(0.2, now);
       gain2.gain.exponentialRampToValueAtTime(0.01, now + 0.7);
 
       const gain3 = context.createGain();
@@ -467,7 +475,7 @@ const createSoundGenerators = () => {
       gain3.gain.exponentialRampToValueAtTime(0.01, now + 0.7);
 
       const subGain = context.createGain();
-      subGain.gain.setValueAtTime(0.20, now);
+      subGain.gain.setValueAtTime(0.2, now);
       subGain.gain.exponentialRampToValueAtTime(0.01, now + 0.7);
 
       // Long reverb for spaciousness
@@ -476,7 +484,7 @@ const createSoundGenerators = () => {
       const delay2 = context.createDelay(0.5);
       delay2.delayTime.value = 0.19;
       const reverbGain = context.createGain();
-      reverbGain.gain.value = 0.20;
+      reverbGain.gain.value = 0.2;
 
       // Connect
       osc1.connect(gain1);
@@ -511,9 +519,9 @@ const createSoundGenerators = () => {
     }
   };
 
-  const playTimeUpSound = () => {
+  const playTimeUpSound = async () => {
     try {
-      const context = getOrCreateAudioContext();
+      const context = await getOrCreateAudioContext();
       if (!context) return;
 
       const now = context.currentTime;
@@ -529,7 +537,7 @@ const createSoundGenerators = () => {
       osc.frequency.setValueAtTime(440, now + 0.24); // A4
       osc.frequency.setValueAtTime(466.16, now + 0.36); // Bb4
       osc.frequency.setValueAtTime(440, now + 0.48); // A4
-      osc.frequency.setValueAtTime(466.16, now + 0.60); // Bb4
+      osc.frequency.setValueAtTime(466.16, now + 0.6); // Bb4
 
       // Low D drone for ominous feel
       const drone = context.createOscillator();
@@ -539,14 +547,14 @@ const createSoundGenerators = () => {
       // Decreasing gain envelope for urgency
       const oscGain = context.createGain();
       oscGain.gain.setValueAtTime(0.35, now);
-      oscGain.gain.setValueAtTime(0.30, now + 0.12);
+      oscGain.gain.setValueAtTime(0.3, now + 0.12);
       oscGain.gain.setValueAtTime(0.25, now + 0.24);
-      oscGain.gain.setValueAtTime(0.20, now + 0.36);
+      oscGain.gain.setValueAtTime(0.2, now + 0.36);
       oscGain.gain.setValueAtTime(0.15, now + 0.48);
       oscGain.gain.exponentialRampToValueAtTime(0.01, now + 0.75);
 
       const droneGain = context.createGain();
-      droneGain.gain.setValueAtTime(0.20, now);
+      droneGain.gain.setValueAtTime(0.2, now);
       droneGain.gain.exponentialRampToValueAtTime(0.01, now + 0.75);
 
       // Slight distortion for aggressive feel
@@ -586,10 +594,11 @@ const createSoundGenerators = () => {
 const soundGenerators = createSoundGenerators();
 
 export default function SoundEffects({ onLoad }: SoundEffectProps) {
-  const isInitializedRef = useRef(false);
+  console.log("SoundEffects component mounted");
 
   // Memoized sound effect function to prevent recreation
   const playSoundEffect = useCallback((type: SoundType) => {
+    console.log(`playSoundEffect called with type: ${type}`);
     const generator = soundGenerators[type];
     if (generator) {
       generator();
@@ -601,19 +610,34 @@ export default function SoundEffects({ onLoad }: SoundEffectProps) {
 
   // Initialize audio context and expose global function
   useEffect(() => {
-    if (isInitializedRef.current) return;
+    console.log("SoundEffects useEffect running");
+
+    const handleUserInteraction = async () => {
+      try {
+        const context = await getOrCreateAudioContext();
+        if (context && context.state === "running") {
+          console.log("AudioContext ready after user interaction");
+          // Remove listeners once activated
+          document.removeEventListener("click", handleUserInteraction);
+          document.removeEventListener("keydown", handleUserInteraction);
+        }
+      } catch (e) {
+        console.error("Error resuming AudioContext on user interaction:", e);
+      }
+    };
 
     try {
       if (typeof window !== "undefined") {
-        // Initialize audio context
-        const context = getOrCreateAudioContext();
-        if (context) {
-          // Expose the sound effect function globally
-          (window as any).playSoundEffect = playSoundEffect;
+        console.log("Exposing playSoundEffect to window");
+        // Expose the sound effect function globally
+        (window as any).playSoundEffect = playSoundEffect;
 
-          isInitializedRef.current = true;
-          onLoad?.();
-        }
+        // Add user interaction listeners to resume AudioContext
+        document.addEventListener("click", handleUserInteraction);
+        document.addEventListener("keydown", handleUserInteraction);
+
+        console.log("SoundEffects initialized, calling onLoad");
+        onLoad?.();
       }
     } catch (e) {
       console.error("Error initializing Web Audio API:", e);
@@ -623,6 +647,8 @@ export default function SoundEffects({ onLoad }: SoundEffectProps) {
     return () => {
       if (typeof window !== "undefined") {
         delete (window as any).playSoundEffect;
+        document.removeEventListener("click", handleUserInteraction);
+        document.removeEventListener("keydown", handleUserInteraction);
       }
     };
   }, [playSoundEffect, onLoad]);

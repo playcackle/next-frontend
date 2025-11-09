@@ -42,7 +42,6 @@ export const unifiedInputAtom = atom<string>("");
 
 // Animation state atoms
 export const animationStateAtom = atom<AnimationState>({
-  entranceAnimation: "",
   attentionAnimation: "",
   animatingTile: "",
   showConfetti: false,
@@ -76,7 +75,6 @@ export const resetGameStateAtom = atom(null, (get, set) => {
   set(gameStateAtom, initGameState);
   set(answerAtom, "");
   set(animationStateAtom, {
-    entranceAnimation: "",
     attentionAnimation: "",
     animatingTile: "",
     showConfetti: false,

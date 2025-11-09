@@ -1,6 +1,6 @@
 "use client";
 
-import { Button, Flex } from "@radix-ui/themes";
+import { Flex } from "@radix-ui/themes";
 import { useAtom } from "jotai";
 import React from "react";
 import styles from "../gameroom.module.css";
@@ -25,7 +25,6 @@ export default function UnifiedInputForm({
 
   const timeExpired = timeRemaining === 0;
   const isAnswerMode = !isRoundBreak && !timeExpired;
-  const buttonText = isAnswerMode ? "Submit" : "Send";
   const placeholderText = isAnswerMode ? "Type.." : "Chat...";
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -63,15 +62,6 @@ export default function UnifiedInputForm({
             }`}
             disabled={timeExpired && !isRoundBreak}
           />
-          <Button
-            type="submit"
-            className={`${styles.unifiedButton} ${
-              isAnswerMode ? styles.answerButton : styles.chatButton
-            }`}
-            disabled={timeExpired && !isRoundBreak}
-          >
-            {buttonText}
-          </Button>
         </Flex>
       </Flex>
     </form>

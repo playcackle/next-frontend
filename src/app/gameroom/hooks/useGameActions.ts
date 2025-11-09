@@ -1,4 +1,4 @@
-import { useSetAtom } from "jotai";
+import { useAtom, useSetAtom } from "jotai";
 import { useCallback, useMemo, useState } from "react";
 import {
   answerAtom,
@@ -9,7 +9,7 @@ import { AnimationState } from "../types/state";
 import { getRandomSuccessSound, playSound } from "../utils";
 
 const initialAnimationState: AnimationState = {
-  animatingSlotId: null,
+  slotId: null,
   showGlitter: false,
   nameFlash: false,
   shake: false,
@@ -19,7 +19,6 @@ const initialAnimationState: AnimationState = {
   particlePosition: null,
   isBonus: false,
   playerColor: "",
-  entranceAnimation: "",
   attentionAnimation: "",
   confettiPosition: null,
   showConfetti: false,
@@ -27,9 +26,10 @@ const initialAnimationState: AnimationState = {
 
 export const useGameActions = () => {
   const setAnswer = useSetAtom(answerAtom);
-  const updateAnimationState = useSetAtom(updateAnimationStateAtom);
+  const [updateAnimationState, setUpdateAnimationSet] = useAtom(
+    updateAnimationStateAtom
+  );
   const resetGameState = useSetAtom(resetGameStateAtom);
-
   const [animationState, setAnimationState] = useState<AnimationState>(
     initialAnimationState
   );
@@ -76,10 +76,9 @@ export const useGameActions = () => {
       timeoutId = setTimeout(() => {
         setAnimationState(initialAnimationState);
         // Also clear Jotai animation state
-        updateAnimationState({
+        setUpdateAnimationSet({
           attentionAnimation: "",
-          animatingTile: "",
-          entranceAnimation: "",
+          slotId: "",
         });
         timeoutId = null;
       }, 2000);
@@ -89,16 +88,13 @@ export const useGameActions = () => {
   // Auto-clear animation state after timeout
   const setAnimationWithTimeout = useCallback(
     (animationUpdate: any, timeout = 400) => {
-      updateAnimationState(animationUpdate);
+      setUpdateAnimationSet(animationUpdate);
 
       setTimeout(() => {
-        if (animationUpdate.entranceAnimation !== undefined) {
-          updateAnimationState({ entranceAnimation: "" });
-        }
         if (animationUpdate.attentionAnimation !== undefined) {
-          updateAnimationState({
+          setUpdateAnimationSet({
             attentionAnimation: "",
-            animatingSlotId: "",
+            slotId: "",
           });
         }
       }, timeout);
@@ -129,10 +125,12 @@ export const useGameActions = () => {
       }
 
       // ENHANCED: Add color burst overlay effect
-      const colorBurstOverlay = document.createElement('div');
-      colorBurstOverlay.className = `colorBurstOverlay ${isBonus ? 'bonus' : ''}`;
+      const colorBurstOverlay = document.createElement("div");
+      colorBurstOverlay.className = `colorBurstOverlay ${
+        isBonus ? "bonus" : ""
+      }`;
       document.body.appendChild(colorBurstOverlay);
-      
+
       // Remove color burst after animation
       setTimeout(() => {
         if (colorBurstOverlay.parentNode) {
@@ -141,21 +139,21 @@ export const useGameActions = () => {
       }, 1200);
 
       // ENHANCED: Add screen shake to the main container
-      const mainContainer = document.querySelector('.main') || document.body;
-      mainContainer.style.animation = 'fullScreenShake 0.6s ease-in-out';
-      
+      const mainContainer = document.querySelector(".main") || document.body;
+      mainContainer.style.animation = "fullScreenShake 0.6s ease-in-out";
+
       // Remove screen shake after animation
       setTimeout(() => {
-        mainContainer.style.animation = '';
+        mainContainer.style.animation = "";
       }, 600);
 
       // ENHANCED: Add success glow to the slot element
       if (element) {
-        const glowElement = document.createElement('div');
-        glowElement.className = `successGlow ${isBonus ? 'bonus' : ''}`;
-        element.style.position = 'relative';
+        const glowElement = document.createElement("div");
+        glowElement.className = `successGlow ${isBonus ? "bonus" : ""}`;
+        element.style.position = "relative";
         element.appendChild(glowElement);
-        
+
         // Remove glow after animation
         setTimeout(() => {
           if (glowElement.parentNode) {
@@ -171,11 +169,13 @@ export const useGameActions = () => {
       });
 
       setAnimationState({
-        slotId: parseInt(slotId),
-        animatingTile: slotId,
+        slotId: slotId,
         isBonus,
         playerColor,
+        attentionAnimation: animation,
         particlePosition,
+        showConfetti: false,
+        confettiPosition: null,
         showGlitter: true,
         nameFlash: true,
         shake: true, // ENHANCED: Now enable shake
@@ -207,14 +207,6 @@ export const useGameActions = () => {
     [setAnimationWithTimeout, applyDOMAnimation, resetAnimations]
   );
 
-  // Trigger entrance animations
-  const triggerEntranceAnimation = useCallback(
-    (animation: string) => {
-      setAnimationWithTimeout({ entranceAnimation: animation });
-    },
-    [setAnimationWithTimeout]
-  );
-
   // Get current animation state
   const getCurrentAnimationState = useCallback(() => {
     return animationState;
@@ -233,7 +225,6 @@ export const useGameActions = () => {
     submitAnswer,
     resetGameState,
     triggerCorrectAnswerEffects,
-    triggerEntranceAnimation,
     setAnimationWithTimeout,
     getCurrentAnimationState,
     animationState,

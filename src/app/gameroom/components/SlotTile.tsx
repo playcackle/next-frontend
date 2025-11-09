@@ -10,21 +10,18 @@ interface SlotTileProps {
   slot: Slot;
   isBonus?: boolean;
   revealDelay: number;
-  entranceDelay: number;
+  entranceDelay: string;
+  className: string;
 }
 
 const SlotTile: React.FC<SlotTileProps> = ({
   slot,
-  revealDelay = 0,
   entranceDelay = 0,
+  className,
 }) => {
   const { data } = useSession();
   // Only get animation state, not time-dependent state
-  const {
-    entranceAnimation,
-    attentionAnimation,
-    animatingSlotId: animatingTile,
-  } = useAnimationState();
+  const { attentionAnimation, slotId } = useAnimationState();
 
   // Memoize all calculations based on props
   const displayState = useMemo(() => {
@@ -45,16 +42,13 @@ const SlotTile: React.FC<SlotTileProps> = ({
         styles.slotTile,
         slot.is_rare ? styles.bonusTile : "",
         slot.is_snapped ? styles.answered : "",
-        slot.id === animatingTile ? styles.correctPulse : "",
-        entranceAnimation,
+        slot.id === slotId ? styles.correctPulse : "",
         displayState.shouldShowAttention ? attentionAnimation : "",
       ].join(" "),
     [
       slot.is_snapped,
       slot.is_rare,
       slot.id,
-      animatingTile,
-      entranceAnimation,
       attentionAnimation,
       displayState.shouldShowAttention,
     ]
@@ -85,10 +79,10 @@ const SlotTile: React.FC<SlotTileProps> = ({
   return (
     <div
       id={`slot-${slot.id}`}
-      className={tileClassNames}
+      className={`${tileClassNames} ${className}`}
       style={
         {
-          "--animate-delay": revealDelay || entranceDelay,
+          animationDelay: entranceDelay,
           "--room-color": displayState.roomColor,
         } as React.CSSProperties
       }

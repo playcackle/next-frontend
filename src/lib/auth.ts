@@ -1,5 +1,6 @@
 import bcrypt from "bcryptjs";
 import type { NextAuthOptions } from "next-auth";
+import NextAuth from "next-auth";
 import credentials from "next-auth/providers/credentials";
 
 export const authOptions: NextAuthOptions = {
@@ -63,3 +64,11 @@ export const authOptions: NextAuthOptions = {
     },
   },
 };
+
+// Export the NextAuth instance
+const handler = NextAuth(authOptions);
+
+// Export signIn for use in server actions
+export const { signIn, signOut } = handler;
+
+export default handler;

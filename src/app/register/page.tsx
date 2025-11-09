@@ -2,6 +2,7 @@
 
 import { Box, Button, Flex } from "@radix-ui/themes";
 import { AtSign, Lock, User } from "lucide-react";
+import { signIn } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
@@ -27,6 +28,11 @@ export default function RegisterPage() {
       setError(r.error);
       return;
     } else {
+      await signIn("credentials", {
+        name: formData.get("name"),
+        password: formData.get("password"),
+        redirect: false,
+      });
       return router.push("/");
     }
   };

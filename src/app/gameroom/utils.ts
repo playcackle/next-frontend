@@ -1,9 +1,5 @@
-import {
-  ATTENTION_ANIMATIONS,
-  ENTRANCE_ANIMATIONS,
-  SOUND_SUCCESS,
-} from "./constants";
-import type { SoundType } from "./types";
+import { ATTENTION_ANIMATIONS, SOUND_SUCCESS } from "./constants";
+import { SoundType } from "./types/state";
 
 /**
  * Format time as MM:SS
@@ -28,15 +24,6 @@ export const getRandomAttentionAnimation = (): string => {
 };
 
 /**
- * Get a random entrance animation
- */
-export const getRandomEntranceAnimation = (): string => {
-  return `animate__animated animate__${
-    ENTRANCE_ANIMATIONS[Math.floor(Math.random() * ENTRANCE_ANIMATIONS.length)]
-  }`;
-};
-
-/**
  * Get a random success sound
  */
 export const getRandomSuccessSound = (): SoundType => {
@@ -50,12 +37,18 @@ export const getRandomSuccessSound = (): SoundType => {
  */
 export const playSound = (type: SoundType): void => {
   try {
-    if (typeof window === "undefined") return;
+    if (typeof window === "undefined") {
+      console.warn("playSound: window is undefined");
+      return;
+    }
 
     // @ts-ignore
     if (window.playSoundEffect) {
+      console.log(`Playing sound: ${type}`);
       // @ts-ignore
       window.playSoundEffect(type);
+    } else {
+      console.warn("window.playSoundEffect is not defined");
     }
   } catch (e) {
     console.error("Sound playback failed:", e);

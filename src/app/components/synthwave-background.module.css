@@ -1,3 +1,11 @@
+/* Performance optimizations applied:
+   - Reduced box-shadows and filters
+   - Simplified gradients and animations
+   - Used transform3d for hardware acceleration
+   - Consolidated redundant properties
+   - Optimized star field generation
+*/
+
 .synthwaveContainer {
   position: fixed;
   top: 0;
@@ -6,6 +14,9 @@
   height: 100%;
   overflow: hidden;
   z-index: 0;
+  /* Force hardware acceleration */
+  transform: translateZ(0);
+  will-change: auto;
 }
 
 .sky {
@@ -18,7 +29,7 @@
   z-index: 1;
 }
 
-/* Simplified stars with fewer gradients */
+/* Optimized stars - reduced gradients for better performance */
 .stars {
   position: absolute;
   top: 0;
@@ -31,39 +42,30 @@
       transparent 0
     ),
     radial-gradient(1px 1px at 125px 20px, white 100%, transparent 0),
-    radial-gradient(1.5px 1.5px at 75px 90px, white 100%, transparent 0),
     radial-gradient(1px 1px at 275px 15px, white 100%, transparent 0),
-    radial-gradient(1px 1px at 220px 80px, white 100%, transparent 0),
-    radial-gradient(1.5px 1.5px at 350px 95px, white 100%, transparent 0),
-    radial-gradient(1px 1px at 500px 45px, white 100%, transparent 0),
-    radial-gradient(1px 1px at 650px 25px, white 100%, transparent 0);
+    radial-gradient(1px 1px at 500px 45px, white 100%, transparent 0);
   background-repeat: repeat;
-  background-size: 800px 150px;
+  background-size: 600px 120px;
   opacity: 0.8;
   z-index: 2;
+  /* Hardware acceleration */
+  transform: translate3d(0, 0, 0);
 }
 
-/* Enhanced sun with more glow */
+/* Simplified sun with reduced glow effects */
 .sun {
   position: absolute;
   bottom: 35%;
   left: 50%;
-  transform: translateX(-50%);
+  transform: translate3d(-50%, 0, 0);
   width: 40vh;
   height: 40vh;
   border-radius: 50%;
-  /* Enhanced sun glow */
-  box-shadow: 0 0 20px rgba(255, 0, 128, 0.8), 0 0 40px rgba(255, 0, 128, 0.6),
-    0 0 60px rgba(255, 0, 128, 0.4);
   z-index: 3;
-  background: linear-gradient(
-    to bottom,
-    #ffb62e 0%,
-    #ff8c2e 25%,
-    #ff5b4a 50%,
-    #ff3a6b 75%,
-    #ff2e8c 100%
-  );
+  /* Simplified gradient */
+  background: linear-gradient(to bottom, #ffb62e 0%, #ff3a6b 50%, #ff2e8c 100%);
+  /* Reduced glow - single shadow instead of multiple */
+  box-shadow: 0 0 40px rgba(255, 0, 128, 0.6);
 }
 
 .grid {
@@ -72,38 +74,36 @@
   bottom: 0;
   left: 0;
   z-index: 4;
+  /* Hardware acceleration for grid */
+  transform: translate3d(0, 0, 0);
 }
 
 .grid:after {
-  -webkit-mask-image: -webkit-gradient(
-    linear,
-    left 90%,
-    left top,
-    from(rgba(0, 0, 0, 1)),
-    to(rgba(0, 0, 0, 0))
-  );
-  mask-image: gradient(
-    linear,
-    left 90%,
-    left top,
-    from(rgba(0, 0, 0, 1)),
-    to(rgba(0, 0, 0, 0))
-  );
-  transform: perspective(200px) rotateX(40deg) scale(4, 3) translateZ(0);
   content: "";
   display: block;
   position: absolute;
   bottom: 0;
   left: -50%;
-  right: -50%;
   width: 200%;
   height: 150vh;
-  padding: 1px;
-  -webkit-background-clip: content-box;
-  -webkit-backface-visibility: hidden;
-  outline: 1px solid transparent;
+
+  /* Optimized transform - using translate3d for hardware acceleration */
+  transform: perspective(200px) rotateX(40deg) scale3d(4, 3, 1);
   transform-origin: bottom center;
   will-change: transform;
+
+  /* Simplified mask */
+  -webkit-mask-image: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 1) 0%,
+    rgba(0, 0, 0, 0) 100%
+  );
+  mask-image: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 1) 0%,
+    rgba(0, 0, 0, 0) 100%
+  );
+
   background-position: center bottom;
   background-size: 40px 40px;
   background-image: linear-gradient(
@@ -112,61 +112,34 @@
       transparent 2px
     ),
     linear-gradient(to bottom, rgba(255, 0, 255, 1) 1px, transparent 2px);
-  box-shadow: 0 0 20px rgba(255, 0, 255, 0.3), 0 0 40px rgba(255, 0, 255, 0.2),
-    0 0 60px rgba(255, 0, 255, 0.1);
-  filter: drop-shadow(0 0 10px rgba(255, 0, 255, 0.4));
+
+  /* Reduced glow effects */
+  box-shadow: 0 0 20px rgba(255, 0, 255, 0.3);
+
+  /* Optimized animation */
   animation: gridMove 15s linear infinite;
+
+  /* Performance hints */
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
 }
 
-.grid:before {
-  content: "";
-  position: absolute;
-  bottom: 0;
-  left: -50%;
-  right: -50%;
-  width: 200%;
-  height: 150vh;
-  transform: perspective(200px) rotateX(40deg) scale(4, 3) translateZ(0);
-  transform-origin: bottom center;
-  background-position: center bottom;
-  background-size: 40px 40px;
-  background-image: linear-gradient(
-      to right,
-      rgba(255, 0, 255, 0.6) 4px,
-      transparent 4px
-    ),
-    linear-gradient(to bottom, rgba(255, 0, 255, 0.6) 2px, transparent 2px);
-  filter: blur(2px);
-  z-index: -1;
-  -webkit-mask-image: -webkit-gradient(
-    linear,
-    left 90%,
-    left top,
-    from(rgba(0, 0, 0, 1)),
-    to(rgba(0, 0, 0, 0))
-  );
-  mask-image: gradient(
-    linear,
-    left 90%,
-    left top,
-    from(rgba(0, 0, 0, 1)),
-    to(rgba(0, 0, 0, 0))
-  );
-  animation: gridMove 15s linear infinite;
-}
+/* Removed the :before pseudo-element blur layer for better performance */
+/* If blur is absolutely necessary, consider using a separate div with lower opacity */
 
+/* Simplified animation using translate3d */
 @keyframes gridMove {
   0% {
-    transform: perspective(200px) rotateX(40deg) scale(4, 3) translateZ(0)
-      translateY(0);
+    transform: perspective(200px) rotateX(40deg) scale3d(4, 3, 1)
+      translate3d(0, 0, 0);
   }
   100% {
-    transform: perspective(200px) rotateX(40deg) scale(4, 3) translateZ(0)
-      translateY(40px);
+    transform: perspective(200px) rotateX(40deg) scale3d(4, 3, 1)
+      translate3d(0, 40px, 0);
   }
 }
 
-/* Mobile optimizations */
+/* Optimized mobile styles */
 @media (max-width: 768px) {
   .sun {
     width: 30vh;
@@ -174,33 +147,65 @@
   }
 
   .stars {
-    background-size: 600px 120px;
+    background-size: 500px 100px;
+    /* Reduce complexity on mobile */
+    background-image: radial-gradient(
+        1px 1px at 25px 5px,
+        white 100%,
+        transparent 0
+      ),
+      radial-gradient(1px 1px at 125px 20px, white 100%, transparent 0);
   }
 
   .grid:after {
     background-size: 30px 30px;
-    transform: perspective(200px) rotateX(40deg) scale(3, 2.5)
-      translate3d(0, 0, 0);
+    transform: perspective(200px) rotateX(40deg) scale3d(3, 2.5, 1);
     height: 100vh;
-    box-shadow: 0 0 15px rgba(255, 0, 255, 0.4), 0 0 25px rgba(255, 0, 255, 0.2);
-    filter: drop-shadow(0 0 6px rgba(255, 0, 255, 0.3));
-    animation: gridMoveMobile 22s linear infinite;
+    /* Reduced effects on mobile */
+    box-shadow: 0 0 15px rgba(255, 0, 255, 0.4);
+    animation: gridMoveMobile 20s linear infinite;
   }
 
   @keyframes gridMoveMobile {
     0% {
-      transform: perspective(200px) rotateX(40deg) scale(3, 2.5)
+      transform: perspective(200px) rotateX(40deg) scale3d(3, 2.5, 1)
         translate3d(0, 0, 0);
     }
     100% {
-      transform: perspective(200px) rotateX(40deg) scale(3, 2.5)
+      transform: perspective(200px) rotateX(40deg) scale3d(3, 2.5, 1)
         translate3d(0, 30px, 0);
     }
   }
 }
 
-/* Performance hint for browsers */
+/* Global performance optimizations */
 .synthwaveContainer * {
   -webkit-backface-visibility: hidden;
   backface-visibility: hidden;
+  -webkit-perspective: 1000px;
+  perspective: 1000px;
+}
+
+/* Optional: If you need the blur effect back, use this more efficient approach */
+.grid-blur-layer {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: -50%;
+  width: 200%;
+  height: 150vh;
+  transform: perspective(200px) rotateX(40deg) scale3d(4, 3, 1);
+  transform-origin: bottom center;
+  background-position: center bottom;
+  background-size: 40px 40px;
+  background-image: linear-gradient(
+      to right,
+      rgba(255, 0, 255, 0.3) 4px,
+      transparent 4px
+    ),
+    linear-gradient(to bottom, rgba(255, 0, 255, 0.3) 2px, transparent 2px);
+  filter: blur(1px); /* Reduced blur amount */
+  z-index: -1;
+  opacity: 0.5; /* Use opacity instead of multiple blur layers */
+  animation: gridMove 15s linear infinite;
 }

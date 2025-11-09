@@ -2,7 +2,7 @@
 
 import SoundEffects from "@/app/components/sound-effects";
 import { useSearchParams } from "next/navigation";
-import React, { useRef } from "react";
+import React, { useRef, useCallback } from "react";
 import styles from "./gameroom.module.css";
 
 // Import custom hooks
@@ -44,6 +44,7 @@ export default function GameroomPage() {
     timeRemaining,
     showCountDown,
     updateGameState,
+    scores,
   } = useGameState();
 
   // Unified message system
@@ -87,9 +88,14 @@ export default function GameroomPage() {
     }
   };
 
-  const handleSoundsLoaded = () => {
-    updateGameState({ soundsLoaded: true });
-  };
+  const handleSoundsLoaded = useRef(false);
+
+  const onSoundsLoaded = useCallback(() => {
+    if (!handleSoundsLoaded.current) {
+      handleSoundsLoaded.current = true;
+      updateGameState({ soundsLoaded: true });
+    }
+  }, [updateGameState]);
 
   return (
     <>
@@ -106,33 +112,15 @@ export default function GameroomPage() {
               ${styles.main}
             `}
           >
-            <RoomHeader
-              roundName={roundName}
-              roomName={name!}
-              roundNumber={roundNumber}
-              totalRounds={totalRounds}
-            />
+            <RoomHeader roomName={name!} />
 
-            <SoundEffects onLoad={handleSoundsLoaded} />
+            <SoundEffects onLoad={onSoundsLoaded} />
 
             <StatsRow nameFlash={false} />
 
             <div className={styles.contentRow}>
               <Flex direction="column" gap="3">
-                {isRoundBreak ? (
-                  <Leaderboard />
-                ) : (
-                  <div
-                    className={styles.slotContainer}
-                    style={
-                      {
-                        "--room-color": "var(--neon-pink)",
-                      } as React.CSSProperties
-                    }
-                  >
-                    <SlotGrid />
-                  </div>
-                )}
+                <UnifiedMessages />
                 <div className={styles.answerRow}>
                   <UnifiedInputForm
                     onSubmit={handleUnifiedSubmit}
@@ -141,7 +129,44 @@ export default function GameroomPage() {
                   />
                 </div>
               </Flex>
-              <UnifiedMessages />
+              {isRoundBreak ? (
+                <Leaderboard />
+              ) : (
+                <div
+                  className={styles.slotContainer}
+                  style={
+                    {
+                      "--room-color": "var(--neon-pink)",
+                    } as React.CSSProperties
+                  }
+                >
+                  <SlotGrid />
+                </div>
+              )}
+
+              {!isRoundBreak && (
+                <div className={styles.leaderboardTile}>
+                  <h3 className={styles.statsTitle}>Leaderboard</h3>
+                  <div className={styles.ingameLeaderboard}>
+                    {scores.slice(0, 10).map((player, index) => (
+                      <div
+                        key={player.player_id}
+                        className={`${styles.leaderboardPlayer} ${
+                          player.display_name === "You" && false
+                            ? styles.nameFlash
+                            : ""
+                        }`}
+                      >
+                        <div className={styles.playerRank}>{index + 1}</div>
+                        <div className={styles.playerName}>
+                          {player.display_name}
+                        </div>
+                        <div className={styles.playerScore}>{player.score}</div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>

@@ -46,9 +46,8 @@ export type GameState = {
 };
 
 export type AnimationState = {
-  entranceAnimation: string;
   attentionAnimation: string;
-  animatingSlotId: string | null;
+  slotId: string | null;
   showConfetti: boolean;
   confettiPosition: { x: number; y: number } | null;
   showGlitter: boolean;
