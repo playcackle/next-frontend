@@ -2,7 +2,7 @@
 
 import SoundEffects from "@/app/components/sound-effects";
 import { useSearchParams } from "next/navigation";
-import React, { useRef, useCallback } from "react";
+import React, { useCallback, useRef } from "react";
 import styles from "./gameroom.module.css";
 
 // Import custom hooks

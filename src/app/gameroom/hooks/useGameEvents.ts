@@ -8,9 +8,9 @@ import {
   SubmissionFeedbackPayload,
 } from "../types/payloads";
 import { getRandomAttentionAnimation } from "../utils";
+import { useGameActions } from "./useGameActions";
 import { useGameSocket } from "./useGameSocket";
 import { useAnimationState, useGameState } from "./useGameState";
-import { useGameActions } from "./useGameActions";
 
 export const useGameEvents = (gameWsUrl: string, token: string) => {
   const { onEvent, sendEvent, isConnected } = useGameSocket(gameWsUrl, token);
@@ -65,7 +65,6 @@ export const useGameEvents = (gameWsUrl: string, token: string) => {
     onEvent("round_over", (data: RoundOverPayload) => {
       updateGameState({
         isRoundBreak: true,
-        slots: [],
         scores: data.scores ?? [],
       });
     });
@@ -126,12 +125,7 @@ export const useGameEvents = (gameWsUrl: string, token: string) => {
         const playerColor = null; // Could be enhanced to get player color
 
         // Trigger visual and audio effects
-        triggerCorrectAnswerEffects(
-          data.id!,
-          animation,
-          isBonus,
-          playerColor
-        );
+        triggerCorrectAnswerEffects(data.id!, animation, isBonus, playerColor);
       }
     });
   }, [

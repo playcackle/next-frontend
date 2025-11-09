@@ -78,6 +78,7 @@ const SlotTile: React.FC<SlotTileProps> = ({
 
   return (
     <div
+      data-slot-id={slotId}
       id={`slot-${slot.id}`}
       className={`${tileClassNames} ${className}`}
       style={
