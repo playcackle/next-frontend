@@ -115,6 +115,7 @@ export const useGameEvents = (gameWsUrl: string, token: string) => {
     });
 
     onEvent("slot_snapped", (data: SlotSnappedPayload) => {
+      debugger;
       updateGameState({
         slots: data.slots,
         scores: data.scores,

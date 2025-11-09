@@ -113,7 +113,7 @@
   flex-direction: column;
   height: 100%;
   overflow: hidden;
-  width: 20vw;
+  width: 18vw;
 }
 
 .statsValue {
@@ -628,7 +628,7 @@
   flex-direction: column;
   transition: all 0.3s ease;
   margin-left: 4px;
-  min-width: 31vw;
+  width: 28vw;
 }
 
 /* Input form positioned where original answer form was */
