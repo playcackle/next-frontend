@@ -37,12 +37,18 @@ export const getRandomSuccessSound = (): SoundType => {
  */
 export const playSound = (type: SoundType): void => {
   try {
-    if (typeof window === "undefined") return;
+    if (typeof window === "undefined") {
+      console.warn("playSound: window is undefined");
+      return;
+    }
 
     // @ts-ignore
     if (window.playSoundEffect) {
+      console.log(`Playing sound: ${type}`);
       // @ts-ignore
       window.playSoundEffect(type);
+    } else {
+      console.warn("window.playSoundEffect is not defined");
     }
   } catch (e) {
     console.error("Sound playback failed:", e);

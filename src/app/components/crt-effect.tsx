@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import styles from "./settings-controls.module.css"; // Import the CSS module
 
 export default function CRTEffect() {
   const [isCRTEnabled, setIsCRTEnabled] = useState(true);
@@ -29,7 +30,7 @@ export default function CRTEffect() {
 
   if (!isCRTEnabled) {
     return (
-      <button className="crt-toggle" onClick={toggleCRTEffect}>
+      <button className={styles["crt-toggle"]} onClick={toggleCRTEffect}>
         Enable CRT Effect
       </button>
     );
@@ -42,7 +43,7 @@ export default function CRTEffect() {
         <div className="crt-flicker"></div>
         <div className="crt-vignette"></div>
       </div>
-      <button className="crt-toggle" onClick={toggleCRTEffect}>
+      <button className={styles["crt-toggle"]} onClick={toggleCRTEffect}>
         Disable CRT Effect
       </button>
     </>

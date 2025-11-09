@@ -1,4 +1,3 @@
-import CRTEffect from "@/app/components/crt-effect";
 import Header from "@/app/components/header";
 import { Progress, Theme } from "@radix-ui/themes";
 import "@radix-ui/themes/styles.css";
@@ -45,7 +44,6 @@ export default async function RootLayout({
               </Provider>
             </div>
           </div>
-          <CRTEffect />
         </Theme>
       </body>
     </html>

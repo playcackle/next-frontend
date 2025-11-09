@@ -172,10 +172,10 @@ export const useGameActions = () => {
         slotId: slotId,
         isBonus,
         playerColor,
-        attentionAnimation,
+        attentionAnimation: animation,
         particlePosition,
-        showConfetti,
-        confettiPosition,
+        showConfetti: false,
+        confettiPosition: null,
         showGlitter: true,
         nameFlash: true,
         shake: true, // ENHANCED: Now enable shake
@@ -196,8 +196,6 @@ export const useGameActions = () => {
         } else {
           const sound = getRandomSuccessSound();
           playSound(sound);
-          // Add a quick second sound for extra impact
-          setTimeout(() => playSound("success1"), 150);
         }
       } catch (error) {
         console.warn("Failed to play sound:", error);

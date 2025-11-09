@@ -1,0 +1,45 @@
+.settingsContainer {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  display: flex;
+  flex-direction: column; /* Stack controls vertically */
+  gap: 10px; /* Space between controls */
+  z-index: 9999; /* Increased z-index to ensure it's on top */
+  align-items: flex-end; /* Align items to the right */
+}
+
+/* Style for both CRT toggle and music controls to ensure consistent appearance */
+.settingsControlBase {
+  background-color: rgba(0, 0, 0, 0.7); /* Semi-transparent background */
+  border: 1px solid #ff00ff; /* Neon pink border */
+  box-shadow: 0 0 15px rgba(255, 0, 255, 0.6); /* Neon glow */
+  border-radius: 8px;
+  padding: 10px 15px;
+  font-family: 'Press Start 2P', cursive;
+  color: #00ffff; /* Neon cyan text */
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  width: fit-content; /* Adjust width to content */
+}
+
+.settingsControlBase:hover {
+  background-color: rgba(0, 0, 0, 0.9);
+  box-shadow: 0 0 20px rgba(255, 0, 255, 0.8);
+}
+
+/* Specific style for CRT toggle button */
+.crt-toggle {
+  composes: settingsControlBase; /* Inherit base styles */
+  cursor: pointer;
+  font-size: 0.9em;
+  text-transform: uppercase;
+  white-space: nowrap; /* Prevent text wrapping */
+}
+
+/* Ensure music controls also use the base style */
+.musicControls {
+  composes: settingsControlBase; /* Inherit base styles */
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}

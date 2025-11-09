@@ -2,7 +2,7 @@
 
 import SoundEffects from "@/app/components/sound-effects";
 import { useSearchParams } from "next/navigation";
-import React, { useRef } from "react";
+import React, { useRef, useCallback } from "react";
 import styles from "./gameroom.module.css";
 
 // Import custom hooks
@@ -88,9 +88,14 @@ export default function GameroomPage() {
     }
   };
 
-  const handleSoundsLoaded = () => {
-    updateGameState({ soundsLoaded: true });
-  };
+  const handleSoundsLoaded = useRef(false);
+
+  const onSoundsLoaded = useCallback(() => {
+    if (!handleSoundsLoaded.current) {
+      handleSoundsLoaded.current = true;
+      updateGameState({ soundsLoaded: true });
+    }
+  }, [updateGameState]);
 
   return (
     <>
@@ -109,7 +114,7 @@ export default function GameroomPage() {
           >
             <RoomHeader roomName={name!} />
 
-            <SoundEffects onLoad={handleSoundsLoaded} />
+            <SoundEffects onLoad={onSoundsLoaded} />
 
             <StatsRow nameFlash={false} />
 

@@ -210,11 +210,8 @@ a {
   animation: crtTurnOn 1s ease-in-out forwards;
 }
 
-/* CRT toggle button */
+/* CRT toggle button (base styles, positioning handled by parent component) */
 .crt-toggle {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
   background: rgba(0, 0, 0, 0.5);
   color: white;
   border: 1px solid var(--neon-blue);
@@ -222,7 +219,6 @@ a {
   padding: 5px 10px;
   font-size: 12px;
   cursor: pointer;
-  z-index: 1010;
   text-transform: uppercase;
   letter-spacing: 1px;
   box-shadow: 0 0 5px var(--neon-blue);

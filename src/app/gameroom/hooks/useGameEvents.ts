@@ -10,11 +10,13 @@ import {
 import { getRandomAttentionAnimation } from "../utils";
 import { useGameSocket } from "./useGameSocket";
 import { useAnimationState, useGameState } from "./useGameState";
+import { useGameActions } from "./useGameActions";
 
 export const useGameEvents = (gameWsUrl: string, token: string) => {
   const { onEvent, sendEvent, isConnected } = useGameSocket(gameWsUrl, token);
   const { updateGameState, slots, gameState } = useGameState();
   const { updateAnimationState } = useAnimationState();
+  const { triggerCorrectAnswerEffects } = useGameActions();
 
   const setAnimationWithClear = (animationUpdate: any, delay = 100) => {
     updateAnimationState(animationUpdate);
@@ -117,18 +119,29 @@ export const useGameEvents = (gameWsUrl: string, token: string) => {
     onEvent("submission_feedback", (data: SubmissionFeedbackPayload) => {
       if (data.status === "success") {
         const animation = getRandomAttentionAnimation();
-        updateAnimationState({
-          attentionAnimation: animation,
-          slotId: data.id!,
-        });
 
-        // Play success sound
-        if (typeof window !== "undefined" && "playFallbackAudio" in window) {
-          (window as any).playFallbackAudio();
-        }
+        // Find the slot to check if it's rare/bonus
+        const slot = slots.find((s) => s.id === data.id);
+        const isBonus = slot?.is_rare || false;
+        const playerColor = null; // Could be enhanced to get player color
+
+        // Trigger visual and audio effects
+        triggerCorrectAnswerEffects(
+          data.id!,
+          animation,
+          isBonus,
+          playerColor
+        );
       }
     });
-  }, [onEvent, slots, gameState, updateGameState, updateAnimationState]);
+  }, [
+    onEvent,
+    slots,
+    gameState,
+    updateGameState,
+    updateAnimationState,
+    triggerCorrectAnswerEffects,
+  ]);
 
   return { sendEvent };
 };

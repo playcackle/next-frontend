@@ -1,7 +1,9 @@
-import LobbyTile from "@/app/components/lobby-tile";
+import LobbyTileComponent from "@/app/components/lobby-tile";
 import { getServerSession } from "next-auth";
 import { AuthButtons } from "./components/auth-buttons";
 import styles from "./page.module.css";
+import { LobbyTile } from "@/app/models/lobby"; // Import the LobbyTile type
+import SettingsControls from "./components/settings-controls"; // Import the new component
 
 export default async function Home() {
   const lobbies = await fetchLobbies();
@@ -9,6 +11,7 @@ export default async function Home() {
   const isSession = session?.user;
   return (
     <>
+      <SettingsControls musicSrc="/audio/Snapscore.wav" />
       <section className={styles.heroSection}>
         <h1 className={styles.title}>
           <span className={styles.neonText}>SNAP</span>
@@ -19,7 +22,7 @@ export default async function Home() {
         <section className={styles.lobbiesSection}>
           <div className={styles.lobbiesContainer}>
             {lobbies.map((x: LobbyTile, i: number) => (
-              <LobbyTile lobby={x} key={i} />
+              <LobbyTileComponent lobby={x} key={i} />
             ))}
           </div>
         </section>
