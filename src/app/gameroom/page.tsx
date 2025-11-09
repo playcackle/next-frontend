@@ -107,12 +107,7 @@ export default function GameroomPage() {
               ${styles.main}
             `}
           >
-            <RoomHeader
-              roundName={roundName}
-              roomName={name!}
-              roundNumber={roundNumber}
-              totalRounds={totalRounds}
-            />
+            <RoomHeader roomName={name!} />
 
             <SoundEffects onLoad={handleSoundsLoaded} />
 

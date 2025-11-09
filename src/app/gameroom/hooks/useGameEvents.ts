@@ -28,7 +28,7 @@ export const useGameEvents = (gameWsUrl: string, token: string) => {
       if (animationUpdate.attentionAnimation !== undefined) {
         updateAnimationState({
           attentionAnimation: "",
-          animatingSlotId: "",
+          slotId: "",
         });
       }
     }, delay);
@@ -127,7 +127,7 @@ export const useGameEvents = (gameWsUrl: string, token: string) => {
         const animation = getRandomAttentionAnimation();
         updateAnimationState({
           attentionAnimation: animation,
-          animatingSlotId: data.id!,
+          slotId: data.id!,
         });
 
         // Play success sound

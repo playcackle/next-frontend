@@ -20,11 +20,7 @@ const SlotTile: React.FC<SlotTileProps> = ({
 }) => {
   const { data } = useSession();
   // Only get animation state, not time-dependent state
-  const {
-    entranceAnimation,
-    attentionAnimation,
-    animatingSlotId: animatingTile,
-  } = useAnimationState();
+  const { entranceAnimation, attentionAnimation, slotId } = useAnimationState();
 
   // Memoize all calculations based on props
   const displayState = useMemo(() => {
@@ -45,7 +41,7 @@ const SlotTile: React.FC<SlotTileProps> = ({
         styles.slotTile,
         slot.is_rare ? styles.bonusTile : "",
         slot.is_snapped ? styles.answered : "",
-        slot.id === animatingTile ? styles.correctPulse : "",
+        slot.id === slotId ? styles.correctPulse : "",
         entranceAnimation,
         displayState.shouldShowAttention ? attentionAnimation : "",
       ].join(" "),
@@ -53,7 +49,6 @@ const SlotTile: React.FC<SlotTileProps> = ({
       slot.is_snapped,
       slot.is_rare,
       slot.id,
-      animatingTile,
       entranceAnimation,
       attentionAnimation,
       displayState.shouldShowAttention,
