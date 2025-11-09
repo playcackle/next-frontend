@@ -21,7 +21,9 @@ export default function StatsRow({ nameFlash }: StatsRowProps) {
     <div className={styles.statsRow}>
       <div className={styles.statsTile}>
         <h3 className={styles.statsTitle}>Looking for:</h3>
-        <div className={styles.statsValue}>{roundName}</div>
+        <div className={styles.statsValue} style={{ fontSize: "14px" }}>
+          {roundName}
+        </div>
         <p className={styles.statsTitle}>Example: (example value)</p>
       </div>
       <div className={styles.statsTile}>
