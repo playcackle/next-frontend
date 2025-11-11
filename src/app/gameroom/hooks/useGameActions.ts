@@ -111,7 +111,9 @@ export const useGameActions = () => {
     ) => {
       // Calculate particle position based on DOM element
       let particlePosition = null;
-      const element = document.querySelector(`[data-slot-id="${slotId}"]`);
+      const element = document.querySelector(
+        `[data-slot-id="${slotId}"]`
+      ) as HTMLElement;
 
       if (element) {
         const rect = element.getBoundingClientRect();
@@ -139,7 +141,8 @@ export const useGameActions = () => {
       }, 1200);
 
       // ENHANCED: Add screen shake to the main container
-      const mainContainer = document.querySelector(".main") || document.body;
+      const mainContainer = (document.querySelector(".main") ||
+        document.body) as HTMLElement;
       mainContainer.style.animation = "fullScreenShake 0.6s ease-in-out";
 
       // Remove screen shake after animation
@@ -149,7 +152,7 @@ export const useGameActions = () => {
 
       // ENHANCED: Add success glow to the slot element
       if (element) {
-        const glowElement = document.createElement("div");
+        const glowElement = document.createElement("div") as HTMLElement;
         glowElement.className = `successGlow ${isBonus ? "bonus" : ""}`;
         element.style.position = "relative";
         element.appendChild(glowElement);
