@@ -4,18 +4,18 @@ import { useSetAtom } from "jotai";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { joinGameroom } from "../actions/joinLobby";
-import { LobbyTile as Lobby } from "../models/lobby";
+import { joinGameroom } from "../actions/joinGameroom";
+import { GameroomTile } from "../models/gameroom";
 import { gameRoomAtom } from "../store/gameRoom";
 import ErrorModal from "./error-modal";
-import styles from "./lobby-tile.module.css";
+import styles from "./gameroom-tile.module.css";
 
-export type LobbyProps = {
-  lobby: Lobby;
+export type GameroomTileProps = {
+  gameroom: GameroomTile;
 };
 
-export default function LobbyTile(props: LobbyProps) {
-  const { lobby } = props;
+export default function GameroomTile(props: GameroomTileProps) {
+  const { gameroom } = props;
   const { data } = useSession();
   const router = useRouter();
   const [showModal, setShowModal] = useState(false);
@@ -28,21 +28,21 @@ export default function LobbyTile(props: LobbyProps) {
       return;
     }
     setGameroom(gameRoom);
-    router.push(`/gameroom?name=${lobby.collection_name}`);
+    router.push(`/gameroom?name=${gameroom.collection_name}`);
   };
 
   return (
     <div className={styles.lobbyCard} onClick={handleClick}>
-      <h3 className={styles.lobbyName}>{lobby.collection_name}</h3>
+      <h3 className={styles.lobbyName}>{gameroom.collection_name}</h3>
       <div className={styles.lobbyCapacity}>
         <span className={styles.capacityText}>
-          {25 - lobby.player_count} slots available
+          {25 - gameroom.player_count} slots available
         </span>
         <div className={styles.capacityBar}>
           <div
             className={styles.capacityFill}
             style={{
-              width: `${(lobby.player_count / 25) * 100}%`,
+              width: `${(gameroom.player_count / 25) * 100}%`,
               backgroundColor: "--neon-pink",
             }}
           ></div>
@@ -51,7 +51,7 @@ export default function LobbyTile(props: LobbyProps) {
       <ErrorModal
         onOpenChange={(change) => setShowModal(change)}
         open={showModal}
-        title="Unable to join lobby"
+        title="Unable to join gameroom"
       />
     </div>
   );

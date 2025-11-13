@@ -1,12 +1,12 @@
-import LobbyTileComponent from "@/app/components/lobby-tile";
+import GameroomTileComponent from "@/app/components/gameroom-tile";
 import { getServerSession } from "next-auth";
 import { AuthButtons } from "./components/auth-buttons";
 import styles from "./page.module.css";
-import { LobbyTile } from "@/app/models/lobby"; // Import the LobbyTile type
+import { GameroomTile } from "@/app/models/gameroom"; // Import the GameroomTile type
 import SettingsControls from "./components/settings-controls"; // Import the new component
 
 export default async function Home() {
-  const lobbies = await fetchLobbies();
+  const gamerooms = await fetchGamerooms();
   const session = await getServerSession();
   const isSession = session?.user;
   return (
@@ -21,8 +21,8 @@ export default async function Home() {
       {isSession ? (
         <section className={styles.lobbiesSection}>
           <div className={styles.lobbiesContainer}>
-            {lobbies.map((x: LobbyTile, i: number) => (
-              <LobbyTileComponent lobby={x} key={i} />
+            {gamerooms.map((x: GameroomTile, i: number) => (
+              <GameroomTileComponent gameroom={x} key={i} />
             ))}
           </div>
         </section>
@@ -35,8 +35,8 @@ export default async function Home() {
   );
 }
 
-// Server-side function to fetch snap lobbies
-async function fetchLobbies(): Promise<LobbyTile[]> {
+// Server-side function to fetch available gamerooms
+async function fetchGamerooms(): Promise<GameroomTile[]> {
   try {
     const baseUrl =
       process.env.BACKEND_URL || process.env.NEXT_PUBLIC_APP_BACKEND_URL;

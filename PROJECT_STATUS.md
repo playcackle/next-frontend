@@ -247,8 +247,8 @@ The system is now ready for deployment with enhanced gameplay mechanics and sign
 
 **Files Modified**:
 
-- `snapscore_backend/lobby/app/core/config.py` - Line 21: Changed default from "5" to "10"
-- `snapscore_backend/lobby/app/websockets/game_timers.py` - Lines 199-215: Added enhanced logging
+- `snapscore_backend/gameroom/app/core/config.py` - Line 21: Changed default from "5" to "10"
+- `snapscore_backend/gameroom/app/websockets/game_timers.py` - Lines 199-215: Added enhanced logging
 
 **Impact**: Games now properly progress through all 10 rounds without timer lockups
 

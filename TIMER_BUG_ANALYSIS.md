@@ -22,7 +22,7 @@
 
 #### **A. Configuration Mismatch**
 ```python
-# snapscore_backend/lobby/app/services/game_service.py:18
+# snapscore_backend/gameroom/app/services/game_service.py:18
 NUM_ROUNDS_PER_GAME = 5  # ❌ Backend thinks game has 5 rounds
 
 # snapscore/src/app/gameroom/page.tsx:131  
@@ -106,7 +106,7 @@ async def on_disconnect(self, sid: str):
 
 ### **Fix 1: Align Round Configuration** ⭐ **CRITICAL**
 ```python
-# snapscore_backend/lobby/app/services/game_service.py
+# snapscore_backend/gameroom/app/services/game_service.py
 NUM_ROUNDS_PER_GAME = 10  # ✅ Change from 5 to 10
 ```
 
