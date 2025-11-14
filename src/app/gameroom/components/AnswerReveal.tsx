@@ -8,6 +8,8 @@ type QuizAnswer = {
   id: number;
   answer: string;
   isRare?: boolean;
+  isAnswered: boolean;
+  answeredBy: string | null;
 };
 
 export default function AnswerReveal() {
@@ -24,8 +26,10 @@ export default function AnswerReveal() {
       (x) =>
         ({
           id: x.id,
-          answer: x.canonical_text,
+          answer: x.text_preview,
           isRare: x.is_rare,
+          isAnswered: x.is_snapped,
+          answeredBy: x.snapped_by_display_name,
         } as unknown as QuizAnswer)
     );
     setAnswers(answers);
@@ -60,7 +64,7 @@ export default function AnswerReveal() {
             key={x.id}
             className={`${styles.answerItem} ${
               x.isRare ? styles.rareAnswer : ""
-            } ${
+            } ${x.isAnswered ? styles.answeredAnswer : ""} ${
               visibleAnswers.includes(x.id)
                 ? `animate__animated ${selectedAnimation}`
                 : styles.hidden
@@ -68,6 +72,9 @@ export default function AnswerReveal() {
           >
             <div className={styles.questionNumber}>#{i + 1}</div>
             <div className={styles.answerText}>{x.answer}</div>
+            {x.isAnswered && x.answeredBy && (
+              <div className={styles.playerName}>{x.answeredBy}</div>
+            )}
           </div>
         ))}
       </div>
