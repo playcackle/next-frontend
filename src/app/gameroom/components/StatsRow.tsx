@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import styles from "../gameroom.module.css";
 import { useGameState } from "../hooks/useGameState";
 import { formatTime } from "../utils";
@@ -14,8 +15,46 @@ export default function StatsRow({ nameFlash }: StatsRowProps) {
     totalRounds,
     isRoundBreak,
     timeRemaining,
-    scores,
   } = useGameState();
+
+  const [roundText, setRoundText] = useState("Round number");
+  const [timeText, setTimeText] = useState("Time remaining");
+
+  const timeRemainingMessages: string[] = [
+    "Hurry up.",
+    "Don’t freeze.",
+    "Move it.",
+    "Stop thinking.",
+    "Try faster.",
+    "Panic.",
+    "Don’t blow it.",
+    "Tick-tock! F*uck face.",
+    "Figure it out.",
+  ];
+
+  const roundMessages: string[] = [
+    "Try harder.",
+    "Don’t mess up.",
+    "Prove something.",
+    "Impress me… somehow.",
+    "Shock me. Please.",
+    "Don’t flop again.",
+    "Keep up.",
+    "Don’t embarrass yourself.",
+    "Let’s see you struggle.",
+  ];
+
+  useEffect(() => {
+    const roundMessage =
+      roundMessages[Math.floor(Math.random() * roundMessages.length)];
+
+    setRoundText(roundMessage.replace("X", String(roundNumber)));
+    const timeRemaining =
+      timeRemainingMessages[
+        Math.floor(Math.random() * timeRemainingMessages.length)
+      ];
+    setTimeText(timeRemaining);
+  }, [roundName]);
 
   return (
     <div className={styles.statsRow}>
@@ -38,7 +77,7 @@ export default function StatsRow({ nameFlash }: StatsRowProps) {
       )}
       <div className={styles.statsTile}>
         <h3 className={styles.statsTitle}>
-          {isRoundBreak ? "Intermission" : "Time Remaining:"}
+          {isRoundBreak ? "Intermission" : timeText}
         </h3>
         <div
           className={`${styles.statsValue} ${
@@ -49,7 +88,7 @@ export default function StatsRow({ nameFlash }: StatsRowProps) {
         </div>
       </div>
       <div className={styles.statsTile}>
-        <h3 className={styles.statsTitle}>Round number:</h3>
+        <h3 className={styles.statsTitle}>{roundText}</h3>
         <div className={styles.statsValue}>
           {roundNumber} / {totalRounds}
         </div>
