@@ -1,0 +1,91 @@
+.answersContainer {
+  background-color: rgba(20, 20, 40, 0.8);
+  border-radius: 8px;
+  padding: 1rem;
+  box-shadow: 0 0 5px var(--neon-pink), 0 0 10px var(--neon-pink),
+    inset 0 0 5px rgba(255, 0, 150, 0.3);
+  border: 1px solid rgba(255, 0, 150, 0.3);
+  backdrop-filter: blur(5px);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.title {
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+  color: #fff;
+  text-shadow: 0 0 10px rgba(255, 0, 150, 0.7);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-family: var(--retro-font);
+}
+
+.answersListContainer {
+  flex: 1;
+  overflow-y: auto;
+  padding-right: 0.5rem;
+}
+
+.answerItem {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  padding: 0.25rem;
+  margin-bottom: 0.5rem;
+  background-color: rgba(10, 10, 30, 0.5);
+  border-radius: 4px;
+  border-left: 3px solid var(--neon-pink);
+}
+.hidden {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.answerItem.rareAnswer {
+  border-left: 3px solid #b744ff;
+  background-color: rgba(183, 68, 255, 0.1);
+}
+
+.answerItem.rareAnswer .questionNumber {
+  color: #b744ff;
+}
+
+.answerItem.rareAnswer .answerText {
+  text-shadow: 0 0 5px rgba(183, 68, 255, 0.5);
+}
+
+.questionNumber {
+  font-size: 1rem;
+  font-weight: bold;
+  color: var(--neon-pink);
+  min-width: 40px;
+  text-align: center;
+  font-family: var(--retro-font);
+}
+
+.answerText {
+  flex: 1;
+  font-size: 1rem;
+  color: white;
+  font-weight: 500;
+  text-shadow: 0 0 5px rgba(255, 0, 150, 0.3);
+}
+
+.answersListContainer::-webkit-scrollbar {
+  width: 8px;
+}
+
+.answersListContainer::-webkit-scrollbar-track {
+  background: rgba(10, 10, 30, 0.5);
+  border-radius: 4px;
+}
+
+.answersListContainer::-webkit-scrollbar-thumb {
+  background: var(--neon-pink);
+  border-radius: 4px;
+}
+
+.answersListContainer::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 0, 150, 0.8);
+}

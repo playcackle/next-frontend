@@ -1,44 +1,20 @@
-import { useAtom, useSetAtom } from "jotai";
-import { useCallback, useMemo, useState } from "react";
+import { useSetAtom } from "jotai";
+import { useCallback, useMemo } from "react";
 import {
   answerAtom,
   resetGameStateAtom,
   updateAnimationStateAtom,
 } from "../store/gameAtoms";
-import { AnimationState } from "../types/state";
 import { getRandomSuccessSound, playSound } from "../utils";
-
-const initialAnimationState: AnimationState = {
-  slotId: null,
-  showGlitter: false,
-  nameFlash: false,
-  shake: false,
-  colorFlash: false,
-  zoomEffect: false,
-  rotateEffect: false,
-  particlePosition: null,
-  isBonus: false,
-  playerColor: "",
-  attentionAnimation: "",
-  confettiPosition: null,
-  showConfetti: false,
-};
 
 export const useGameActions = () => {
   const setAnswer = useSetAtom(answerAtom);
-  const [updateAnimationState, setUpdateAnimationSet] = useAtom(
-    updateAnimationStateAtom
-  );
+  const updateAnimationState = useSetAtom(updateAnimationStateAtom);
   const resetGameState = useSetAtom(resetGameStateAtom);
-  const [animationState, setAnimationState] = useState<AnimationState>(
-    initialAnimationState
-  );
 
   const applyDOMAnimation = useCallback(
     (slotId: string, animationType: string) => {
-      const element = document.querySelector(
-        `[data-slot-id="${slotId}"]`
-      ) as HTMLElement;
+      const element = document.getElementById(`slot-${slotId}`) as HTMLElement;
 
       if (!element) {
         console.warn(`Element with slot ID ${slotId} not found`);
@@ -47,21 +23,21 @@ export const useGameActions = () => {
 
       // Remove any existing animation classes
       element.classList.remove(
-        "animate-shake",
-        "animate-bounce",
-        "animate-pulse",
-        "animate-zoom",
-        "animate-rotate",
-        "animate-flash",
-        "animate-glitter"
+        "animate__shakeX",
+        "animate__bounce",
+        "animate__pulse",
+        "animate__zoom",
+        "animate__rotate",
+        "animate__flash",
+        "animate__glitter"
       );
 
       // Apply the new animation class
-      element.classList.add(`animate-${animationType}`);
+      element.classList.add(...animationType.split(" "));
 
       // Remove animation class after completion
       setTimeout(() => {
-        element.classList.remove(`animate-${animationType}`);
+        element.classList.remove(...animationType.split(" "));
       }, 2000);
     },
     []
@@ -74,11 +50,15 @@ export const useGameActions = () => {
       if (timeoutId) clearTimeout(timeoutId);
 
       timeoutId = setTimeout(() => {
-        setAnimationState(initialAnimationState);
-        // Also clear Jotai animation state
-        setUpdateAnimationSet({
+        updateAnimationState({
           attentionAnimation: "",
-          slotId: "",
+          slotId: null,
+          showGlitter: false,
+          showConfetti: false,
+          confettiPosition: null,
+          particlePosition: null,
+          isBonus: false,
+          playerColor: "",
         });
         timeoutId = null;
       }, 2000);
@@ -88,13 +68,12 @@ export const useGameActions = () => {
   // Auto-clear animation state after timeout
   const setAnimationWithTimeout = useCallback(
     (animationUpdate: any, timeout = 400) => {
-      setUpdateAnimationSet(animationUpdate);
+      updateAnimationState(animationUpdate);
 
       setTimeout(() => {
         if (animationUpdate.attentionAnimation !== undefined) {
-          setUpdateAnimationSet({
+          updateAnimationState({
             attentionAnimation: "",
-            slotId: "",
           });
         }
       }, timeout);
@@ -109,11 +88,12 @@ export const useGameActions = () => {
       isBonus: boolean = false,
       playerColor: string | null
     ) => {
+      const shouldShowConfetti = Math.random() < 0.4;
+
       // Calculate particle position based on DOM element
       let particlePosition = null;
-      const element = document.querySelector(
-        `[data-slot-id="${slotId}"]`
-      ) as HTMLElement;
+      let confettiPosition = null;
+      const element = document.getElementById(`slot-${slotId}`) as HTMLElement;
 
       if (element) {
         const rect = element.getBoundingClientRect();
@@ -121,9 +101,20 @@ export const useGameActions = () => {
           x: rect.left + rect.width / 2,
           y: rect.top + rect.height / 2,
         };
+        confettiPosition = {
+          x: rect.left + rect.width / 2,
+          y: rect.top - 20, // Position 20px above the slot
+        };
       } else {
         // Fallback position
-        particlePosition = { x: 100 / 2, y: 100 / 2 };
+        particlePosition = {
+          x: window.innerWidth / 2,
+          y: window.innerHeight / 2,
+        };
+        confettiPosition = {
+          x: window.innerWidth / 2,
+          y: window.innerHeight / 2 - 50,
+        };
       }
 
       // ENHANCED: Add color burst overlay effect
@@ -165,32 +156,20 @@ export const useGameActions = () => {
         }, 1500);
       }
 
-      // Update both animation states
-      setAnimationWithTimeout({
-        attentionAnimation: animation,
-        animatingTile: slotId,
-      });
-
-      setAnimationState({
+      updateAnimationState({
         slotId: slotId,
-        isBonus,
-        playerColor,
         attentionAnimation: animation,
+        isBonus,
+        playerColor: playerColor || "",
         particlePosition,
-        showConfetti: false,
-        confettiPosition: null,
+        confettiPosition,
+        showConfetti: shouldShowConfetti, // Use random chance instead of always true
         showGlitter: true,
-        nameFlash: true,
-        shake: true, // ENHANCED: Now enable shake
-        colorFlash: true,
-        zoomEffect: true,
-        rotateEffect: true, // ENHANCED: Enable rotation for extra chaos
       });
 
       // Apply DOM animation
       applyDOMAnimation(slotId, animation);
 
-      // ENHANCED: Play appropriate sound with enhanced volume/effects
       try {
         if (isBonus) {
           playSound("bonus");
@@ -207,13 +186,8 @@ export const useGameActions = () => {
       // Reset animations after completion
       resetAnimations();
     },
-    [setAnimationWithTimeout, applyDOMAnimation, resetAnimations]
+    [updateAnimationState, applyDOMAnimation, resetAnimations]
   );
-
-  // Get current animation state
-  const getCurrentAnimationState = useCallback(() => {
-    return animationState;
-  }, [animationState]);
 
   const submitAnswer = (
     answer: string,
@@ -229,7 +203,5 @@ export const useGameActions = () => {
     resetGameState,
     triggerCorrectAnswerEffects,
     setAnimationWithTimeout,
-    getCurrentAnimationState,
-    animationState,
   };
 };

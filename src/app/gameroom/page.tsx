@@ -20,6 +20,7 @@ import SlotGrid from "./components/SlotGrid";
 import StatsRow from "./components/StatsRow";
 
 import { Flex } from "@radix-ui/themes";
+import AnswerReveal from "./components/AnswerReveal";
 import Leaderboard from "./components/LeaderBoard";
 import { useAnswerBubbles } from "./hooks/useAnswerBubbles";
 import { useChatSocket } from "./hooks/useChatWs";
@@ -37,9 +38,6 @@ export default function GameroomPage() {
   // Global state hooks
   const {
     loading,
-    roundName,
-    roundNumber,
-    totalRounds,
     isRoundBreak,
     timeRemaining,
     showCountDown,
@@ -167,6 +165,7 @@ export default function GameroomPage() {
                   </div>
                 </div>
               )}
+              {isRoundBreak && <AnswerReveal />}
             </div>
           </div>
         </div>

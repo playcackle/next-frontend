@@ -40,12 +40,15 @@ export const answerAtom = atom<string>("");
 export const unifiedMessagesAtom = atom<UnifiedMessage[]>([]);
 export const unifiedInputAtom = atom<string>("");
 
-// Animation state atoms
 export const animationStateAtom = atom<AnimationState>({
   attentionAnimation: "",
-  animatingTile: "",
+  slotId: null,
   showConfetti: false,
-  confettiPosition: null as { x: number; y: number } | null,
+  confettiPosition: null,
+  particlePosition: null,
+  showGlitter: false,
+  isBonus: false,
+  playerColor: "",
 });
 
 // Actions atoms (write-only atoms for state updates)
@@ -67,7 +70,8 @@ export const updateAnimationStateAtom = atom(
   null,
   (get, set, update: Partial<AnimationState>) => {
     const current = get(animationStateAtom);
-    set(animationStateAtom, { ...current, ...update });
+    const merged = { ...current, ...update };
+    set(animationStateAtom, merged);
   }
 );
 
@@ -76,9 +80,13 @@ export const resetGameStateAtom = atom(null, (get, set) => {
   set(answerAtom, "");
   set(animationStateAtom, {
     attentionAnimation: "",
-    animatingTile: "",
+    slotId: null,
     showConfetti: false,
     confettiPosition: null,
+    particlePosition: null,
+    showGlitter: false,
+    isBonus: false,
+    playerColor: "",
   });
 });
 
