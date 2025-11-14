@@ -55,7 +55,7 @@ export default function StatsRow({ nameFlash }: StatsRowProps) {
         </div>
       </div>
       <div className={styles.statsTile}>
-        <h3 className={styles.statsTitle}>Active players:</h3>
+        <h3 className={styles.statsTitle}>Playing nerds:</h3>
         <div className={styles.statsValue}>{playerCount}</div>
       </div>
     </div>
