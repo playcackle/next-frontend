@@ -6,6 +6,7 @@ import type { Metadata } from "next";
 import { getServerSession } from "next-auth";
 import type React from "react";
 import { Suspense } from "react";
+import SynthwaveBackground from "./components/synthwave-background";
 import "./globals.css";
 import { Provider } from "./provider";
 
@@ -21,6 +22,7 @@ export default async function RootLayout({
   children: React.ReactNode;
 }) {
   const session = await getServerSession();
+  const isGameroom = window.location.pathname.includes("gameroom");
   return (
     <html lang="en">
       <body
@@ -37,7 +39,7 @@ export default async function RootLayout({
             <div className="crt-content">
               <Provider>
                 <Suspense fallback={<Progress />}>
-                  {/* <SynthwaveBackground /> */}
+                  <SynthwaveBackground animated={!isGameroom} />
                   <Header session={session!} />
                   <main>{children}</main>
                 </Suspense>
