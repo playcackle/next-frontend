@@ -100,7 +100,10 @@ export const addUnifiedMessageAtom = atom(
     set(unifiedMessagesAtom, updated);
 
     // Update Bot Bob's last message if this is from Bot Bob
-    if (message.player_id === "botbob" || message.display_name.toLowerCase() === "botbob") {
+    if (
+      message.player_id === "botbob" ||
+      message.display_name.toLowerCase() === "botbob"
+    ) {
       set(botBobLastMessageAtom, message);
     }
   }

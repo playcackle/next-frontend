@@ -1,7 +1,6 @@
 "use client";
 
 import SoundEffects from "@/app/components/sound-effects";
-import { useSearchParams } from "next/navigation";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import styles from "./gameroom.module.css";
 
@@ -30,9 +29,8 @@ import { useGameState } from "./hooks/useGameState";
 import { animationStateAtom } from "./store/gameAtoms";
 
 export default function GameroomPage() {
-  const searchParams = useSearchParams();
-  const name = searchParams.get("name");
   const gameroom = useAtomValue(gameRoomAtom);
+  const animationState = useAtomValue(animationStateAtom);
   const { addAnswerBubble, bubbles, removeBubble } = useAnswerBubbles();
 
   // Global state hooks
@@ -142,6 +140,10 @@ export default function GameroomPage() {
             ref={mainRef}
             className={`
               ${styles.main}
+          ${animationState.shake ? styles.screenShake : ""}
+          ${animationState.colorFlash ? styles.colorFlash : ""}
+          ${animationState.zoomEffect ? styles.zoomEffect : ""}
+          ${animationState.rotateEffect ? styles.rotateEffect : ""}
             `}
           >
             <RoomHeader roomName={name!} />
@@ -161,6 +163,7 @@ export default function GameroomPage() {
                   />
                 </div>
               </Flex>
+              {isRoundBreak && <AnswerReveal />}
               {isRoundBreak ? (
                 <Leaderboard />
               ) : (
@@ -175,7 +178,6 @@ export default function GameroomPage() {
                   <SlotGrid />
                 </div>
               )}
-
               {!isRoundBreak && (
                 <div className={styles.leaderboardTile}>
                   <h3 className={styles.statsTitle}>Leaderboard</h3>
@@ -212,7 +214,6 @@ export default function GameroomPage() {
                   </div>
                 </div>
               )}
-              {isRoundBreak && <AnswerReveal />}
             </div>
           </div>
         </div>

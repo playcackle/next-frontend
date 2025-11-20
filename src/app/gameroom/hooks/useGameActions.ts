@@ -88,24 +88,25 @@ export const useGameActions = () => {
       isBonus: boolean = false,
       playerColor: string | null
     ) => {
-      const shouldShowConfetti = false;
+      const shouldShowConfetti = Math.random() < 0.4;
 
-      // Calculate particle position based on DOM element
       let particlePosition = null;
       let confettiPosition = null;
       const element = document.getElementById(`slot-${slotId}`) as HTMLElement;
-
+      debugger;
       if (element) {
         const rect = element.getBoundingClientRect();
         particlePosition = {
           x: rect.left + rect.width / 2,
           y: rect.top + rect.height / 2,
         };
+        // Position confetti 60px above the top of the slot tile for better visibility
         confettiPosition = {
-          x: rect.left + rect.width / 2,
-          y: rect.top - 20, // Position 20px above the slot
+          x: rect.left,
+          y: rect.top - 60,
         };
       } else {
+        console.warn("[v0] Slot element not found for:", slotId);
         // Fallback position
         particlePosition = {
           x: window.innerWidth / 2,
@@ -163,13 +164,14 @@ export const useGameActions = () => {
         playerColor: playerColor || "",
         particlePosition,
         confettiPosition,
-        showConfetti: shouldShowConfetti, // Use random chance instead of always true
+        showConfetti: shouldShowConfetti,
         showGlitter: true,
       });
 
       // Apply DOM animation
       applyDOMAnimation(slotId, animation);
 
+      // ENHANCED: Play appropriate sound with enhanced volume/effects
       try {
         if (isBonus) {
           playSound("bonus");

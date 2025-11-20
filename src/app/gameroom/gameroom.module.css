@@ -422,23 +422,26 @@
   height: 100%;
   padding: 0.5rem;
   gap: 0.5rem;
+  background: rgba(0, 0, 0, 0.4);
+  border-radius: 6px;
 }
 
 .correctAnswer {
-  font-size: 0.75rem;
+  font-size: 0.85rem; /* Increased from 0.75rem for better visibility */
   font-weight: bold;
   color: white;
-  text-shadow: 0 0 10px rgba(255, 255, 255, 0.7);
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.7), 0 2px 4px rgba(0, 0, 0, 0.5); /* Added drop shadow for depth */
   font-family: var(--retro-font);
   max-width: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
   display: -webkit-box;
   -webkit-line-clamp: 2;
-  line-clamp: 2;
   -webkit-box-orient: vertical;
   /* Add a minimum height to ensure the text has enough space */
   min-height: 2.5rem;
+  text-align: center; /* Center the text */
+  line-height: 1.3; /* Better line spacing */
 }
 
 /* Enhanced player badge appearance with dramatic entrance */
@@ -481,15 +484,15 @@
   justify-content: center;
   background: linear-gradient(
     135deg,
-    rgba(0, 0, 0, 0.8) 0%,
-    rgba(0, 0, 0, 0.6) 100%
-  );
+    rgba(0, 0, 0, 0.9) 0%,
+    rgba(30, 30, 60, 0.85) 100%
+  ); /* Darker, more contrasted background */
   border-radius: 16px;
-  padding: 0.3rem 0.6rem;
+  padding: 0.4rem 0.7rem; /* Slightly larger padding */
   gap: 0.4rem;
-  box-shadow: 0 0 15px rgba(255, 255, 255, 0.4),
-    inset 0 0 10px rgba(255, 255, 255, 0.1);
-  border: 2px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.5),
+    inset 0 0 15px rgba(255, 255, 255, 0.15), 0 4px 8px rgba(0, 0, 0, 0.3); /* Enhanced shadow for depth */
+  border: 2px solid rgba(255, 255, 255, 0.4); /* Slightly more opaque border */
   position: relative;
   margin-top: 0.5rem;
   z-index: 2;
@@ -564,13 +567,13 @@
 
 /* Enhance the player badge avatar with a subtle pulse */
 .playerBadgeAvatar {
-  width: 18px;
-  height: 18px;
+  width: 20px; /* Increased from 18px */
+  height: 20px; /* Increased from 18px */
   display: flex;
   align-items: center;
   justify-content: center;
   border-radius: 3px;
-  font-size: 0.6rem;
+  font-size: 0.65rem; /* Slightly larger font */
   font-weight: bold;
   color: white;
   text-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
@@ -591,13 +594,15 @@
 }
 
 .playerBadgeName {
-  font-size: 0.7rem;
+  font-size: 0.75rem; /* Increased from 0.7rem */
+  font-weight: 600; /* Added bold weight */
   color: white;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   max-width: 80px;
   font-family: var(--retro-font-alt);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5); /* Added text shadow for readability */
 }
 
 .slotTile {
@@ -617,32 +622,7 @@
   overflow: hidden;
   min-height: 60px; /* Increased minimum height */
   max-height: 100px; /* Increased maximum height */
-  opacity: 0;
-}
-
-.slotTileAnimation {
-  transform: translateY(-50px) translateX(-50px) rotateZ(-5deg) scale(0.8);
-  animation: none;
-  opacity: 0;
-}
-
-.slotTileVisible {
-  animation: dealCard 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-}
-
-@keyframes dealCard {
-  0% {
-    opacity: 0;
-    transform: translateY(-50px) translateX(-50px) rotateZ(-5deg) scale(0.8);
-  }
-  50% {
-    opacity: 1;
-    transform: translateY(-10px) translateX(-10px) rotateZ(-2deg) scale(1.05);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0) translateX(0) rotateZ(0) scale(1);
-  }
+  opacity: 1;
 }
 
 .slotTile:hover:not(.answered) {
@@ -662,12 +642,14 @@
 }
 
 .answered {
-  opacity: 0.8;
+  opacity: 1; /* Changed from 0.8 to fully opaque for better visibility */
   cursor: default;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  border: 2px solid rgba(0, 255, 136, 0.5); /* Added green border to indicate answered state */
+  box-shadow: 0 0 15px rgba(0, 255, 136, 0.3); /* Green glow for answered tiles */
 }
 
 .answered:hover {
@@ -1360,31 +1342,6 @@
   }
 }
 
-/* Add these styles to the existing CSS file */
-
-.intermissionText {
-  font-size: 1.2rem;
-  color: var(--neon-purple);
-  text-shadow: 0 0 10px rgba(183, 0, 255, 0.7);
-  font-weight: bold;
-  margin-bottom: 0.5rem;
-  animation: intermissionPulse 1.5s infinite alternate;
-}
-
-.roundInfo {
-  font-size: 0.9rem;
-  color: #ccc;
-}
-
-@keyframes intermissionPulse {
-  0% {
-    text-shadow: 0 0 5px rgba(183, 0, 255, 0.5);
-  }
-  100% {
-    text-shadow: 0 0 15px rgba(183, 0, 255, 1), 0 0 25px rgba(183, 0, 255, 0.7);
-  }
-}
-
 /* Bonus confetti styles */
 .bonusConfetti {
   box-shadow: 0 0 10px rgba(255, 215, 0, 0.7);
@@ -1664,7 +1621,6 @@
     box-shadow: 0 0 8px rgba(255, 215, 0, 0.2);
   }
 }
-
 /* ============================
    PLAYER AVATAR STYLES
    ============================ */
@@ -1744,16 +1700,10 @@
    ============================ */
 
 .botBobPinned {
-  background: linear-gradient(
-    135deg,
-    rgba(183, 0, 255, 0.2) 0%,
-    rgba(0, 221, 255, 0.2) 100%
-  );
   border-bottom: 2px solid rgba(183, 0, 255, 0.5);
   padding: 1rem;
   position: relative;
   overflow: hidden;
-  animation: botBobPinnedPulse 3s ease-in-out infinite alternate;
 }
 
 .botBobPinned::before {
@@ -1763,33 +1713,6 @@
   left: -100%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(255, 255, 255, 0.1),
-    transparent
-  );
-  animation: botBobShimmer 4s ease-in-out infinite;
-}
-
-@keyframes botBobPinnedPulse {
-  0% {
-    box-shadow: inset 0 0 10px rgba(183, 0, 255, 0.3);
-  }
-  100% {
-    box-shadow: inset 0 0 20px rgba(183, 0, 255, 0.5),
-      inset 0 0 30px rgba(0, 221, 255, 0.3);
-  }
-}
-
-@keyframes botBobShimmer {
-  0% {
-    left: -100%;
-  }
-  50%,
-  100% {
-    left: 100%;
-  }
 }
 
 .botBobPinnedContent {

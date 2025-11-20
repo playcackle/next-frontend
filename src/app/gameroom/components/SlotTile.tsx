@@ -2,7 +2,7 @@
 
 import { useAtomValue } from "jotai";
 import { useSession } from "next-auth/react";
-import React, { useEffect, useMemo, useRef } from "react";
+import React, { useMemo, useRef } from "react";
 import styles from "../gameroom.module.css";
 import { animationStateAtom } from "../store/gameAtoms";
 import { Slot } from "../types/state";
@@ -15,24 +15,32 @@ interface SlotTileProps {
   className: string;
 }
 
-const SlotTile: React.FC<SlotTileProps> = ({
-  slot,
-  entranceDelay = 0,
-  className,
-}) => {
+const SlotTile: React.FC<SlotTileProps> = ({ slot, className }) => {
   const { data } = useSession();
   const animationState = useAtomValue(animationStateAtom);
-  const hasAnimatedIn = useRef(false);
 
-  useEffect(() => {
-    const delay = parseFloat(entranceDelay as string) * 1000 + 500; // Add entrance animation duration
-    const timer = setTimeout(() => {
-      hasAnimatedIn.current = true;
-    }, delay);
-    return () => clearTimeout(timer);
-  }, [entranceDelay]);
+  const hasAnimated = useRef(false);
+  const lastAnimatedSlotId = useRef<string | null>(null);
 
-  // Memoize all calculations based on props
+  const shouldPulse = useMemo(() => {
+    const isCurrentlyAnimating = slot.id === animationState.slotId;
+
+    // If this is a new animation for this slot
+    if (isCurrentlyAnimating && lastAnimatedSlotId.current !== slot.id) {
+      lastAnimatedSlotId.current = slot.id;
+      hasAnimated.current = true;
+      return true;
+    }
+
+    // If animation state cleared (slotId becomes null), reset for this slot
+    if (animationState.slotId === null && hasAnimated.current) {
+      hasAnimated.current = false;
+      lastAnimatedSlotId.current = null;
+    }
+
+    return false;
+  }, [slot.id, animationState.slotId]);
+
   const displayState = useMemo(() => {
     const shouldShowContent = slot.is_snapped;
     const shouldShowAttention =
@@ -51,17 +59,16 @@ const SlotTile: React.FC<SlotTileProps> = ({
         styles.slotTile,
         slot.is_rare ? styles.bonusTile : "",
         slot.is_snapped ? styles.answered : "",
-        slot.id === animationState.slotId ? styles.correctPulse : "",
-        displayState.shouldShowAttention
+        shouldPulse ? styles.correctPulse : "",
+        displayState.shouldShowAttention && shouldPulse
           ? animationState.attentionAnimation
           : "",
       ].join(" "),
     [
       slot.is_snapped,
       slot.is_rare,
-      slot.id,
+      shouldPulse,
       animationState.attentionAnimation,
-      animationState.slotId,
       displayState.shouldShowAttention,
     ]
   );
@@ -91,14 +98,9 @@ const SlotTile: React.FC<SlotTileProps> = ({
   return (
     <div
       id={`slot-${slot.id}`}
-      className={`${
-        hasAnimatedIn.current
-          ? ""
-          : `${styles.slotTileAnimation} ${styles.slotTileVisible}`
-      } ${tileClassNames} ${className}`}
+      className={`${tileClassNames} ${className}`}
       style={
         {
-          animationDelay: hasAnimatedIn.current ? "0s" : entranceDelay,
           "--room-color": displayState.roomColor,
         } as React.CSSProperties
       }
@@ -108,11 +110,11 @@ const SlotTile: React.FC<SlotTileProps> = ({
   );
 };
 
-// Optimized memo comparison - only re-render when these specific props change
 export default React.memo(SlotTile, (prevProps, nextProps) => {
   return (
     prevProps.slot.id === nextProps.slot.id &&
     prevProps.slot.is_snapped === nextProps.slot.is_snapped &&
+    prevProps.slot.is_rare === nextProps.slot.is_rare &&
     prevProps.slot.canonical_text === nextProps.slot.canonical_text &&
     prevProps.slot.snapped_by_display_name ===
       nextProps.slot.snapped_by_display_name &&

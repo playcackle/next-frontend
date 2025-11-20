@@ -125,7 +125,7 @@ export const useGameSocket = (baseUrl: string, token: string) => {
 
     // ========== CONNECTION EVENT HANDLERS ==========
 
-    socket.on("connect", (data) => {
+    socket.on("connect", () => {
       // Successful connection - reset everything
       setSocketState({
         isConnected: true,
@@ -201,7 +201,7 @@ export const useGameSocket = (baseUrl: string, token: string) => {
 
     // Set up regular event handlers
     gameEvents.forEach((eventName) => {
-      socket.on(eventName, (data) => {
+      socket.on(eventName, (data: any) => {
         const listeners = listenersRef.current.get(eventName);
         if (listeners && listeners.size > 0) {
           listeners.forEach((callback) => {

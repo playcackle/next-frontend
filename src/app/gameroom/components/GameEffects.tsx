@@ -29,7 +29,7 @@ export default function GameEffects({ animationState }: GameEffectsProps) {
         />
       )}
 
-      {animationState.showGlitter && <div className="glitter-overlay"></div>}
+      {animationState.showGlitter && <div className="glitterOverlay"></div>}
     </>
   );
 }
