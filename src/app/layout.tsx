@@ -4,6 +4,7 @@ import "@radix-ui/themes/styles.css";
 import "animate.css";
 import type { Metadata } from "next";
 import { getServerSession } from "next-auth";
+import { headers } from "next/headers";
 import type React from "react";
 import { Suspense } from "react";
 import SynthwaveBackground from "./components/synthwave-background";
@@ -22,7 +23,12 @@ export default async function RootLayout({
   children: React.ReactNode;
 }) {
   const session = await getServerSession();
-  const isGameroom = window.location.pathname.includes("gameroom");
+  const headersList = await headers();
+  const pathname =
+    headersList.get("x-invoke-path") || headersList.get("referer");
+
+  const isGameroom = pathname?.includes("gameroom");
+
   return (
     <html lang="en">
       <body

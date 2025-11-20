@@ -6,7 +6,7 @@ interface SynthwaveBackgroundProps {
 }
 
 export default function SynthwaveBackground({
-  animated = true,
+  animated = false,
 }: SynthwaveBackgroundProps) {
   return (
     <div className={styles.synthwaveContainer}>
