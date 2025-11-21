@@ -28,7 +28,6 @@ export default async function RootLayout({
     headersList.get("x-invoke-path") || headersList.get("referer");
 
   const isGameroom = pathname?.includes("gameroom");
-
   return (
     <html lang="en">
       <body
@@ -45,7 +44,7 @@ export default async function RootLayout({
             <div className="crt-content">
               <Provider>
                 <Suspense fallback={<Progress />}>
-                  <SynthwaveBackground animated={!isGameroom} />
+                  <SynthwaveBackground animated={!false} />
                   <Header session={session!} />
                   <main>{children}</main>
                 </Suspense>
