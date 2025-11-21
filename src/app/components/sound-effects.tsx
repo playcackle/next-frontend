@@ -59,23 +59,57 @@ const createSoundGenerators = () => {
 
       const now = context.currentTime;
 
-      // Crisp "Ding" - Coin collect style
-      const osc = context.createOscillator();
-      osc.type = "sine";
-      osc.frequency.setValueAtTime(1200, now);
-      osc.frequency.exponentialRampToValueAtTime(2000, now + 0.1);
+      // "PIXEL PERFECT" - Classic 8-bit coin/collect: G5 → C6 (perfect fourth jump)
+      // Instant square wave blip
+      const blip1 = context.createOscillator();
+      blip1.type = "square";
+      blip1.frequency.value = 783.99; // G5
+      const blip1Gain = context.createGain();
+      blip1Gain.gain.setValueAtTime(0.4, now);
+      blip1Gain.gain.exponentialRampToValueAtTime(0.01, now + 0.08);
+      blip1.connect(blip1Gain);
+      blip1Gain.connect(context.destination);
+      blip1.start(now);
+      blip1.stop(now + 0.08);
 
-      const gain = context.createGain();
-      gain.gain.setValueAtTime(0.3, now);
-      gain.gain.exponentialRampToValueAtTime(0.01, now + 0.15);
+      // Second higher blip
+      const blip2 = context.createOscillator();
+      blip2.type = "square";
+      blip2.frequency.value = 1046.5; // C6
+      const blip2Gain = context.createGain();
+      blip2Gain.gain.setValueAtTime(0.45, now + 0.06);
+      blip2Gain.gain.exponentialRampToValueAtTime(0.01, now + 0.16);
+      blip2.connect(blip2Gain);
+      blip2Gain.connect(context.destination);
+      blip2.start(now + 0.06);
+      blip2.stop(now + 0.16);
 
-      osc.connect(gain);
-      gain.connect(context.destination);
+      // Triangle wave for retro warmth
+      const tri = context.createOscillator();
+      tri.type = "triangle";
+      tri.frequency.setValueAtTime(783.99, now);
+      tri.frequency.exponentialRampToValueAtTime(1046.5, now + 0.08);
+      const triGain = context.createGain();
+      triGain.gain.setValueAtTime(0.25, now);
+      triGain.gain.exponentialRampToValueAtTime(0.01, now + 0.18);
+      tri.connect(triGain);
+      triGain.connect(context.destination);
+      tri.start(now);
+      tri.stop(now + 0.18);
 
-      osc.start(now);
-      osc.stop(now + 0.15);
+      // Sub bass punch
+      const sub = context.createOscillator();
+      sub.type = "sine";
+      sub.frequency.value = 196.0; // G3
+      const subGain = context.createGain();
+      subGain.gain.setValueAtTime(0.3, now);
+      subGain.gain.exponentialRampToValueAtTime(0.01, now + 0.12);
+      sub.connect(subGain);
+      subGain.connect(context.destination);
+      sub.start(now);
+      sub.stop(now + 0.12);
 
-      console.log("Played SIMPLE DING (correct)");
+      console.log("Played PIXEL PERFECT (correct)");
     } catch (e) {
       console.error("Error playing sound effect:", e);
     }
@@ -88,25 +122,130 @@ const createSoundGenerators = () => {
 
       const now = context.currentTime;
 
-      // Simple "Power Up" - Ascending trill
-      const freqs = [440, 554, 659, 880]; // A major chord
-      freqs.forEach((f, i) => {
-        const osc = context.createOscillator();
-        osc.type = "square";
-        osc.frequency.value = f;
-        
-        const gain = context.createGain();
-        gain.gain.setValueAtTime(0.1, now + i * 0.05);
-        gain.gain.exponentialRampToValueAtTime(0.01, now + i * 0.05 + 0.1);
-        
-        osc.connect(gain);
-        gain.connect(context.destination);
-        
-        osc.start(now + i * 0.05);
-        osc.stop(now + i * 0.05 + 0.1);
+      // "JACKPOT CASCADE" - Epic arcade bonus like Maelstrom power-ups
+      // Explosive start with noise burst
+      const noiseBuffer = context.createBuffer(
+        1,
+        context.sampleRate * 0.04,
+        context.sampleRate
+      );
+      const noiseData = noiseBuffer.getChannelData(0);
+      for (let i = 0; i < noiseBuffer.length; i++) {
+        noiseData[i] =
+          (Math.random() * 2 - 1) * Math.exp(-i / (noiseBuffer.length / 2));
+      }
+      const noise = context.createBufferSource();
+      noise.buffer = noiseBuffer;
+      const noiseGain = context.createGain();
+      noiseGain.gain.value = 0.4;
+      noise.connect(noiseGain);
+      noiseGain.connect(context.destination);
+      noise.start(now);
+
+      // Rapid ascending arpeggio cascade: C5 → E5 → G5 → C6 → E6 → G6 → C7
+      const notes = [523.25, 659.25, 783.99, 1046.5, 1318.51, 1567.98, 2093.0];
+      const intervals = [0, 0.07, 0.13, 0.19, 0.25, 0.31, 0.37];
+
+      notes.forEach((freq, i) => {
+        // Square wave blips
+        const blip = context.createOscillator();
+        blip.type = "square";
+        blip.frequency.value = freq;
+        const blipGain = context.createGain();
+        blipGain.gain.setValueAtTime(0.35, now + intervals[i]);
+        blipGain.gain.exponentialRampToValueAtTime(
+          0.01,
+          now + intervals[i] + 0.12
+        );
+        blip.connect(blipGain);
+        blipGain.connect(context.destination);
+        blip.start(now + intervals[i]);
+        blip.stop(now + intervals[i] + 0.12);
+
+        // Triangle harmonics
+        const tri = context.createOscillator();
+        tri.type = "triangle";
+        tri.frequency.value = freq * 0.5; // Octave down
+        const triGain = context.createGain();
+        triGain.gain.setValueAtTime(0.2, now + intervals[i]);
+        triGain.gain.exponentialRampToValueAtTime(
+          0.01,
+          now + intervals[i] + 0.12
+        );
+        tri.connect(triGain);
+        triGain.connect(context.destination);
+        tri.start(now + intervals[i]);
+        tri.stop(now + intervals[i] + 0.12);
       });
 
-      console.log("Played SIMPLE POWERUP (bonus)");
+      // Pulsing power chord backing (C major)
+      const chord1 = context.createOscillator();
+      chord1.type = "square";
+      chord1.frequency.value = 261.63; // C4
+      const chord2 = context.createOscillator();
+      chord2.type = "square";
+      chord2.frequency.value = 329.63; // E4
+      const chord3 = context.createOscillator();
+      chord3.type = "square";
+      chord3.frequency.value = 392.0; // G4
+
+      const chordGain = context.createGain();
+      // Pulsing effect
+      chordGain.gain.setValueAtTime(0.25, now + 0.05);
+      chordGain.gain.setValueAtTime(0.15, now + 0.12);
+      chordGain.gain.setValueAtTime(0.25, now + 0.19);
+      chordGain.gain.setValueAtTime(0.15, now + 0.26);
+      chordGain.gain.setValueAtTime(0.25, now + 0.33);
+      chordGain.gain.exponentialRampToValueAtTime(0.01, now + 0.6);
+
+      chord1.connect(chordGain);
+      chord2.connect(chordGain);
+      chord3.connect(chordGain);
+      chordGain.connect(context.destination);
+
+      chord1.start(now + 0.05);
+      chord2.start(now + 0.05);
+      chord3.start(now + 0.05);
+      chord1.stop(now + 0.6);
+      chord2.stop(now + 0.6);
+      chord3.stop(now + 0.6);
+
+      // Massive sub bass kick
+      const kick = context.createOscillator();
+      kick.type = "sine";
+      kick.frequency.setValueAtTime(150, now);
+      kick.frequency.exponentialRampToValueAtTime(40, now + 0.15);
+      const kickGain = context.createGain();
+      kickGain.gain.setValueAtTime(0.6, now);
+      kickGain.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
+      kick.connect(kickGain);
+      kickGain.connect(context.destination);
+      kick.start(now);
+      kick.stop(now + 0.25);
+
+      // Second kick at climax
+      const kick2 = context.createOscillator();
+      kick2.type = "sine";
+      kick2.frequency.setValueAtTime(150, now + 0.37);
+      kick2.frequency.exponentialRampToValueAtTime(40, now + 0.52);
+      const kick2Gain = context.createGain();
+      kick2Gain.gain.setValueAtTime(0.55, now + 0.37);
+      kick2Gain.gain.exponentialRampToValueAtTime(0.01, now + 0.6);
+      kick2.connect(kick2Gain);
+      kick2Gain.connect(context.destination);
+      kick2.start(now + 0.37);
+      kick2.stop(now + 0.6);
+
+      // Echo delay for depth
+      const delay = context.createDelay(0.15);
+      delay.delayTime.value = 0.08;
+      const delayGain = context.createGain();
+      delayGain.gain.value = 0.3;
+      chordGain.connect(delay);
+      delay.connect(delayGain);
+      delayGain.connect(context.destination);
+
+      console.log("Played JACKPOT CASCADE (bonus)");
     } catch (e) {
       console.error("Error playing bonus sound effect:", e);
     }
@@ -202,7 +341,7 @@ const createSoundGenerators = () => {
       // Sub bass thump
       const sub = context.createOscillator();
       sub.type = "sine";
-      sub.frequency.setValueAtTime(164.81, now); // E3
+      sub.frequency.value = 164.81; // E3
       sub.frequency.exponentialRampToValueAtTime(82.41, now + 0.1); // E2
       const subGain = context.createGain();
       subGain.gain.setValueAtTime(0.5, now);
@@ -661,6 +800,8 @@ const createSoundGenerators = () => {
 // Create sound generators once outside component
 const soundGenerators = createSoundGenerators();
 
+let hasInitialized = false;
+
 export default function SoundEffects({ onLoad }: SoundEffectProps) {
   console.log("SoundEffects component mounted");
 
@@ -674,54 +815,48 @@ export default function SoundEffects({ onLoad }: SoundEffectProps) {
       console.warn(`Unknown sound type: ${type}`);
       soundGenerators.correct(); // Fallback
     }
-  }, []);
+  }, []); // Empty deps array - function never needs to change
 
-  // Initialize audio context and expose global function
-  useEffect(() => {
-    console.log("SoundEffects useEffect running");
-
-    const handleUserInteraction = async () => {
-      try {
-        const context = await getOrCreateAudioContext();
-        if (context && context.state === "running") {
-          console.log("AudioContext ready after user interaction");
-          // Remove listeners once activated
-          document.removeEventListener("click", handleUserInteraction);
-          document.removeEventListener("keydown", handleUserInteraction);
-        }
-      } catch (e) {
-        console.error("Error resuming AudioContext on user interaction:", e);
-      }
-    };
-
-    try {
-      if (typeof window !== "undefined") {
-        console.log("Exposing playSoundEffect to window");
-        // Expose the sound effect function globally
-        (window as any).playSoundEffect = playSoundEffect;
-
-        // Add user interaction listeners to resume AudioContext
-        document.addEventListener("click", handleUserInteraction);
-        document.addEventListener("keydown", handleUserInteraction);
-
-        console.log("SoundEffects initialized, calling onLoad");
-        onLoad?.();
-      }
-    } catch (e) {
-      console.error("Error initializing Web Audio API:", e);
+  // Memoized onLoad handler to stabilize it
+  const handleLoad = useCallback(() => {
+    if (onLoad) {
+      onLoad();
     }
+  }, [onLoad]);
 
-    // Cleanup function
-    return () => {
-      if (typeof window !== "undefined") {
-        delete (window as any).playSoundEffect;
-        document.removeEventListener("click", handleUserInteraction);
-        document.removeEventListener("keydown", handleUserInteraction);
+  useEffect(() => {
+    if (hasInitialized) {
+      return;
+    }
+    hasInitialized = true;
+
+    const resumeAudio = async () => {
+      try {
+        await getOrCreateAudioContext();
+      } catch (e) {
+        console.error("Error initializing audio:", e);
       }
     };
-  }, [playSoundEffect, onLoad]);
 
-  // Cleanup audio context on unmount
+    const handleUserInteraction = () => {
+      resumeAudio();
+      handleLoad();
+    };
+
+    // Resume audio context on user interaction
+    document.addEventListener("click", handleUserInteraction, { once: true });
+    document.addEventListener("keydown", handleUserInteraction, { once: true });
+    document.addEventListener("touchstart", handleUserInteraction, {
+      once: true,
+    });
+
+    return () => {
+      document.removeEventListener("click", handleUserInteraction);
+      document.removeEventListener("keydown", handleUserInteraction);
+      document.removeEventListener("touchstart", handleUserInteraction);
+    };
+  }, [handleLoad]); // Keep handleLoad in deps to maintain consistent array size
+
   useEffect(() => {
     return () => {
       if (globalAudioContext && globalAudioContext.state !== "closed") {

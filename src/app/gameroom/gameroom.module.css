@@ -1626,6 +1626,8 @@
   height: 28px;
   min-width: 28px;
   min-height: 28px;
+  margin-left: 0.25rem;
+  margin-right: 0.25rem;
 }
 
 .avatarMedium {
@@ -1696,7 +1698,7 @@
 
 .botBobPinned {
   border-bottom: 2px solid rgba(183, 0, 255, 0.5);
-  padding: 1rem;
+  padding: 0.5rem;
   position: relative;
   overflow: hidden;
 }
@@ -1748,7 +1750,7 @@
 
 /* Adjust message styling to work with avatars */
 .unifiedMessage {
-  padding: 0.5rem;
+  padding: 0.1rem;
 }
 
 .messageContent {

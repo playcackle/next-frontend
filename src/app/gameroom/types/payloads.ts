@@ -69,9 +69,9 @@ export type LobbySyncPayload = {
   total_rounds: number;
   time_remaining_seconds: number | null;
   player_count: number;
-  topic_name: string | null;
-  topic_prompt?: string | null;
-  topic_example?: string | null;
+  topic_name: string;
+  topic_prompt: string;
+  topic_example: string;
   lobby_id: string;
   timestamp_utc: string;
   slots: Slot[];

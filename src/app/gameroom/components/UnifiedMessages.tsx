@@ -3,16 +3,12 @@
 import { Flex } from "@radix-ui/themes";
 import { useAtomValue } from "jotai";
 import { useSession } from "next-auth/react";
-import React, { useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import styles from "../gameroom.module.css";
 import { useGameState } from "../hooks/useGameState";
-import {
-  UnifiedMessage,
-  unifiedMessagesAtom,
-  botBobLastMessageAtom,
-} from "../store/gameAtoms";
-import PlayerAvatar from "./PlayerAvatar";
+import { botBobLastMessageAtom, unifiedMessagesAtom } from "../store/gameAtoms";
 import BotBobPinnedMessage from "./BotBobPinnedMessage";
+import PlayerAvatar from "./PlayerAvatar";
 
 export default function UnifiedMessages() {
   const { data: session } = useSession();
@@ -40,27 +36,14 @@ export default function UnifiedMessages() {
 
   const getMessageTypeClass = (messageType: string) => {
     switch (messageType) {
-      case 'answer_attempt':
+      case "answer_attempt":
         return styles.answerMessage;
-      case 'successful_answer':
+      case "successful_answer":
         return styles.successfulAnswerMessage;
-      case 'failed_answer':
+      case "failed_answer":
         return styles.failedAnswerMessage;
       default:
         return styles.chatMessage;
-    }
-  };
-
-  const getMessagePrefix = (message: UnifiedMessage) => {
-    switch (message.message_type) {
-      case 'answer_attempt':
-        return '';
-      case 'successful_answer':
-        return `+${message.points_awarded}`;
-      case 'failed_answer':
-        return '';
-      default:
-        return '';
     }
   };
 
@@ -74,14 +57,15 @@ export default function UnifiedMessages() {
           <div className={styles.messagesEmpty}>
             {isRoundBreak
               ? "💬 Start chatting!"
-              : "⚡ Answers will appear here..."
-            }
+              : "⚡ Answers will appear here..."}
           </div>
         ) : (
           messages.map((msg, index) => (
             <div
               key={index}
-              className={`${styles.unifiedMessage} ${getMessageTypeClass(msg.message_type)} ${
+              className={`${styles.unifiedMessage} ${getMessageTypeClass(
+                msg.message_type
+              )} ${
                 msg.player_id === session?.user.id ? styles.ownMessage : ""
               }`}
             >
@@ -93,10 +77,9 @@ export default function UnifiedMessages() {
                 />
                 <div className={styles.messageContentWrapper}>
                   <Flex direction="row" gap="2" align="center">
-                    <span className={styles.messagePrefix}>
-                      {getMessagePrefix(msg)}
+                    <span className={styles.messageUser}>
+                      {msg.display_name}
                     </span>
-                    <span className={styles.messageUser}>{msg.display_name}</span>
                     <span className={styles.messageTime}>
                       {formatTimestamp(msg.timestamp)}
                     </span>
@@ -105,7 +88,8 @@ export default function UnifiedMessages() {
                     {msg.text}
                     {msg.canonical_text && msg.canonical_text !== msg.text && (
                       <span className={styles.canonicalAnswer}>
-                        {" "}→ "{msg.canonical_text}"
+                        {" "}
+                        → "{msg.canonical_text}"
                       </span>
                     )}
                   </div>

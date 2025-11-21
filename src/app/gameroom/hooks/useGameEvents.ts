@@ -29,6 +29,8 @@ export const useGameEvents = (gameWsUrl: string, token: string) => {
   const handleLobbySyncRef = useRef((data: LobbySyncPayload) => {
     updateGameState({
       roundNumber: data.round_number,
+      roundExample: data.topic_example!,
+      roundPrompt: data.topic_prompt!,
       totalRounds: data.total_rounds,
       playerCount: data.player_count,
       timeRemaining: data.time_remaining_seconds ?? 0,
@@ -55,7 +57,7 @@ export const useGameEvents = (gameWsUrl: string, token: string) => {
     updateGameState({
       isRoundBreak: true,
       scores: data.scores ?? [],
-        accolades: data.accolades ?? [],
+      accolades: data.accolades ?? [],
     });
   });
 
@@ -69,10 +71,12 @@ export const useGameEvents = (gameWsUrl: string, token: string) => {
     updateGameState({
       isRoundBreak: false,
       roundName: data.topic_name,
+      roundExample: data.topic_example,
+      roundPrompt: data.topic_prompt,
       slots: data.slots,
       roundNumber: data.round_number,
       showCountDown: false,
-        accolades: [], // Clear accolades for new round
+      accolades: [], // Clear accolades for new round
     });
   });
 
@@ -86,6 +90,8 @@ export const useGameEvents = (gameWsUrl: string, token: string) => {
     updateGameState({
       roundNumber: 0,
       roundName: "",
+      roundExample: "",
+      roundPrompt: "",
       isRoundBreak: false,
       slots: [],
       scores: [],
@@ -121,6 +127,8 @@ export const useGameEvents = (gameWsUrl: string, token: string) => {
     handleLobbySyncRef.current = (data: LobbySyncPayload) => {
       updateGameState({
         roundNumber: data.round_number,
+        roundExample: data.topic_example,
+        roundPrompt: data.topic_prompt,
         totalRounds: data.total_rounds,
         playerCount: data.player_count,
         timeRemaining: data.time_remaining_seconds ?? 0,

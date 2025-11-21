@@ -3,11 +3,7 @@ import styles from "../gameroom.module.css";
 import { useGameState } from "../hooks/useGameState";
 import { formatTime } from "../utils";
 
-interface StatsRowProps {
-  nameFlash?: boolean;
-}
-
-export default function StatsRow({ nameFlash }: StatsRowProps) {
+export default function StatsRow() {
   const {
     playerCount,
     roundName,
