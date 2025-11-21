@@ -1,9 +1,8 @@
 import GameroomTileComponent from "@/app/components/gameroom-tile";
 import { getServerSession } from "next-auth";
 import { AuthButtons } from "./components/auth-buttons";
-import styles from "./page.module.css";
-import { GameroomTile } from "@/app/models/gameroom"; // Import the GameroomTile type
 import SettingsControls from "./components/settings-controls"; // Import the new component
+import styles from "./page.module.css";
 
 export default async function Home() {
   const gamerooms = await fetchGamerooms();
@@ -21,7 +20,7 @@ export default async function Home() {
       {isSession ? (
         <section className={styles.lobbiesSection}>
           <div className={styles.lobbiesContainer}>
-            {gamerooms.map((x: GameroomTile, i: number) => (
+            {gamerooms.map((x: any, i: number) => (
               <GameroomTileComponent gameroom={x} key={i} />
             ))}
           </div>
@@ -36,7 +35,7 @@ export default async function Home() {
 }
 
 // Server-side function to fetch available gamerooms
-async function fetchGamerooms(): Promise<GameroomTile[]> {
+async function fetchGamerooms(): Promise<any[]> {
   try {
     const baseUrl =
       process.env.BACKEND_URL || process.env.NEXT_PUBLIC_APP_BACKEND_URL;
