@@ -13,6 +13,7 @@ import {
   Zap,
 } from "lucide-react";
 
+import { useState } from "react";
 import { useGameState } from "../hooks/useGameState";
 import { Accolade } from "../types/state";
 import styles from "./leaderboard.module.css";
@@ -28,6 +29,34 @@ const ACCOLADE_ICONS: Record<string, LucideIcon> = {
   hot_streak: TrendingUp,
   clutch_player: Timer,
 };
+
+function AccoladeChip({ accolade }: { accolade: Accolade }) {
+  const [showPopover, setShowPopover] = useState(false);
+  const IconComponent = ACCOLADE_ICONS[accolade.accolade_type] || Award;
+
+  return (
+    <div
+      className={styles.accoladeChip}
+      onMouseEnter={() => setShowPopover(true)}
+      onMouseLeave={() => setShowPopover(false)}
+    >
+      <IconComponent aria-hidden="true" className={styles.accoladeIcon} />
+
+      <span className={styles.accoladeTitle}>{accolade.title}</span>
+      {showPopover && (
+        <div className={styles.accoladePopover}>
+          <div className={styles.accoladePopoverTitle}>
+            <span className={styles.accoladePopoverIcon}></span>
+            {accolade.title}
+          </div>
+          <div className={styles.accoladePopoverDescription}>
+            {accolade.description}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
 
 export default function Leaderboard() {
   const { scores, accolades } = useGameState();
@@ -60,26 +89,12 @@ export default function Leaderboard() {
                 </div>
                 {playerAccolades.length > 0 && (
                   <div className={styles.accoladesRow}>
-                    {playerAccolades.map((accolade, idx) => {
-                      const IconComponent =
-                        ACCOLADE_ICONS[accolade.accolade_type] || Award;
-
-                      return (
-                        <span
-                          key={idx}
-                          className={styles.accoladeBadge}
-                          title={accolade.description}
-                        >
-                          <IconComponent
-                            aria-hidden="true"
-                            className={styles.accoladeIcon}
-                          />
-                          <span className={styles.accoladeTitle}>
-                            {accolade.title}
-                          </span>
-                        </span>
-                      );
-                    })}
+                    {playerAccolades.map((accolade, i) => (
+                      <AccoladeChip
+                        accolade={accolade}
+                        key={accolade.title + i}
+                      />
+                    ))}
                   </div>
                 )}
               </div>
