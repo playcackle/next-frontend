@@ -29,8 +29,8 @@ export const useGameEvents = (gameWsUrl: string, token: string) => {
   const handleLobbySyncRef = useRef((data: LobbySyncPayload) => {
     updateGameState({
       roundNumber: data.round_number,
-      roundExample: data.topic_example!,
-      roundPrompt: data.topic_prompt!,
+      roundExample: data.topic_example,
+      roundPrompt: data.topic_prompt,
       totalRounds: data.total_rounds,
       playerCount: data.player_count,
       timeRemaining: data.time_remaining_seconds ?? 0,
