@@ -17,7 +17,7 @@ export default function Header(props: Props) {
       <div className={styles.logo}>
         <Link href="/">
           <span className={styles.logoText}>
-            SNAP<span className={styles.logoHighlight}>SCORE</span>
+            CAC<span className={styles.logoHighlight}>KLE</span>
           </span>
         </Link>
       </div>

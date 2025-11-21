@@ -7,9 +7,7 @@ export function AuthButtons() {
   return (
     <div className={styles.authButtonsContainer}>
       <div className={styles.authMessage}>
-        <h2 className={styles.authTitle}>
-          Join the SnapScore Quiz Revolution!!
-        </h2>
+        <h2 className={styles.authTitle}>Join the Cackle Quiz Revolution!!</h2>
         <p className={styles.authDescription}>
           Sign up or log in to access our rad collection quiz of everything
           between 80's music and classic pub quizes

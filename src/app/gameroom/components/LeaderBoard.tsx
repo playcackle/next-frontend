@@ -41,8 +41,6 @@ function AccoladeChip({ accolade }: { accolade: Accolade }) {
       onMouseLeave={() => setShowPopover(false)}
     >
       <IconComponent aria-hidden="true" className={styles.accoladeIcon} />
-
-      <span className={styles.accoladeTitle}>{accolade.title}</span>
       {showPopover && (
         <div className={styles.accoladePopover}>
           <div className={styles.accoladePopoverTitle}>

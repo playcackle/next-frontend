@@ -1,7 +1,7 @@
 .leaderboardContainer {
   background-color: rgba(20, 20, 40, 0.8);
   border-radius: 8px;
-  padding: 0.75rem;
+  padding: 0.25rem;
   box-shadow: 0 0 5px var(--neon-pink), 0 0 10px var(--neon-pink),
     inset 0 0 5px rgba(255, 0, 170, 0.3);
   border: 1px solid rgba(255, 0, 170, 0.3);
@@ -12,7 +12,7 @@
 }
 
 .title {
-  font-size: 1rem;
+  font-size: 0.75rem;
   margin-bottom: 0.5rem;
   color: #fff;
   text-shadow: 0 0 10px rgba(255, 0, 170, 0.7);
@@ -31,7 +31,7 @@
   display: flex;
   align-items: center;
   gap: 1rem;
-  padding: 0.75rem;
+  padding: 0.25rem;
   margin-bottom: 0.5rem;
   background-color: rgba(10, 10, 30, 0.5);
   border-radius: 4px;
@@ -98,7 +98,7 @@
 }
 
 .username {
-  font-size: 1rem;
+  font-size: 0.75rem;
   font-weight: bold;
   color: white;
   /* Removed margin-bottom */

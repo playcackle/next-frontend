@@ -13,8 +13,8 @@ export default async function Home() {
       <SettingsControls musicSrc="/audio/Snapscore.wav" />
       <section className={styles.heroSection}>
         <h1 className={styles.title}>
-          <span className={styles.neonText}>SNAP</span>
-          <span className={styles.neonTextPink}>SCORE</span>
+          <span className={styles.neonText}>CAC</span>
+          <span className={styles.neonTextPink}>KLE</span>
         </h1>
       </section>
       {isSession ? (
