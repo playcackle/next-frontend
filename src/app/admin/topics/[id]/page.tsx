@@ -5,8 +5,10 @@ import { useState, useEffect } from "react";
 import {
   topicsApi,
   slotsApi,
+  collectionsApi,
   type TopicDetail,
   type Slot,
+  type Collection,
 } from "@/lib/api/admin";
 import styles from "./page.module.css";
 
@@ -22,6 +24,7 @@ export default function TopicDetailPage() {
   const [topicName, setTopicName] = useState("");
   const [topicPrompt, setTopicPrompt] = useState("");
   const [topicExample, setTopicExample] = useState("");
+  const [collections, setCollections] = useState<Collection[]>([]);
   const [showCreateSlot, setShowCreateSlot] = useState(false);
 
   // New slot form state
@@ -39,12 +42,16 @@ export default function TopicDetailPage() {
       setLoading(true);
       setError(null);
 
-      // Load topic details with slots
-      const topicData = await topicsApi.getById(topicId);
+      // Load topic details with slots and all collections for display
+      const [topicData, collectionsData] = await Promise.all([
+        topicsApi.getById(topicId),
+        collectionsApi.getAll(),
+      ]);
       setTopic(topicData);
       setTopicName(topicData.name);
       setTopicPrompt(topicData.prompt || "");
       setTopicExample(topicData.example_text || "");
+      setCollections(collectionsData);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to load topic");
     } finally {
@@ -108,6 +115,17 @@ export default function TopicDetailPage() {
 
   const handleViewSlot = (slotId: number) => {
     router.push(`/admin/slots/${slotId}`);
+  };
+
+  const getCollectionNames = (collectionIds: number[]) => {
+    if (!collectionIds || collectionIds.length === 0) {
+      return "Not assigned to any collection";
+    }
+    return collectionIds
+      .map(
+        (id) => collections.find((collection) => collection.id === id)?.name || `Collection ${id}`
+      )
+      .join(", ");
   };
 
   if (loading) {
@@ -220,6 +238,10 @@ export default function TopicDetailPage() {
                       <strong>Example:</strong> {topic.example_text}
                     </p>
                   )}
+                  <p className={styles.topicCollections}>
+                    <strong>Collections:</strong>{" "}
+                    {getCollectionNames(topic.collection_ids || [])}
+                  </p>
                 </div>
                 <button
                   className={styles.editMetadataButton}

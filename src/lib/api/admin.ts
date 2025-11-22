@@ -34,7 +34,7 @@ export type Topic = {
   name: string;
   prompt: string | null;
   example_text: string | null;
-  collection_id: number;
+  collection_ids: number[];
   slot_count?: number;
 };
 
@@ -46,14 +46,14 @@ export type TopicCreate = {
   name: string;
   prompt?: string;
   example_text?: string;
-  collection_id: number;
+  collection_ids: number[];
 };
 
 export type TopicUpdate = {
   name?: string;
   prompt?: string;
   example_text?: string;
-  collection_id?: number;
+  collection_ids?: number[];
 };
 
 export type Slot = {

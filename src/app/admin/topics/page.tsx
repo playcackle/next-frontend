@@ -51,13 +51,17 @@ export default function TopicsPage() {
     }
   };
 
-  const getCollectionName = (collectionId: number) => {
-    const collection = collections.find((c) => c.id === collectionId);
-    return collection?.name || "Unknown";
+  const getCollectionNames = (collectionIds: number[]) => {
+    if (!collectionIds || collectionIds.length === 0) {
+      return "No collection";
+    }
+    return collectionIds
+      .map((id) => collections.find((c) => c.id === id)?.name || `Collection ${id}`)
+      .join(", ");
   };
 
   const filteredTopics = filterCollection
-    ? topics.filter((t) => t.collection_id === filterCollection)
+    ? topics.filter((t) => t.collection_ids?.includes(filterCollection))
     : topics;
 
   if (loading) {
@@ -130,7 +134,7 @@ export default function TopicsPage() {
               <div className={styles.topicInfo}>
                 <h3 className={styles.topicName}>{topic.name}</h3>
                 <p className={styles.collectionName}>
-                  Collection: {getCollectionName(topic.collection_id)}
+                  Collections: {getCollectionNames(topic.collection_ids)}
                 </p>
                 {topic.prompt && (
                   <p className={styles.topicPrompt}>Prompt: {topic.prompt}</p>

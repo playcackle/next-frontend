@@ -110,14 +110,16 @@
 }
 
 .topicPrompt,
-.topicExample {
+.topicExample,
+.topicCollections {
   color: #aaa;
   font-size: 1rem;
   margin: 0.25rem 0;
 }
 
 .topicPrompt strong,
-.topicExample strong {
+.topicExample strong,
+.topicCollections strong {
   color: #00ffff;
 }
 
