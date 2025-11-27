@@ -10,7 +10,12 @@ import ErrorModal from "./error-modal";
 import styles from "./gameroom-tile.module.css";
 
 export type GameroomTileProps = {
-  gameroom: any;
+  gameroom: {
+    lobby_id: string;
+    collection_name: string;
+    player_count: number;
+    join_base_url?: string | null;
+  };
 };
 
 export default function GameroomTile(props: GameroomTileProps) {
@@ -30,6 +35,7 @@ export default function GameroomTile(props: GameroomTileProps) {
     const gameRoom = await joinGameroom({
       lobbyId: gameroom.lobby_id,
       playerId: data.user.id,
+      joinBaseUrl: gameroom.join_base_url ?? undefined,
     });
     if ("isError" in gameRoom) {
       setErrorMessage(gameRoom.error);

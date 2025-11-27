@@ -3,6 +3,7 @@
 type JoinPayload = {
   lobbyId: string;
   playerId: string;
+  joinBaseUrl?: string | null;
 };
 
 type LobbyJoinSuccess = {
@@ -19,6 +20,13 @@ type LobbyJoinError = {
 
 type LobbyJoinResponse = LobbyJoinSuccess | LobbyJoinError;
 
+const formatJoinUrl = (baseUrl: string) => {
+  const trimmed = baseUrl.endsWith("/")
+    ? baseUrl.slice(0, baseUrl.length - 1)
+    : baseUrl;
+  return `${trimmed}/join`;
+};
+
 const resolveLobbyManagerUrl = () => {
   const baseUrl =
     process.env.BACKEND_URL || process.env.NEXT_PUBLIC_LOBBY_MANAGER_URL;
@@ -28,41 +36,52 @@ const resolveLobbyManagerUrl = () => {
   return baseUrl;
 };
 
+const postJoin = async (url: string, playerId: string) => {
+  const response = await fetch(url, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ player_id: playerId }),
+  });
+
+  if (!response.ok) {
+    let errorMessage = "Unable to join lobby.";
+    try {
+      const errorData = await response.json();
+      errorMessage = errorData.detail || errorData.message || errorMessage;
+    } catch (error) {
+      console.error("Failed to parse join error:", error);
+    }
+    return {
+      isError: true,
+      error: errorMessage,
+    } as LobbyJoinError;
+  }
+
+  return (await response.json()) as LobbyJoinSuccess;
+};
+
 export const joinGameroom = async ({
   lobbyId,
   playerId,
+  joinBaseUrl,
 }: JoinPayload): Promise<LobbyJoinResponse> => {
-  const lobbyManagerUrl = resolveLobbyManagerUrl();
   try {
-    const response = await fetch(`${lobbyManagerUrl}/lobbies/${lobbyId}/join`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ player_id: playerId }),
-    });
-
-    if (!response.ok) {
-      let errorMessage = "Unable to join lobby.";
-      try {
-        const errorData = await response.json();
-        errorMessage = errorData.detail || errorData.message || errorMessage;
-      } catch (error) {
-        console.error("Failed to parse join error:", error);
-      }
-      return {
-        isError: true,
-        error: errorMessage,
-      };
+    if (joinBaseUrl) {
+      return await postJoin(formatJoinUrl(joinBaseUrl), playerId);
     }
 
-    const data = (await response.json()) as LobbyJoinSuccess;
-    return data;
+    const lobbyManagerUrl = resolveLobbyManagerUrl();
+    return await postJoin(
+      `${lobbyManagerUrl}/lobbies/${lobbyId}/join`,
+      playerId
+    );
   } catch (error) {
-    console.error("Failed to reach Lobby Manager:", error);
+    console.error("Failed during lobby join:", error);
     return {
       isError: true,
-      error: "Lobby Manager is unavailable. Please try again shortly.",
+      error: "Unable to reach lobby. Please try again shortly.",
     };
   }
 };
