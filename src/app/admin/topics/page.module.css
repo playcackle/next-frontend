@@ -6,6 +6,52 @@
 
 .header {
   margin-bottom: 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 2rem;
+}
+
+.uploadToggle {
+  background: rgba(0, 221, 255, 0.1);
+  border: 2px solid var(--neon-blue);
+  color: var(--neon-blue);
+  padding: 1rem 2rem;
+  font-size: 1rem;
+  font-family: var(--retro-font);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 10px rgba(0, 221, 255, 0.3);
+  border-radius: 4px;
+  white-space: nowrap;
+}
+
+.uploadToggle:hover {
+  background: rgba(0, 221, 255, 0.2);
+  box-shadow: 0 0 20px rgba(0, 221, 255, 0.5);
+  transform: translateY(-2px);
+}
+
+.uploadToggle:active {
+  transform: translateY(0);
+}
+
+.uploadSection {
+  margin-bottom: 2rem;
+  animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .title {
@@ -270,6 +316,15 @@
 }
 
 @media (max-width: 768px) {
+  .header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .uploadToggle {
+    width: 100%;
+  }
+
   .filterSection {
     flex-direction: column;
     align-items: stretch;

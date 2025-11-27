@@ -5,7 +5,6 @@ import type React from "react"
 import { usePathname, useRouter } from "next/navigation"
 import styles from "./layout.module.css"
 import SynthwaveBackground from "@/components/synthwave-background"
-import Header from "@/components/header"
 
 export default function AdminLayout({
   children,
@@ -24,7 +23,6 @@ export default function AdminLayout({
   return (
     <div className={styles.container}>
       <SynthwaveBackground />
-      <Header />
 
       <nav className={styles.tabNav}>
         {navItems.map((item) => (

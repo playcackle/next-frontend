@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import { topicsApi, collectionsApi, type Topic, type Collection } from "@/lib/api/admin";
+import SlotCSVUpload from "../components/SlotCSVUpload";
 import styles from "./page.module.css";
 
 export default function TopicsPage() {
@@ -12,6 +13,7 @@ export default function TopicsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [filterCollection, setFilterCollection] = useState<number | null>(null);
+  const [showUpload, setShowUpload] = useState(false);
 
   useEffect(() => {
     loadData();
@@ -95,7 +97,23 @@ export default function TopicsPage() {
           <span className={styles.neonText}>TOPIC</span>
           <span className={styles.neonTextPink}>BROWSER</span>
         </h1>
+        <button
+          className={styles.uploadToggle}
+          onClick={() => setShowUpload(!showUpload)}
+        >
+          {showUpload ? "✖️ CLOSE UPLOAD" : "⬆️ UPLOAD SLOTS"}
+        </button>
       </div>
+
+      {/* CSV Upload Section */}
+      {showUpload && (
+        <div className={styles.uploadSection}>
+          <SlotCSVUpload onUploadComplete={() => {
+            loadData();
+            setShowUpload(false);
+          }} />
+        </div>
+      )}
 
       {/* Filter */}
       <div className={styles.filterSection}>

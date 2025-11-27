@@ -342,29 +342,40 @@ export const topicsApi = {
   },
 
   /**
-   * Upload topics from a CSV file
+   * Upload slots from an Excel file
+   *
+   * Uses the same parsing logic as populate_initial_data().
+   * Each sheet in the Excel file becomes a topic.
+   * Topics can optionally be linked to collections, or you can link them later via collectionsApi.
    */
-  async uploadCSV(
+  async uploadExcel(
     file: File,
-    collectionIds: number[],
-    updateExisting: boolean = false
+    options?: {
+      collectionIds?: number[];
+      updateExisting?: boolean;
+    }
   ): Promise<CSVUploadResponse> {
     const formData = new FormData();
     formData.append('file', file);
-    formData.append('collection_ids', collectionIds.join(','));
-    formData.append('update_existing', updateExisting.toString());
 
-    const res = await fetch(`${API_BASE_URL}/admin/topics/upload-csv`, {
+    if (options?.collectionIds && options.collectionIds.length > 0) {
+      formData.append('collection_ids', options.collectionIds.join(','));
+    }
+
+    formData.append('update_existing', (options?.updateExisting ?? false).toString());
+
+    const res = await fetch(`${API_BASE_URL}/admin/upload-slots`, {
       method: 'POST',
       body: formData,
     });
 
     if (!res.ok) {
       const error = await res.json();
-      throw new Error(error.detail || 'Failed to upload CSV');
+      throw new Error(error.detail || 'Failed to upload Excel file');
     }
 
-    return res.json();
+    const result: CSVUploadResponse = await res.json();
+    return result;
   },
 };
 
