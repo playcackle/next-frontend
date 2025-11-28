@@ -33,6 +33,13 @@ export default async function RootLayout({
       process.env.NEXT_PUBLIC_LOBBY_MANAGER_URL ?? "",
   };
 
+  if (typeof globalThis !== "undefined") {
+    (globalThis as any).__ENV = {
+      ...(globalThis as any).__ENV,
+      ...runtimeEnv,
+    };
+  }
+
   return (
     <html lang="en">
       <head>

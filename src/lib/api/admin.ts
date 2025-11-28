@@ -4,11 +4,22 @@
 
 const DEFAULT_MANAGER_URL = "http://dummy:8001";
 
-const getApiBaseUrl = (): string => {
-  if (typeof window !== "undefined" && window.__ENV?.NEXT_PUBLIC_LOBBY_MANAGER_URL) {
-    return window.__ENV.NEXT_PUBLIC_LOBBY_MANAGER_URL;
+const getRuntimeEnv = () => {
+  if (typeof window !== "undefined" && window.__ENV) {
+    return window.__ENV;
   }
-  return process.env.NEXT_PUBLIC_LOBBY_MANAGER_URL || DEFAULT_MANAGER_URL;
+  if (typeof globalThis !== "undefined" && (globalThis as any).__ENV) {
+    return (globalThis as any).__ENV;
+  }
+  return undefined;
+};
+
+const getApiBaseUrl = (): string => {
+  const runtimeEnv = getRuntimeEnv();
+  if (runtimeEnv?.NEXT_PUBLIC_LOBBY_MANAGER_URL) {
+    return runtimeEnv.NEXT_PUBLIC_LOBBY_MANAGER_URL;
+  }
+  return DEFAULT_MANAGER_URL;
 };
 
 const apiFetch = (path: string, init?: RequestInit) =>
