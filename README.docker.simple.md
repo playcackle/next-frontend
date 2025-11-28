@@ -13,12 +13,12 @@ This is a simple Docker Compose setup for the SnapScore frontend that works with
    ```bash
    # For local backend
    BACKEND_URL=http://localhost:8001
-   BACKEND_JOIN_URL=http://localhost:8000
+   NEXT_PUBLIC_LOBBY_MANAGER_URL=http://localhost:8001
    NEXTAUTH_URL=http://localhost:3000
    
    # For VPS backend (replace YOUR_VPS_IP)
    BACKEND_URL=http://YOUR_VPS_IP:8001
-   BACKEND_JOIN_URL=http://YOUR_VPS_IP:8000
+   NEXT_PUBLIC_LOBBY_MANAGER_URL=http://YOUR_VPS_IP:8001
    NEXTAUTH_URL=http://YOUR_VPS_IP:3000
    ```
 
@@ -34,21 +34,21 @@ This is a simple Docker Compose setup for the SnapScore frontend that works with
 ### Local Development
 ```env
 BACKEND_URL=http://localhost:8001
-BACKEND_JOIN_URL=http://localhost:8000
+NEXT_PUBLIC_LOBBY_MANAGER_URL=http://localhost:8001
 NEXTAUTH_URL=http://localhost:3000
 ```
 
 ### VPS Deployment
 ```env
 BACKEND_URL=http://YOUR_VPS_IP:8001
-BACKEND_JOIN_URL=http://YOUR_VPS_IP:8000
+NEXT_PUBLIC_LOBBY_MANAGER_URL=http://YOUR_VPS_IP:8001
 NEXTAUTH_URL=http://YOUR_VPS_IP:3000
 ```
 
 ### Domain-based Deployment
 ```env
 BACKEND_URL=https://api.yourdomain.com:8001
-BACKEND_JOIN_URL=https://game.yourdomain.com:8000
+NEXT_PUBLIC_LOBBY_MANAGER_URL=https://api.yourdomain.com:8001
 NEXTAUTH_URL=https://yourdomain.com
 ```
 

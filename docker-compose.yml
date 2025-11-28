@@ -9,18 +9,15 @@ services:
         - NEXTAUTH_URL=${NEXTAUTH_URL:-http://localhost:3000}
         - AUTH_SECRET=${AUTH_SECRET:-Tyq8N0UATfZDomQLcUqxodFOLuedd87vRDfUV5Wq5r0=}
         - NEXT_PUBLIC_LOBBY_MANAGER_URL=${NEXT_PUBLIC_LOBBY_MANAGER_URL:-http://localhost:8001}
-        - NEXT_PUBLIC_BACKEND_JOIN_URL=${NEXT_PUBLIC_BACKEND_JOIN_URL:-http://localhost:8000}
     ports:
       - "3000:3000"
     environment:
       - NODE_ENV=production
       - NEXT_TELEMETRY_DISABLED=1
-      # Server-side URLs (inside container) - use host.docker.internal
+      # Server-side URL (inside container) - use host.docker.internal
       - BACKEND_URL=${BACKEND_URL:-http://host.docker.internal:8001}
-      - BACKEND_JOIN_URL=${BACKEND_JOIN_URL:-http://host.docker.internal:8000}
-      # Client-side URLs (for browser) - use localhost
-      - NEXT_PUBLIC_BACKEND_URL=${NEXT_PUBLIC_BACKEND_URL:-http://localhost:8001}
-      - NEXT_PUBLIC_BACKEND_JOIN_URL=${NEXT_PUBLIC_BACKEND_JOIN_URL:-http://localhost:8000}
+      # Client-side URL (for browser) - use localhost
+      - NEXT_PUBLIC_LOBBY_MANAGER_URL=${NEXT_PUBLIC_LOBBY_MANAGER_URL:-http://localhost:8001}
       # NextAuth configuration
       - NEXTAUTH_URL=${NEXTAUTH_URL:-http://localhost:3000}
       - AUTH_SECRET=${AUTH_SECRET:-Tyq8N0UATfZDomQLcUqxodFOLuedd87vRDfUV5Wq5r0=}

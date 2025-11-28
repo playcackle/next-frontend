@@ -4,6 +4,16 @@ import SettingsControls from "@/components/settings-controls"; // Import the new
 import { getServerSession } from "next-auth";
 import styles from "./page.module.css";
 
+type LobbyInfo = {
+  lobby_id: string;
+  collection_name: string;
+  status: string;
+  player_count: number;
+  join_base_url?: string | null;
+  game_ws_url?: string | null;
+  chat_ws_url?: string | null;
+};
+
 export default async function Home() {
   const gamerooms = await fetchGamerooms();
   const session = await getServerSession();
@@ -20,9 +30,9 @@ export default async function Home() {
       {isSession ? (
         <section className={styles.lobbiesSection}>
           <div className={styles.lobbiesContainer}>
-            {gamerooms.map((x: any, i: number) => (
-              <GameroomTileComponent gameroom={x} key={i} />
-            ))}
+	            {gamerooms.map((x: LobbyInfo, i: number) => (
+	              <GameroomTileComponent gameroom={x} key={i} />
+	            ))}
           </div>
         </section>
       ) : (
@@ -35,10 +45,13 @@ export default async function Home() {
 }
 
 // Server-side function to fetch available gamerooms
-async function fetchGamerooms(): Promise<any[]> {
+async function fetchGamerooms(): Promise<LobbyInfo[]> {
   try {
     const baseUrl =
-      process.env.BACKEND_URL || process.env.NEXT_PUBLIC_APP_BACKEND_URL;
+      process.env.BACKEND_URL || process.env.NEXT_PUBLIC_LOBBY_MANAGER_URL;
+    if (!baseUrl) {
+      throw new Error("Lobby Manager URL is not configured.");
+    }
 
     const response = await fetch(`${baseUrl}/lobbies`, {
       // Add cache options for revalidation
@@ -51,8 +64,7 @@ async function fetchGamerooms(): Promise<any[]> {
       throw new Error(`Error fetching lobbies: ${response.status}`);
     }
 
-    const data = await response.json();
-    return data;
+    return response.json();
   } catch (error) {
     console.error("Failed to fetch lobbies lobbies:", error);
     return [];

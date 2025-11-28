@@ -118,6 +118,9 @@ export type Lobby = {
   collection_name: string | null;
   configuration: GameConfigurationParameters | null;
   admin_base_url?: string | null;
+  join_base_url?: string | null;
+  game_ws_url?: string | null;
+  chat_ws_url?: string | null;
 };
 
 export type LobbyConfigurationUpdate = {
