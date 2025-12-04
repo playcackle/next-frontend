@@ -1,0 +1,218 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: 1rem;
+}
+
+.modal {
+  background: linear-gradient(
+    135deg,
+    rgba(20, 20, 40, 0.98) 0%,
+    rgba(10, 10, 30, 0.98) 100%
+  );
+  border: 2px solid var(--neon-blue);
+  border-radius: 12px;
+  max-width: 520px;
+  width: 100%;
+  box-shadow: 0 0 30px rgba(0, 221, 255, 0.3), 0 0 60px rgba(0, 221, 255, 0.1);
+  animation: modalAppear 0.3s ease-out;
+}
+
+@keyframes modalAppear {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1.5rem 1.5rem 1rem;
+  border-bottom: 1px solid rgba(0, 221, 255, 0.2);
+}
+
+.icon {
+  font-size: 1.75rem;
+}
+
+.title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--neon-blue);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin: 0;
+  text-shadow: 0 0 10px var(--neon-blue);
+}
+
+.content {
+  padding: 1.5rem;
+}
+
+.tierBadge {
+  display: inline-block;
+  padding: 0.35rem 0.75rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  margin-bottom: 0.75rem;
+}
+
+.tierBadge[data-tier="low"] {
+  background: rgba(255, 100, 100, 0.2);
+  color: #ff6b6b;
+  border: 1px solid #ff6b6b;
+}
+
+.tierBadge[data-tier="medium"] {
+  background: rgba(255, 200, 100, 0.2);
+  color: #ffc107;
+  border: 1px solid #ffc107;
+}
+
+.tierBadge[data-tier="high"] {
+  background: rgba(0, 255, 102, 0.2);
+  color: var(--neon-green);
+  border: 1px solid var(--neon-green);
+}
+
+.specs {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.5);
+  margin-bottom: 0.75rem;
+}
+
+.description {
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.85);
+  line-height: 1.5;
+  margin-bottom: 1.25rem;
+}
+
+.comparison {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.option {
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 1rem;
+}
+
+.option h3 {
+  font-size: 0.8rem;
+  color: var(--neon-pink);
+  margin-bottom: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.option ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.option li {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.7);
+  padding: 0.25rem 0;
+  padding-left: 1rem;
+  position: relative;
+}
+
+.option li::before {
+  content: "•";
+  position: absolute;
+  left: 0;
+  color: var(--neon-blue);
+}
+
+.actions {
+  display: flex;
+  gap: 1rem;
+  padding: 1rem 1.5rem 1.5rem;
+}
+
+.button {
+  flex: 1;
+  padding: 0.875rem 1rem;
+  border-radius: 6px;
+  font-family: var(--retro-font);
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.buttonSecondary {
+  background: transparent;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.buttonSecondary:hover {
+  border-color: rgba(255, 255, 255, 0.6);
+  color: white;
+}
+
+.buttonPrimary {
+  background: linear-gradient(135deg, var(--neon-blue), var(--neon-purple));
+  border: none;
+  color: white;
+}
+
+.buttonPrimary:hover {
+  box-shadow: 0 0 20px rgba(0, 221, 255, 0.5);
+  transform: translateY(-1px);
+}
+
+.recommended {
+  border-color: var(--neon-green) !important;
+}
+
+.recommendedBadge {
+  position: absolute;
+  top: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--neon-green);
+  color: black;
+  font-size: 0.6rem;
+  padding: 0.15rem 0.5rem;
+  border-radius: 3px;
+  font-weight: 700;
+}
+
+@media (max-width: 500px) {
+  .comparison {
+    grid-template-columns: 1fr;
+  }
+
+  .actions {
+    flex-direction: column;
+  }
+
+  .title {
+    font-size: 1rem;
+  }
+}

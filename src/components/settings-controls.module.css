@@ -1,45 +1,151 @@
-.settingsContainer {
+/* Complete redesign - cohesive floating panel */
+.settingsWrapper {
   position: fixed;
   bottom: 20px;
   right: 20px;
+  z-index: 9999;
   display: flex;
-  flex-direction: column; /* Stack controls vertically */
-  gap: 10px; /* Space between controls */
-  z-index: 9999; /* Increased z-index to ensure it's on top */
-  align-items: flex-end; /* Align items to the right */
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
 }
 
-/* Style for both CRT toggle and music controls to ensure consistent appearance */
-.settingsControlBase {
-  background-color: rgba(0, 0, 0, 0.7); /* Semi-transparent background */
-  border: 1px solid #ff00ff; /* Neon pink border */
-  box-shadow: 0 0 15px rgba(255, 0, 255, 0.6); /* Neon glow */
-  border-radius: 8px;
-  padding: 10px 15px;
-  font-family: 'Press Start 2P', cursive;
-  color: #00ffff; /* Neon cyan text */
-  transition: background-color 0.3s ease, box-shadow 0.3s ease;
-  width: fit-content; /* Adjust width to content */
-}
-
-.settingsControlBase:hover {
-  background-color: rgba(0, 0, 0, 0.9);
-  box-shadow: 0 0 20px rgba(255, 0, 255, 0.8);
-}
-
-/* Specific style for CRT toggle button */
-.crt-toggle {
-  composes: settingsControlBase; /* Inherit base styles */
+.settingsToggle {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: linear-gradient(
+    135deg,
+    rgba(0, 221, 255, 0.15),
+    rgba(183, 0, 255, 0.15)
+  );
+  border: 1px solid rgba(0, 221, 255, 0.4);
+  color: var(--neon-blue, #00ddff);
   cursor: pointer;
-  font-size: 0.9em;
-  text-transform: uppercase;
-  white-space: nowrap; /* Prevent text wrapping */
-}
-
-/* Ensure music controls also use the base style */
-.musicControls {
-  composes: settingsControlBase; /* Inherit base styles */
   display: flex;
   align-items: center;
-  gap: 10px;
+  justify-content: center;
+  transition: all 0.2s ease;
+  box-shadow: 0 0 15px rgba(0, 221, 255, 0.2);
+}
+
+.settingsToggle:hover {
+  background: linear-gradient(
+    135deg,
+    rgba(0, 221, 255, 0.25),
+    rgba(183, 0, 255, 0.25)
+  );
+  border-color: rgba(0, 221, 255, 0.6);
+  box-shadow: 0 0 20px rgba(0, 221, 255, 0.4);
+  transform: scale(1.05);
+}
+
+.settingsPanel {
+  background: linear-gradient(
+    145deg,
+    rgba(10, 10, 31, 0.95),
+    rgba(20, 20, 50, 0.95)
+  );
+  border: 1px solid rgba(0, 221, 255, 0.3);
+  border-radius: 12px;
+  overflow: hidden;
+  width: 280px;
+  max-height: 0;
+  opacity: 0;
+  transform: translateY(10px) scale(0.95);
+  transition: all 0.25s ease;
+  box-shadow: 0 0 20px rgba(0, 221, 255, 0.1), 0 4px 30px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.settingsPanel.expanded {
+  max-height: 300px;
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+.settingsHeader {
+  padding: 12px 16px;
+  border-bottom: 1px solid rgba(0, 221, 255, 0.15);
+  background: linear-gradient(90deg, rgba(0, 221, 255, 0.1), transparent);
+}
+
+.settingsTitle {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: var(--neon-blue, #00ddff);
+}
+
+.settingsContent {
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.settingItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.02);
+  transition: background 0.2s ease;
+}
+
+.settingItem:hover {
+  background: rgba(0, 221, 255, 0.05);
+}
+
+.settingLabel {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.7);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* Toggle button styles for CRT and Performance */
+.toggleButton {
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-size: 10px;
+  font-family: inherit;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.toggleButton:hover {
+  background: rgba(0, 221, 255, 0.1);
+  border-color: rgba(0, 221, 255, 0.4);
+  color: var(--neon-blue, #00ddff);
+}
+
+.toggleButton.active {
+  background: rgba(0, 255, 102, 0.15);
+  border-color: rgba(0, 255, 102, 0.5);
+  color: var(--neon-green, #00ff66);
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .settingsWrapper {
+    bottom: 10px;
+    right: 10px;
+  }
+
+  .settingsPanel {
+    width: 260px;
+  }
+
+  .settingsToggle {
+    width: 40px;
+    height: 40px;
+  }
 }

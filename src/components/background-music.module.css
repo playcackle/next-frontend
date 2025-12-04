@@ -1,83 +1,78 @@
+/* Compact inline controls matching panel design */
 .musicControls {
-  /* Positioning and z-index are now handled by the parent SettingsControls component */
   display: flex;
   align-items: center;
-  gap: 10px;
-  /* The rest of the styling will be composed from settings-controls.module.css */
+  gap: 6px;
 }
 
-.playPauseButton {
-  background-color: #00ffff; /* Neon cyan */
-  color: #000;
-  border: none;
-  padding: 8px 15px;
-  border-radius: 5px;
+.iconButton {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: rgba(255, 255, 255, 0.6);
   cursor: pointer;
-  font-size: 0.9em;
-  text-transform: uppercase;
-  transition: background-color 0.3s ease, box-shadow 0.3s ease;
-  box-shadow: 0 0 8px rgba(0, 255, 255, 0.6);
-}
-
-.playPauseButton:hover {
-  background-color: #00e0e0;
-  box-shadow: 0 0 12px rgba(0, 255, 255, 0.8);
-}
-
-.volumeControl {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-}
-
-.volumeButton {
-  background: none;
-  border: none;
-  color: #ff00ff; /* Neon pink */
-  cursor: pointer;
-  padding: 5px;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: color 0.3s ease;
+  transition: all 0.2s ease;
 }
 
-.volumeButton:hover {
-  color: #00ffff; /* Neon cyan on hover */
+.iconButton:hover {
+  background: rgba(0, 221, 255, 0.1);
+  border-color: rgba(0, 221, 255, 0.4);
+  color: var(--neon-blue, #00ddff);
+}
+
+.iconButton.playing {
+  background: rgba(0, 255, 102, 0.15);
+  border-color: rgba(0, 255, 102, 0.4);
+  color: var(--neon-green, #00ff66);
 }
 
 .volumeSlider {
   -webkit-appearance: none;
-  width: 100px;
-  height: 8px;
-  background: #00ffff; /* Neon cyan track */
+  appearance: none;
+  width: 60px;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 2px;
   outline: none;
-  opacity: 0.8;
-  transition: opacity 0.2s;
-  border-radius: 4px;
-  box-shadow: 0 0 5px rgba(0, 255, 255, 0.4);
-}
-
-.volumeSlider:hover {
-  opacity: 1;
+  cursor: pointer;
 }
 
 .volumeSlider::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
-  width: 18px;
-  height: 18px;
+  width: 12px;
+  height: 12px;
   border-radius: 50%;
-  background: #ff00ff; /* Neon pink thumb */
+  background: var(--neon-blue, #00ddff);
   cursor: pointer;
-  box-shadow: 0 0 8px rgba(255, 0, 255, 0.8);
+  box-shadow: 0 0 6px rgba(0, 221, 255, 0.5);
+  transition: transform 0.15s ease;
+}
+
+.volumeSlider::-webkit-slider-thumb:hover {
+  transform: scale(1.2);
 }
 
 .volumeSlider::-moz-range-thumb {
-  width: 18px;
-  height: 18px;
+  width: 12px;
+  height: 12px;
   border-radius: 50%;
-  background: #ff00ff; /* Neon pink thumb */
+  background: var(--neon-blue, #00ddff);
   cursor: pointer;
-  box-shadow: 0 0 8px rgba(255, 0, 255, 0.8);
+  border: none;
+  box-shadow: 0 0 6px rgba(0, 221, 255, 0.5);
+}
+
+.volumeSlider::-webkit-slider-runnable-track {
+  background: linear-gradient(
+    90deg,
+    var(--neon-blue, #00ddff) 0%,
+    rgba(255, 255, 255, 0.15) 100%
+  );
+  border-radius: 2px;
 }

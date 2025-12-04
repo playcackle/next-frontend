@@ -22,7 +22,7 @@ body {
   background-color: var(--dark-bg);
   color: white;
   letter-spacing: 1px;
-  min-height: 100vh; /* Ensure minimum height */
+  min-height: 100vh;
   margin: 0;
   padding: 0;
   caret-color: transparent;
@@ -49,24 +49,14 @@ a {
   cursor: pointer;
 }
 
+/* Simplified flicker animation - less frequent */
 @keyframes flicker {
   0%,
-  19.999%,
-  22%,
-  62.999%,
-  64%,
-  64.999%,
-  70%,
   100% {
     opacity: 1;
   }
-  20%,
-  21.999%,
-  63%,
-  63.999%,
-  65%,
-  69.999% {
-    opacity: 0.8;
+  50% {
+    opacity: 0.95;
   }
 }
 
@@ -95,7 +85,7 @@ a {
   overflow: hidden;
 }
 
-/* Scanlines */
+/* Simplified scanlines - larger gaps, less GPU intensive */
 .crt-scanlines {
   position: absolute;
   top: 0;
@@ -105,28 +95,29 @@ a {
   background: linear-gradient(
     to bottom,
     transparent 50%,
-    rgba(0, 0, 0, 0.1) 50%
+    rgba(0, 0, 0, 0.05) 50%
   );
-  background-size: 100% 4px;
+  background-size: 100% 6px;
   z-index: 1001;
 }
 
-/* Screen flicker */
+/* Slower, less intensive flicker animation */
 .crt-flicker {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(255, 255, 255, 0.03);
+  background: rgba(255, 255, 255, 0.02);
   opacity: 0;
   z-index: 1002;
-  animation: crtFlicker 0.15s infinite alternate-reverse;
+  animation: crtFlicker 0.5s infinite alternate-reverse;
 }
 
+/* Slower flicker keyframes */
 @keyframes crtFlicker {
   0% {
-    opacity: 0.1;
+    opacity: 0.05;
   }
   100% {
     opacity: 0;
@@ -210,7 +201,7 @@ a {
   animation: crtTurnOn 1s ease-in-out forwards;
 }
 
-/* CRT toggle button (base styles, positioning handled by parent component) */
+/* CRT toggle button */
 .crt-toggle {
   background: rgba(0, 0, 0, 0.5);
   color: white;
@@ -230,8 +221,74 @@ a {
   background: rgba(0, 0, 0, 0.7);
   box-shadow: 0 0 10px var(--neon-blue);
 }
-/* Override Radix overlay */
+
+/* Removed backdrop-filter from radix overlay */
 [data-radix-dialog-overlay] {
-  background-color: rgba(0, 0, 0, 0.8) !important;
-  backdrop-filter: blur(5px) !important;
+  background-color: rgba(0, 0, 0, 0.85) !important;
+}
+
+/* ============================================
+   PERFORMANCE MODE STYLES
+   When .performance-mode is on body, disable
+   heavy effects for older computers
+   ============================================ */
+
+/* Disable all CRT effects in performance mode */
+body.performance-mode .crt-overlay,
+body.performance-mode .crt-scanlines,
+body.performance-mode .crt-flicker,
+body.performance-mode .crt-vignette {
+  display: none !important;
+}
+
+/* Disable turn-on animation */
+body.performance-mode .crt-turn-on {
+  animation: none !important;
+}
+
+/* Disable all backdrop-filters globally */
+body.performance-mode *,
+body.performance-mode *::before,
+body.performance-mode *::after {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+/* Disable glow animations */
+body.performance-mode * {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+}
+
+/* But keep essential transitions working */
+body.performance-mode button,
+body.performance-mode a,
+body.performance-mode input {
+  transition-duration: 0.1s !important;
+}
+
+/* Reduce box-shadow complexity */
+body.performance-mode * {
+  --neon-glow: 0 0 5px currentColor;
+}
+
+/* Respect prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  .crt-flicker,
+  .crt-scanlines {
+    display: none;
+  }
+
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  button,
+  a,
+  input {
+    transition-duration: 0.1s !important;
+  }
 }

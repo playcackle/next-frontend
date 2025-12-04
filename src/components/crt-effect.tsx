@@ -1,20 +1,21 @@
 "use client";
 
+import { performanceModeAtom } from "@/atoms/performance-atom";
+import { useAtomValue } from "jotai";
 import { useEffect, useState } from "react";
-import styles from "./settings-controls.module.css"; // Import the CSS module
+import styles from "./settings-controls.module.css";
 
 export default function CRTEffect() {
   const [isCRTEnabled, setIsCRTEnabled] = useState(true);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
+  const performanceMode = useAtomValue(performanceModeAtom);
 
   useEffect(() => {
-    // Check if CRT effect preference is stored in localStorage
     const storedPreference = localStorage.getItem("crtEffect");
     if (storedPreference !== null) {
       setIsCRTEnabled(storedPreference === "true");
     }
 
-    // Set initial load to false after a short delay
     const timer = setTimeout(() => {
       setIsInitialLoad(false);
     }, 1000);
@@ -28,23 +29,24 @@ export default function CRTEffect() {
     localStorage.setItem("crtEffect", newState.toString());
   };
 
-  if (!isCRTEnabled) {
-    return (
-      <button className={styles["crt-toggle"]} onClick={toggleCRTEffect}>
-        Enable CRT Effect
-      </button>
-    );
-  }
+  const isActive = isCRTEnabled && !performanceMode;
 
   return (
     <>
-      <div className={`crt-overlay ${isInitialLoad ? "crt-turn-on" : ""}`}>
-        <div className="crt-scanlines"></div>
-        <div className="crt-flicker"></div>
-        <div className="crt-vignette"></div>
-      </div>
-      <button className={styles["crt-toggle"]} onClick={toggleCRTEffect}>
-        Disable CRT Effect
+      {isActive && (
+        <div className={`crt-overlay ${isInitialLoad ? "crt-turn-on" : ""}`}>
+          <div className="crt-scanlines"></div>
+          <div className="crt-flicker"></div>
+          <div className="crt-vignette"></div>
+        </div>
+      )}
+      <button
+        className={`${styles.toggleButton} ${isActive ? styles.active : ""}`}
+        onClick={toggleCRTEffect}
+        disabled={performanceMode}
+        title={performanceMode ? "Disabled in Performance Mode" : ""}
+      >
+        {performanceMode ? "Off" : isActive ? "On" : "Off"}
       </button>
     </>
   );

@@ -2,7 +2,6 @@ import Header from "@/components/header";
 import SynthwaveBackground from "@/components/synthwave-background";
 import { Progress, Theme } from "@radix-ui/themes";
 import "@radix-ui/themes/styles.css";
-import "animate.css";
 import type { Metadata } from "next";
 import { headers } from "next/headers";
 import type React from "react";
@@ -27,6 +26,7 @@ export default async function RootLayout({
 
   const isGameroom = pathname?.includes("gameroom");
   const isAdmin = pathname?.includes("/admin");
+
   return (
     <html lang="en">
       <body

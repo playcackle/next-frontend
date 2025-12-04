@@ -801,9 +801,13 @@ const createSoundGenerators = () => {
 const soundGenerators = createSoundGenerators();
 
 let hasInitialized = false;
+let hasLogged = false;
 
 export default function SoundEffects({ onLoad }: SoundEffectProps) {
-  console.log("SoundEffects component mounted");
+  if (!hasLogged) {
+    console.log("SoundEffects component mounted");
+    hasLogged = true;
+  }
 
   // Memoized sound effect function to prevent recreation
   const playSoundEffect = useCallback((type: SoundType) => {
@@ -816,13 +820,6 @@ export default function SoundEffects({ onLoad }: SoundEffectProps) {
       soundGenerators.correct(); // Fallback
     }
   }, []); // Empty deps array - function never needs to change
-
-  // Memoized onLoad handler to stabilize it
-  const handleLoad = useCallback(() => {
-    if (onLoad) {
-      onLoad();
-    }
-  }, [onLoad]);
 
   useEffect(() => {
     if (hasInitialized) {
@@ -840,7 +837,9 @@ export default function SoundEffects({ onLoad }: SoundEffectProps) {
 
     const handleUserInteraction = () => {
       resumeAudio();
-      handleLoad();
+      if (onLoad) {
+        onLoad();
+      }
     };
 
     // Resume audio context on user interaction
@@ -855,7 +854,8 @@ export default function SoundEffects({ onLoad }: SoundEffectProps) {
       document.removeEventListener("keydown", handleUserInteraction);
       document.removeEventListener("touchstart", handleUserInteraction);
     };
-  }, [handleLoad]); // Keep handleLoad in deps to maintain consistent array size
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Empty deps - only run once on mount
 
   useEffect(() => {
     return () => {

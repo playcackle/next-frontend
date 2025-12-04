@@ -1,8 +1,9 @@
 "use client";
 
-import React, { useRef, useState, useEffect } from "react";
-import { Volume2, VolumeX, Volume1, Play, Pause } from "lucide-react"; // Icons for volume
-import styles from "./background-music.module.css"; // We'll create this CSS module
+import { Pause, Play, Volume1, Volume2, VolumeX } from "lucide-react";
+import type React from "react";
+import { useEffect, useRef, useState } from "react";
+import styles from "./background-music.module.css";
 
 interface BackgroundMusicProps {
   src: string;
@@ -11,7 +12,7 @@ interface BackgroundMusicProps {
 const BackgroundMusic: React.FC<BackgroundMusicProps> = ({ src }) => {
   const audioRef = useRef<HTMLAudioElement>(null);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [volume, setVolume] = useState(0.5); // Default volume
+  const [volume, setVolume] = useState(0.5);
   const [isMuted, setIsMuted] = useState(false);
 
   useEffect(() => {
@@ -20,7 +21,6 @@ const BackgroundMusic: React.FC<BackgroundMusicProps> = ({ src }) => {
       audio.volume = volume;
       audio.muted = isMuted;
 
-      // Attempt to autoplay, but acknowledge browser restrictions
       const playPromise = audio.play();
       if (playPromise !== undefined) {
         playPromise
@@ -29,9 +29,7 @@ const BackgroundMusic: React.FC<BackgroundMusicProps> = ({ src }) => {
           })
           .catch((error) => {
             console.warn("Autoplay prevented:", error);
-            // Autoplay was prevented, so set isPlaying to false
             setIsPlaying(false);
-            // Optionally, show a play button to the user
           });
       }
     }
@@ -50,14 +48,14 @@ const BackgroundMusic: React.FC<BackgroundMusicProps> = ({ src }) => {
   };
 
   const handleVolumeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const newVolume = parseFloat(event.target.value);
+    const newVolume = Number.parseFloat(event.target.value);
     setVolume(newVolume);
     if (audioRef.current) {
       audioRef.current.volume = newVolume;
       if (newVolume > 0 && isMuted) {
-        setIsMuted(false); // Unmute if volume is increased from 0 while muted
+        setIsMuted(false);
       } else if (newVolume === 0 && !isMuted) {
-        setIsMuted(true); // Mute if volume is set to 0
+        setIsMuted(true);
       }
     }
   };
@@ -67,44 +65,46 @@ const BackgroundMusic: React.FC<BackgroundMusicProps> = ({ src }) => {
     if (audio) {
       audio.muted = !isMuted;
       setIsMuted(!isMuted);
-      // If unmuting, restore previous volume if it was 0 due to mute
       if (!isMuted && volume === 0) {
-        setVolume(0.5); // Restore to a default non-zero volume
+        setVolume(0.5);
         audio.volume = 0.5;
       }
     }
   };
 
-  const VolumeIcon = isMuted
-    ? VolumeX
-    : volume === 0
-    ? VolumeX
-    : volume < 0.5
-    ? Volume1
-    : Volume2;
+  const VolumeIcon =
+    isMuted || volume === 0 ? VolumeX : volume < 0.5 ? Volume1 : Volume2;
 
   return (
     <div className={styles.musicControls}>
       <audio ref={audioRef} src={src} loop />
 
-      <button onClick={togglePlayPause} className={styles.playPauseButton}>
-        {isPlaying ? <Pause size={20} /> : <Play size={20} />}
+      <button
+        onClick={togglePlayPause}
+        className={`${styles.iconButton} ${isPlaying ? styles.playing : ""}`}
+        aria-label={isPlaying ? "Pause" : "Play"}
+      >
+        {isPlaying ? <Pause size={14} /> : <Play size={14} />}
       </button>
 
-      <div className={styles.volumeControl}>
-        <button onClick={toggleMute} className={styles.volumeButton}>
-          <VolumeIcon size={20} />
-        </button>
-        <input
-          type="range"
-          min="0"
-          max="1"
-          step="0.01"
-          value={isMuted ? 0 : volume}
-          onChange={handleVolumeChange}
-          className={styles.volumeSlider}
-        />
-      </div>
+      <button
+        onClick={toggleMute}
+        className={styles.iconButton}
+        aria-label={isMuted ? "Unmute" : "Mute"}
+      >
+        <VolumeIcon size={14} />
+      </button>
+
+      <input
+        type="range"
+        min="0"
+        max="1"
+        step="0.01"
+        value={isMuted ? 0 : volume}
+        onChange={handleVolumeChange}
+        className={styles.volumeSlider}
+        aria-label="Volume"
+      />
     </div>
   );
 };
