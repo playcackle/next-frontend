@@ -38,7 +38,6 @@ const getOrCreateAudioContext = async (): Promise<AudioContext | null> => {
     if (globalAudioContext.state === "suspended") {
       try {
         await globalAudioContext.resume();
-        console.log("AudioContext resumed successfully");
       } catch (e) {
         console.warn("Could not resume audio context:", e);
       }
@@ -51,7 +50,23 @@ const getOrCreateAudioContext = async (): Promise<AudioContext | null> => {
   }
 };
 
-// Sound generation functions (memoized outside component to prevent recreation)
+const scheduleCleanup = (
+  context: AudioContext,
+  nodes: AudioNode[],
+  duration: number
+) => {
+  setTimeout(() => {
+    nodes.forEach((node) => {
+      try {
+        node.disconnect();
+      } catch (e) {
+        // Node may already be disconnected
+      }
+    });
+  }, duration * 1000 + 100); // Add 100ms buffer
+};
+
+// Sound generation functions
 const createSoundGenerators = () => {
   const playCelebratoryCorrectSound = async () => {
     try {
@@ -59,12 +74,11 @@ const createSoundGenerators = () => {
       if (!context) return;
 
       const now = context.currentTime;
+      const duration = 0.2; // Define max duration
 
-      // "PIXEL PERFECT" - Classic 8-bit coin/collect: G5 → C6 (perfect fourth jump)
-      // Instant square wave blip
       const blip1 = context.createOscillator();
       blip1.type = "square";
-      blip1.frequency.value = 783.99; // G5
+      blip1.frequency.value = 783.99;
       const blip1Gain = context.createGain();
       blip1Gain.gain.setValueAtTime(0.4, now);
       blip1Gain.gain.exponentialRampToValueAtTime(0.01, now + 0.08);
@@ -73,10 +87,9 @@ const createSoundGenerators = () => {
       blip1.start(now);
       blip1.stop(now + 0.08);
 
-      // Second higher blip
       const blip2 = context.createOscillator();
       blip2.type = "square";
-      blip2.frequency.value = 1046.5; // C6
+      blip2.frequency.value = 1046.5;
       const blip2Gain = context.createGain();
       blip2Gain.gain.setValueAtTime(0.45, now + 0.06);
       blip2Gain.gain.exponentialRampToValueAtTime(0.01, now + 0.16);
@@ -85,7 +98,6 @@ const createSoundGenerators = () => {
       blip2.start(now + 0.06);
       blip2.stop(now + 0.16);
 
-      // Triangle wave for retro warmth
       const tri = context.createOscillator();
       tri.type = "triangle";
       tri.frequency.setValueAtTime(783.99, now);
@@ -98,10 +110,9 @@ const createSoundGenerators = () => {
       tri.start(now);
       tri.stop(now + 0.18);
 
-      // Sub bass punch
       const sub = context.createOscillator();
       sub.type = "sine";
-      sub.frequency.value = 196.0; // G3
+      sub.frequency.value = 196.0;
       const subGain = context.createGain();
       subGain.gain.setValueAtTime(0.3, now);
       subGain.gain.exponentialRampToValueAtTime(0.01, now + 0.12);
@@ -110,7 +121,11 @@ const createSoundGenerators = () => {
       sub.start(now);
       sub.stop(now + 0.12);
 
-      console.log("Played PIXEL PERFECT (correct)");
+      scheduleCleanup(
+        context,
+        [blip1Gain, blip2Gain, triGain, subGain],
+        duration
+      );
     } catch (e) {
       console.error("Error playing sound effect:", e);
     }
@@ -122,9 +137,8 @@ const createSoundGenerators = () => {
       if (!context) return;
 
       const now = context.currentTime;
+      const duration = 0.7; // Define max duration
 
-      // "JACKPOT CASCADE" - Epic arcade bonus like Maelstrom power-ups
-      // Explosive start with noise burst
       const noiseBuffer = context.createBuffer(
         1,
         context.sampleRate * 0.04,
@@ -143,12 +157,11 @@ const createSoundGenerators = () => {
       noiseGain.connect(context.destination);
       noise.start(now);
 
-      // Rapid ascending arpeggio cascade: C5 → E5 → G5 → C6 → E6 → G6 → C7
       const notes = [523.25, 659.25, 783.99, 1046.5, 1318.51, 1567.98, 2093.0];
       const intervals = [0, 0.07, 0.13, 0.19, 0.25, 0.31, 0.37];
+      const allNodes: AudioNode[] = [noiseGain];
 
       notes.forEach((freq, i) => {
-        // Square wave blips
         const blip = context.createOscillator();
         blip.type = "square";
         blip.frequency.value = freq;
@@ -162,11 +175,11 @@ const createSoundGenerators = () => {
         blipGain.connect(context.destination);
         blip.start(now + intervals[i]);
         blip.stop(now + intervals[i] + 0.12);
+        allNodes.push(blipGain);
 
-        // Triangle harmonics
         const tri = context.createOscillator();
         tri.type = "triangle";
-        tri.frequency.value = freq * 0.5; // Octave down
+        tri.frequency.value = freq * 0.5;
         const triGain = context.createGain();
         triGain.gain.setValueAtTime(0.2, now + intervals[i]);
         triGain.gain.exponentialRampToValueAtTime(
@@ -177,21 +190,20 @@ const createSoundGenerators = () => {
         triGain.connect(context.destination);
         tri.start(now + intervals[i]);
         tri.stop(now + intervals[i] + 0.12);
+        allNodes.push(triGain);
       });
 
-      // Pulsing power chord backing (C major)
       const chord1 = context.createOscillator();
       chord1.type = "square";
-      chord1.frequency.value = 261.63; // C4
+      chord1.frequency.value = 261.63;
       const chord2 = context.createOscillator();
       chord2.type = "square";
-      chord2.frequency.value = 329.63; // E4
+      chord2.frequency.value = 329.63;
       const chord3 = context.createOscillator();
       chord3.type = "square";
-      chord3.frequency.value = 392.0; // G4
+      chord3.frequency.value = 392.0;
 
       const chordGain = context.createGain();
-      // Pulsing effect
       chordGain.gain.setValueAtTime(0.25, now + 0.05);
       chordGain.gain.setValueAtTime(0.15, now + 0.12);
       chordGain.gain.setValueAtTime(0.25, now + 0.19);
@@ -211,7 +223,6 @@ const createSoundGenerators = () => {
       chord2.stop(now + 0.6);
       chord3.stop(now + 0.6);
 
-      // Massive sub bass kick
       const kick = context.createOscillator();
       kick.type = "sine";
       kick.frequency.setValueAtTime(150, now);
@@ -224,7 +235,6 @@ const createSoundGenerators = () => {
       kick.start(now);
       kick.stop(now + 0.25);
 
-      // Second kick at climax
       const kick2 = context.createOscillator();
       kick2.type = "sine";
       kick2.frequency.setValueAtTime(150, now + 0.37);
@@ -237,16 +247,8 @@ const createSoundGenerators = () => {
       kick2.start(now + 0.37);
       kick2.stop(now + 0.6);
 
-      // Echo delay for depth
-      const delay = context.createDelay(0.15);
-      delay.delayTime.value = 0.08;
-      const delayGain = context.createGain();
-      delayGain.gain.value = 0.3;
-      chordGain.connect(delay);
-      delay.connect(delayGain);
-      delayGain.connect(context.destination);
-
-      console.log("Played JACKPOT CASCADE (bonus)");
+      allNodes.push(chordGain, kickGain, kick2Gain);
+      scheduleCleanup(context, allNodes, duration);
     } catch (e) {
       console.error("Error playing bonus sound effect:", e);
     }
@@ -258,9 +260,8 @@ const createSoundGenerators = () => {
       if (!context) return;
 
       const now = context.currentTime;
+      const duration = 0.5; // Define max duration
 
-      // "MEGA BLAST" - Explosive arcade hit: E5 → B5 → E6 (power fifth explosion)
-      // White noise explosion burst
       const explosionBuffer = context.createBuffer(
         1,
         context.sampleRate * 0.06,
@@ -281,12 +282,11 @@ const createSoundGenerators = () => {
       explosionGain.connect(context.destination);
       explosion.start(now);
 
-      // Rapid triple hit pattern (like SF2 perfect/combo)
-      const hits = [659.25, 987.77, 1318.51]; // E5, B5, E6
+      const hits = [659.25, 987.77, 1318.51];
       const timings = [0.02, 0.1, 0.18];
+      const allNodes: AudioNode[] = [explosionGain];
 
       hits.forEach((freq, i) => {
-        // Primary square wave hit
         const hit = context.createOscillator();
         hit.type = "square";
         hit.frequency.value = freq;
@@ -300,11 +300,11 @@ const createSoundGenerators = () => {
         hitGain.connect(context.destination);
         hit.start(now + timings[i]);
         hit.stop(now + timings[i] + 0.12);
+        allNodes.push(hitGain);
 
-        // Saw wave for thickness
         const saw = context.createOscillator();
         saw.type = "sawtooth";
-        saw.frequency.value = freq * 0.5; // Octave down
+        saw.frequency.value = freq * 0.5;
         const sawGain = context.createGain();
         sawGain.gain.setValueAtTime(0.25, now + timings[i]);
         sawGain.gain.exponentialRampToValueAtTime(
@@ -315,15 +315,15 @@ const createSoundGenerators = () => {
         sawGain.connect(context.destination);
         saw.start(now + timings[i]);
         saw.stop(now + timings[i] + 0.12);
+        allNodes.push(sawGain);
       });
 
-      // Power chord sustain (E major)
       const power1 = context.createOscillator();
       power1.type = "square";
-      power1.frequency.value = 329.63; // E4
+      power1.frequency.value = 329.63;
       const power2 = context.createOscillator();
       power2.type = "square";
-      power2.frequency.value = 493.88; // B4
+      power2.frequency.value = 493.88;
 
       const powerGain = context.createGain();
       powerGain.gain.setValueAtTime(0.2, now + 0.02);
@@ -339,11 +339,10 @@ const createSoundGenerators = () => {
       power1.stop(now + 0.4);
       power2.stop(now + 0.4);
 
-      // Sub bass thump
       const sub = context.createOscillator();
       sub.type = "sine";
-      sub.frequency.value = 164.81; // E3
-      sub.frequency.exponentialRampToValueAtTime(82.41, now + 0.1); // E2
+      sub.frequency.value = 164.81;
+      sub.frequency.exponentialRampToValueAtTime(82.41, now + 0.1);
       const subGain = context.createGain();
       subGain.gain.setValueAtTime(0.5, now);
       subGain.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
@@ -352,16 +351,8 @@ const createSoundGenerators = () => {
       sub.start(now);
       sub.stop(now + 0.25);
 
-      // Echo for arcade depth
-      const delay = context.createDelay(0.12);
-      delay.delayTime.value = 0.06;
-      const delayGain = context.createGain();
-      delayGain.gain.value = 0.25;
-      powerGain.connect(delay);
-      delay.connect(delayGain);
-      delayGain.connect(context.destination);
-
-      console.log("Played MEGA BLAST (success1)");
+      allNodes.push(powerGain, subGain);
+      scheduleCleanup(context, allNodes, duration);
     } catch (e) {
       console.error("Error playing success1 sound effect:", e);
     }
@@ -373,12 +364,11 @@ const createSoundGenerators = () => {
       if (!context) return;
 
       const now = context.currentTime;
+      const duration = 0.6; // Define max duration
 
-      // "POWER UP SURGE" - Fast arpeggiated energy burst: C5 → E5 → G5 → C6
-      // Instant attack pulse
       const pulse = context.createOscillator();
       pulse.type = "square";
-      pulse.frequency.value = 523.25; // C5
+      pulse.frequency.value = 523.25;
       const pulseGain = context.createGain();
       pulseGain.gain.setValueAtTime(0.45, now);
       pulseGain.gain.exponentialRampToValueAtTime(0.01, now + 0.04);
@@ -387,59 +377,40 @@ const createSoundGenerators = () => {
       pulse.start(now);
       pulse.stop(now + 0.04);
 
-      // Rapid fire arpeggio with super saws
       const arp1 = context.createOscillator();
       arp1.type = "sawtooth";
-      arp1.frequency.setValueAtTime(523.25, now + 0.03); // C5
-      arp1.frequency.setValueAtTime(659.25, now + 0.12); // E5
-      arp1.frequency.setValueAtTime(783.99, now + 0.21); // G5
-      arp1.frequency.exponentialRampToValueAtTime(1046.5, now + 0.38); // C6
+      arp1.frequency.setValueAtTime(523.25, now + 0.03);
+      arp1.frequency.setValueAtTime(659.25, now + 0.12);
+      arp1.frequency.setValueAtTime(783.99, now + 0.21);
+      arp1.frequency.exponentialRampToValueAtTime(1046.5, now + 0.38);
 
       const arp2 = context.createOscillator();
       arp2.type = "sawtooth";
-      arp2.frequency.setValueAtTime(527.18, now + 0.03); // C5 +13 cents
-      arp2.frequency.setValueAtTime(664.18, now + 0.12); // E5
-      arp2.frequency.setValueAtTime(789.66, now + 0.21); // G5
-      arp2.frequency.exponentialRampToValueAtTime(1053.98, now + 0.38); // C6
+      arp2.frequency.setValueAtTime(527.18, now + 0.03);
+      arp2.frequency.setValueAtTime(664.18, now + 0.12);
+      arp2.frequency.setValueAtTime(789.66, now + 0.21);
+      arp2.frequency.exponentialRampToValueAtTime(1053.98, now + 0.38);
 
       const arp3 = context.createOscillator();
       arp3.type = "sawtooth";
-      arp3.frequency.setValueAtTime(519.37, now + 0.03); // C5 -13 cents
-      arp3.frequency.setValueAtTime(654.39, now + 0.12); // E5
-      arp3.frequency.setValueAtTime(778.39, now + 0.21); // G5
-      arp3.frequency.exponentialRampToValueAtTime(1039.14, now + 0.38); // C6
+      arp3.frequency.setValueAtTime(519.37, now + 0.03);
+      arp3.frequency.setValueAtTime(654.39, now + 0.12);
+      arp3.frequency.setValueAtTime(778.39, now + 0.21);
+      arp3.frequency.exponentialRampToValueAtTime(1039.14, now + 0.38);
 
-      // Bright PWM squares on top
-      const pwm1 = context.createOscillator();
-      pwm1.type = "square";
-      pwm1.frequency.setValueAtTime(1046.5, now + 0.03); // C6
-      pwm1.frequency.setValueAtTime(1318.51, now + 0.12); // E6
-      pwm1.frequency.setValueAtTime(1567.98, now + 0.21); // G6
-      pwm1.frequency.exponentialRampToValueAtTime(2093.0, now + 0.38); // C7
-
-      const pwm2 = context.createOscillator();
-      pwm2.type = "square";
-      pwm2.frequency.setValueAtTime(1053.98, now + 0.03); // C6 +12 cents
-      pwm2.frequency.setValueAtTime(1328.89, now + 0.12); // E6
-      pwm2.frequency.setValueAtTime(1579.63, now + 0.21); // G6
-      pwm2.frequency.exponentialRampToValueAtTime(2108.94, now + 0.38); // C7
-
-      // Massive sub bass following root notes
       const sub = context.createOscillator();
       sub.type = "sine";
-      sub.frequency.setValueAtTime(130.81, now + 0.03); // C3
-      sub.frequency.setValueAtTime(164.81, now + 0.12); // E3
-      sub.frequency.setValueAtTime(196.0, now + 0.21); // G3
-      sub.frequency.exponentialRampToValueAtTime(261.63, now + 0.38); // C4
+      sub.frequency.setValueAtTime(130.81, now + 0.03);
+      sub.frequency.setValueAtTime(164.81, now + 0.12);
+      sub.frequency.setValueAtTime(196.0, now + 0.21);
+      sub.frequency.exponentialRampToValueAtTime(261.63, now + 0.38);
 
-      // Aggressive resonant filter sweep
       const filter = context.createBiquadFilter();
       filter.type = "lowpass";
       filter.Q.value = 10;
       filter.frequency.setValueAtTime(2000, now);
       filter.frequency.exponentialRampToValueAtTime(8000, now + 0.35);
 
-      // 8-bit coin collect blips at each note
       const blip1 = context.createOscillator();
       blip1.type = "square";
       blip1.frequency.value = 1046.5;
@@ -473,7 +444,6 @@ const createSoundGenerators = () => {
       blip3.start(now + 0.21);
       blip3.stop(now + 0.28);
 
-      // Punchy gain envelopes
       const arpGain1 = context.createGain();
       arpGain1.gain.setValueAtTime(0.32, now + 0.03);
       arpGain1.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
@@ -486,61 +456,44 @@ const createSoundGenerators = () => {
       arpGain3.gain.setValueAtTime(0.28, now + 0.03);
       arpGain3.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
 
-      const pwmGain1 = context.createGain();
-      pwmGain1.gain.setValueAtTime(0.25, now + 0.03);
-      pwmGain1.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
-
-      const pwmGain2 = context.createGain();
-      pwmGain2.gain.setValueAtTime(0.22, now + 0.03);
-      pwmGain2.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
-
       const subGain = context.createGain();
       subGain.gain.setValueAtTime(0.38, now + 0.03);
       subGain.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
 
-      // Ping-pong delay for stereo width
-      const delay = context.createDelay(0.15);
-      delay.delayTime.value = 0.06;
-      const delayGain = context.createGain();
-      delayGain.gain.value = 0.3;
-
-      // Connect the circuit
       arp1.connect(arpGain1);
       arp2.connect(arpGain2);
       arp3.connect(arpGain3);
-      pwm1.connect(pwmGain1);
-      pwm2.connect(pwmGain2);
       sub.connect(subGain);
 
       arpGain1.connect(filter);
       arpGain2.connect(filter);
       arpGain3.connect(filter);
-      pwmGain1.connect(filter);
-      pwmGain2.connect(filter);
 
       filter.connect(context.destination);
-      filter.connect(delay);
-      delay.connect(delayGain);
-      delayGain.connect(context.destination);
-
       subGain.connect(context.destination);
 
-      // Launch!
       arp1.start(now + 0.03);
       arp2.start(now + 0.03);
       arp3.start(now + 0.03);
-      pwm1.start(now + 0.03);
-      pwm2.start(now + 0.03);
       sub.start(now + 0.03);
 
       arp1.stop(now + 0.5);
       arp2.stop(now + 0.5);
       arp3.stop(now + 0.5);
-      pwm1.stop(now + 0.5);
-      pwm2.stop(now + 0.5);
       sub.stop(now + 0.5);
 
-      console.log("Played POWER UP SURGE (success2)");
+      const allNodes: AudioNode[] = [
+        pulseGain,
+        arpGain1,
+        arpGain2,
+        arpGain3,
+        subGain,
+        blipGain1,
+        blipGain2,
+        blipGain3,
+        filter,
+      ];
+      scheduleCleanup(context, allNodes, duration);
     } catch (e) {
       console.error("Error playing success2 sound effect:", e);
     }
@@ -552,12 +505,11 @@ const createSoundGenerators = () => {
       if (!context) return;
 
       const now = context.currentTime;
+      const duration = 0.5; // Define max duration
 
-      // "COMBO BLAST" - Explosive multi-hit combo sound: D5 → F5 → A5 → D6 (fast cascade)
-      // Initial explosion pulse
       const explosion = context.createOscillator();
       explosion.type = "square";
-      explosion.frequency.setValueAtTime(587.33, now); // D5
+      explosion.frequency.setValueAtTime(587.33, now);
       const explosionGain = context.createGain();
       explosionGain.gain.setValueAtTime(0.55, now);
       explosionGain.gain.exponentialRampToValueAtTime(0.01, now + 0.06);
@@ -566,10 +518,9 @@ const createSoundGenerators = () => {
       explosion.start(now);
       explosion.stop(now + 0.06);
 
-      // Rapid cascade of notes (like coins multiplying)
       const note1 = context.createOscillator();
       note1.type = "square";
-      note1.frequency.value = 587.33; // D5
+      note1.frequency.value = 587.33;
       const note1Gain = context.createGain();
       note1Gain.gain.setValueAtTime(0.35, now + 0.05);
       note1Gain.gain.exponentialRampToValueAtTime(0.01, now + 0.15);
@@ -580,7 +531,7 @@ const createSoundGenerators = () => {
 
       const note2 = context.createOscillator();
       note2.type = "square";
-      note2.frequency.value = 698.46; // F5
+      note2.frequency.value = 698.46;
       const note2Gain = context.createGain();
       note2Gain.gain.setValueAtTime(0.35, now + 0.1);
       note2Gain.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
@@ -591,7 +542,7 @@ const createSoundGenerators = () => {
 
       const note3 = context.createOscillator();
       note3.type = "square";
-      note3.frequency.value = 880; // A5
+      note3.frequency.value = 880;
       const note3Gain = context.createGain();
       note3Gain.gain.setValueAtTime(0.35, now + 0.15);
       note3Gain.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
@@ -602,7 +553,7 @@ const createSoundGenerators = () => {
 
       const note4 = context.createOscillator();
       note4.type = "square";
-      note4.frequency.value = 1174.66; // D6
+      note4.frequency.value = 1174.66;
       const note4Gain = context.createGain();
       note4Gain.gain.setValueAtTime(0.4, now + 0.2);
       note4Gain.gain.exponentialRampToValueAtTime(0.01, now + 0.35);
@@ -611,26 +562,9 @@ const createSoundGenerators = () => {
       note4.start(now + 0.2);
       note4.stop(now + 0.35);
 
-      // Power chord backing (super saws)
-      const backing1 = context.createOscillator();
-      backing1.type = "sawtooth";
-      backing1.frequency.setValueAtTime(293.66, now + 0.03); // D4
-      backing1.frequency.exponentialRampToValueAtTime(587.33, now + 0.25); // D5
-
-      const backing2 = context.createOscillator();
-      backing2.type = "sawtooth";
-      backing2.frequency.setValueAtTime(296.21, now + 0.03); // D4 +15 cents
-      backing2.frequency.exponentialRampToValueAtTime(591.11, now + 0.25); // D5
-
-      const backing3 = context.createOscillator();
-      backing3.type = "sawtooth";
-      backing3.frequency.setValueAtTime(291.14, now + 0.03); // D4 -15 cents
-      backing3.frequency.exponentialRampToValueAtTime(583.58, now + 0.25); // D5
-
-      // Huge sub bass thump
       const sub = context.createOscillator();
       sub.type = "sine";
-      sub.frequency.value = 146.83; // D3
+      sub.frequency.value = 146.83;
       const subGain = context.createGain();
       subGain.gain.setValueAtTime(0.45, now);
       subGain.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
@@ -639,59 +573,16 @@ const createSoundGenerators = () => {
       sub.start(now);
       sub.stop(now + 0.4);
 
-      // Aggressive filter for punch
-      const filter = context.createBiquadFilter();
-      filter.type = "lowpass";
-      filter.Q.value = 12;
-      filter.frequency.setValueAtTime(1000, now);
-      filter.frequency.exponentialRampToValueAtTime(7000, now + 0.3);
-
-      // Backing gain envelopes
-      const backGain1 = context.createGain();
-      backGain1.gain.setValueAtTime(0.28, now + 0.03);
-      backGain1.gain.exponentialRampToValueAtTime(0.01, now + 0.45);
-
-      const backGain2 = context.createGain();
-      backGain2.gain.setValueAtTime(0.24, now + 0.03);
-      backGain2.gain.exponentialRampToValueAtTime(0.01, now + 0.45);
-
-      const backGain3 = context.createGain();
-      backGain3.gain.setValueAtTime(0.24, now + 0.03);
-      backGain3.gain.exponentialRampToValueAtTime(0.01, now + 0.45);
-
-      // Echo/delay for arcade depth
-      const delay = context.createDelay(0.2);
-      delay.delayTime.value = 0.06;
-      const delayGain = context.createGain();
-      delayGain.gain.value = 0.25;
-      backGain1.connect(delay);
-      delay.connect(delayGain);
-      delayGain.connect(context.destination);
-
-      // Connect the circuit
-      backing1.connect(backGain1);
-      backing2.connect(backGain2);
-      backing3.connect(backGain3);
-      sub.connect(subGain);
-
-      backGain1.connect(filter);
-      backGain2.connect(filter);
-      backGain3.connect(filter);
-
-      filter.connect(context.destination);
-
-      // Launch!
-      backing1.start(now + 0.03);
-      backing2.start(now + 0.03);
-      backing3.start(now + 0.03);
-      sub.start(now);
-
-      backing1.stop(now + 0.45);
-      backing2.stop(now + 0.45);
-      backing3.stop(now + 0.45);
-      sub.stop(now + 0.4);
-
-      console.log("Played COMBO BLAST (success3)");
+      // Simplified to just the core notes
+      const allNodes: AudioNode[] = [
+        explosionGain,
+        note1Gain,
+        note2Gain,
+        note3Gain,
+        note4Gain,
+        subGain,
+      ];
+      scheduleCleanup(context, allNodes, duration);
     } catch (e) {
       console.error("Error playing success3 sound effect:", e);
     }
@@ -703,12 +594,12 @@ const createSoundGenerators = () => {
       if (!context) return;
 
       const now = context.currentTime;
+      const duration = 0.5;
 
-      // "TIME UP" - Simple, attention-grabbing sound effect
       const oscillator = context.createOscillator();
       oscillator.type = "square";
-      oscillator.frequency.setValueAtTime(880, now); // A5
-      oscillator.frequency.exponentialRampToValueAtTime(440, now + 0.5); // A4
+      oscillator.frequency.setValueAtTime(880, now);
+      oscillator.frequency.exponentialRampToValueAtTime(440, now + 0.5);
       const gain = context.createGain();
       gain.gain.setValueAtTime(0.3, now);
       gain.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
@@ -717,7 +608,7 @@ const createSoundGenerators = () => {
       oscillator.start(now);
       oscillator.stop(now + 0.5);
 
-      console.log("Played TIME UP");
+      scheduleCleanup(context, [gain], duration);
     } catch (e) {
       console.error("Error playing time up sound effect:", e);
     }
@@ -729,21 +620,42 @@ const createSoundGenerators = () => {
       if (!context) return;
 
       const now = context.currentTime;
+      const duration = 0.6;
 
-      // "NEW ROUND" - Cheerful sound effect for starting a new round
-      const oscillator = context.createOscillator();
-      oscillator.type = "triangle";
-      oscillator.frequency.setValueAtTime(440, now); // A4
-      oscillator.frequency.exponentialRampToValueAtTime(880, now + 0.5); // A5
-      const gain = context.createGain();
-      gain.gain.setValueAtTime(0.25, now);
-      gain.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
-      oscillator.connect(gain);
-      gain.connect(context.destination);
-      oscillator.start(now);
-      oscillator.stop(now + 0.5);
+      const blip1 = context.createOscillator();
+      blip1.type = "square";
+      blip1.frequency.value = 523.25; // C5
+      const blip1Gain = context.createGain();
+      blip1Gain.gain.setValueAtTime(0.35, now);
+      blip1Gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
+      blip1.connect(blip1Gain);
+      blip1Gain.connect(context.destination);
+      blip1.start(now);
+      blip1.stop(now + 0.1);
 
-      console.log("Played NEW ROUND");
+      const blip2 = context.createOscillator();
+      blip2.type = "square";
+      blip2.frequency.value = 659.25; // E5
+      const blip2Gain = context.createGain();
+      blip2Gain.gain.setValueAtTime(0.35, now + 0.15);
+      blip2Gain.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
+      blip2.connect(blip2Gain);
+      blip2Gain.connect(context.destination);
+      blip2.start(now + 0.15);
+      blip2.stop(now + 0.25);
+
+      const blip3 = context.createOscillator();
+      blip3.type = "square";
+      blip3.frequency.value = 783.99; // G5
+      const blip3Gain = context.createGain();
+      blip3Gain.gain.setValueAtTime(0.4, now + 0.3);
+      blip3Gain.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
+      blip3.connect(blip3Gain);
+      blip3Gain.connect(context.destination);
+      blip3.start(now + 0.3);
+      blip3.stop(now + 0.5);
+
+      scheduleCleanup(context, [blip1Gain, blip2Gain, blip3Gain], duration);
     } catch (e) {
       console.error("Error playing new round sound effect:", e);
     }
@@ -755,21 +667,21 @@ const createSoundGenerators = () => {
       if (!context) return;
 
       const now = context.currentTime;
+      const duration = 0.15;
 
-      // "PLAYER SNAP" - Quick, sharp sound effect for player action
-      const oscillator = context.createOscillator();
-      oscillator.type = "square";
-      oscillator.frequency.setValueAtTime(2093.0, now); // C7
-      oscillator.frequency.exponentialRampToValueAtTime(1046.5, now + 0.1); // C6
+      const osc = context.createOscillator();
+      osc.type = "sine";
+      osc.frequency.setValueAtTime(880, now);
+      osc.frequency.exponentialRampToValueAtTime(1320, now + 0.05);
       const gain = context.createGain();
-      gain.gain.setValueAtTime(0.5, now);
+      gain.gain.setValueAtTime(0.25, now);
       gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
-      oscillator.connect(gain);
+      osc.connect(gain);
       gain.connect(context.destination);
-      oscillator.start(now);
-      oscillator.stop(now + 0.1);
+      osc.start(now);
+      osc.stop(now + 0.1);
 
-      console.log("Played PLAYER SNAP");
+      scheduleCleanup(context, [gain], duration);
     } catch (e) {
       console.error("Error playing player snap sound effect:", e);
     }

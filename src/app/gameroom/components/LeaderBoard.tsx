@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 
 import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { useGameState } from "../hooks/useGameState";
 import type { Accolade } from "../types/state";
 import styles from "./leaderboard.module.css";
@@ -34,7 +35,12 @@ function AccoladeChip({ accolade }: { accolade: Accolade }) {
   const [showPopover, setShowPopover] = useState(false);
   const [popoverPosition, setPopoverPosition] = useState({ top: 0, left: 0 });
   const chipRef = useRef<HTMLDivElement>(null);
+  const [isMounted, setIsMounted] = useState(false);
   const IconComponent = ACCOLADE_ICONS[accolade.accolade_type] || Award;
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   useEffect(() => {
     if (showPopover && chipRef.current) {
@@ -46,6 +52,22 @@ function AccoladeChip({ accolade }: { accolade: Accolade }) {
     }
   }, [showPopover]);
 
+  const popoverContent =
+    showPopover && isMounted ? (
+      <div
+        className={styles.accoladePopover}
+        style={{ top: popoverPosition.top, left: popoverPosition.left }}
+      >
+        <div className={styles.accoladePopoverTitle}>
+          <span className={styles.accoladePopoverIcon}></span>
+          {accolade.title}
+        </div>
+        <div className={styles.accoladePopoverDescription}>
+          {accolade.description}
+        </div>
+      </div>
+    ) : null;
+
   return (
     <div
       ref={chipRef}
@@ -54,20 +76,7 @@ function AccoladeChip({ accolade }: { accolade: Accolade }) {
       onMouseLeave={() => setShowPopover(false)}
     >
       <IconComponent aria-hidden="true" className={styles.accoladeIcon} />
-      {showPopover && (
-        <div
-          className={styles.accoladePopover}
-          style={{ top: popoverPosition.top, left: popoverPosition.left }}
-        >
-          <div className={styles.accoladePopoverTitle}>
-            <span className={styles.accoladePopoverIcon}></span>
-            {accolade.title}
-          </div>
-          <div className={styles.accoladePopoverDescription}>
-            {accolade.description}
-          </div>
-        </div>
-      )}
+      {popoverContent && createPortal(popoverContent, document.body)}
     </div>
   );
 }
