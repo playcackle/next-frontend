@@ -5,7 +5,7 @@ export function getPerformanceTier(): PerformanceTier {
 
   // Use multiple signals
   const cores = navigator.hardwareConcurrency || 4;
-  const memory = navigator.deviceMemory || 4;
+  const memory = (navigator as any).deviceMemory || 4;
 
   // Check actual rendering performance
   const isHighPerformance =

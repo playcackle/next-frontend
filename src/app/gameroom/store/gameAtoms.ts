@@ -34,7 +34,24 @@ const initGameState = {
 // Core game state atoms
 export const gameStateAtom = atom<GameState>(initGameState);
 
-export const slotsAtom = atom<Slot[]>([]);
+// Derived atoms - allows components to subscribe to only specific pieces of state
+// This prevents unnecessary re-renders when unrelated state changes
+export const playerCountAtom = atom((get) => get(gameStateAtom).playerCount);
+export const timeRemainingAtom = atom((get) => get(gameStateAtom).timeRemaining);
+export const roundNameAtom = atom((get) => get(gameStateAtom).roundName);
+export const roundPromptAtom = atom((get) => get(gameStateAtom).roundPrompt);
+export const roundExampleAtom = atom((get) => get(gameStateAtom).roundExample);
+export const roundNumberAtom = atom((get) => get(gameStateAtom).roundNumber);
+export const totalRoundsAtom = atom((get) => get(gameStateAtom).totalRounds);
+export const isRoundBreakAtom = atom((get) => get(gameStateAtom).isRoundBreak);
+export const loadingAtom = atom((get) => get(gameStateAtom).loading);
+export const soundsLoadedAtom = atom((get) => get(gameStateAtom).soundsLoaded);
+export const slotsAtom = atom((get) => get(gameStateAtom).slots);
+export const scoresAtom = atom((get) => get(gameStateAtom).scores);
+export const accoladesAtom = atom((get) => get(gameStateAtom).accolades);
+export const finalScoreAtom = atom((get) => get(gameStateAtom).finalScore);
+export const showCountDownAtom = atom((get) => get(gameStateAtom).showCountDown);
+
 export const answerAtom = atom<string>("");
 
 // Unified message system atoms

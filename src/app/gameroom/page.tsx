@@ -25,23 +25,31 @@ import { useChatSocket } from "./hooks/useChatWs";
 import { useGameActions } from "./hooks/useGameActions";
 import { useGameEvents } from "./hooks/useGameEvents";
 import { useGameState } from "./hooks/useGameState";
-import { animationStateAtom } from "./store/gameAtoms";
+import {
+  animationStateAtom,
+  isRoundBreakAtom,
+  loadingAtom,
+  roundNameAtom,
+  scoresAtom,
+  showCountDownAtom,
+  timeRemainingAtom,
+} from "./store/gameAtoms";
 
 export default function GameroomPage() {
   const gameroom = useAtomValue(gameRoomAtom);
   const animationState = useAtomValue(animationStateAtom);
   const { addAnswerBubble, bubbles, removeBubble } = useAnswerBubbles();
 
-  // Global state hooks
-  const {
-    loading,
-    isRoundBreak,
-    timeRemaining,
-    showCountDown,
-    updateGameState,
-    scores,
-    roundName,
-  } = useGameState();
+  // Use atomic selectors for optimal performance
+  const loading = useAtomValue(loadingAtom);
+  const isRoundBreak = useAtomValue(isRoundBreakAtom);
+  const timeRemaining = useAtomValue(timeRemainingAtom);
+  const showCountDown = useAtomValue(showCountDownAtom);
+  const scores = useAtomValue(scoresAtom);
+  const roundName = useAtomValue(roundNameAtom);
+
+  // Still need updateGameState from the hook
+  const { updateGameState } = useGameState();
 
   // Refs
   const mainRef = useRef<HTMLDivElement>(null);

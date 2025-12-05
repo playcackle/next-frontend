@@ -1,19 +1,29 @@
-import { useEffect, useState } from "react";
+import { useAtomValue } from "jotai";
+import React, { useEffect, useState } from "react";
 import styles from "../gameroom.module.css";
-import { useGameState } from "../hooks/useGameState";
+import {
+  isRoundBreakAtom,
+  playerCountAtom,
+  roundExampleAtom,
+  roundNameAtom,
+  roundNumberAtom,
+  roundPromptAtom,
+  timeRemainingAtom,
+  totalRoundsAtom,
+} from "../store/gameAtoms";
 import { formatTime } from "../utils";
 
-export default function StatsRow() {
-  const {
-    playerCount,
-    roundName,
-    roundPrompt,
-    roundExample,
-    roundNumber,
-    totalRounds,
-    isRoundBreak,
-    timeRemaining,
-  } = useGameState();
+const StatsRow = React.memo(() => {
+  // Use atomic selectors for optimal performance
+  // Component only re-renders when these specific values change
+  const playerCount = useAtomValue(playerCountAtom);
+  const roundName = useAtomValue(roundNameAtom);
+  const roundPrompt = useAtomValue(roundPromptAtom);
+  const roundExample = useAtomValue(roundExampleAtom);
+  const roundNumber = useAtomValue(roundNumberAtom);
+  const totalRounds = useAtomValue(totalRoundsAtom);
+  const isRoundBreak = useAtomValue(isRoundBreakAtom);
+  const timeRemaining = useAtomValue(timeRemainingAtom);
 
   const [roundText, setRoundText] = useState("Round number");
   const [timeText, setTimeText] = useState("Time remaining");
@@ -99,4 +109,6 @@ export default function StatsRow() {
       </div>
     </div>
   );
-}
+});
+
+export default StatsRow;

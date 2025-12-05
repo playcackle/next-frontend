@@ -5,14 +5,18 @@ import { useAtomValue } from "jotai";
 import { useSession } from "next-auth/react";
 import { useEffect, useRef } from "react";
 import styles from "../gameroom.module.css";
-import { useGameState } from "../hooks/useGameState";
-import { botBobLastMessageAtom, unifiedMessagesAtom } from "../store/gameAtoms";
+import {
+  botBobLastMessageAtom,
+  isRoundBreakAtom,
+  unifiedMessagesAtom,
+} from "../store/gameAtoms";
 import BotBobPinnedMessage from "./BotBobPinnedMessage";
 import PlayerAvatar from "./PlayerAvatar";
 
 export default function UnifiedMessages() {
   const { data: session } = useSession();
-  const { isRoundBreak } = useGameState();
+  // Use atomic selector for optimal performance
+  const isRoundBreak = useAtomValue(isRoundBreakAtom);
   const messages = useAtomValue(unifiedMessagesAtom);
   const botBobLastMessage = useAtomValue(botBobLastMessageAtom);
   const messagesEndRef = useRef<HTMLDivElement>(null);
