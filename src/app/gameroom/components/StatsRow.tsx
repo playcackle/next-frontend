@@ -1,5 +1,5 @@
 import { useAtomValue } from "jotai";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import styles from "../gameroom.module.css";
 import {
   isRoundBreakAtom,
@@ -13,7 +13,7 @@ import {
 } from "../store/gameAtoms";
 import { formatTime } from "../utils";
 
-export default function StatsRow() {
+const StatsRow = React.memo(() => {
   // Use atomic selectors for optimal performance
   // Component only re-renders when these specific values change
   const playerCount = useAtomValue(playerCountAtom);
@@ -109,4 +109,6 @@ export default function StatsRow() {
       </div>
     </div>
   );
-}
+});
+
+export default StatsRow;
