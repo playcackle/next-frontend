@@ -790,12 +790,6 @@ const createSoundGenerators = () => {
 const SoundEffects = ({ onLoad }: SoundEffectProps) => {
   const soundGenerators = createSoundGenerators();
 
-  useEffect(() => {
-    if (onLoad) {
-      onLoad();
-    }
-  }, [onLoad]);
-
   const playSound = useCallback(
     async (soundType: SoundType) => {
       switch (soundType) {
@@ -829,6 +823,20 @@ const SoundEffects = ({ onLoad }: SoundEffectProps) => {
     },
     [soundGenerators]
   );
+
+  useEffect(() => {
+    (window as any).playSoundEffect = playSound;
+
+    return () => {
+      delete (window as any).playSoundEffect;
+    };
+  }, [playSound]);
+
+  useEffect(() => {
+    if (onLoad) {
+      onLoad();
+    }
+  }, [onLoad]);
 
   return null;
 };
