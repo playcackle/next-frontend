@@ -13,8 +13,9 @@ import {
   Zap,
 } from "lucide-react";
 
+import { useAtomValue } from "jotai";
 import React, { useCallback, useMemo, useState } from "react";
-import { useGameState } from "../hooks/useGameState";
+import { accoladesAtom, scoresAtom } from "../store/gameAtoms";
 import { Accolade, Scores } from "../types/state";
 import styles from "./leaderboard.module.css";
 
@@ -112,7 +113,9 @@ const LeaderboardEntry = React.memo(
 );
 
 const Leaderboard = React.memo(() => {
-  const { scores, accolades } = useGameState();
+  // Use atomic selectors for optimal performance
+  const scores = useAtomValue(scoresAtom);
+  const accolades = useAtomValue(accoladesAtom);
 
   // Memoize the accolade map to avoid O(n×m) filtering on every render
   // This creates the map once and only recalculates when accolades change
