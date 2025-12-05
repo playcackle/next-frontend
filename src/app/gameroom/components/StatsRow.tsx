@@ -73,14 +73,11 @@ const StatsRow = React.memo(() => {
             <div className={styles.statsValue} style={{ fontSize: "14px" }}>
               {roundName}
             </div>
-            {roundExample && (
-              <p className={styles.statsTitle}>Example: {roundExample}</p>
-            )}
           </div>
           <div className={styles.statsTile}>
-            <h3 className={styles.statsTitle}>Explanation text:</h3>
+            <h3 className={styles.statsTitle}>Example text:</h3>
             <p className={styles.statsValue} style={{ fontSize: "14px" }}>
-              {roundPrompt || "Answer with items from this category"}
+              {roundExample || "Answer with items from this category"}
             </p>
           </div>
         </>
