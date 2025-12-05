@@ -1,5 +1,5 @@
 import { ATTENTION_ANIMATIONS, SOUND_SUCCESS } from "./constants";
-import { SoundType } from "./types/state";
+import type { SoundType } from "./types/state";
 
 /**
  * Format time as MM:SS
@@ -38,17 +38,13 @@ export const getRandomSuccessSound = (): SoundType => {
 export const playSound = (type: SoundType): void => {
   try {
     if (typeof window === "undefined") {
-      console.warn("playSound: window is undefined");
       return;
     }
 
     // @ts-ignore
     if (window.playSoundEffect) {
-      console.log(`Playing sound: ${type}`);
       // @ts-ignore
       window.playSoundEffect(type);
-    } else {
-      console.warn("window.playSoundEffect is not defined");
     }
   } catch (e) {
     console.error("Sound playback failed:", e);
@@ -113,7 +109,12 @@ export const getInitials = (displayName: string): string => {
 export const getPlayerAvatar = (
   playerId: string,
   displayName: string
-): { type: "image" | "generated"; value: string; color?: string; initials?: string } => {
+): {
+  type: "image" | "generated";
+  value: string;
+  color?: string;
+  initials?: string;
+} => {
   // Check if it's Bot Bob
   if (playerId === "botbob" || displayName.toLowerCase() === "botbob") {
     return {

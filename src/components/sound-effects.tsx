@@ -822,6 +822,16 @@ export default function SoundEffects({ onLoad }: SoundEffectProps) {
   }, []); // Empty deps array - function never needs to change
 
   useEffect(() => {
+    // @ts-ignore
+    window.playSoundEffect = playSoundEffect;
+
+    return () => {
+      // @ts-ignore
+      delete window.playSoundEffect;
+    };
+  }, [playSoundEffect]);
+
+  useEffect(() => {
     if (hasInitialized) {
       return;
     }
