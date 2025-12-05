@@ -15,11 +15,8 @@ type QuizAnswer = {
 export default function AnswerReveal() {
   const [visibleAnswers, setVisibleAnswers] = useState<number[]>([]);
   const [answers, setAnswers] = useState<QuizAnswer[]>([]);
-  const [selectedAnimation, setSelectedAnimation] = useState<string>("");
 
   const { slots } = useGameState();
-
-  const entranceAnimations = ["animate__slideInLeft"];
 
   useEffect(() => {
     const answers = slots.map(
@@ -36,13 +33,10 @@ export default function AnswerReveal() {
   }, [slots]);
 
   useEffect(() => {
-    const randomAnimation =
-      entranceAnimations[Math.floor(Math.random() * entranceAnimations.length)];
-    setSelectedAnimation(randomAnimation);
-  }, []);
+    if (answers.length === 0) return;
 
-  useEffect(() => {
-    if (!selectedAnimation || answers.length === 0) return;
+    // Reset visible answers when answers change
+    setVisibleAnswers([]);
 
     const revealAnswers = () => {
       answers.forEach((answer, index) => {
@@ -53,7 +47,7 @@ export default function AnswerReveal() {
     };
 
     revealAnswers();
-  }, [selectedAnimation]);
+  }, [answers]);
 
   return (
     <div className={styles.answersContainer}>
@@ -65,9 +59,7 @@ export default function AnswerReveal() {
             className={`${styles.answerItem} ${
               x.isRare ? styles.rareAnswer : ""
             } ${x.isAnswered ? styles.answeredAnswer : ""} ${
-              visibleAnswers.includes(x.id)
-                ? `animate__animated ${selectedAnimation}`
-                : styles.hidden
+              visibleAnswers.includes(x.id) ? styles.visible : styles.hidden
             }`}
           >
             <div className={styles.questionNumber}>#{i + 1}</div>

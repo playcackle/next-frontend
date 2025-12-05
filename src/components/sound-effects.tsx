@@ -6,14 +6,15 @@ type SoundEffectProps = {
   onLoad?: () => void;
 };
 
-// Sound types
 export type SoundType =
   | "correct"
   | "bonus"
   | "success1"
   | "success2"
   | "success3"
-  | "timeUp";
+  | "timeUp"
+  | "newRound"
+  | "playerSnap";
 
 // Audio context singleton to prevent multiple instances
 let globalAudioContext: AudioContext | null = null;
@@ -660,32 +661,35 @@ const createSoundGenerators = () => {
 
       // Echo/delay for arcade depth
       const delay = context.createDelay(0.2);
-      delay.delayTime.value = 0.05;
+      delay.delayTime.value = 0.06;
       const delayGain = context.createGain();
-      delayGain.gain.value = 0.35;
+      delayGain.gain.value = 0.25;
+      backGain1.connect(delay);
+      delay.connect(delayGain);
+      delayGain.connect(context.destination);
 
-      // Connect backing
+      // Connect the circuit
       backing1.connect(backGain1);
       backing2.connect(backGain2);
       backing3.connect(backGain3);
+      sub.connect(subGain);
 
       backGain1.connect(filter);
       backGain2.connect(filter);
       backGain3.connect(filter);
 
       filter.connect(context.destination);
-      filter.connect(delay);
-      delay.connect(delayGain);
-      delayGain.connect(context.destination);
 
-      // Fire!
+      // Launch!
       backing1.start(now + 0.03);
       backing2.start(now + 0.03);
       backing3.start(now + 0.03);
+      sub.start(now);
 
       backing1.stop(now + 0.45);
       backing2.stop(now + 0.45);
       backing3.stop(now + 0.45);
+      sub.stop(now + 0.4);
 
       console.log("Played COMBO BLAST (success3)");
     } catch (e) {
@@ -700,175 +704,141 @@ const createSoundGenerators = () => {
 
       const now = context.currentTime;
 
-      // "FINAL COUNTDOWN" - Urgent arcade alarm: descending siren with pulsing bass
-      // Rapid alarm pulses (like classic arcade warnings)
-      for (let i = 0; i < 3; i++) {
-        const offset = i * 0.15;
+      // "TIME UP" - Simple, attention-grabbing sound effect
+      const oscillator = context.createOscillator();
+      oscillator.type = "square";
+      oscillator.frequency.setValueAtTime(880, now); // A5
+      oscillator.frequency.exponentialRampToValueAtTime(440, now + 0.5); // A4
+      const gain = context.createGain();
+      gain.gain.setValueAtTime(0.3, now);
+      gain.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
+      oscillator.connect(gain);
+      gain.connect(context.destination);
+      oscillator.start(now);
+      oscillator.stop(now + 0.5);
 
-        // High alarm beep
-        const beep = context.createOscillator();
-        beep.type = "square";
-        beep.frequency.setValueAtTime(880, now + offset); // A5
-        beep.frequency.exponentialRampToValueAtTime(
-          659.25,
-          now + offset + 0.12
-        ); // E5 (descend)
-
-        const beepGain = context.createGain();
-        beepGain.gain.setValueAtTime(0.4 - i * 0.08, now + offset);
-        beepGain.gain.exponentialRampToValueAtTime(0.01, now + offset + 0.12);
-
-        beep.connect(beepGain);
-        beepGain.connect(context.destination);
-        beep.start(now + offset);
-        beep.stop(now + offset + 0.12);
-
-        // Low warning tone
-        const warning = context.createOscillator();
-        warning.type = "sawtooth";
-        warning.frequency.value = 220; // A3
-
-        const warningGain = context.createGain();
-        warningGain.gain.setValueAtTime(0.35 - i * 0.06, now + offset);
-        warningGain.gain.exponentialRampToValueAtTime(
-          0.01,
-          now + offset + 0.12
-        );
-
-        warning.connect(warningGain);
-        warningGain.connect(context.destination);
-        warning.start(now + offset);
-        warning.stop(now + offset + 0.12);
-      }
-
-      // Pulsing sub bass for urgency
-      const pulse = context.createOscillator();
-      pulse.type = "sine";
-      pulse.frequency.value = 110; // A2
-
-      const pulseGain = context.createGain();
-      // Create pulsing effect
-      pulseGain.gain.setValueAtTime(0.4, now);
-      pulseGain.gain.setValueAtTime(0.1, now + 0.075);
-      pulseGain.gain.setValueAtTime(0.4, now + 0.15);
-      pulseGain.gain.setValueAtTime(0.1, now + 0.225);
-      pulseGain.gain.setValueAtTime(0.4, now + 0.3);
-      pulseGain.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
-
-      pulse.connect(pulseGain);
-      pulseGain.connect(context.destination);
-      pulse.start(now);
-      pulse.stop(now + 0.5);
-
-      // Noise burst for impact
-      const noiseBuffer = context.createBuffer(
-        1,
-        context.sampleRate * 0.05,
-        context.sampleRate
-      );
-      const noiseData = noiseBuffer.getChannelData(0);
-      for (let i = 0; i < noiseBuffer.length; i++) {
-        noiseData[i] = (Math.random() * 2 - 1) * 0.3;
-      }
-
-      const noise = context.createBufferSource();
-      noise.buffer = noiseBuffer;
-
-      const noiseGain = context.createGain();
-      noiseGain.gain.setValueAtTime(0.25, now);
-      noiseGain.gain.exponentialRampToValueAtTime(0.01, now + 0.05);
-
-      noise.connect(noiseGain);
-      noiseGain.connect(context.destination);
-      noise.start(now);
-
-      console.log("Played FINAL COUNTDOWN (timeUp)");
+      console.log("Played TIME UP");
     } catch (e) {
       console.error("Error playing time up sound effect:", e);
     }
   };
+
+  const playNewRoundSound = async () => {
+    try {
+      const context = await getOrCreateAudioContext();
+      if (!context) return;
+
+      const now = context.currentTime;
+
+      // "NEW ROUND" - Cheerful sound effect for starting a new round
+      const oscillator = context.createOscillator();
+      oscillator.type = "triangle";
+      oscillator.frequency.setValueAtTime(440, now); // A4
+      oscillator.frequency.exponentialRampToValueAtTime(880, now + 0.5); // A5
+      const gain = context.createGain();
+      gain.gain.setValueAtTime(0.25, now);
+      gain.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
+      oscillator.connect(gain);
+      gain.connect(context.destination);
+      oscillator.start(now);
+      oscillator.stop(now + 0.5);
+
+      console.log("Played NEW ROUND");
+    } catch (e) {
+      console.error("Error playing new round sound effect:", e);
+    }
+  };
+
+  const playPlayerSnapSound = async () => {
+    try {
+      const context = await getOrCreateAudioContext();
+      if (!context) return;
+
+      const now = context.currentTime;
+
+      // "PLAYER SNAP" - Quick, sharp sound effect for player action
+      const oscillator = context.createOscillator();
+      oscillator.type = "square";
+      oscillator.frequency.setValueAtTime(2093.0, now); // C7
+      oscillator.frequency.exponentialRampToValueAtTime(1046.5, now + 0.1); // C6
+      const gain = context.createGain();
+      gain.gain.setValueAtTime(0.5, now);
+      gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
+      oscillator.connect(gain);
+      gain.connect(context.destination);
+      oscillator.start(now);
+      oscillator.stop(now + 0.1);
+
+      console.log("Played PLAYER SNAP");
+    } catch (e) {
+      console.error("Error playing player snap sound effect:", e);
+    }
+  };
+
   return {
-    correct: playCelebratoryCorrectSound,
-    bonus: playEpicBonusSound,
-    success1: playCelebratorySuccess1Sound,
-    success2: playCelebratorySuccess2Sound,
-    success3: playCelebratorySuccess3Sound,
-    timeUp: playTimeUpSound,
+    playCelebratoryCorrectSound,
+    playEpicBonusSound,
+    playCelebratorySuccess1Sound,
+    playCelebratorySuccess2Sound,
+    playCelebratorySuccess3Sound,
+    playTimeUpSound,
+    playNewRoundSound,
+    playPlayerSnapSound,
   };
 };
 
-// Create sound generators once outside component
-const soundGenerators = createSoundGenerators();
+const SoundEffects = ({ onLoad }: SoundEffectProps) => {
+  const soundGenerators = createSoundGenerators();
 
-let hasInitialized = false;
-let hasLogged = false;
-
-export default function SoundEffects({ onLoad }: SoundEffectProps) {
-  if (!hasLogged) {
-    console.log("SoundEffects component mounted");
-    hasLogged = true;
-  }
-
-  // Memoized sound effect function to prevent recreation
-  const playSoundEffect = useCallback((type: SoundType) => {
-    console.log(`playSoundEffect called with type: ${type}`);
-    const generator = soundGenerators[type];
-    if (generator) {
-      generator();
-    } else {
-      console.warn(`Unknown sound type: ${type}`);
-      soundGenerators.correct(); // Fallback
-    }
-  }, []); // Empty deps array - function never needs to change
+  const playSound = useCallback(
+    async (soundType: SoundType) => {
+      switch (soundType) {
+        case "correct":
+          await soundGenerators.playCelebratoryCorrectSound();
+          break;
+        case "bonus":
+          await soundGenerators.playEpicBonusSound();
+          break;
+        case "success1":
+          await soundGenerators.playCelebratorySuccess1Sound();
+          break;
+        case "success2":
+          await soundGenerators.playCelebratorySuccess2Sound();
+          break;
+        case "success3":
+          await soundGenerators.playCelebratorySuccess3Sound();
+          break;
+        case "timeUp":
+          await soundGenerators.playTimeUpSound();
+          break;
+        case "newRound":
+          await soundGenerators.playNewRoundSound();
+          break;
+        case "playerSnap":
+          await soundGenerators.playPlayerSnapSound();
+          break;
+        default:
+          console.error("Unknown sound type:", soundType);
+      }
+    },
+    [soundGenerators]
+  );
 
   useEffect(() => {
-    if (hasInitialized) {
-      return;
-    }
-    hasInitialized = true;
-
-    const resumeAudio = async () => {
-      try {
-        await getOrCreateAudioContext();
-      } catch (e) {
-        console.error("Error initializing audio:", e);
-      }
-    };
-
-    const handleUserInteraction = () => {
-      resumeAudio();
-      if (onLoad) {
-        onLoad();
-      }
-    };
-
-    // Resume audio context on user interaction
-    document.addEventListener("click", handleUserInteraction, { once: true });
-    document.addEventListener("keydown", handleUserInteraction, { once: true });
-    document.addEventListener("touchstart", handleUserInteraction, {
-      once: true,
-    });
+    (window as any).playSoundEffect = playSound;
 
     return () => {
-      document.removeEventListener("click", handleUserInteraction);
-      document.removeEventListener("keydown", handleUserInteraction);
-      document.removeEventListener("touchstart", handleUserInteraction);
+      delete (window as any).playSoundEffect;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); // Empty deps - only run once on mount
+  }, [playSound]);
 
   useEffect(() => {
-    return () => {
-      if (globalAudioContext && globalAudioContext.state !== "closed") {
-        try {
-          globalAudioContext.close();
-          globalAudioContext = null;
-        } catch (e) {
-          console.error("Error closing audio context:", e);
-        }
-      }
-    };
-  }, []);
+    if (onLoad) {
+      onLoad();
+    }
+  }, [onLoad]);
 
   return null;
-}
+};
+
+export default SoundEffects;
