@@ -20,7 +20,9 @@ export default function Header() {
       <div className={styles.auth}>
         {session?.user && (
           <>
-            <div className={styles.playerName}>{session.user?.name}</div>
+            <Link href="/profile" className={styles.playerName}>
+              {session.user?.name}
+            </Link>
             <Button
               className={styles.signOutButton}
               onClick={() => signOut({ callbackUrl: "/" })}
