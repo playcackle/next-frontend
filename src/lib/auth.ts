@@ -19,7 +19,7 @@ export const authOptions: NextAuthOptions = {
           const password = credentials!.password;
 
           const res = await fetch(
-            `${process.env.BACKEND_URL}/players/by-name/${encodeURIComponent(
+            `${process.env.LOBBY_MANAGER_INTERNAL_URL}/players/by-name/${encodeURIComponent(
               name
             )}`
           );

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-const BACKEND_BASE_URL = process.env.BACKEND_URL || "http://localhost:8001";
+const BACKEND_BASE_URL = process.env.LOBBY_MANAGER_INTERNAL_URL || "http://localhost:8001";
 
 type RouteParams = { path?: string[] };
 type RouteContext = { params: RouteParams } | { params: Promise<{ path: string[] }> };
