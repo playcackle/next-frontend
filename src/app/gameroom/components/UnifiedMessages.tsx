@@ -2,7 +2,7 @@
 
 import { Flex } from "@radix-ui/themes";
 import { useAtomValue } from "jotai";
-import { useSession } from "next-auth/react";
+import { useUser } from "@/hooks/useUser";
 import { useEffect, useRef } from "react";
 import styles from "../gameroom.module.css";
 import {
@@ -14,7 +14,7 @@ import BotBobPinnedMessage from "./BotBobPinnedMessage";
 import PlayerAvatar from "./PlayerAvatar";
 
 export default function UnifiedMessages() {
-  const { data: session } = useSession();
+  const { user } = useUser();
   // Use atomic selector for optimal performance
   const isRoundBreak = useAtomValue(isRoundBreakAtom);
   const messages = useAtomValue(unifiedMessagesAtom);
@@ -70,7 +70,7 @@ export default function UnifiedMessages() {
               className={`${styles.unifiedMessage} ${getMessageTypeClass(
                 msg.message_type
               )} ${
-                msg.player_id === session?.user.id ? styles.ownMessage : ""
+                msg.player_id === user?.id ? styles.ownMessage : ""
               }`}
             >
               <Flex direction="row" gap="2" align="center">

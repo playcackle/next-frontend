@@ -6,10 +6,12 @@ import {
   lobbiesApi,
   collectionsApi,
   hostSettingsApi,
+  fuzzyMatchConfigApi,
   type Lobby,
   type Collection,
   type GameConfigurationParameters,
   type HostSettings,
+  type FuzzyMatchConfig,
 } from "@/lib/api/admin";
 import * as Slider from "@radix-ui/react-slider";
 import * as Select from "@radix-ui/react-select";
@@ -50,6 +52,11 @@ export default function LobbyDetailPage() {
   const [hostSettingsLoading, setHostSettingsLoading] = useState(false);
   const [hostSettingsSaving, setHostSettingsSaving] = useState(false);
 
+  // Fuzzy match config state
+  const [fuzzyMatchConfig, setFuzzyMatchConfig] = useState<FuzzyMatchConfig | null>(null);
+  const [fuzzyMatchLoading, setFuzzyMatchLoading] = useState(false);
+  const [fuzzyMatchSaving, setFuzzyMatchSaving] = useState(false);
+
   useEffect(() => {
     loadData();
   }, [lobbyId]);
@@ -76,8 +83,9 @@ export default function LobbyDetailPage() {
         setSelectedCollection(lobbyData.collection_id);
       }
 
-      // Load host settings
+      // Load host settings and fuzzy match config
       loadHostSettings();
+      loadFuzzyMatchConfig();
     } catch (err) {
       console.error("Failed to load lobby:", err);
       setError(err instanceof Error ? err.message : "Failed to load lobby");
@@ -99,6 +107,19 @@ export default function LobbyDetailPage() {
     }
   };
 
+  const loadFuzzyMatchConfig = async () => {
+    try {
+      setFuzzyMatchLoading(true);
+      const config = await fuzzyMatchConfigApi.get(lobbyId);
+      setFuzzyMatchConfig(config);
+    } catch (err) {
+      console.error("Failed to load fuzzy match config:", err);
+      // Don't set error state, just log it - optional
+    } finally {
+      setFuzzyMatchLoading(false);
+    }
+  };
+
   const updateHostSetting = async <K extends keyof HostSettings>(
     key: K,
     value: HostSettings[K]
@@ -117,6 +138,27 @@ export default function LobbyDetailPage() {
       loadHostSettings();
     } finally {
       setHostSettingsSaving(false);
+    }
+  };
+
+  const updateFuzzyMatchSetting = async <K extends keyof FuzzyMatchConfig>(
+    key: K,
+    value: FuzzyMatchConfig[K]
+  ) => {
+    if (!fuzzyMatchConfig) return;
+
+    try {
+      setFuzzyMatchSaving(true);
+      const updated = await fuzzyMatchConfigApi.update(lobbyId, {
+        [key]: value,
+      });
+      setFuzzyMatchConfig(updated);
+    } catch (err) {
+      alert(err instanceof Error ? err.message : "Failed to update fuzzy match setting");
+      // Revert the change in UI
+      loadFuzzyMatchConfig();
+    } finally {
+      setFuzzyMatchSaving(false);
     }
   };
 
@@ -546,6 +588,94 @@ export default function LobbyDetailPage() {
         </div>
       )}
 
+      {/* Fuzzy Matching Configuration */}
+      {fuzzyMatchConfig && (
+        <div className={styles.section}>
+          <h2 className={styles.sectionTitle}>
+            Fuzzy Matching
+            {fuzzyMatchLoading && <span className={styles.loadingBadge}>Loading...</span>}
+          </h2>
+
+          <div className={styles.fuzzyMatchDescription}>
+            <p>
+              Control how typos and variations are handled. Higher similarity scores are stricter.
+            </p>
+          </div>
+
+          <div className={styles.parameterGrid}>
+            <ParameterSlider
+              label="Minimum Similarity (Acceptance)"
+              value={fuzzyMatchConfig.min_similarity}
+              onChange={(value) => updateFuzzyMatchSetting("min_similarity", value)}
+              min={80}
+              max={100}
+              unit="%"
+              description="Score required to accept typos (100 = exact match only)"
+            />
+            <ParameterSlider
+              label="Near-Miss Threshold"
+              value={fuzzyMatchConfig.near_miss_threshold}
+              onChange={(value) => updateFuzzyMatchSetting("near_miss_threshold", value)}
+              min={60}
+              max={95}
+              unit="%"
+              description="Score to show 'close!' feedback"
+            />
+            <ParameterSlider
+              label="Minimum Word Length"
+              value={fuzzyMatchConfig.min_word_length}
+              onChange={(value) => updateFuzzyMatchSetting("min_word_length", value)}
+              min={3}
+              max={10}
+              unit="chars"
+              description="Words shorter than this use exact matching"
+            />
+            <ParameterSlider
+              label="Max Length Difference"
+              value={fuzzyMatchConfig.max_length_diff}
+              onChange={(value) => updateFuzzyMatchSetting("max_length_diff", value)}
+              min={1}
+              max={10}
+              unit="chars"
+              description="Max character difference for fuzzy match"
+            />
+          </div>
+
+          <div className={styles.fuzzyMatchPresets}>
+            <p className={styles.presetsLabel}>Quick Presets:</p>
+            <div className={styles.presetButtons}>
+              <button
+                className={styles.presetButton}
+                onClick={() => {
+                  updateFuzzyMatchSetting("min_similarity", 100);
+                }}
+                disabled={fuzzyMatchSaving}
+              >
+                Strict (Exact Only)
+              </button>
+              <button
+                className={styles.presetButton}
+                onClick={() => {
+                  updateFuzzyMatchSetting("min_similarity", 92);
+                }}
+                disabled={fuzzyMatchSaving}
+              >
+                Balanced (Default)
+              </button>
+              <button
+                className={styles.presetButton}
+                onClick={() => {
+                  updateFuzzyMatchSetting("min_similarity", 85);
+                }}
+                disabled={fuzzyMatchSaving}
+              >
+                Forgiving
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Action Buttons */}
       <div className={styles.actionButtons}>
         <button
@@ -581,6 +711,7 @@ function ParameterSlider({
   min,
   max,
   unit,
+  description,
 }: {
   label: string;
   value: number;
@@ -588,6 +719,7 @@ function ParameterSlider({
   min: number;
   max: number;
   unit: string;
+  description?: string;
 }) {
   return (
     <div className={styles.parameterControl}>
@@ -597,6 +729,9 @@ function ParameterSlider({
           {value} {unit}
         </span>
       </div>
+      {description && (
+        <p className={styles.parameterDescription}>{description}</p>
+      )}
       <Slider.Root
         className={styles.sliderRoot}
         value={[value]}

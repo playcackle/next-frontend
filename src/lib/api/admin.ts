@@ -166,6 +166,26 @@ export type HostSettingsUpdate = {
   urgency_interval_seconds?: number;
 };
 
+export type FuzzyMatchConfig = {
+  min_similarity: number;
+  min_word_length: number;
+  near_miss_threshold: number;
+  max_length_diff: number;
+};
+
+export type FuzzyMatchConfigUpdate = {
+  min_similarity?: number;
+  min_word_length?: number;
+  near_miss_threshold?: number;
+  max_length_diff?: number;
+};
+
+export type FuzzyMatchConfigResponse = {
+  status: string;
+  message: string;
+  config: FuzzyMatchConfig;
+};
+
 export type TopicUploadResult = {
   topic_name: string;
   topic_id: number;
@@ -655,5 +675,56 @@ export const hostSettingsApi = {
       throw new Error(error.detail || 'Failed to update host settings');
     }
     return res.json();
+  },
+};
+
+// ============================================================================
+// Fuzzy Match Config API (via Gameroom proxy)
+// ============================================================================
+
+export const fuzzyMatchConfigApi = {
+  /**
+   * Get fuzzy match configuration for a gameroom
+   * Note: The gameroom admin endpoint doesn't use lobby ID in the path
+   * since each gameroom instance is already tied to a specific lobby
+   */
+  async get(lobbyId: string): Promise<FuzzyMatchConfig> {
+    const gameroomUrl = await this.getGameroomAdminUrl(lobbyId);
+    const res = await fetch(`${gameroomUrl}/admin/fuzzy-match-config`);
+    if (!res.ok) {
+      const error = await res.json();
+      throw new Error(error.detail || 'Failed to fetch fuzzy match config');
+    }
+    const data: FuzzyMatchConfigResponse = await res.json();
+    return data.config;
+  },
+
+  /**
+   * Update fuzzy match configuration for a gameroom
+   */
+  async update(lobbyId: string, updates: FuzzyMatchConfigUpdate): Promise<FuzzyMatchConfig> {
+    const gameroomUrl = await this.getGameroomAdminUrl(lobbyId);
+    const res = await fetch(`${gameroomUrl}/admin/fuzzy-match-config`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(updates),
+    });
+    if (!res.ok) {
+      const error = await res.json();
+      throw new Error(error.detail || 'Failed to update fuzzy match config');
+    }
+    const data: FuzzyMatchConfigResponse = await res.json();
+    return data.config;
+  },
+
+  /**
+   * Helper to get gameroom admin URL for a specific lobby
+   */
+  async getGameroomAdminUrl(lobbyId: string): Promise<string> {
+    const lobby = await lobbiesApi.getById(lobbyId);
+    if (!lobby.admin_base_url) {
+      throw new Error('Gameroom admin URL not available');
+    }
+    return lobby.admin_base_url;
   },
 };

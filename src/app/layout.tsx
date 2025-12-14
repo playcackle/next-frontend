@@ -25,7 +25,6 @@ export default async function RootLayout({
     headersList.get("x-invoke-path") || headersList.get("referer");
 
   const isGameroom = pathname?.includes("gameroom");
-  const isAdmin = pathname?.includes("/admin");
 
   return (
     <html lang="en">
@@ -44,7 +43,7 @@ export default async function RootLayout({
               <Provider>
                 <Suspense fallback={<Progress />}>
                   <SynthwaveBackground animated={false} />
-                  {!isAdmin && <Header />}
+                  <Header />
                   <main>{children}</main>
                 </Suspense>
               </Provider>

@@ -2,11 +2,9 @@
 
 import { Box, Button, Flex } from "@radix-ui/themes";
 import { AtSign, Lock, User } from "lucide-react";
-import { signIn } from "next-auth/react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
-import { register } from "../../actions/register";
+import { signUp } from "../../actions/auth";
 import styles from "../login/auth.module.css";
 
 export default function RegisterPage() {
@@ -14,37 +12,99 @@ export default function RegisterPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const router = useRouter();
+  const [success, setSuccess] = useState("");
+  const [warning, setWarning] = useState("");
+  const [loading, setLoading] = useState(false);
   const ref = useRef<HTMLFormElement>(null);
 
   const handleSubmit = async (formData: FormData) => {
-    const r = await register({
-      email: formData.get("email"),
-      password: formData.get("password"),
-      name: formData.get("name"),
-    });
-    ref.current?.reset();
-    if (r?.error) {
-      setError(r.error);
-      return;
-    } else {
-      await signIn("credentials", {
-        name: formData.get("name"),
-        password: formData.get("password"),
-        redirect: false,
-      });
-      return router.push("/");
+    setError(""); // Clear previous errors
+    setSuccess("");
+    setWarning("");
+    setLoading(true);
+
+    try {
+      const result = await signUp(formData);
+
+      if (result?.error) {
+        setError(result.error);
+        return;
+      }
+
+      if (result?.message) {
+        // Email confirmation required
+        setSuccess(result.message);
+        if (result?.warning) {
+          setWarning(result.warning);
+        }
+        setName("");
+        setEmail("");
+        setPassword("");
+        ref.current?.reset();
+      }
+
+      // If no result (redirect happened), signup was successful and user is auto-logged in
+    } catch (err) {
+      console.error("Unexpected error:", err);
+      setError("An unexpected error occurred. Please try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <Flex align="center" direction="column">
-      <form ref={ref} action={handleSubmit} className={styles.formContainer}>
+      <form
+        ref={ref}
+        action={handleSubmit}
+        className={styles.formContainer}
+        autoComplete="off"
+        suppressHydrationWarning
+      >
         <h1 className={styles.title}>
           <span className={styles.neonText}>REG</span>
           <span className={styles.neonTextPink}>ISTER</span>
         </h1>
         <p>So, a new challenger? Cute.</p>
+
+        {error && (
+          <div style={{
+            color: "#ff0055",
+            backgroundColor: "rgba(255, 0, 85, 0.1)",
+            padding: "10px",
+            borderRadius: "5px",
+            marginBottom: "10px",
+            border: "1px solid #ff0055"
+          }}>
+            ⚠️ {error}
+          </div>
+        )}
+
+        {success && (
+          <div style={{
+            color: "#00ff88",
+            backgroundColor: "rgba(0, 255, 136, 0.1)",
+            padding: "10px",
+            borderRadius: "5px",
+            marginBottom: "10px",
+            border: "1px solid #00ff88"
+          }}>
+            ✅ {success}
+          </div>
+        )}
+
+        {warning && (
+          <div style={{
+            color: "#ffb400",
+            backgroundColor: "rgba(255, 180, 0, 0.1)",
+            padding: "10px",
+            borderRadius: "5px",
+            marginBottom: "10px",
+            border: "1px solid #ffb400"
+          }}>
+            ⚠️ {warning}
+          </div>
+        )}
 
         <Box className={styles.form}>
           <div className={styles.inputGroup}>
@@ -57,6 +117,11 @@ export default function RegisterPage() {
                 id="name"
                 type="text"
                 name="name"
+                autoComplete="nickname"
+                data-lpignore="true"
+                data-1p-ignore="true"
+                data-dashlaneignore="true"
+                suppressHydrationWarning
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 className={styles.input}
@@ -76,6 +141,11 @@ export default function RegisterPage() {
                 id="email"
                 type="email"
                 name="email"
+                autoComplete="email"
+                data-lpignore="true"
+                data-1p-ignore="true"
+                data-dashlaneignore="true"
+                suppressHydrationWarning
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className={styles.input}
@@ -95,6 +165,11 @@ export default function RegisterPage() {
                 id="password"
                 name="password"
                 type="password"
+                autoComplete="new-password"
+                data-lpignore="true"
+                data-1p-ignore="true"
+                data-dashlaneignore="true"
+                suppressHydrationWarning
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className={styles.input}
@@ -104,8 +179,8 @@ export default function RegisterPage() {
             </div>
           </div>
 
-          <Button type="submit" className={styles.submitButton}>
-            Create Account
+          <Button type="submit" className={styles.submitButton} disabled={loading}>
+            {loading ? "Creating account..." : "Create Account"}
           </Button>
         </Box>
 

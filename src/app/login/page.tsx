@@ -2,57 +2,116 @@
 
 import { Box, Button, Flex } from "@radix-ui/themes";
 import { AtSign, Lock } from "lucide-react";
-import { signIn } from "next-auth/react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
-import { FormEvent, useRef, useState } from "react";
+import type { AuthChangeEvent, Session } from "@supabase/supabase-js";
 import styles from "../login/auth.module.css";
 
-export default function RegisterPage() {
-  const [name, setName] = useState("");
+export default function LoginPage() {
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const router = useRouter();
+  const [loading, setLoading] = useState(false);
   const ref = useRef<HTMLFormElement>(null);
+  const router = useRouter();
+  const supabase = useMemo(() => createClient(), []);
 
-  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const formData = new FormData(event.currentTarget);
-    const res = await signIn("credentials", {
-      name: formData.get("name"),
-      password: formData.get("password"),
-      redirect: false,
+  useEffect(() => {
+    let isMounted = true;
+
+    // If already signed in (e.g., email link), bounce to home
+    const checkUser = async () => {
+      const { data } = await supabase.auth.getUser();
+      if (!isMounted) return;
+      if (data.user) {
+        router.replace("/");
+      }
+    };
+    checkUser();
+
+    // Redirect as soon as Supabase reports SIGNED_IN
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((event: AuthChangeEvent, session: Session | null) => {
+      if (!isMounted) return;
+      if (event === "SIGNED_IN") {
+        router.replace("/");
+      }
     });
-    if (res?.error) {
-      setError(res.error as string);
-    }
-    if (res?.ok) {
-      return router.push("/");
+
+    return () => {
+      isMounted = false;
+      subscription.unsubscribe();
+    };
+  }, [supabase, router]);
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setError("");
+    setLoading(true);
+
+    const formData = new FormData(e.currentTarget);
+    const email = formData.get("email") as string;
+    const password = formData.get("password") as string;
+
+    try {
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (error) {
+        setError(error.message);
+        return;
+      }
+
+      // Navigate immediately; auth listener is a fallback
+      router.replace("/");
+    } catch (err) {
+      console.error("Login error:", err);
+      setError("An unexpected error occurred");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <Flex align="center" direction="column">
-      <form ref={ref} onSubmit={handleSubmit} className={styles.formContainer}>
+      <form
+        ref={ref}
+        onSubmit={handleSubmit}
+        className={styles.formContainer}
+        autoComplete="off"
+        suppressHydrationWarning
+      >
         <h1 className={styles.title}>
           <span className={styles.neonText}>Back for more?</span>
-          <span className={styles.neonTextPink}>Didn’t expect that.</span>
+          <span className={styles.neonTextPink}>Didn't expect that.</span>
         </h1>
+
+        {error && <p style={{ color: "red" }}>{error}</p>}
 
         <Box className={styles.form}>
           <div className={styles.inputGroup}>
-            <label htmlFor="name" className={styles.label}>
-              Name
+            <label htmlFor="email" className={styles.label}>
+              Email
             </label>
             <div className={styles.inputWrapper}>
               <AtSign className={styles.inputIcon} size={18} />
               <input
-                id="name"
-                type="name"
-                name="name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
+                id="email"
+                type="email"
+                name="email"
+                autoComplete="username"
+                data-lpignore="true"
+                data-1p-ignore="true"
+                data-dashlaneignore="true"
+                suppressHydrationWarning
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 className={styles.input}
-                placeholder="Type your name. Try not to mess it up."
+                placeholder="Your email address"
                 required
               />
             </div>
@@ -68,6 +127,11 @@ export default function RegisterPage() {
                 id="password"
                 type="password"
                 name="password"
+                autoComplete="current-password"
+                data-lpignore="true"
+                data-1p-ignore="true"
+                data-dashlaneignore="true"
+                suppressHydrationWarning
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className={styles.input}
@@ -77,8 +141,8 @@ export default function RegisterPage() {
             </div>
           </div>
 
-          <Button type="submit" className={styles.submitButton}>
-            Fine, let’s go
+          <Button type="submit" className={styles.submitButton} disabled={loading}>
+            {loading ? "Logging in..." : "Fine, let's go"}
           </Button>
         </Box>
       </form>

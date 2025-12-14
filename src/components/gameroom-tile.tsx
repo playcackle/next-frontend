@@ -2,8 +2,8 @@
 
 import { joinGameroom } from "@/actions/joinGameroom";
 import { gameRoomAtom } from "@/app/store/gameRoom";
+import { useUser } from "@/hooks/useUser";
 import { useSetAtom } from "jotai";
-import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import ErrorModal from "./error-modal";
@@ -20,21 +20,21 @@ export type GameroomTileProps = {
 
 export default function GameroomTile(props: GameroomTileProps) {
   const { gameroom } = props;
-  const { data } = useSession();
+  const { user } = useUser();
   const router = useRouter();
   const [showModal, setShowModal] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | undefined>();
   const setGameroom = useSetAtom(gameRoomAtom);
 
   const handleClick = async () => {
-    if (!data?.user?.id) {
+    if (!user?.id) {
       setErrorMessage("Please sign in to join a gameroom.");
       setShowModal(true);
       return;
     }
     const gameRoom = await joinGameroom({
       lobbyId: gameroom.lobby_id,
-      playerId: data.user.id,
+      playerId: user.id,
       joinBaseUrl: gameroom.join_base_url ?? undefined,
     });
     if ("isError" in gameRoom) {

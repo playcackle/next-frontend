@@ -520,3 +520,82 @@
     font-size: 2rem;
   }
 }
+
+/* Fuzzy Matching */
+.fuzzyMatchDescription {
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  background: rgba(0, 255, 255, 0.05);
+  border: 1px solid rgba(0, 255, 255, 0.2);
+  border-radius: 8px;
+}
+
+.fuzzyMatchDescription p {
+  margin: 0;
+  color: #cfcfcf;
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+.parameterDescription {
+  margin: 0.5rem 0 0.75rem 0;
+  color: #999;
+  font-size: 0.85rem;
+  line-height: 1.4;
+  font-style: italic;
+}
+
+.fuzzyMatchPresets {
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+.presetsLabel {
+  margin: 0 0 1rem 0;
+  color: #cfcfcf;
+  font-size: 0.95rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.presetButtons {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.presetButton {
+  flex: 1;
+  min-width: 150px;
+  padding: 0.875rem 1.5rem;
+  background: rgba(0, 255, 255, 0.1);
+  border: 2px solid rgba(0, 255, 255, 0.4);
+  color: rgba(0, 221, 255, 1);
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: all 0.3s ease;
+  font-family: var(--retro-font);
+}
+
+.presetButton:hover:not(:disabled) {
+  background: rgba(0, 255, 255, 0.2);
+  border-color: rgba(0, 255, 255, 0.8);
+  box-shadow: 0 0 15px rgba(0, 255, 255, 0.4);
+  transform: translateY(-2px);
+}
+
+.presetButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.presetButton:active:not(:disabled) {
+  transform: translateY(0);
+}

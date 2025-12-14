@@ -16,7 +16,7 @@ const resolvePathSegments = async (context: RouteContext): Promise<string[]> => 
 
 const buildTargetUrl = (segments: string[], search: string) => {
   const suffix = segments.length ? `/${segments.join("/")}` : "";
-  return `${BACKEND_BASE_URL}/admin${suffix}${search}`;
+  return `${BACKEND_BASE_URL}/players${suffix}${search}`;
 };
 
 const HOP_BY_HOP_HEADERS = ["connection", "proxy-connection", "keep-alive", "upgrade", "transfer-encoding"];

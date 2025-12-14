@@ -37,13 +37,24 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
 # Build arguments for Next.js environment variables
+# Supabase (new)
+ARG NEXT_PUBLIC_SUPABASE_URL
+ARG NEXT_PUBLIC_SUPABASE_ANON_KEY
+ARG NEXT_PUBLIC_LOBBY_MANAGER_URL=http://localhost:8001
+
+# NextAuth (keep temporarily until frontend auth migration complete)
 ARG NEXTAUTH_URL=http://localhost:3000
 ARG AUTH_SECRET
-ARG NEXT_PUBLIC_LOBBY_MANAGER_URL=http://localhost:8001
 
 # Set environment variables for build - use placeholder URLs since services aren't available during build
 ENV BACKEND_URL=http://placeholder:8001
 ENV NEXT_PUBLIC_LOBBY_MANAGER_URL=$NEXT_PUBLIC_LOBBY_MANAGER_URL
+
+# Supabase environment variables (baked into client bundle)
+ENV NEXT_PUBLIC_SUPABASE_URL=$NEXT_PUBLIC_SUPABASE_URL
+ENV NEXT_PUBLIC_SUPABASE_ANON_KEY=$NEXT_PUBLIC_SUPABASE_ANON_KEY
+
+# NextAuth (temporary - remove after migration)
 ENV NEXTAUTH_URL=$NEXTAUTH_URL
 ENV AUTH_SECRET=$AUTH_SECRET
 

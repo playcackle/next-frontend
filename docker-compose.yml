@@ -6,19 +6,27 @@ services:
       context: .
       dockerfile: Dockerfile
       args:
+        # Supabase (new)
+        - NEXT_PUBLIC_SUPABASE_URL=${NEXT_PUBLIC_SUPABASE_URL}
+        - NEXT_PUBLIC_SUPABASE_ANON_KEY=${NEXT_PUBLIC_SUPABASE_ANON_KEY}
+        - NEXT_PUBLIC_LOBBY_MANAGER_URL=${NEXT_PUBLIC_LOBBY_MANAGER_URL:-http://localhost:8001}
+        # NextAuth (temporary - keep until frontend auth migration)
         - NEXTAUTH_URL=${NEXTAUTH_URL:-http://localhost:3000}
         - AUTH_SECRET=${AUTH_SECRET:-Tyq8N0UATfZDomQLcUqxodFOLuedd87vRDfUV5Wq5r0=}
-        - NEXT_PUBLIC_LOBBY_MANAGER_URL=${NEXT_PUBLIC_LOBBY_MANAGER_URL:-http://localhost:8001}
     ports:
       - "3000:3000"
     environment:
       - NODE_ENV=production
       - NEXT_TELEMETRY_DISABLED=1
-      # Server-side URL (inside container) - use host.docker.internal
+      # Server-side URLs (inside container) - use host.docker.internal
       - BACKEND_URL=${BACKEND_URL:-http://host.docker.internal:8001}
+      - LOBBY_MANAGER_INTERNAL_URL=${LOBBY_MANAGER_INTERNAL_URL:-http://host.docker.internal:8001}
       # Client-side URL (for browser) - use localhost
       - NEXT_PUBLIC_LOBBY_MANAGER_URL=${NEXT_PUBLIC_LOBBY_MANAGER_URL:-http://localhost:8001}
-      # NextAuth configuration
+      # Supabase
+      - NEXT_PUBLIC_SUPABASE_URL=${NEXT_PUBLIC_SUPABASE_URL}
+      - NEXT_PUBLIC_SUPABASE_ANON_KEY=${NEXT_PUBLIC_SUPABASE_ANON_KEY}
+      # NextAuth (temporary - keep until frontend auth migration)
       - NEXTAUTH_URL=${NEXTAUTH_URL:-http://localhost:3000}
       - AUTH_SECRET=${AUTH_SECRET:-Tyq8N0UATfZDomQLcUqxodFOLuedd87vRDfUV5Wq5r0=}
     extra_hosts:

@@ -1,7 +1,7 @@
 "use client";
 
 import { useAtomValue } from "jotai";
-import { useSession } from "next-auth/react";
+import { useUser } from "@/hooks/useUser";
 import React, { useMemo, useRef } from "react";
 import styles from "../gameroom.module.css";
 import { animationStateAtom } from "../store/gameAtoms";
@@ -16,7 +16,7 @@ interface SlotTileProps {
 }
 
 const SlotTile: React.FC<SlotTileProps> = ({ slot, className }) => {
-  const { data } = useSession();
+  const { user } = useUser();
   const animationState = useAtomValue(animationStateAtom);
 
   const hasAnimated = useRef(false);
@@ -44,14 +44,14 @@ const SlotTile: React.FC<SlotTileProps> = ({ slot, className }) => {
   const displayState = useMemo(() => {
     const shouldShowContent = slot.is_snapped;
     const shouldShowAttention =
-      slot.is_snapped && slot.snapped_by_player_id === data?.user.id;
+      slot.is_snapped && slot.snapped_by_player_id === user?.id;
 
     return {
       shouldShowContent,
       shouldShowAttention,
       roomColor: slot.is_snapped ? "var(--neon-purple)" : "var(--neon-pink)",
     };
-  }, [slot.is_snapped, slot.snapped_by_player_id, data?.user.id]);
+  }, [slot.is_snapped, slot.snapped_by_player_id, user?.id]);
 
   const tileClassNames = useMemo(
     () =>

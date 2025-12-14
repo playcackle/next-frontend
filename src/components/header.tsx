@@ -1,12 +1,26 @@
 "use client";
 
 import { Button } from "@radix-ui/themes";
-import { signOut, useSession } from "next-auth/react";
+import { useUser } from "@/hooks/useUser";
+import { createClient } from "@/lib/supabase/client";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useMemo, useState } from "react";
 import styles from "./header.module.css";
 
 export default function Header() {
-  const { data: session } = useSession();
+  const { user, loading } = useUser();
+  const [signingOut, setSigningOut] = useState(false);
+  const supabase = useMemo(() => createClient(), []);
+  const router = useRouter();
+
+  const handleSignOut = async () => {
+    setSigningOut(true);
+    await supabase.auth.signOut();
+    router.refresh();
+    router.push("/login");
+    setSigningOut(false);
+  };
 
   return (
     <header className={styles.header}>
@@ -18,18 +32,21 @@ export default function Header() {
         </Link>
       </div>
       <div className={styles.auth}>
-        {session?.user && (
+        {!loading && user && (
           <>
-            <div className={styles.playerName}>{session.user?.name}</div>
+            <Link href="/profile" className={styles.playerName}>
+              {user.user_metadata?.name || user.email}
+            </Link>
             <Button
               className={styles.signOutButton}
-              onClick={() => signOut({ callbackUrl: "/" })}
+              disabled={signingOut}
+              onClick={handleSignOut}
             >
-              Sign Out
+              {signingOut ? "Signing Out..." : "Sign Out"}
             </Button>
           </>
         )}
-        {!session?.user && (
+        {!loading && !user && (
           <>
             <Link href="/login" className={styles.loginLink}>
               Back for more
