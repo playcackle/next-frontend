@@ -3,6 +3,7 @@
 import { Box, Button, Flex } from "@radix-ui/themes";
 import { AtSign, Lock, User } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
 import { signUp } from "../../actions/auth";
 import styles from "../login/auth.module.css";
@@ -15,6 +16,7 @@ export default function RegisterPage() {
   const [success, setSuccess] = useState("");
   const [warning, setWarning] = useState("");
   const [loading, setLoading] = useState(false);
+  const router = useRouter();
   const ref = useRef<HTMLFormElement>(null);
 
   const handleSubmit = async (formData: FormData) => {
@@ -41,6 +43,7 @@ export default function RegisterPage() {
         setEmail("");
         setPassword("");
         ref.current?.reset();
+        router.push("/");
       }
 
       // If no result (redirect happened), signup was successful and user is auto-logged in
@@ -68,40 +71,46 @@ export default function RegisterPage() {
         <p>So, a new challenger? Cute.</p>
 
         {error && (
-          <div style={{
-            color: "#ff0055",
-            backgroundColor: "rgba(255, 0, 85, 0.1)",
-            padding: "10px",
-            borderRadius: "5px",
-            marginBottom: "10px",
-            border: "1px solid #ff0055"
-          }}>
+          <div
+            style={{
+              color: "#ff0055",
+              backgroundColor: "rgba(255, 0, 85, 0.1)",
+              padding: "10px",
+              borderRadius: "5px",
+              marginBottom: "10px",
+              border: "1px solid #ff0055",
+            }}
+          >
             ⚠️ {error}
           </div>
         )}
 
         {success && (
-          <div style={{
-            color: "#00ff88",
-            backgroundColor: "rgba(0, 255, 136, 0.1)",
-            padding: "10px",
-            borderRadius: "5px",
-            marginBottom: "10px",
-            border: "1px solid #00ff88"
-          }}>
+          <div
+            style={{
+              color: "#00ff88",
+              backgroundColor: "rgba(0, 255, 136, 0.1)",
+              padding: "10px",
+              borderRadius: "5px",
+              marginBottom: "10px",
+              border: "1px solid #00ff88",
+            }}
+          >
             ✅ {success}
           </div>
         )}
 
         {warning && (
-          <div style={{
-            color: "#ffb400",
-            backgroundColor: "rgba(255, 180, 0, 0.1)",
-            padding: "10px",
-            borderRadius: "5px",
-            marginBottom: "10px",
-            border: "1px solid #ffb400"
-          }}>
+          <div
+            style={{
+              color: "#ffb400",
+              backgroundColor: "rgba(255, 180, 0, 0.1)",
+              padding: "10px",
+              borderRadius: "5px",
+              marginBottom: "10px",
+              border: "1px solid #ffb400",
+            }}
+          >
             ⚠️ {warning}
           </div>
         )}
@@ -179,7 +188,11 @@ export default function RegisterPage() {
             </div>
           </div>
 
-          <Button type="submit" className={styles.submitButton} disabled={loading}>
+          <Button
+            type="submit"
+            className={styles.submitButton}
+            disabled={loading}
+          >
             {loading ? "Creating account..." : "Create Account"}
           </Button>
         </Box>
