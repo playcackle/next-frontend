@@ -206,3 +206,5 @@ The included Docker setup provides:
 ## 📄 License
 
 This project is part of the SnapScore gaming platform.
+
+
