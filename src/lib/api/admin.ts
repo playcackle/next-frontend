@@ -728,3 +728,81 @@ export const fuzzyMatchConfigApi = {
     return lobby.admin_base_url;
   },
 };
+
+// ============================================================================
+// Bot API (via Lobby Manager admin proxy)
+// ============================================================================
+
+export type BotInfo = {
+  name: string;
+  player_id: string;
+  lobby_id: string;
+  status: 'running' | 'stopped';
+};
+
+export type BotAddRequest = {
+  count: number;
+  accuracy?: number;  // 0.0-1.0
+  typo_rate?: number; // 0.0-1.0
+  min_delay_seconds?: number; // Min time between submissions (default: 5.0)
+  max_delay_seconds?: number; // Max time between submissions (default: 30.0)
+};
+
+export type BotAddResponse = {
+  lobby_id: string;
+  requested_count: number;
+  accuracy: number;
+  typo_rate: number;
+  min_delay_seconds: number;
+  max_delay_seconds: number;
+  results: Record<string, string>;
+};
+
+export type BotListResponse = {
+  lobby_id: string;
+  bots: BotInfo[];
+  count: number;
+};
+
+export const botsApi = {
+  /**
+   * Add bots to a specific lobby
+   */
+  async addToLobby(lobbyId: string, request: BotAddRequest): Promise<BotAddResponse> {
+    const res = await apiFetch(`/admin/lobbies/${lobbyId}/bots`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(request),
+    });
+    if (!res.ok) {
+      const error = await res.json();
+      throw new Error(error.detail || 'Failed to add bots');
+    }
+    return res.json();
+  },
+
+  /**
+   * Get bots in a specific lobby
+   */
+  async getInLobby(lobbyId: string): Promise<BotListResponse> {
+    const res = await apiFetch(`/admin/lobbies/${lobbyId}/bots`);
+    if (!res.ok) {
+      const error = await res.json();
+      throw new Error(error.detail || 'Failed to fetch bots');
+    }
+    return res.json();
+  },
+
+  /**
+   * Remove all bots from a lobby
+   */
+  async removeFromLobby(lobbyId: string): Promise<void> {
+    const res = await apiFetch(`/admin/lobbies/${lobbyId}/bots`, {
+      method: 'DELETE',
+    });
+    if (!res.ok) {
+      const error = await res.json();
+      throw new Error(error.detail || 'Failed to remove bots');
+    }
+  },
+};

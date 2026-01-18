@@ -17,6 +17,7 @@ import * as Slider from "@radix-ui/react-slider";
 import * as Select from "@radix-ui/react-select";
 import { ChevronDown } from "lucide-react";
 import styles from "./page.module.css";
+import { BotControls } from "./components/BotControls";
 
 export default function LobbyDetailPage() {
   const router = useRouter();
@@ -675,6 +676,9 @@ export default function LobbyDetailPage() {
           </div>
         </div>
       )}
+
+      {/* Bot Stress Testing */}
+      <BotControls lobbyId={lobbyId} />
 
       {/* Action Buttons */}
       <div className={styles.actionButtons}>
