@@ -23,12 +23,14 @@ const initGameState = {
   roundNumber: 0,
   totalRounds: 10, // Default value, will be overridden by backend
   isRoundBreak: false,
+  isPostGameShowcase: false,
   loading: true,
   soundsLoaded: false,
   slots: [],
   scores: [],
   accolades: [],
   finalScore: [],
+  playerAccolades: [],
   showCountDown: false,
 };
 // Core game state atoms
@@ -46,6 +48,8 @@ export const roundExampleAtom = atom((get) => get(gameStateAtom).roundExample);
 export const roundNumberAtom = atom((get) => get(gameStateAtom).roundNumber);
 export const totalRoundsAtom = atom((get) => get(gameStateAtom).totalRounds);
 export const isRoundBreakAtom = atom((get) => get(gameStateAtom).isRoundBreak);
+export const isPostGameShowcaseAtom = atom((get) => get(gameStateAtom).isPostGameShowcase);
+export const playerAccoladesAtom = atom((get) => get(gameStateAtom).playerAccolades);
 export const loadingAtom = atom((get) => get(gameStateAtom).loading);
 export const soundsLoadedAtom = atom((get) => get(gameStateAtom).soundsLoaded);
 export const slotsAtom = atom((get) => get(gameStateAtom).slots);

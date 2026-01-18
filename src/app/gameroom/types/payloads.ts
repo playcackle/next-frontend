@@ -134,6 +134,14 @@ export type GameOverPayload = {
   final_scores: FinalScore[];
   post_game_showcase_duration_seconds: number;
   new_game_cycle_start_timestamp_utc: string;
+  player_accolades: PlayerAccolades[];
+};
+
+export type PlayerAccolades = {
+  player_id: string;
+  display_name: string;
+  score: number;
+  accolades_count: Record<string, number>;
 };
 
 export type LobbyResettingForNewGamePayload = {

@@ -20,6 +20,7 @@ import StatsRow from "./components/StatsRow";
 import { Flex } from "@radix-ui/themes";
 import AnswerReveal from "./components/AnswerReveal";
 import Leaderboard from "./components/LeaderBoard";
+import PostGameShowcase from "./components/PostGameShowcase";
 import { useAnswerBubbles } from "./hooks/useAnswerBubbles";
 import { useChatSocket } from "./hooks/useChatWs";
 import { useGameActions } from "./hooks/useGameActions";
@@ -27,6 +28,7 @@ import { useGameEvents } from "./hooks/useGameEvents";
 import { useGameState } from "./hooks/useGameState";
 import {
   animationStateAtom,
+  isPostGameShowcaseAtom,
   isRoundBreakAtom,
   loadingAtom,
   roundNameAtom,
@@ -43,6 +45,7 @@ export default function GameroomPage() {
   // Use atomic selectors for optimal performance
   const loading = useAtomValue(loadingAtom);
   const isRoundBreak = useAtomValue(isRoundBreakAtom);
+  const isPostGameShowcase = useAtomValue(isPostGameShowcaseAtom);
   const timeRemaining = useAtomValue(timeRemainingAtom);
   const showCountDown = useAtomValue(showCountDownAtom);
   const scores = useAtomValue(scoresAtom);
@@ -169,22 +172,28 @@ export default function GameroomPage() {
                   />
                 </div>
               </Flex>
-              {isRoundBreak && <AnswerReveal />}
-              {isRoundBreak ? (
-                <Leaderboard />
+              {isPostGameShowcase ? (
+                <PostGameShowcase />
               ) : (
-                <div
-                  className={styles.slotContainer}
-                  style={
-                    {
-                      "--room-color": "var(--neon-pink)",
-                    } as React.CSSProperties
-                  }
-                >
-                  <SlotGrid />
-                </div>
+                <>
+                  {isRoundBreak && <AnswerReveal />}
+                  {isRoundBreak ? (
+                    <Leaderboard />
+                  ) : (
+                    <div
+                      className={styles.slotContainer}
+                      style={
+                        {
+                          "--room-color": "var(--neon-pink)",
+                        } as React.CSSProperties
+                      }
+                    >
+                      <SlotGrid />
+                    </div>
+                  )}
+                </>
               )}
-              {!isRoundBreak && (
+              {!isPostGameShowcase && !isRoundBreak && (
                 <div className={styles.leaderboardTile}>
                   <h3 className={styles.statsTitle}>Leaderboard</h3>
                   <div className={styles.ingameLeaderboard}>

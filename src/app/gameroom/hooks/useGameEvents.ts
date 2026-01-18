@@ -41,6 +41,7 @@ export const useGameEvents = (gameWsUrl: string, token: string) => {
         data.time_remaining_seconds! > 0 &&
         (data.status === "ROUND_BREAK" || data.status === "POST_GAME_SHOWCASE"),
       isRoundBreak: data.status === "ROUND_BREAK",
+      isPostGameShowcase: data.status === "POST_GAME_SHOWCASE",
       scores: data.scores ?? [],
       slots: data.slots ?? [],
     });
@@ -84,6 +85,11 @@ export const useGameEvents = (gameWsUrl: string, token: string) => {
   const handleGameOverRef = useRef((data: GameOverPayload) => {
     updateGameState({
       finalScore: data.final_scores,
+      scores: data.final_scores,
+      isPostGameShowcase: true,
+      playerAccolades: data.player_accolades ?? [],
+      showCountDown: false,
+      timeRemaining: 0,
     });
   });
 
@@ -94,9 +100,11 @@ export const useGameEvents = (gameWsUrl: string, token: string) => {
       roundExample: "",
       roundPrompt: "",
       isRoundBreak: false,
+      isPostGameShowcase: false,
       slots: [],
       scores: [],
       finalScore: [],
+      playerAccolades: [],
       showCountDown: false,
     });
   });

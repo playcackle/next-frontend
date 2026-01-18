@@ -258,3 +258,27 @@
     padding: 0.1rem 0.2rem;
   }
 }
+
+.headerRow {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0.5rem clamp(0.25rem, 0.75vh, 0.5rem);
+  border-bottom: 1px solid rgba(255, 0, 170, 0.3);
+}
+
+.headerRow .title {
+  margin: 0;
+}
+
+.trophyIcon {
+  color: #ffd700;
+  filter: drop-shadow(0 0 6px #ffd700);
+  vertical-align: middle;
+  margin-right: 2px;
+}
+
+.accoladeCount {
+  margin-left: 2px;
+  color: var(--neon-pink);
+}
