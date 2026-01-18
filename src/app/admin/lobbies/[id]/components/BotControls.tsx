@@ -12,6 +12,8 @@ interface BotControlsProps {
 export function BotControls({ lobbyId }: BotControlsProps) {
   const [botCount, setBotCount] = useState(5);
   const [accuracy, setAccuracy] = useState(70); // Percentage (0-100)
+  const [minDelay, setMinDelay] = useState(5); // Seconds
+  const [maxDelay, setMaxDelay] = useState(30); // Seconds
   const [activeBots, setActiveBots] = useState<BotInfo[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -45,6 +47,8 @@ export function BotControls({ lobbyId }: BotControlsProps) {
         count: botCount,
         accuracy: accuracy / 100, // Convert percentage to 0-1
         typo_rate: 0.2,
+        min_delay_seconds: minDelay,
+        max_delay_seconds: maxDelay,
       });
       await loadBotStatus();
     } catch (err) {
@@ -168,6 +172,60 @@ export function BotControls({ lobbyId }: BotControlsProps) {
           <p className={styles.hint}>
             Higher accuracy means bots will submit more correct answers (with occasional
             typos)
+          </p>
+        </div>
+
+        <div className={styles.controlGroup}>
+          <div className={styles.controlHeader}>
+            <label className={styles.controlLabel}>Min Delay (seconds)</label>
+            <span className={styles.controlValue}>{minDelay}s</span>
+          </div>
+          <Slider.Root
+            className={styles.sliderRoot}
+            value={[minDelay]}
+            onValueChange={([value]) => setMinDelay(Math.min(value, maxDelay - 1))}
+            min={1}
+            max={60}
+            step={1}
+          >
+            <Slider.Track className={styles.sliderTrack}>
+              <Slider.Range className={styles.sliderRange} />
+            </Slider.Track>
+            <Slider.Thumb className={styles.sliderThumb} />
+          </Slider.Root>
+          <div className={styles.sliderLabels}>
+            <span>1s</span>
+            <span>60s</span>
+          </div>
+          <p className={styles.hint}>
+            Minimum time between bot submissions
+          </p>
+        </div>
+
+        <div className={styles.controlGroup}>
+          <div className={styles.controlHeader}>
+            <label className={styles.controlLabel}>Max Delay (seconds)</label>
+            <span className={styles.controlValue}>{maxDelay}s</span>
+          </div>
+          <Slider.Root
+            className={styles.sliderRoot}
+            value={[maxDelay]}
+            onValueChange={([value]) => setMaxDelay(Math.max(value, minDelay + 1))}
+            min={2}
+            max={120}
+            step={1}
+          >
+            <Slider.Track className={styles.sliderTrack}>
+              <Slider.Range className={styles.sliderRange} />
+            </Slider.Track>
+            <Slider.Thumb className={styles.sliderThumb} />
+          </Slider.Root>
+          <div className={styles.sliderLabels}>
+            <span>2s</span>
+            <span>120s</span>
+          </div>
+          <p className={styles.hint}>
+            Maximum time between bot submissions (randomized)
           </p>
         </div>
       </div>

@@ -744,6 +744,8 @@ export type BotAddRequest = {
   count: number;
   accuracy?: number;  // 0.0-1.0
   typo_rate?: number; // 0.0-1.0
+  min_delay_seconds?: number; // Min time between submissions (default: 5.0)
+  max_delay_seconds?: number; // Max time between submissions (default: 30.0)
 };
 
 export type BotAddResponse = {
@@ -751,6 +753,8 @@ export type BotAddResponse = {
   requested_count: number;
   accuracy: number;
   typo_rate: number;
+  min_delay_seconds: number;
+  max_delay_seconds: number;
   results: Record<string, string>;
 };
 
