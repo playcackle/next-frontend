@@ -397,6 +397,13 @@
   min-height: 0;
 }
 
+/* Post-game showcase spans the middle and right columns */
+.postGameShowcaseWrapper {
+  grid-column: 2 / 4;
+  min-height: 0;
+  height: 100%;
+}
+
 .slotContainer {
   height: 100%;
   background-color: rgba(20, 20, 40, 0.7);

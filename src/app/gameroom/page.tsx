@@ -173,7 +173,9 @@ export default function GameroomPage() {
                 </div>
               </Flex>
               {isPostGameShowcase ? (
-                <PostGameShowcase />
+                <div className={styles.postGameShowcaseWrapper}>
+                  <PostGameShowcase />
+                </div>
               ) : (
                 <>
                   {isRoundBreak && <AnswerReveal />}

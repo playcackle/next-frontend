@@ -14,30 +14,81 @@ import {
   type LucideIcon,
 } from "lucide-react";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { useGameState } from "../hooks/useGameState";
-import type { Accolade } from "../types/state";
 import type { PlayerAccolades } from "../types/payloads";
-import styles from "./leaderboard.module.css";
+import styles from "./postgame.module.css";
 
-const ACCOLADE_ICONS: Record<string, LucideIcon> = {
-  speed_demon: Zap,
-  first_blood: Swords,
-  sharpshooter: Crosshair,
-  perfectionist: BadgeCheck,
-  machine_gun: Repeat2,
-  snapping_spree: Flame,
-  hot_streak: TrendingUp,
-  clutch_player: Timer,
+// ============ ACCOLADE CONFIGURATION ============
+
+type AccoladeConfig = {
+  icon: LucideIcon;
+  title: string;
+  description: string;
 };
 
-function AccoladeChip({ accolade }: { accolade: Accolade }) {
+const ACCOLADE_CONFIG: Record<string, AccoladeConfig> = {
+  speed_demon: {
+    icon: Zap,
+    title: "Speed Demon",
+    description: "Fastest snap of the round",
+  },
+  first_blood: {
+    icon: Swords,
+    title: "First Blood",
+    description: "First to snap in the round",
+  },
+  sharpshooter: {
+    icon: Crosshair,
+    title: "Sharpshooter",
+    description: "Perfect accuracy this round",
+  },
+  perfectionist: {
+    icon: BadgeCheck,
+    title: "Perfectionist",
+    description: "All snaps correct, no wrong guesses",
+  },
+  machine_gun: {
+    icon: Repeat2,
+    title: "Machine Gun",
+    description: "Most snaps in a short window",
+  },
+  snapping_spree: {
+    icon: Flame,
+    title: "Snapping Spree",
+    description: "Multiple snaps in quick succession",
+  },
+  hot_streak: {
+    icon: TrendingUp,
+    title: "Hot Streak",
+    description: "Consistent snapping over time",
+  },
+  clutch_player: {
+    icon: Timer,
+    title: "Clutch Player",
+    description: "Snapped in the final seconds",
+  },
+};
+
+// Max accolades to show per player before overflow indicator
+const MAX_VISIBLE_ACCOLADES = 5;
+
+// ============ ACCOLADE CHIP COMPONENT ============
+
+type AccoladeChipProps = {
+  accoladeType: string;
+  count: number;
+};
+
+function AccoladeChip({ accoladeType, count }: AccoladeChipProps) {
   const [showPopover, setShowPopover] = useState(false);
   const [popoverPosition, setPopoverPosition] = useState({ top: 0, left: 0 });
   const chipRef = useRef<HTMLDivElement>(null);
   const [isMounted, setIsMounted] = useState(false);
-  const IconComponent = ACCOLADE_ICONS[accolade.accolade_type] || Award;
+
+  const config = ACCOLADE_CONFIG[accoladeType];
+  const IconComponent = config?.icon || Award;
 
   useEffect(() => {
     setIsMounted(true);
@@ -53,18 +104,17 @@ function AccoladeChip({ accolade }: { accolade: Accolade }) {
     }
   }, [showPopover]);
 
+  if (!config) return null;
+
   const popoverContent =
     showPopover && isMounted ? (
       <div
         className={styles.accoladePopover}
         style={{ top: popoverPosition.top, left: popoverPosition.left }}
       >
-        <div className={styles.accoladePopoverTitle}>
-          <span className={styles.accoladePopoverIcon}></span>
-          {accolade.title}
-        </div>
+        <div className={styles.accoladePopoverTitle}>{config.title}</div>
         <div className={styles.accoladePopoverDescription}>
-          {accolade.description}
+          {config.description}
         </div>
       </div>
     ) : null;
@@ -77,137 +127,79 @@ function AccoladeChip({ accolade }: { accolade: Accolade }) {
       onMouseLeave={() => setShowPopover(false)}
     >
       <IconComponent aria-hidden="true" className={styles.accoladeIcon} />
+      <span className={styles.accoladeCount}>×{count}</span>
       {popoverContent && createPortal(popoverContent, document.body)}
     </div>
   );
 }
 
-function formatAccoladeKey(key: string): string {
-  return key.replace(/_/g, " ");
-}
-
-function getAccoladeFromKey(type: string): Accolade | null {
-  const accoladeMap: Record<string, Accolade> = {
-    speed_demon: {
-      accolade_type: "speed_demon",
-      player_id: "",
-      player_display_name: "",
-      title: "Speed Demon",
-      description: "Fastest snap of the round",
-      metric_value: 0,
-    },
-    first_blood: {
-      accolade_type: "first_blood",
-      player_id: "",
-      player_display_name: "",
-      title: "First Blood",
-      description: "First to snap in the round",
-      metric_value: 0,
-    },
-    sharpshooter: {
-      accolade_type: "sharpshooter",
-      player_id: "",
-      player_display_name: "",
-      title: "Sharpshooter",
-      description: "Perfect accuracy this round",
-      metric_value: 0,
-    },
-    perfectionist: {
-      accolade_type: "perfectionist",
-      player_id: "",
-      player_display_name: "",
-      title: "Perfectionist",
-      description: "All snaps correct, no wrong guesses",
-      metric_value: 0,
-    },
-    machine_gun: {
-      accolade_type: "machine_gun",
-      player_id: "",
-      player_display_name: "",
-      title: "Machine Gun",
-      description: "Most snaps in a short window",
-      metric_value: 0,
-    },
-    snapping_spree: {
-      accolade_type: "snapping_spree",
-      player_id: "",
-      player_display_name: "",
-      title: "Snapping Spree",
-      description: "Multiple snaps in quick succession",
-      metric_value: 0,
-    },
-    hot_streak: {
-      accolade_type: "hot_streak",
-      player_id: "",
-      player_display_name: "",
-      title: "Hot Streak",
-      description: "Consistent snapping over time",
-      metric_value: 0,
-    },
-    clutch_player: {
-      accolade_type: "clutch_player",
-      player_id: "",
-      player_display_name: "",
-      title: "Clutch Player",
-      description: "Snapped in the final seconds",
-      metric_value: 0,
-    },
-  };
-  return accoladeMap[type] || null;
-}
+// ============ MAIN COMPONENT ============
 
 export default function PostGameShowcase() {
   const { scores, playerAccolades } = useGameState();
 
-  const playerIdToAccolades = new Map<string, PlayerAccolades>();
-  playerAccolades.forEach((pa) => playerIdToAccolades.set(pa.player_id, pa));
+  // Build lookup map: player_id -> PlayerAccolades
+  const playerIdToAccolades = useMemo(() => {
+    const map = new Map<string, PlayerAccolades>();
+    playerAccolades.forEach((pa) => map.set(pa.player_id, pa));
+    return map;
+  }, [playerAccolades]);
+
+  // Cast scores to include rank (from FinalScore type)
+  const rankedScores = scores as Array<{
+    player_id: string;
+    display_name: string;
+    score: number;
+    rank?: number;
+  }>;
 
   return (
-    <div className={styles.leaderboardContainer}>
-      <h2 className={styles.title}>Final Standings</h2>
-      <div className={styles.entriesContainer}>
-        {(scores as Array<{ player_id: string; display_name: string; score: number; rank?: number }>).map(
-          (entry, index) => {
+    <div className={styles.showcaseContainer}>
+      <div className={styles.leaderboardPanel}>
+        <h2 className={styles.panelTitle}>Final Standings</h2>
+        <div className={styles.entriesContainer}>
+          {rankedScores.map((entry, index) => {
             const rank = entry.rank || index + 1;
             const accolades = playerIdToAccolades.get(entry.player_id);
-            const accoladeEntries = Object.entries(accolades?.accolades_count || {});
+            const accoladeEntries = Object.entries(
+              accolades?.accolades_count || {}
+            )
+              .filter(([, count]) => count > 0)
+              .sort(([, a], [, b]) => b - a); // Sort by count descending
 
             return (
-              <div
-                key={entry.player_id}
-                className={styles.entry}
-                data-rank={rank}
-              >
+              <div key={entry.player_id} className={styles.entry} data-rank={rank}>
                 <div className={styles.rank}>
-                  {rank === 1 && <Trophy size={16} className={styles.trophyIcon} />}
-                  {rank > 1 && `#${rank}`}
+                  {rank === 1 ? (
+                    <Trophy className={styles.trophyIcon} />
+                  ) : (
+                    `#${rank}`
+                  )}
                 </div>
                 <div className={styles.info}>
-                  <div className={styles.usernameRow}>
-                    <span className={styles.username}>{entry.display_name}</span>
-                    <span className={styles.score}>
-                      {entry.score.toLocaleString()} pts
-                    </span>
+                  <span className={styles.username}>{entry.display_name}</span>
+                  <div className={styles.accoladesRow}>
+                    {accoladeEntries.slice(0, MAX_VISIBLE_ACCOLADES).map(([type, count]) => (
+                      <AccoladeChip
+                        key={type}
+                        accoladeType={type}
+                        count={count}
+                      />
+                    ))}
+                    {accoladeEntries.length > MAX_VISIBLE_ACCOLADES && (
+                      <span className={styles.accoladeOverflow}>
+                        +{accoladeEntries.length - MAX_VISIBLE_ACCOLADES}
+                      </span>
+                    )}
                   </div>
-                  {accoladeEntries.length > 0 && (
-                    <div className={styles.accoladesRow}>
-                      {accoladeEntries.map(([type, count]) => {
-                        const accolade = getAccoladeFromKey(type);
-                        if (!accolade) return null;
-                        return (
-                          <AccoladeChip
-                            key={type}
-                            accolade={{ ...accolade, accolade_type: type }}
-                          />
-                        );
-                      })}
-                    </div>
-                  )}
+                  <span className={styles.score}>
+                    {entry.score.toLocaleString()} pts
+                  </span>
                 </div>
               </div>
             );
-          }
-        )}
+          })}
+        </div>
       </div>
     </div>
   );
