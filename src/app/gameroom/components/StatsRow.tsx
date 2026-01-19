@@ -2,6 +2,7 @@ import { useAtomValue } from "jotai";
 import React, { useEffect, useState } from "react";
 import styles from "../gameroom.module.css";
 import {
+  isPostGameShowcaseAtom,
   isRoundBreakAtom,
   playerCountAtom,
   roundExampleAtom,
@@ -23,6 +24,7 @@ const StatsRow = React.memo(() => {
   const roundNumber = useAtomValue(roundNumberAtom);
   const totalRounds = useAtomValue(totalRoundsAtom);
   const isRoundBreak = useAtomValue(isRoundBreakAtom);
+  const isPostGameShowcase = useAtomValue(isPostGameShowcaseAtom);
   const timeRemaining = useAtomValue(timeRemainingAtom);
 
   const [roundText, setRoundText] = useState("Round number");
@@ -84,11 +86,17 @@ const StatsRow = React.memo(() => {
       )}
       <div className={styles.statsTile}>
         <h3 className={styles.statsTitle}>
-          {isRoundBreak ? "Intermission" : timeText}
+          {isPostGameShowcase
+            ? "New game in:"
+            : isRoundBreak
+            ? "Intermission"
+            : timeText}
         </h3>
         <div
           className={`${styles.statsValue} ${
-            !isRoundBreak && timeRemaining <= 30 ? styles.timerWarning : ""
+            !isRoundBreak && !isPostGameShowcase && timeRemaining <= 30
+              ? styles.timerWarning
+              : ""
           }`}
         >
           {formatTime(timeRemaining)}
