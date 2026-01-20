@@ -442,7 +442,6 @@
   width: 100%;
   height: 100%;
   padding: 0.5rem;
-  gap: 0.5rem;
   background: rgba(0, 0, 0, 0.4);
   border-radius: 6px;
 }
@@ -625,7 +624,7 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 80px;
+  width: 100%;
   font-family: var(--retro-font-alt);
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5); /* Added text shadow for readability */
 }
@@ -689,6 +688,7 @@
   color: rgba(255, 255, 255, 0.9);
   text-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
   font-family: var(--retro-font);
+  padding: 0.5rem;
 }
 
 .answerRow {
@@ -1386,97 +1386,74 @@
   padding: 1rem;
   border-radius: 4px;
   border: 2px solid transparent;
-  border-image: linear-gradient(135deg, #b700ff, #00ddff) 1;
-  background-color: rgba(0, 0, 0, 0.3);
+  background:
+    linear-gradient(rgba(10, 10, 20, 0.95), rgba(10, 10, 20, 0.95)) padding-box,
+    linear-gradient(90deg, #b700ff, #00ddff) border-box;
   color: white;
   font-family: var(--retro-font-alt);
-  transition: all 0.5s ease;
+  transition: all 0.3s ease;
   position: relative;
 }
 
-.unifiedInput::before {
-  content: "";
-  position: absolute;
-  top: -2px;
-  left: -2px;
-  right: -2px;
-  bottom: -2px;
-  border-radius: 6px;
-  background: linear-gradient(135deg, #b700ff, #7c3aed, #3b82f6, #00ddff);
-  background-size: 200% 200%;
-  z-index: -1;
-  opacity: 0;
-  transition: opacity 0.5s ease;
-  animation: gradientShift 3s ease-in-out infinite;
-}
-
 .unifiedInput.answerMode {
-  border-image: linear-gradient(135deg, #b700ff, #3b82f6) 1;
   font-size: 1.1rem;
   font-family: var(--retro-font);
+  background:
+    linear-gradient(rgba(10, 10, 20, 0.95), rgba(10, 10, 20, 0.95)) padding-box,
+    linear-gradient(90deg, #b700ff, #3b82f6) border-box;
 }
 
 .unifiedInput.chatMode {
-  border-image: linear-gradient(135deg, #b700ff, #00ddff) 1;
+  background:
+    linear-gradient(rgba(10, 10, 20, 0.95), rgba(10, 10, 20, 0.95)) padding-box,
+    linear-gradient(90deg, #b700ff, #00ddff) border-box;
 }
 
 .unifiedInput:focus {
   outline: none;
-  box-shadow:
-    0 0 15px rgba(183, 0, 255, 0.7),
-    0 0 30px rgba(59, 130, 246, 0.4);
-  border-image: linear-gradient(135deg, #b700ff, #00ddff) 1;
-  animation: inputFocusPulse 2s ease-in-out infinite;
   caret-color: #b700ff;
+  background:
+    linear-gradient(rgba(10, 10, 20, 0.95), rgba(10, 10, 20, 0.95)) padding-box,
+    conic-gradient(
+        from var(--spot-angle, 0deg),
+        #b700ff 0deg,
+        #7c3aed 90deg,
+        #3b82f6 180deg,
+        #00ddff 270deg,
+        #b700ff 360deg
+      )
+      border-box;
+  animation: traceSpot 2s linear infinite;
 }
 
 .unifiedInput.answerMode:focus {
-  box-shadow:
-    0 0 15px rgba(183, 0, 255, 0.7),
-    0 0 30px rgba(59, 130, 246, 0.4);
-  border-image: linear-gradient(135deg, #b700ff, #3b82f6) 1;
-  animation: inputFocusPulsePurpleBlue 2s ease-in-out infinite;
   caret-color: #7c3aed;
+  background:
+    linear-gradient(rgba(10, 10, 20, 0.95), rgba(10, 10, 20, 0.95)) padding-box,
+    conic-gradient(
+        from var(--spot-angle, 0deg),
+        #b700ff 0deg,
+        #7c3aed 120deg,
+        #3b82f6 240deg,
+        #b700ff 360deg
+      )
+      border-box;
 }
 
-@keyframes inputFocusPulse {
-  0%,
+@property --spot-angle {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+
+@keyframes traceSpot {
+  0% {
+    --spot-angle: 0deg;
+  }
   100% {
-    box-shadow:
-      0 0 15px rgba(183, 0, 255, 0.7),
-      0 0 30px rgba(0, 221, 255, 0.4);
-  }
-  50% {
-    box-shadow:
-      0 0 25px rgba(183, 0, 255, 0.9),
-      0 0 50px rgba(0, 221, 255, 0.6);
+    --spot-angle: 360deg;
   }
 }
-
-@keyframes inputFocusPulsePurpleBlue {
-  0%,
-  100% {
-    box-shadow:
-      0 0 15px rgba(183, 0, 255, 0.7),
-      0 0 30px rgba(59, 130, 246, 0.4);
-  }
-  50% {
-    box-shadow:
-      0 0 25px rgba(183, 0, 255, 0.9),
-      0 0 50px rgba(59, 130, 246, 0.6);
-  }
-}
-
-@keyframes gradientShift {
-  0%,
-  100% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-}
-
 /* Smooth answer area transitions */
 .answerAreaContainer {
   transition: all 0.3s ease;
