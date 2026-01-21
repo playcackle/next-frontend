@@ -6,7 +6,7 @@
   width: 100%;
   max-width: 800px;
   margin: 0 auto;
-  padding: 2rem 1rem;
+  padding: 0.5rem 1rem;
   animation: fadeIn 0.8s ease-out;
 }
 
@@ -67,13 +67,17 @@
 
 .signupButton {
   background: linear-gradient(45deg, var(--neon-pink), var(--neon-purple));
-  box-shadow: 0 0 15px rgba(255, 0, 170, 0.5), 0 0 30px rgba(255, 0, 170, 0.3);
+  box-shadow:
+    0 0 15px rgba(255, 0, 170, 0.5),
+    0 0 30px rgba(255, 0, 170, 0.3);
   border-color: rgba(255, 0, 170, 0.5);
 }
 
 .loginButton {
   background: linear-gradient(45deg, var(--neon-purple), var(--neon-blue));
-  box-shadow: 0 0 15px rgba(183, 0, 255, 0.5), 0 0 30px rgba(183, 0, 255, 0.3);
+  box-shadow:
+    0 0 15px rgba(183, 0, 255, 0.5),
+    0 0 30px rgba(183, 0, 255, 0.3);
   border-color: rgba(183, 0, 255, 0.5);
 }
 
@@ -83,11 +87,15 @@
 }
 
 .signupButton:hover {
-  box-shadow: 0 0 20px rgba(255, 0, 170, 0.7), 0 0 40px rgba(255, 0, 170, 0.4);
+  box-shadow:
+    0 0 20px rgba(255, 0, 170, 0.7),
+    0 0 40px rgba(255, 0, 170, 0.4);
 }
 
 .loginButton:hover {
-  box-shadow: 0 0 20px rgba(183, 0, 255, 0.7), 0 0 40px rgba(183, 0, 255, 0.4);
+  box-shadow:
+    0 0 20px rgba(183, 0, 255, 0.7),
+    0 0 40px rgba(183, 0, 255, 0.4);
 }
 
 .signupButton:hover::after,
