@@ -27,7 +27,11 @@ Decimal phases appear between their surrounding integers in numeric order.
   1. Player in an active game sees the correct intermission UI automatically after a round ends — no manual page reload or rejoin
   2. When the client is mid-transition and state is uncertain, a visible reconnecting indicator is shown rather than a frozen or incorrect game screen
   3. Player who loses WebSocket connection and reconnects lands in the correct game phase (lobby, intermission, or active round) without manual intervention
-**Plans**: TBD
+**Plans**: 2 plans
+
+Plans:
+- [ ] 01-01-PLAN.md — Fix scheduleReconnect stale closure + loading gate covers reconnecting state (STATE-02)
+- [ ] 01-02-PLAN.md — Emit request_state_sync on reconnect + fix handleLobbySyncRef divergence + round_over sync request (STATE-01, STATE-03)
 
 ### Phase 2: Chat UX
 **Goal**: Players can instantly tell what kind of message they are reading in the unified chat feed
@@ -70,7 +74,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. State Sync | 0/? | Not started | - |
+| 1. State Sync | 0/2 | Not started | - |
 | 2. Chat UX | 0/? | Not started | - |
 | 3. Onboarding | 0/? | Not started | - |
 | 4. Landing Page | 0/? | Not started | - |
