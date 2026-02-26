@@ -18,7 +18,7 @@ import { useGameSocket } from "./useGameSocket";
 import { useGameState } from "./useGameState";
 
 export const useGameEvents = (gameWsUrl: string, token: string) => {
-  const { onEvent, sendEvent, isConnected } = useGameSocket(gameWsUrl, token);
+  const { onEvent, sendEvent, isConnected, connectionStatus } = useGameSocket(gameWsUrl, token);
   const { updateGameState, slots } = useGameState();
   const { triggerCorrectAnswerEffects } = useGameActions();
 
@@ -28,8 +28,9 @@ export const useGameEvents = (gameWsUrl: string, token: string) => {
   }, [slots]);
 
   useEffect(() => {
-    updateGameState({ loading: !isConnected });
-  }, [isConnected, updateGameState]);
+    const isUncertain = !isConnected || connectionStatus === "reconnecting";
+    updateGameState({ loading: isUncertain });
+  }, [isConnected, connectionStatus, updateGameState]);
 
   const handleLobbySyncRef = useRef((data: LobbySyncPayload) => {
     updateGameState({
@@ -197,5 +198,5 @@ export const useGameEvents = (gameWsUrl: string, token: string) => {
     );
   }, [onEvent]);
 
-  return { sendEvent };
+  return { sendEvent, connectionStatus };
 };
