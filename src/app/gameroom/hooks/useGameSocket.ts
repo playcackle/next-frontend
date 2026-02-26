@@ -46,6 +46,7 @@ export const useGameSocket = (baseUrl: string, token: string) => {
     new Map()
   );
   const reconnectTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const initializeSocketRef = useRef<() => void>(() => {});
 
   const [socketState, setSocketState] = useState<SocketState>({
     isConnected: false,
@@ -75,34 +76,35 @@ export const useGameSocket = (baseUrl: string, token: string) => {
   }, []);
 
   const scheduleReconnect = useCallback(() => {
-    // Stop trying after max attempts
-    if (socketState.reconnectAttempts >= MAX_RECONNECT_ATTEMPTS) {
-      setSocketState((prev) => ({
+    setSocketState((prev) => {
+      // Stop trying after max attempts
+      if (prev.reconnectAttempts >= MAX_RECONNECT_ATTEMPTS) {
+        return {
+          ...prev,
+          connectionStatus: "error",
+          error: "Max reconnection attempts reached",
+        };
+      }
+
+      // Calculate exponential backoff delay (max 30 seconds)
+      const delay = Math.min(
+        RECONNECT_DELAY_BASE * Math.pow(2, prev.reconnectAttempts),
+        30000
+      );
+
+      // Schedule the reconnection attempt
+      reconnectTimeoutRef.current = setTimeout(() => {
+        initializeSocketRef.current();
+      }, delay);
+
+      // Update state to show reconnecting status
+      return {
         ...prev,
-        connectionStatus: "error",
-        error: "Max reconnection attempts reached",
-      }));
-      return;
-    }
-
-    // Calculate exponential backoff delay (max 30 seconds)
-    const delay = Math.min(
-      RECONNECT_DELAY_BASE * Math.pow(2, socketState.reconnectAttempts),
-      30000
-    );
-
-    // Update state to show reconnecting status
-    setSocketState((prev) => ({
-      ...prev,
-      connectionStatus: "reconnecting",
-      reconnectAttempts: prev.reconnectAttempts + 1,
-    }));
-
-    // Schedule the reconnection attempt
-    reconnectTimeoutRef.current = setTimeout(() => {
-      initializeSocket();
-    }, delay);
-  }, [socketState.reconnectAttempts]);
+        connectionStatus: "reconnecting",
+        reconnectAttempts: prev.reconnectAttempts + 1,
+      };
+    });
+  }, []);
 
   // ==================== SOCKET INITIALIZATION ====================
 
@@ -221,6 +223,11 @@ export const useGameSocket = (baseUrl: string, token: string) => {
     clearReconnectTimeout,
     debouncedErrorLog,
   ]);
+
+  // Keep initializeSocketRef in sync so scheduleReconnect can call it without a direct dependency
+  useEffect(() => {
+    initializeSocketRef.current = initializeSocket;
+  }, [initializeSocket]);
 
   // ==================== LIFECYCLE MANAGEMENT ====================
 
