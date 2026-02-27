@@ -41,7 +41,11 @@ Plans:
   1. A correct answer submission in the chat feed is visually distinct from a regular chat message (different color, badge, or treatment)
   2. Bot Bob hint messages are immediately recognizable in the feed without reading the sender name
   3. A duplicate or already-answered attempt looks different from a fresh answer attempt, so players understand why their input was rejected
-**Plans**: TBD
+**Plans**: 2 plans
+
+Plans:
+- [ ] 02-01-PLAN.md — CSS classes for all message type variants (botBobMessage, duplicateMessage, badge classes, performance-mode guards) (CHAT-01, CHAT-02, CHAT-03)
+- [ ] 02-02-PLAN.md — Refactor getMessageTypeClass + add getMessageBadge + render badges in UnifiedMessages.tsx (CHAT-01, CHAT-02, CHAT-03)
 
 ### Phase 3: Onboarding
 **Goal**: New users understand how to play before their first round, and are not shown the walkthrough again afterward
@@ -75,6 +79,6 @@ Phases execute in numeric order: 1 → 2 → 3 → 4
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. State Sync | 2/2 | Complete   | 2026-02-26 |
-| 2. Chat UX | 0/? | Not started | - |
+| 2. Chat UX | 0/2 | Planned | - |
 | 3. Onboarding | 0/? | Not started | - |
 | 4. Landing Page | 0/? | Not started | - |
