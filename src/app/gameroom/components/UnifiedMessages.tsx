@@ -4,11 +4,13 @@ import { Flex } from "@radix-ui/themes";
 import { useAtomValue } from "jotai";
 import { useUser } from "@/hooks/useUser";
 import { useEffect, useRef } from "react";
+import React from "react";
 import styles from "../gameroom.module.css";
 import {
   botBobLastMessageAtom,
   isRoundBreakAtom,
   unifiedMessagesAtom,
+  type UnifiedMessage,
 } from "../store/gameAtoms";
 import BotBobPinnedMessage from "./BotBobPinnedMessage";
 import PlayerAvatar from "./PlayerAvatar";
@@ -38,9 +40,17 @@ export default function UnifiedMessages() {
     }
   };
 
-  const getMessageTypeClass = (messageType: string) => {
-    switch (messageType) {
+  const getMessageTypeClass = (msg: UnifiedMessage): string => {
+    // Bot Bob detection must precede message_type switch — Bot Bob sends type "chat"
+    if (msg.player_id === "botbob" || msg.display_name.toLowerCase() === "botbob") {
+      return styles.botBobMessage;
+    }
+    switch (msg.message_type) {
       case "answer_attempt":
+        // already_snapped is distinct from wrong/too_slow — muted amber, not red
+        if (msg.submission_result === "already_snapped") {
+          return styles.duplicateMessage;
+        }
         return styles.answerMessage;
       case "successful_answer":
         return styles.successfulAnswerMessage;
@@ -49,6 +59,39 @@ export default function UnifiedMessages() {
       default:
         return styles.chatMessage;
     }
+  };
+
+  /** Returns a badge element for non-chat message types, or null for plain chat. */
+  const getMessageBadge = (msg: UnifiedMessage): React.ReactNode | null => {
+    if (msg.player_id === "botbob" || msg.display_name.toLowerCase() === "botbob") {
+      return (
+        <span className={`${styles.messageBadge} ${styles.messageBadgeBot}`}>
+          BOT
+        </span>
+      );
+    }
+    if (msg.message_type === "successful_answer") {
+      return (
+        <span className={`${styles.messageBadge} ${styles.messageBadgeCorrect}`}>
+          CORRECT
+        </span>
+      );
+    }
+    if (msg.message_type === "answer_attempt" && msg.submission_result === "already_snapped") {
+      return (
+        <span className={`${styles.messageBadge} ${styles.messageBadgeDuplicate}`}>
+          TAKEN
+        </span>
+      );
+    }
+    if (msg.message_type === "failed_answer" || msg.message_type === "answer_attempt") {
+      return (
+        <span className={`${styles.messageBadge} ${styles.messageBadgeFailed}`}>
+          MISS
+        </span>
+      );
+    }
+    return null;
   };
 
   return (
@@ -67,10 +110,12 @@ export default function UnifiedMessages() {
           messages.map((msg, index) => (
             <div
               key={index}
-              className={`${styles.unifiedMessage} ${getMessageTypeClass(
-                msg.message_type
-              )} ${
-                msg.player_id === user?.id ? styles.ownMessage : ""
+              className={`${styles.unifiedMessage} ${getMessageTypeClass(msg)} ${
+                msg.player_id === user?.id
+                  ? msg.message_type === "successful_answer"
+                    ? styles.ownSuccessfulAnswerMessage
+                    : styles.ownMessage
+                  : ""
               }`}
             >
               <Flex direction="row" gap="2" align="center">
@@ -80,6 +125,7 @@ export default function UnifiedMessages() {
                   size="small"
                 />
                 <div className={styles.messageContentWrapper}>
+                  {getMessageBadge(msg)}
                   <Flex direction="row" gap="2" align="center">
                     <span className={styles.messageUser}>
                       {msg.display_name}
