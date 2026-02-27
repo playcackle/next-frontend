@@ -1578,3 +1578,87 @@
   word-wrap: break-word;
   overflow-wrap: break-word;
 }
+
+/* ============================
+   CHAT MESSAGE TYPE VARIANTS
+   ============================ */
+
+/* Bot Bob message in scrolling feed — purple-teal treatment distinct from player chat */
+.botBobMessage {
+  border-left-color: var(--neon-purple);
+  background-color: rgba(183, 0, 255, 0.12);
+  box-shadow: inset 3px 0 8px rgba(183, 0, 255, 0.15);
+}
+
+/* Duplicate / already-snapped attempt — muted amber, clearly not a wrong answer */
+.duplicateMessage {
+  border-left-color: #FF8C00;
+  background-color: rgba(255, 140, 0, 0.08);
+  opacity: 0.75;
+}
+
+/* Combined class: own message that is also a correct answer — gold wins over blue tint */
+/* Addresses: .ownMessage uses !important so successfulAnswerMessage gold is suppressed without this */
+.ownSuccessfulAnswerMessage {
+  background-color: rgba(255, 215, 0, 0.15) !important;
+  border-left-color: #ffd700 !important;
+  box-shadow: 0 0 12px rgba(255, 215, 0, 0.3) !important;
+}
+
+/* Badge base — small pill label prefix before message content */
+.messageBadge {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.6rem;
+  font-family: var(--retro-font);
+  font-weight: bold;
+  letter-spacing: 0.5px;
+  padding: 0.1rem 0.3rem;
+  border-radius: 2px;
+  text-transform: uppercase;
+  vertical-align: middle;
+  margin-right: 0.3rem;
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+/* BOT badge — purple to match botBobMessage */
+.messageBadgeBot {
+  background-color: rgba(183, 0, 255, 0.3);
+  color: var(--neon-purple);
+  border: 1px solid rgba(183, 0, 255, 0.5);
+  text-shadow: 0 0 6px rgba(183, 0, 255, 0.7);
+}
+
+/* CORRECT badge — gold to match successfulAnswerMessage */
+.messageBadgeCorrect {
+  background-color: rgba(255, 215, 0, 0.25);
+  color: #FFD700;
+  border: 1px solid rgba(255, 215, 0, 0.5);
+  text-shadow: 0 0 6px rgba(255, 215, 0, 0.7);
+}
+
+/* TAKEN badge — amber to match duplicateMessage */
+.messageBadgeDuplicate {
+  background-color: rgba(255, 140, 0, 0.2);
+  color: #FF8C00;
+  border: 1px solid rgba(255, 140, 0, 0.4);
+}
+
+/* MISS badge — red to match failedAnswerMessage */
+.messageBadgeFailed {
+  background-color: rgba(255, 68, 68, 0.2);
+  color: #ff4444;
+  border: 1px solid rgba(255, 68, 68, 0.3);
+}
+
+/* Performance mode: suppress successfulAnswerMessage glow animation */
+:global(.performance-mode) .successfulAnswerMessage {
+  animation: none;
+  box-shadow: 0 0 4px rgba(255, 215, 0, 0.2);
+}
+
+/* Performance mode: suppress botBobMessage inset glow */
+:global(.performance-mode) .botBobMessage {
+  box-shadow: none;
+}
