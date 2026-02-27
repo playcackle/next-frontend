@@ -114,7 +114,13 @@ export default function UnifiedMessages() {
                 msg.player_id === user?.id
                   ? msg.message_type === "successful_answer"
                     ? styles.ownSuccessfulAnswerMessage
-                    : styles.ownMessage
+                    : msg.message_type === "failed_answer" ||
+                      (msg.message_type === "answer_attempt" &&
+                        msg.submission_result !== "already_snapped")
+                    ? styles.ownFailedAnswerMessage
+                    : msg.message_type === "chat"
+                    ? styles.ownMessage
+                    : "" // answer_attempt already_snapped — orange from .duplicateMessage preserved
                   : ""
               }`}
             >

@@ -1283,9 +1283,9 @@
 }
 
 .successfulAnswerMessage {
-  border-left-color: #ffd700;
-  background-color: rgba(255, 215, 0, 0.1);
-  box-shadow: 0 0 8px rgba(255, 215, 0, 0.2);
+  border-left-color: var(--neon-green);
+  background-color: rgba(0, 255, 102, 0.08);
+  box-shadow: 0 0 8px rgba(0, 255, 102, 0.2);
   animation: correctAnswerGlow 1s ease-out;
 }
 
@@ -1597,12 +1597,19 @@
   opacity: 0.75;
 }
 
-/* Combined class: own message that is also a correct answer — gold wins over blue tint */
-/* Addresses: .ownMessage uses !important so successfulAnswerMessage gold is suppressed without this */
+/* Combined class: own message that is also a correct answer — green wins over blue tint */
+/* Addresses: .ownMessage uses !important so successfulAnswerMessage green is suppressed without this */
 .ownSuccessfulAnswerMessage {
-  background-color: rgba(255, 215, 0, 0.15) !important;
-  border-left-color: #ffd700 !important;
-  box-shadow: 0 0 12px rgba(255, 215, 0, 0.3) !important;
+  background-color: rgba(0, 255, 102, 0.12) !important;
+  border-left-color: var(--neon-green) !important;
+  box-shadow: 0 0 12px rgba(0, 255, 102, 0.3) !important;
+}
+
+/* Combined class: own message that is a wrong answer — resets .ownMessage blue to neutral */
+.ownFailedAnswerMessage {
+  background-color: rgba(0, 0, 0, 0.2) !important;
+  border-left-color: rgba(255, 255, 255, 0.15) !important;
+  box-shadow: none !important;
 }
 
 /* Badge base — small pill label prefix before message content */
@@ -1630,12 +1637,12 @@
   text-shadow: 0 0 6px rgba(183, 0, 255, 0.7);
 }
 
-/* CORRECT badge — gold to match successfulAnswerMessage */
+/* CORRECT badge — green to match successfulAnswerMessage */
 .messageBadgeCorrect {
-  background-color: rgba(255, 215, 0, 0.25);
-  color: #FFD700;
-  border: 1px solid rgba(255, 215, 0, 0.5);
-  text-shadow: 0 0 6px rgba(255, 215, 0, 0.7);
+  background-color: rgba(0, 255, 102, 0.2);
+  color: var(--neon-green);
+  border: 1px solid rgba(0, 255, 102, 0.5);
+  text-shadow: 0 0 6px rgba(0, 255, 102, 0.7);
 }
 
 /* TAKEN badge — amber to match duplicateMessage */
@@ -1655,7 +1662,7 @@
 /* Performance mode: suppress successfulAnswerMessage glow animation */
 :global(.performance-mode) .successfulAnswerMessage {
   animation: none;
-  box-shadow: 0 0 4px rgba(255, 215, 0, 0.2);
+  box-shadow: 0 0 4px rgba(0, 255, 102, 0.2);
 }
 
 /* Performance mode: suppress botBobMessage inset glow */
