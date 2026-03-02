@@ -1284,8 +1284,7 @@
 
 .successfulAnswerMessage {
   border-left-color: var(--neon-green);
-  background-color: rgba(0, 255, 102, 0.08);
-  box-shadow: 0 0 8px rgba(0, 255, 102, 0.2);
+  background-color: rgba(0, 255, 102, 0.05);
   animation: correctAnswerGlow 1s ease-out;
 }
 
@@ -1583,26 +1582,24 @@
    CHAT MESSAGE TYPE VARIANTS
    ============================ */
 
-/* Bot Bob message in scrolling feed — purple-teal treatment distinct from player chat */
+/* Bot Bob message in scrolling feed — purple border matches chatMessage hue, slightly stronger bg */
 .botBobMessage {
   border-left-color: var(--neon-purple);
-  background-color: rgba(183, 0, 255, 0.12);
-  box-shadow: inset 3px 0 8px rgba(183, 0, 255, 0.15);
+  background-color: rgba(183, 0, 255, 0.05);
 }
 
-/* Duplicate / already-snapped attempt — muted amber, clearly not a wrong answer */
+/* Duplicate / already-snapped attempt — orange border, muted */
 .duplicateMessage {
   border-left-color: #FF8C00;
-  background-color: rgba(255, 140, 0, 0.08);
+  background-color: rgba(255, 140, 0, 0.05);
   opacity: 0.75;
 }
 
 /* Combined class: own message that is also a correct answer — green wins over blue tint */
 /* Addresses: .ownMessage uses !important so successfulAnswerMessage green is suppressed without this */
 .ownSuccessfulAnswerMessage {
-  background-color: rgba(0, 255, 102, 0.12) !important;
+  background-color: rgba(0, 255, 102, 0.05) !important;
   border-left-color: var(--neon-green) !important;
-  box-shadow: 0 0 12px rgba(0, 255, 102, 0.3) !important;
 }
 
 /* Combined class: own message that is a wrong answer — resets .ownMessage blue to neutral */
@@ -1615,7 +1612,6 @@
 /* Performance mode: suppress successfulAnswerMessage glow animation */
 :global(.performance-mode) .successfulAnswerMessage {
   animation: none;
-  box-shadow: 0 0 4px rgba(0, 255, 102, 0.2);
 }
 
 /* Performance mode: suppress botBobMessage inset glow */
