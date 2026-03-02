@@ -46,7 +46,9 @@ export default function UnifiedMessages() {
     }
     switch (msg.message_type) {
       case "answer_attempt":
-        return styles.duplicateMessage; // only already_snapped reaches here (wrong answers are filtered)
+        if (msg.submission_result === "already_snapped") return styles.duplicateMessage;
+        if (msg.submission_result === "success") return styles.successfulAnswerMessage;
+        return styles.chatMessage;
       case "successful_answer":
         return styles.successfulAnswerMessage;
       default:
