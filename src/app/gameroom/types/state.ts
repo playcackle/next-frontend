@@ -10,6 +10,7 @@ export type Slot = {
   text_preview: string;
   canonical_text: string;
   is_rare: boolean;
+  failed_attempts: number;
 };
 
 export type Score = {

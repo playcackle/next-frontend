@@ -1208,7 +1208,7 @@
 
 .messagesScrollArea {
   flex: 1;
-  padding: 1rem;
+  padding: 0.5rem;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
@@ -1262,6 +1262,7 @@
 
 .unifiedMessage {
   padding: 0.25rem;
+  padding-left: 0.5rem;
   border-radius: 6px;
   font-size: 0.7rem;
   animation: messageAppear 0.3s ease-out;
@@ -1287,7 +1288,6 @@
   background-color: rgba(0, 255, 102, 0.05);
   animation: correctAnswerGlow 1s ease-out;
 }
-
 
 .messagePrefix {
   font-weight: bold;
@@ -1512,7 +1512,7 @@
    ============================ */
 
 .botBobPinned {
-  border-bottom: 2px solid rgba(183, 0, 255, 0.5);
+  border-bottom: 2px solid rgba(0, 191, 255, 0.5);
   padding: 0.5rem;
   position: relative;
   overflow: hidden;
@@ -1536,11 +1536,11 @@
 
 .botBobName {
   font-size: 0.85rem;
-  color: var(--neon-purple);
+  color: #00bfff;
   text-transform: uppercase;
   letter-spacing: 1px;
   font-family: var(--retro-font);
-  text-shadow: 0 0 10px rgba(183, 0, 255, 0.7);
+  text-shadow: 0 0 10px rgba(0, 191, 255, 0.7);
 }
 
 .botBobText {
@@ -1585,7 +1585,7 @@
 
 /* Duplicate / already-snapped attempt — orange border, muted */
 .duplicateMessage {
-  border-left-color: #FF8C00;
+  border-left-color: #ff8c00;
   background-color: rgba(255, 140, 0, 0.05);
   opacity: 0.75;
 }
@@ -1597,7 +1597,6 @@
   border-left-color: var(--neon-green) !important;
 }
 
-
 /* Performance mode: suppress successfulAnswerMessage glow animation */
 :global(.performance-mode) .successfulAnswerMessage {
   animation: none;
@@ -1606,4 +1605,72 @@
 /* Performance mode: suppress botBobMessage inset glow */
 :global(.performance-mode) .botBobMessage {
   box-shadow: none;
+}
+
+/* ── Layout toggle ─────────────────────────────────────────── */
+.layoutToggleRow {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1.25rem;
+}
+
+.layoutToggleLabel {
+  font-family: var(--retro-font);
+  font-size: 0.7rem;
+  letter-spacing: 2px;
+  color: rgba(255, 255, 255, 0.4);
+  text-transform: uppercase;
+}
+
+.layoutToggleBtn {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: rgba(255, 255, 255, 0.4);
+  padding: 0.3rem 0.9rem;
+  border-radius: 4px;
+  font-family: var(--retro-font);
+  font-size: 0.7rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.layoutToggleBtn.layoutToggleActive {
+  border-color: var(--neon-pink);
+  color: var(--neon-pink);
+  text-shadow: 0 0 8px rgba(255, 0, 170, 0.7);
+  box-shadow: 0 0 8px rgba(255, 0, 170, 0.3);
+}
+
+.layoutToggleTrack {
+  width: 42px;
+  height: 22px;
+  border-radius: 11px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  position: relative;
+  cursor: pointer;
+  transition: background 0.3s ease;
+  flex-shrink: 0;
+}
+
+.layoutToggleThumb {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.4);
+  transition:
+    transform 0.3s ease,
+    background 0.3s ease;
+}
+
+.layoutToggleThumb.layoutToggleThumbOn {
+  transform: translateX(20px);
+  background: var(--neon-pink);
+  box-shadow: 0 0 6px rgba(255, 0, 170, 0.8);
 }
