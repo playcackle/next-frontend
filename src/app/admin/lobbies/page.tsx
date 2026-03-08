@@ -22,10 +22,11 @@ export default function LobbiesPage() {
     try {
       setError(null);
       const data = await lobbiesApi.getAll();
-      setLobbies(data);
+      setLobbies(data || []);
     } catch (err) {
       console.error("Failed to load lobbies:", err);
       setError(err instanceof Error ? err.message : "Failed to load lobbies");
+      setLobbies([]);
     } finally {
       setLoading(false);
     }

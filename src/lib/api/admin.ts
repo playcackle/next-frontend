@@ -3,10 +3,7 @@
  */
 
 const apiFetch = (path: string, init?: RequestInit) => {
-  const normalizedPath = path.startsWith("/admin")
-    ? path
-    : `/admin${path.startsWith("/") ? path : `/${path}`}`;
-  return fetch(`/api${normalizedPath}`, init);
+  return fetch(`/api${path.startsWith("/") ? path : `/${path}`}`, init);
 };
 
 // ============================================================================

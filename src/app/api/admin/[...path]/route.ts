@@ -1,6 +1,23 @@
 import { NextRequest, NextResponse } from "next/server";
 
-const BACKEND_BASE_URL = process.env.LOBBY_MANAGER_INTERNAL_URL || "http://localhost:8001";
+const LOBBY_MANAGER_URL = process.env.LOBBY_MANAGER_INTERNAL_URL || "http://localhost:8001";
+const CONTENT_SERVICE_URL = process.env.CONTENT_SERVICE_URL || "http://localhost:8003";
+const PLAYER_SERVICE_URL = process.env.PLAYER_SERVICE_URL || "http://localhost:8004";
+
+const COLLECTION_PATHS = ["/collections", "/topics", "/slots", "/upload-slots"];
+const PLAYER_PATHS = ["/players"];
+
+const getBackendUrl = (path: string): string => {
+  const normalizedPath = path.startsWith("/") ? path : `/${path}`;
+  
+  if (COLLECTION_PATHS.some(p => normalizedPath.startsWith(p))) {
+    return CONTENT_SERVICE_URL;
+  }
+  if (PLAYER_PATHS.some(p => normalizedPath.startsWith(p))) {
+    return PLAYER_SERVICE_URL;
+  }
+  return LOBBY_MANAGER_URL;
+};
 
 type RouteParams = { path?: string[] };
 type RouteContext = { params: RouteParams } | { params: Promise<{ path: string[] }> };
@@ -16,7 +33,20 @@ const resolvePathSegments = async (context: RouteContext): Promise<string[]> => 
 
 const buildTargetUrl = (segments: string[], search: string) => {
   const suffix = segments.length ? `/${segments.join("/")}` : "";
-  return `${BACKEND_BASE_URL}/admin${suffix}${search}`;
+  const normalizedPath = suffix || "/";
+  
+  let baseUrl = LOBBY_MANAGER_URL;
+  let pathPrefix = "/admin"; // lobby-manager admin endpoints
+  
+  if (COLLECTION_PATHS.some(p => normalizedPath.startsWith(p))) {
+    baseUrl = CONTENT_SERVICE_URL;
+    pathPrefix = ""; // content-service doesn't use /admin prefix
+  } else if (PLAYER_PATHS.some(p => normalizedPath.startsWith(p))) {
+    baseUrl = PLAYER_SERVICE_URL;
+    pathPrefix = ""; // player-service doesn't use /admin prefix
+  }
+  
+  return `${baseUrl}${pathPrefix}${normalizedPath}${search}`;
 };
 
 const HOP_BY_HOP_HEADERS = ["connection", "proxy-connection", "keep-alive", "upgrade", "transfer-encoding"];
@@ -26,7 +56,7 @@ const forwardRequest = async (req: NextRequest, context: RouteContext) => {
   const targetUrl = buildTargetUrl(segments, req.nextUrl.search);
 
   const headers = new Headers(req.headers);
-  headers.set("host", new URL(BACKEND_BASE_URL).host);
+  headers.set("host", new URL(targetUrl).host);
   HOP_BY_HOP_HEADERS.forEach((header) => headers.delete(header));
   headers.delete("content-length");
 
