@@ -44,6 +44,12 @@ a {
   text-decoration: none;
 }
 
+/* Ensure page content always layers above the fixed synthwave background (z-index 0–4) */
+main {
+  position: relative;
+  z-index: 5;
+}
+
 button,
 a {
   cursor: pointer;
