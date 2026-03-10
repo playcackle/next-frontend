@@ -8,7 +8,6 @@ import {
   roundExampleAtom,
   roundNameAtom,
   roundNumberAtom,
-  roundPromptAtom,
   timeRemainingAtom,
   totalRoundsAtom,
 } from "../store/gameAtoms";
@@ -29,7 +28,6 @@ const StatsTileWithTooltip = ({ tooltip, children }: StatsTileProps) => (
 const StatsRow = React.memo(() => {
   const playerCount = useAtomValue(playerCountAtom);
   const roundName = useAtomValue(roundNameAtom);
-  const roundPrompt = useAtomValue(roundPromptAtom);
   const roundExample = useAtomValue(roundExampleAtom);
   const roundNumber = useAtomValue(roundNumberAtom);
   const totalRounds = useAtomValue(totalRoundsAtom);
@@ -99,16 +97,16 @@ const StatsRow = React.memo(() => {
           isPostGameShowcase
             ? "Time until the next game begins. Stick around."
             : isRoundBreak
-            ? "Take a breather. The next round starts shortly."
-            : "Time left in this round. Type faster."
+              ? "Take a breather. The next round starts shortly."
+              : "Time left in this round. Type faster."
         }
       >
         <h3 className={styles.statsTitle}>
           {isPostGameShowcase
             ? "New game in:"
             : isRoundBreak
-            ? "Intermission"
-            : timeText}
+              ? "Intermission"
+              : timeText}
         </h3>
         <div
           className={`${styles.statsValue} ${

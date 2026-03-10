@@ -1,12 +1,12 @@
 import { AuthButtons } from "@/components/auth-buttons";
+import HomeGamerooms from "@/components/home-gamerooms";
+import HomeLeaderboard from "@/components/home-leaderboard";
+import HomeUserStats from "@/components/home-user-stats";
+import OnboardingModal from "@/components/onboarding-modal";
 import SettingsControls from "@/components/settings-controls";
 import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
 import styles from "./page.module.css";
-import HomeLeaderboard from "@/components/home-leaderboard";
-import HomeUserStats from "@/components/home-user-stats";
-import HomeGamerooms from "@/components/home-gamerooms";
-import OnboardingModal from "@/components/onboarding-modal";
 
 type LobbyInfo = {
   lobby_id: string;
@@ -21,7 +21,11 @@ type LobbyInfo = {
 export default async function Home({
   searchParams,
 }: {
-  searchParams: Promise<{ error?: string; error_description?: string; onboarding?: string }>;
+  searchParams: Promise<{
+    error?: string;
+    error_description?: string;
+    onboarding?: string;
+  }>;
 }) {
   const gamerooms = await fetchGamerooms();
   const supabase = await createClient();
