@@ -6,6 +6,7 @@ import styles from "./page.module.css";
 import HomeLeaderboard from "@/components/home-leaderboard";
 import HomeUserStats from "@/components/home-user-stats";
 import HomeGamerooms from "@/components/home-gamerooms";
+import OnboardingModal from "@/components/onboarding-modal";
 
 type LobbyInfo = {
   lobby_id: string;
@@ -20,7 +21,7 @@ type LobbyInfo = {
 export default async function Home({
   searchParams,
 }: {
-  searchParams: Promise<{ error?: string; error_description?: string }>;
+  searchParams: Promise<{ error?: string; error_description?: string; onboarding?: string }>;
 }) {
   const gamerooms = await fetchGamerooms();
   const supabase = await createClient();
@@ -31,10 +32,12 @@ export default async function Home({
   const params = await searchParams;
   const authError = params.error;
   const errorDescription = params.error_description;
+  const showOnboarding = params.onboarding === "1";
 
   return (
     <>
       <SettingsControls musicSrc="/audio/Snapscore.wav" />
+      {showOnboarding && <OnboardingModal show={showOnboarding} />}
 
       <div className={styles.pageWrapper}>
         {/* Hero */}

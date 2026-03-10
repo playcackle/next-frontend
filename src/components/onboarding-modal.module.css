@@ -1,0 +1,224 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(5, 0, 20, 0.85);
+  backdrop-filter: blur(6px);
+  z-index: 100;
+  animation: overlayIn 0.3s ease;
+}
+
+@keyframes overlayIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.content {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 101;
+  width: min(520px, calc(100vw - 2rem));
+  background: rgba(10, 5, 30, 0.97);
+  border: 1px solid rgba(183, 0, 255, 0.35);
+  border-radius: 10px;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  box-shadow:
+    0 0 40px rgba(183, 0, 255, 0.2),
+    0 0 80px rgba(183, 0, 255, 0.08),
+    inset 0 0 30px rgba(57, 39, 64, 0.04);
+  animation: contentIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes contentIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -46%) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+/* ── Header ───────────────────────────────────────────────── */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.headerLabel {
+  font-family: var(--retro-font);
+  font-size: 0.65rem;
+  letter-spacing: 4px;
+  color: rgba(183, 0, 255, 0.7);
+  text-transform: uppercase;
+}
+
+.skipBtn {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: rgba(255, 255, 255, 0.35);
+  padding: 0.3rem 0.8rem;
+  border-radius: 4px;
+  font-family: var(--retro-font);
+  font-size: 0.65rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.skipBtn:hover {
+  border-color: rgba(255, 255, 255, 0.4);
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* ── Step body ────────────────────────────────────────────── */
+.stepBody {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 1rem;
+  min-height: 200px;
+  justify-content: center;
+  transition: opacity 0.18s ease, transform 0.18s ease;
+}
+
+.stepBodyHidden {
+  opacity: 0;
+  transform: translateY(8px);
+}
+
+.stepBodyVisible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.stepIcon {
+  width: 64px;
+  height: 64px;
+  border-radius: 12px;
+  border: 2px solid rgba(183, 0, 255, 0.5);
+  background: rgba(183, 0, 255, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--retro-font);
+  font-size: 2rem;
+  color: rgba(183, 0, 255, 0.9);
+  text-shadow: 0 0 12px rgba(183, 0, 255, 0.8);
+  box-shadow: 0 0 20px rgba(183, 0, 255, 0.2);
+  flex-shrink: 0;
+}
+
+.stepTitle {
+  font-family: var(--retro-font);
+  font-size: 1.4rem;
+  font-weight: bold;
+  color: white;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin: 0;
+  text-shadow: 0 0 10px rgba(183, 0, 255, 0.5);
+}
+
+.stepText {
+  font-family: var(--retro-font-alt);
+  font-size: 0.95rem;
+  color: rgba(255, 255, 255, 0.65);
+  line-height: 1.65;
+  margin: 0;
+  max-width: 380px;
+}
+
+/* ── Progress dots ────────────────────────────────────────── */
+.dots {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  align-items: center;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.15);
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.dotDone {
+  background: rgba(183, 0, 255, 0.4);
+  width: 8px;
+  height: 8px;
+}
+
+.dotActive {
+  background: rgba(183, 0, 255, 1);
+  box-shadow: 0 0 8px rgba(183, 0, 255, 0.9);
+  width: 24px;
+  border-radius: 4px;
+}
+
+/* ── Navigation ───────────────────────────────────────────── */
+.nav {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: space-between;
+}
+
+.navBtn {
+  flex: 1;
+  background: transparent;
+  border: 2px solid rgba(255, 255, 255, 0.15);
+  color: rgba(255, 255, 255, 0.5);
+  padding: 0.75rem 1rem;
+  border-radius: 6px;
+  font-family: var(--retro-font);
+  font-size: 0.8rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.navBtn:disabled {
+  opacity: 0.2;
+  cursor: not-allowed;
+}
+
+.navBtn:not(:disabled):hover {
+  border-color: rgba(255, 255, 255, 0.4);
+  color: white;
+}
+
+.navBtnPrimary {
+  border-color: var(--neon-pink);
+  color: var(--neon-pink);
+}
+
+.navBtnPrimary:not(:disabled):hover {
+  background: rgba(255, 0, 170, 0.1);
+  box-shadow: 0 0 16px rgba(255, 0, 170, 0.3);
+  border-color: var(--neon-pink) !important;
+  color: var(--neon-pink) !important;
+}
+
+/* ── Step counter ─────────────────────────────────────────── */
+.stepCounter {
+  font-family: var(--retro-font-alt);
+  font-size: 0.7rem;
+  color: rgba(255, 255, 255, 0.2);
+  text-align: center;
+  margin: 0;
+  letter-spacing: 1px;
+}

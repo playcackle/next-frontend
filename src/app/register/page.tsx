@@ -150,7 +150,8 @@ export default function RegisterPage() {
         return;
       }
 
-      // If no result (redirect happened), signup was successful and user is auto-logged in
+      // Signup was successful and user is auto-logged in — show onboarding
+      router.push("/?onboarding=1");
     } catch (err) {
       console.error("Unexpected error:", err);
       setError("An unexpected error occurred. Please try again.");
