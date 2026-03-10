@@ -1,3 +1,5 @@
+"use client";
+
 import { useAtomValue } from "jotai";
 import React, { useState } from "react";
 import styles from "../gameroom.module.css";
@@ -7,7 +9,6 @@ import AnswerGrid from "./AnswerGrid";
 import SlotTile from "./SlotTile";
 
 function SlotGrid() {
-  // Use atomic selector for optimal performance
   const slots = useAtomValue(slotsAtom);
   const [useGridLayout, setUseGridLayout] = useState(false);
 

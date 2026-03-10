@@ -1,0 +1,307 @@
+.pageWrapper {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 1.5rem 1.5rem 4rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+}
+
+/* ── Header ───────────────────────────────────────────────── */
+.pageHeader {
+  display: flex;
+  align-items: flex-end;
+  gap: 1.25rem;
+}
+
+.backLink {
+  font-family: var(--retro-font);
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: rgba(255, 255, 255, 0.4);
+  padding-bottom: 4px;
+  transition: color 0.2s ease;
+  white-space: nowrap;
+}
+
+.backLink:hover {
+  color: var(--neon-blue);
+}
+
+.pageTitle {
+  font-family: var(--retro-font);
+  font-size: 2.8rem;
+  font-weight: 800;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  line-height: 1;
+  margin: 0;
+}
+
+.titleAccentBlue {
+  color: #fff;
+  text-shadow: 0 0 5px #0ff, 0 0 15px #0ff, 0 0 30px #0ff;
+}
+
+.titleAccentPink {
+  color: #fff;
+  text-shadow: 0 0 5px #f0f, 0 0 15px #f0f, 0 0 30px #f0f;
+}
+
+.roomCount {
+  font-family: var(--retro-font);
+  font-size: 0.7rem;
+  color: rgba(255, 255, 255, 0.35);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-top: 0.3rem;
+}
+
+/* ── Filters bar ──────────────────────────────────────────── */
+.filtersBar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: flex-end;
+  padding: 1rem 1.25rem;
+  background: rgba(20, 20, 40, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 10px;
+  box-shadow: 0 0 20px rgba(0, 221, 255, 0.05);
+}
+
+/* Search */
+.searchWrapper {
+  position: relative;
+  flex: 1;
+  min-width: 200px;
+  display: flex;
+  align-items: center;
+}
+
+.searchIcon {
+  position: absolute;
+  left: 0.75rem;
+  width: 14px;
+  height: 14px;
+  color: rgba(255, 255, 255, 0.35);
+  pointer-events: none;
+}
+
+.searchInput {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(0, 221, 255, 0.2);
+  border-radius: 6px;
+  padding: 0.45rem 2rem 0.45rem 2.25rem;
+  color: white;
+  font-family: var(--retro-font);
+  font-size: 0.8rem;
+  letter-spacing: 0.5px;
+  outline: none;
+  caret-color: var(--neon-blue);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.searchInput::placeholder {
+  color: rgba(255, 255, 255, 0.3);
+}
+
+.searchInput:focus {
+  border-color: var(--neon-blue);
+  box-shadow: 0 0 8px rgba(0, 221, 255, 0.2);
+}
+
+.searchClear {
+  position: absolute;
+  right: 0.6rem;
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 1rem;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0;
+  transition: color 0.15s ease;
+}
+
+.searchClear:hover {
+  color: var(--neon-pink);
+}
+
+/* Filter group */
+.filterGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.filterGroupLabel {
+  font-family: var(--retro-font);
+  font-size: 0.62rem;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: rgba(255, 255, 255, 0.35);
+}
+
+.filterChips {
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+
+.chip {
+  padding: 0.3rem 0.7rem;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.04);
+  color: rgba(255, 255, 255, 0.5);
+  font-family: var(--retro-font);
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+
+.chip:hover {
+  border-color: rgba(0, 221, 255, 0.5);
+  color: rgba(255, 255, 255, 0.85);
+  background: rgba(0, 221, 255, 0.08);
+}
+
+.chipActive {
+  border-color: var(--neon-blue);
+  background: rgba(0, 221, 255, 0.15);
+  color: white;
+  box-shadow: 0 0 8px rgba(0, 221, 255, 0.25);
+}
+
+/* Sort select */
+.sortSelect {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 6px;
+  padding: 0.35rem 0.7rem;
+  color: rgba(255, 255, 255, 0.75);
+  font-family: var(--retro-font);
+  font-size: 0.72rem;
+  letter-spacing: 0.5px;
+  outline: none;
+  cursor: pointer;
+  transition: border-color 0.18s ease;
+  appearance: auto;
+}
+
+.sortSelect:focus {
+  border-color: var(--neon-blue);
+  box-shadow: 0 0 6px rgba(0, 221, 255, 0.2);
+}
+
+/* ── Rooms grid ───────────────────────────────────────────── */
+.gameroomsGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+.tileWrapper {
+  position: relative;
+}
+
+/* Status badge overlaid on tile */
+.statusBadge {
+  position: absolute;
+  top: 0.6rem;
+  right: 0.6rem;
+  padding: 0.2rem 0.6rem;
+  border-radius: 20px;
+  font-family: var(--retro-font);
+  font-size: 0.6rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  pointer-events: none;
+  z-index: 3;
+}
+
+.status_open {
+  background: rgba(0, 255, 102, 0.15);
+  border: 1px solid rgba(0, 255, 102, 0.4);
+  color: var(--neon-green);
+}
+
+.status_in_progress {
+  background: rgba(255, 195, 0, 0.15);
+  border: 1px solid rgba(255, 195, 0, 0.4);
+  color: #ffc300;
+}
+
+.status_full {
+  background: rgba(255, 0, 85, 0.15);
+  border: 1px solid rgba(255, 0, 85, 0.35);
+  color: #ff3366;
+}
+
+/* ── Empty state ──────────────────────────────────────────── */
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding: 3rem 1.5rem;
+  border: 1px dashed rgba(255, 255, 255, 0.12);
+  border-radius: 10px;
+  text-align: center;
+}
+
+.emptyStateText {
+  font-family: var(--retro-font);
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.clearFiltersBtn {
+  padding: 0.4rem 1.25rem;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 0, 170, 0.4);
+  background: rgba(255, 0, 170, 0.08);
+  color: var(--neon-pink);
+  font-family: var(--retro-font);
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.clearFiltersBtn:hover {
+  background: rgba(255, 0, 170, 0.16);
+  box-shadow: 0 0 10px rgba(255, 0, 170, 0.25);
+}
+
+/* ── Responsive ───────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .gameroomsGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .pageTitle {
+    font-size: 2rem;
+  }
+
+  .filtersBar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .searchWrapper {
+    min-width: unset;
+  }
+}
+
+@media (max-width: 480px) {
+  .gameroomsGrid {
+    grid-template-columns: 1fr;
+  }
+}

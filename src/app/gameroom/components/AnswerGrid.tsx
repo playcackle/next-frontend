@@ -136,7 +136,9 @@ export const AnswerGrid: React.FC<AnswerGridProps> = ({ slots }) => {
                 key={slot.id}
                 className={`${styles.answerChip} ${slot.is_rare ? styles.answerChipBonus : ""} ${isNew ? styles.answerChipNew : ""}`}
               >
-                <span className={styles.answerChipText}>{slot.canonical_text}</span>
+                <span className={styles.answerChipText}>
+                  {slot.canonical_text}
+                </span>
                 {slot.snapped_by_display_name && (
                   <span className={styles.answerChipPlayer}>
                     {slot.snapped_by_display_name}

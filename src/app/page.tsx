@@ -1,9 +1,11 @@
 import { AuthButtons } from "@/components/auth-buttons";
-import GameroomTileComponent from "@/components/gameroom-tile";
 import SettingsControls from "@/components/settings-controls";
 import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
 import styles from "./page.module.css";
+import HomeLeaderboard from "@/components/home-leaderboard";
+import HomeUserStats from "@/components/home-user-stats";
+import HomeGamerooms from "@/components/home-gamerooms";
 
 type LobbyInfo = {
   lobby_id: string;
@@ -26,7 +28,6 @@ export default async function Home({
     data: { user },
   } = await supabase.auth.getUser();
 
-  // Handle auth errors from email confirmation (searchParams is a Promise in Next.js 16+)
   const params = await searchParams;
   const authError = params.error;
   const errorDescription = params.error_description;
@@ -34,70 +35,92 @@ export default async function Home({
   return (
     <>
       <SettingsControls musicSrc="/audio/Snapscore.wav" />
-      <section className={styles.heroSection}>
-        <h1 className={styles.title}>
-          <span className={styles.neonText}>CAC</span>
-          <span className={styles.neonTextPink}>KLE</span>
-        </h1>
 
-        {authError && (
-          <div
-            style={{
-              color: "#ff0055",
-              backgroundColor: "rgba(255, 0, 85, 0.1)",
-              padding: "15px 20px",
-              borderRadius: "8px",
-              marginTop: "20px",
-              border: "1px solid #ff0055",
-              maxWidth: "600px",
-              margin: "20px auto",
-            }}
-          >
-            <div style={{ fontSize: "18px", marginBottom: "10px" }}>
-              ⚠️ Email Link Expired
+      <div className={styles.pageWrapper}>
+        {/* Hero */}
+        <section className={styles.heroSection}>
+          <h1 className={styles.title}>
+            <span className={styles.neonText}>CAC</span>
+            <span className={styles.neonTextPink}>KLE</span>
+          </h1>
+          <p className={styles.tagline}>Race. Claim. Win.</p>
+
+          {authError && (
+            <div className={styles.authErrorBanner}>
+              <span className={styles.authErrorIcon}>!</span>
+              <div>
+                <strong>Email Link Expired</strong>
+                <p>
+                  {errorDescription?.replace(/\+/g, " ") ||
+                    "Your email confirmation link has expired."}
+                </p>
+                <p>
+                  <Link href="/register" className={styles.authErrorLink}>
+                    Sign up again
+                  </Link>{" "}
+                  or{" "}
+                  <Link href="/login" className={styles.authErrorLink}>
+                    try logging in
+                  </Link>
+                  .
+                </p>
+              </div>
             </div>
-            <div style={{ fontSize: "14px", marginBottom: "15px" }}>
-              {errorDescription?.replace(/\+/g, " ") ||
-                "Your email confirmation link has expired."}
-            </div>
-            <div style={{ fontSize: "14px" }}>
-              Please{" "}
-              <Link
-                href="/register"
-                style={{ color: "#00ff88", textDecoration: "underline" }}
-              >
-                sign up again
-              </Link>{" "}
-              to get a new confirmation email, or{" "}
-              <Link
-                href="/login"
-                style={{ color: "#00ff88", textDecoration: "underline" }}
-              >
-                try logging in
-              </Link>{" "}
-              if you already confirmed.
-            </div>
-          </div>
+          )}
+        </section>
+
+        {user ? (
+          <>
+            {/* Section 1: Global Leaderboard */}
+            <section className={styles.section}>
+              <div className={styles.sectionHeader}>
+                <h2 className={styles.sectionTitle}>
+                  <span className={styles.sectionTitleAccent}>Global</span>{" "}
+                  Leaderboard
+                </h2>
+                <Link href="/leaderboard" className={styles.seeAllLink}>
+                  See All
+                </Link>
+              </div>
+              <HomeLeaderboard />
+            </section>
+
+            {/* Section 2: Your Stats */}
+            <section className={styles.section}>
+              <div className={styles.sectionHeader}>
+                <h2 className={styles.sectionTitle}>
+                  <span className={styles.sectionTitleAccent}>Your</span> Stats
+                </h2>
+                <Link href="/profile" className={styles.seeAllLink}>
+                  Full Profile
+                </Link>
+              </div>
+              <HomeUserStats userId={user.id} />
+            </section>
+
+            {/* Section 3: Gamerooms */}
+            <section className={styles.section}>
+              <div className={styles.sectionHeader}>
+                <h2 className={styles.sectionTitle}>
+                  <span className={styles.sectionTitleAccent}>Game</span> Rooms
+                </h2>
+                <Link href="/gamerooms" className={styles.seeAllLink}>
+                  Browse All
+                </Link>
+              </div>
+              <HomeGamerooms gamerooms={gamerooms} />
+            </section>
+          </>
+        ) : (
+          <section className={styles.authSection}>
+            <AuthButtons />
+          </section>
         )}
-      </section>
-      {user ? (
-        <section className={styles.lobbiesSection}>
-          <div className={styles.lobbiesContainer}>
-            {gamerooms.map((x: LobbyInfo, i: number) => (
-              <GameroomTileComponent gameroom={x} key={i} />
-            ))}
-          </div>
-        </section>
-      ) : (
-        <section className={styles.authSection}>
-          <AuthButtons />
-        </section>
-      )}
+      </div>
     </>
   );
 }
 
-// Server-side function to fetch available gamerooms
 async function fetchGamerooms(): Promise<LobbyInfo[]> {
   try {
     const baseUrl =
@@ -105,22 +128,15 @@ async function fetchGamerooms(): Promise<LobbyInfo[]> {
     if (!baseUrl) {
       throw new Error("Lobby Manager URL is not configured.");
     }
-
     const response = await fetch(`${baseUrl}/lobbies`, {
-      // Add cache options for revalidation
-      next: {
-        revalidate: 60, // Revalidate every 60 seconds
-      },
+      next: { revalidate: 60 },
     });
-
     if (!response.ok) {
-      console.error(response.text());
       throw new Error(`Error fetching lobbies: ${response.status}`);
     }
-
     return response.json();
   } catch (error) {
-    console.error("Failed to fetch lobbies lobbies:", error);
+    console.error("Failed to fetch lobbies:", error);
     return [];
   }
 }
