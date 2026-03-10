@@ -1,6 +1,5 @@
 import { AuthButtons } from "@/components/auth-buttons";
 import HomeGamerooms from "@/components/home-gamerooms";
-import HomeLeaderboard from "@/components/home-leaderboard";
 import HomeUserStats from "@/components/home-user-stats";
 import OnboardingModal from "@/components/onboarding-modal";
 import SettingsControls from "@/components/settings-controls";
@@ -79,7 +78,7 @@ export default async function Home({
         {user ? (
           <>
             {/* Section 1: Global Leaderboard */}
-            <section className={styles.section}>
+            {/* <section className={styles.section}>
               <div className={styles.sectionHeader}>
                 <h2 className={styles.sectionTitle}>
                   <span className={styles.sectionTitleAccent}>Global</span>{" "}
@@ -90,7 +89,7 @@ export default async function Home({
                 </Link>
               </div>
               <HomeLeaderboard />
-            </section>
+            </section> */}
 
             {/* Section 2: Your Stats */}
             <section className={styles.section}>
