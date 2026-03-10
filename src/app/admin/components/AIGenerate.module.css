@@ -84,6 +84,69 @@
   color: #666;
 }
 
+.estimateButton {
+  padding: 0.75rem 1rem;
+  background: rgba(255, 165, 0, 0.2);
+  border: 2px solid #ffa500;
+  color: #ffa500;
+  font-weight: 700;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.estimateButton:hover:not(:disabled) {
+  background: rgba(255, 165, 0, 0.3);
+  transform: translateY(-2px);
+}
+
+.estimateButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.estimateResult {
+  color: #00ff00;
+  font-size: 0.85rem;
+  margin-top: 0.5rem;
+  padding: 0.5rem;
+  background: rgba(0, 255, 0, 0.1);
+  border-radius: 4px;
+}
+
+.estimateWarning {
+  color: #ff6b6b;
+  font-size: 0.85rem;
+  margin-top: 0.5rem;
+  padding: 0.5rem;
+  background: rgba(255, 107, 107, 0.1);
+  border-radius: 4px;
+  border: 1px solid #ff6b6b;
+}
+
+.suggestionsList {
+  margin: 0.5rem 0 0 0;
+  padding-left: 1.5rem;
+  list-style: disc;
+}
+
+.suggestionButton {
+  background: none;
+  border: none;
+  color: #ffa500;
+  text-decoration: underline;
+  cursor: pointer;
+  font-size: 0.85rem;
+  padding: 0;
+}
+
+.suggestionButton:hover {
+  color: #ffcc00;
+}
+
 .helpText {
   color: #a0a0ff;
   font-size: 0.8rem;
@@ -250,7 +313,7 @@
 
 .slotRow {
   display: grid;
-  grid-template-columns: 1fr 1fr 100px 60px 40px;
+  grid-template-columns: 1.5fr 1fr 1.5fr 50px 40px;
   gap: 0.5rem;
   padding: 0.75rem;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
@@ -263,7 +326,8 @@
 
 .slotInput,
 .slotPrompt,
-.slotClue {
+.slotClue,
+.slotAliases {
   padding: 0.5rem;
   background: rgba(0, 0, 0, 0.5);
   border: 1px solid #6b6bff;
@@ -274,7 +338,8 @@
 
 .slotInput:focus,
 .slotPrompt:focus,
-.slotClue:focus {
+.slotClue:focus,
+.slotAliases:focus {
   outline: none;
   border-color: #ff00ff;
 }

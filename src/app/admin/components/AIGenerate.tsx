@@ -6,6 +6,7 @@ import {
   topicsApi,
   type TopicGenerateResponse,
   type SlotProposal,
+  type EstimateSlotsResponse,
 } from "@/lib/api/admin";
 import styles from "./AIGenerate.module.css";
 
@@ -24,6 +25,10 @@ export default function AIGenerate({ topicId, topicName = "", onComplete }: AIGe
   const [example, setExample] = useState("");
   const [numSlots, setNumSlots] = useState(30);
   
+  // Estimate state
+  const [estimate, setEstimate] = useState<EstimateSlotsResponse | null>(null);
+  const [estimating, setEstimating] = useState(false);
+  
   // Generation state
   const [generationResult, setGenerationResult] = useState<TopicGenerateResponse | null>(null);
   const [editedSlots, setEditedSlots] = useState<SlotProposal[]>([]);
@@ -39,11 +44,31 @@ export default function AIGenerate({ topicId, topicName = "", onComplete }: AIGe
     setName(topicName);
     setExample("");
     setNumSlots(30);
+    setEstimate(null);
     setGenerationResult(null);
     setEditedSlots([]);
     setError(null);
     setStatusMessage("");
     setCreatedTopicId(null);
+  };
+
+  const handleEstimate = async () => {
+    if (!name.trim() || !example.trim()) {
+      setError("Topic name and example are required to estimate");
+      return;
+    }
+
+    setEstimating(true);
+    setError(null);
+
+    try {
+      const result = await generationApi.estimateSlots(name, example);
+      setEstimate(result);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to estimate");
+    } finally {
+      setEstimating(false);
+    }
   };
 
   const handleGenerate = async () => {
@@ -73,7 +98,7 @@ export default function AIGenerate({ topicId, topicName = "", onComplete }: AIGe
     }
   };
 
-  const handleSlotEdit = (index: number, field: keyof SlotProposal, value: string | boolean) => {
+  const handleSlotEdit = (index: number, field: keyof SlotProposal, value: string | boolean | string[]) => {
     const updated = [...editedSlots];
     if (field === "is_rare") {
       updated[index] = { ...updated[index], is_rare: value as boolean };
@@ -186,22 +211,62 @@ export default function AIGenerate({ topicId, topicName = "", onComplete }: AIGe
 
           <div className={styles.formField}>
             <label className={styles.label}>Number of Slots</label>
-            <input
-              type="number"
-              className={styles.input}
-              value={numSlots}
-              onChange={(e) => setNumSlots(parseInt(e.target.value) || 30)}
-              min={10}
-              max={100}
-            />
+            <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+              <input
+                type="number"
+                className={styles.input}
+                value={numSlots}
+                onChange={(e) => {
+                  setNumSlots(parseInt(e.target.value) || 30);
+                  setEstimate(null);
+                }}
+                min={10}
+                max={100}
+                style={{ width: '100px' }}
+              />
+              <button
+                type="button"
+                className={styles.estimateButton}
+                onClick={handleEstimate}
+                disabled={!name.trim() || !example.trim() || estimating}
+              >
+                {estimating ? "⏳..." : "📊 Check Size"}
+              </button>
+            </div>
+            {estimate && (
+              <div className={estimate.is_too_large ? styles.estimateWarning : styles.estimateResult}>
+                {estimate.is_too_large ? (
+                  <>
+                    {'⚠️'} Topic too large: ~{estimate.item_count} items. Consider narrowing down:
+                    <ul className={styles.suggestionsList}>
+                      {estimate.suggestions.map((s, i) => (
+                        <li key={i}>
+                          <button 
+                            type="button"
+                            className={styles.suggestionButton}
+                            onClick={() => { setName(s); setEstimate(null); }}
+                          >
+                            {s}
+                          </button>
+                        </li>
+                      ))}
+                    </ul>
+                  </>
+                ) : (
+                  <span style={{ color: '#00ff00' }}>
+                    {'✅'} Topic size OK: ~{estimate.item_count} items - {estimate.reasoning}
+                  </span>
+                )}
+              </div>
+            )}
           </div>
 
           <button
             className={styles.submitButton}
             onClick={handleGenerate}
-            disabled={!name.trim() || !example.trim()}
+            disabled={!name.trim() || !example.trim() || (estimate?.is_too_large ?? false)}
           >
-            🚀 GENERATE
+            {estimate?.is_too_large ? "⚠️ TOPIC TOO LARGE" : "🚀 GENERATE"}
           </button>
         </div>
       )}
@@ -227,9 +292,6 @@ export default function AIGenerate({ topicId, topicName = "", onComplete }: AIGe
 
           <div className={styles.slotsInfo}>
             <p>{editedSlots.length} slots generated</p>
-            <p className={styles.topicPromptPreview}>
-              <strong>Topic Prompt:</strong> {generationResult?.topic_prompt}
-            </p>
           </div>
 
           <div className={styles.slotsList}>

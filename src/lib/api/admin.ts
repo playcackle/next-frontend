@@ -552,6 +552,14 @@ export type TopicPromptResponse = {
   topic_prompt: string;
 };
 
+export type EstimateSlotsResponse = {
+  item_count: number | "unknown";
+  is_too_large: boolean;
+  can_generate: boolean;
+  reasoning: string;
+  suggestions: string[];
+};
+
 // ============================================================================
 // AI Content Generation API
 // ============================================================================
@@ -583,6 +591,19 @@ export const generationApi = {
     if (!res.ok) {
       const error = await res.json();
       throw new Error(error.detail || 'Failed to generate topic prompt');
+    }
+    return res.json();
+  },
+
+  /**
+   * Estimate recommended number of slots for a topic
+   * Uses Perplexity to research and LLM to suggest a count
+   */
+  async estimateSlots(topicName: string, example: string): Promise<EstimateSlotsResponse> {
+    const res = await apiFetch(`/admin/generate/estimate-slots?topic_name=${encodeURIComponent(topicName)}&example=${encodeURIComponent(example)}`);
+    if (!res.ok) {
+      const error = await res.json();
+      throw new Error(error.detail || 'Failed to estimate slots');
     }
     return res.json();
   },
