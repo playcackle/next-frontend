@@ -6,6 +6,24 @@ import { playersApi, type PlayerProfileStats } from "@/lib/api/players";
 import { useRouter } from "next/navigation";
 import styles from "./page.module.css";
 
+function StatCard({ value, label, accent = "pink" }: { value: string; label: string; accent?: "pink" | "blue" | "gold" }) {
+  return (
+    <div className={`${styles.statCard} ${styles[`accent_${accent}`]}`}>
+      <div className={styles.statValue}>{value}</div>
+      <div className={styles.statLabel}>{label}</div>
+    </div>
+  );
+}
+
+function AnalyticRow({ label, value }: { label: string; value: string }) {
+  return (
+    <div className={styles.analyticRow}>
+      <span className={styles.analyticLabel}>{label}</span>
+      <span className={styles.analyticValue}>{value}</span>
+    </div>
+  );
+}
+
 export default function ProfilePage() {
   const { user, loading: authLoading } = useUser();
   const router = useRouter();
@@ -14,21 +32,13 @@ export default function ProfilePage() {
   const [error, setError] = useState<string | null>(null);
 
   const loadProfile = useCallback(async () => {
-    if (!user?.id) {
-      console.log("loadProfile: No user ID");
-      return;
-    }
-
-    console.log("loadProfile: Starting for user", user.id);
-
+    if (!user?.id) return;
     try {
       setLoading(true);
       setError(null);
       const data = await playersApi.getProfile(user.id);
-      console.log("loadProfile: Received data", data);
       setProfile(data);
     } catch (err) {
-      console.error("Failed to load profile:", err);
       setError(err instanceof Error ? err.message : "Failed to load profile");
     } finally {
       setLoading(false);
@@ -40,20 +50,15 @@ export default function ProfilePage() {
       router.push("/login");
       return;
     }
-
-    if (user?.id) {
-      loadProfile();
-    }
+    if (user?.id) loadProfile();
   }, [authLoading, user?.id, router, loadProfile]);
-
-  console.log("Profile page render:", { loading, error, hasProfile: !!profile });
 
   if (loading) {
     return (
       <div className={styles.container}>
-        <div className={styles.loadingContainer}>
-          <div className={styles.spinner}></div>
-          <p>Loading profile...</p>
+        <div className={styles.stateContainer}>
+          <div className={styles.spinner} />
+          <p className={styles.stateText}>Loading profile...</p>
         </div>
       </div>
     );
@@ -62,9 +67,9 @@ export default function ProfilePage() {
   if (error || !profile) {
     return (
       <div className={styles.container}>
-        <div className={styles.errorContainer}>
-          <h3>Failed to load profile</h3>
-          <p>{error}</p>
+        <div className={styles.stateContainer}>
+          <p className={styles.errorHeading}>Failed to load profile</p>
+          <p className={styles.stateText}>{error}</p>
           <button className={styles.retryButton} onClick={loadProfile}>
             Retry
           </button>
@@ -74,8 +79,7 @@ export default function ProfilePage() {
   }
 
   const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString("en-US", {
+    return new Date(dateString).toLocaleDateString("en-US", {
       year: "numeric",
       month: "long",
       day: "numeric",
@@ -84,151 +88,81 @@ export default function ProfilePage() {
 
   const getLastSeenText = (lastSeen: string | null) => {
     if (!lastSeen) return "Never";
-    const date = new Date(lastSeen);
-    const now = new Date();
-    const diffMs = now.getTime() - date.getTime();
-    const diffMins = Math.floor(diffMs / (1000 * 60));
-
+    const diffMs = Date.now() - new Date(lastSeen).getTime();
+    const diffMins = Math.floor(diffMs / 60000);
     if (diffMins < 1) return "Just now";
-    if (diffMins < 60) return `${diffMins} minute${diffMins > 1 ? "s" : ""} ago`;
+    if (diffMins < 60) return `${diffMins}m ago`;
     const diffHours = Math.floor(diffMins / 60);
-    if (diffHours < 24) return `${diffHours} hour${diffHours > 1 ? "s" : ""} ago`;
-    const diffDays = Math.floor(diffHours / 24);
-    return `${diffDays} day${diffDays > 1 ? "s" : ""} ago`;
+    if (diffHours < 24) return `${diffHours}h ago`;
+    return `${Math.floor(diffHours / 24)}d ago`;
   };
+
+  const hasAnalytics =
+    profile.overall_accuracy !== null || profile.rare_claims !== null;
 
   return (
     <div className={styles.container}>
-      <div className={styles.header}>
-        <h1 className={styles.title}>
-          <span className={styles.neonText}>{profile.name}</span>
-        </h1>
-        <p className={styles.subtitle}>
-          Joined {formatDate(profile.created_at)}
-        </p>
-        <p className={styles.lastSeen}>
-          Last active: {getLastSeenText(profile.last_seen_active_at)}
-        </p>
-      </div>
 
-      <div className={styles.statsGrid}>
-        {/* Total Score Card */}
-        <div className={styles.statCard}>
-          <div className={styles.statIcon}>🏆</div>
-          <div className={styles.statValue}>{profile.total_score.toLocaleString()}</div>
-          <div className={styles.statLabel}>Total Score</div>
+      {/* Hero header */}
+      <div className={styles.hero}>
+        <div className={styles.avatar}>
+          {(profile.name || "?")[0].toUpperCase()}
         </div>
-
-        {/* Games Played Card */}
-        <div className={styles.statCard}>
-          <div className={styles.statIcon}>🎮</div>
-          <div className={styles.statValue}>{profile.games_played}</div>
-          <div className={styles.statLabel}>Games Played</div>
-        </div>
-
-        {/* Rounds Played Card */}
-        <div className={styles.statCard}>
-          <div className={styles.statIcon}>🔄</div>
-          <div className={styles.statValue}>{profile.rounds_played}</div>
-          <div className={styles.statLabel}>Rounds Played</div>
-        </div>
-
-        {/* Total Slots Snapped Card */}
-        <div className={styles.statCard}>
-          <div className={styles.statIcon}>⚡</div>
-          <div className={styles.statValue}>{profile.total_slots_snapped}</div>
-          <div className={styles.statLabel}>Slots Snapped</div>
+        <div className={styles.heroMeta}>
+          <h1 className={styles.playerName}>{profile.name}</h1>
+          <p className={styles.heroSub}>Joined {formatDate(profile.created_at)}</p>
+          <span className={styles.lastSeenBadge}>
+            Active {getLastSeenText(profile.last_seen_active_at)}
+          </span>
         </div>
       </div>
 
-      <div className={styles.averagesSection}>
+      {/* Primary stats */}
+      <section className={styles.section}>
+        <h2 className={styles.sectionTitle}>Stats</h2>
+        <div className={styles.statsGrid}>
+          <StatCard value={profile.total_score.toLocaleString()} label="Total Score" accent="pink" />
+          <StatCard value={String(profile.games_played)} label="Games Played" accent="blue" />
+          <StatCard value={String(profile.rounds_played)} label="Rounds Played" accent="blue" />
+          <StatCard value={String(profile.total_slots_snapped)} label="Slots Snapped" accent="gold" />
+        </div>
+      </section>
+
+      {/* Averages */}
+      <section className={styles.section}>
         <h2 className={styles.sectionTitle}>Averages</h2>
-        <div className={styles.averagesGrid}>
-          <div className={styles.averageCard}>
-            <div className={styles.averageValue}>
-              {profile.average_score_per_game.toFixed(1)}
-            </div>
-            <div className={styles.averageLabel}>Score per Game</div>
-          </div>
-
-          <div className={styles.averageCard}>
-            <div className={styles.averageValue}>
-              {profile.average_score_per_round.toFixed(1)}
-            </div>
-            <div className={styles.averageLabel}>Score per Round</div>
-          </div>
-
-          <div className={styles.averageCard}>
-            <div className={styles.averageValue}>
-              {profile.average_slots_per_game.toFixed(1)}
-            </div>
-            <div className={styles.averageLabel}>Slots per Game</div>
-          </div>
-
-          <div className={styles.averageCard}>
-            <div className={styles.averageValue}>
-              {profile.average_slots_per_round.toFixed(1)}
-            </div>
-            <div className={styles.averageLabel}>Slots per Round</div>
-          </div>
+        <div className={styles.statsGrid}>
+          <StatCard value={profile.average_score_per_game.toFixed(1)} label="Score / Game" accent="blue" />
+          <StatCard value={profile.average_score_per_round.toFixed(1)} label="Score / Round" accent="blue" />
+          <StatCard value={profile.average_slots_per_game.toFixed(1)} label="Slots / Game" accent="gold" />
+          <StatCard value={profile.average_slots_per_round.toFixed(1)} label="Slots / Round" accent="gold" />
         </div>
-      </div>
+      </section>
 
-      {/* Analytics Section */}
-      {(profile.overall_accuracy !== null || profile.rare_claims !== null) && (
-        <div className={styles.analyticsSection}>
-          <h2 className={styles.sectionTitle}>Performance Analytics</h2>
-          <div className={styles.analyticsGrid}>
+      {/* Analytics */}
+      {hasAnalytics && (
+        <section className={styles.section}>
+          <h2 className={styles.sectionTitle}>Performance</h2>
+          <div className={styles.analyticsPanel}>
             {profile.overall_accuracy !== null && (
-              <div className={styles.analyticsCard}>
-                <div className={styles.analyticsIcon}>🎯</div>
-                <div className={styles.analyticsValue}>
-                  {profile.overall_accuracy.toFixed(1)}%
-                </div>
-                <div className={styles.analyticsLabel}>Accuracy</div>
-              </div>
+              <AnalyticRow label="Accuracy" value={`${profile.overall_accuracy.toFixed(1)}%`} />
             )}
-
             {profile.average_claim_rank !== null && (
-              <div className={styles.analyticsCard}>
-                <div className={styles.analyticsIcon}>🏅</div>
-                <div className={styles.analyticsValue}>
-                  #{profile.average_claim_rank.toFixed(1)}
-                </div>
-                <div className={styles.analyticsLabel}>Avg Claim Rank</div>
-              </div>
+              <AnalyticRow label="Avg Claim Rank" value={`#${profile.average_claim_rank.toFixed(1)}`} />
             )}
-
             {profile.rare_claims !== null && profile.rare_claims > 0 && (
-              <div className={styles.analyticsCard}>
-                <div className={styles.analyticsIcon}>💎</div>
-                <div className={styles.analyticsValue}>{profile.rare_claims}</div>
-                <div className={styles.analyticsLabel}>Rare Claims</div>
-              </div>
+              <AnalyticRow label="Rare Claims" value={String(profile.rare_claims)} />
             )}
-
             {profile.near_miss_rate !== null && (
-              <div className={styles.analyticsCard}>
-                <div className={styles.analyticsIcon}>📊</div>
-                <div className={styles.analyticsValue}>
-                  {profile.near_miss_rate.toFixed(1)}%
-                </div>
-                <div className={styles.analyticsLabel}>Near-Miss Rate</div>
-              </div>
+              <AnalyticRow label="Near-Miss Rate" value={`${profile.near_miss_rate.toFixed(1)}%`} />
             )}
-
             {profile.avg_near_miss_similarity !== null && (
-              <div className={styles.analyticsCard}>
-                <div className={styles.analyticsIcon}>🔍</div>
-                <div className={styles.analyticsValue}>
-                  {profile.avg_near_miss_similarity.toFixed(1)}%
-                </div>
-                <div className={styles.analyticsLabel}>Avg Near-Miss Similarity</div>
-              </div>
+              <AnalyticRow label="Avg Near-Miss Similarity" value={`${profile.avg_near_miss_similarity.toFixed(1)}%`} />
             )}
           </div>
-        </div>
+        </section>
       )}
+
     </div>
   );
 }
