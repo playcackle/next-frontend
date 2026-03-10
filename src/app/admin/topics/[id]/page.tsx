@@ -10,6 +10,7 @@ import {
   type Slot,
   type Collection,
 } from "@/lib/api/admin";
+import AIGenerate from "../../components/AIGenerate";
 import styles from "./page.module.css";
 
 export default function TopicDetailPage() {
@@ -259,12 +260,19 @@ export default function TopicDetailPage() {
               <h2 className={styles.sectionTitle}>
                 Slots ({topic.slots.length})
               </h2>
-              <button
-                className={styles.createSlotButton}
-                onClick={() => setShowCreateSlot(!showCreateSlot)}
-              >
-                {showCreateSlot ? "✕ CANCEL" : "+ NEW SLOT"}
-              </button>
+              <div style={{ display: 'flex', gap: '0.5rem' }}>
+                <AIGenerate 
+                  topicId={topic.id} 
+                  topicName={topic.name}
+                  onComplete={loadData}
+                />
+                <button
+                  className={styles.createSlotButton}
+                  onClick={() => setShowCreateSlot(!showCreateSlot)}
+                >
+                  {showCreateSlot ? "✕ CANCEL" : "+ NEW SLOT"}
+                </button>
+              </div>
             </div>
 
             {/* Create Slot Form */}

@@ -514,6 +514,93 @@ export const aliasesApi = {
       const error = await res.json();
       throw new Error(error.detail || 'Failed to delete alias');
     }
+  }
+};
+
+// ============================================================================
+// AI Content Generation Types
+// ============================================================================
+
+export type TopicGenerateRequest = {
+  name: string;
+  example: string;
+  num_slots: number;
+  research_prompt?: string;
+};
+
+export type SlotProposal = {
+  canonical_text: string;
+  prompt: string;
+  bot_bob_clue: string | null;
+  is_rare: boolean;
+  aliases: string[];
+};
+
+export type TopicGenerateResponse = {
+  topic_name: string;
+  topic_prompt: string;
+  example_text: string | null;
+  slots: SlotProposal[];
+  research_data: string;
+  slots_generated: number;
+  metadata: Record<string, unknown>;
+};
+
+export type TopicPromptResponse = {
+  topic_name: string;
+  example: string;
+  topic_prompt: string;
+};
+
+// ============================================================================
+// AI Content Generation API
+// ============================================================================
+
+export const generationApi = {
+  /**
+   * Generate topic content using AI (full flow)
+   * This takes ~15-30 seconds
+   */
+  async generateTopic(request: TopicGenerateRequest): Promise<TopicGenerateResponse> {
+    const res = await apiFetch(`/admin/generate/topic`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(request),
+    });
+    if (!res.ok) {
+      const error = await res.json();
+      throw new Error(error.detail || 'Failed to generate topic');
+    }
+    return res.json();
+  },
+
+  /**
+   * Generate just the topic prompt (fast - one API call)
+   * Useful for previewing the prompt before full generation
+   */
+  async generateTopicPrompt(topicName: string, example: string): Promise<TopicPromptResponse> {
+    const res = await apiFetch(`/admin/generate/topic-prompt?topic_name=${encodeURIComponent(topicName)}&example=${encodeURIComponent(example)}`);
+    if (!res.ok) {
+      const error = await res.json();
+      throw new Error(error.detail || 'Failed to generate topic prompt');
+    }
+    return res.json();
+  },
+
+  /**
+   * Bulk create slots for a topic
+   */
+  async createSlotsBulk(topicId: number, slots: Omit<SlotCreate, 'topic_id'>[]): Promise<{ slots_created: number; topic_id: number }> {
+    const res = await apiFetch(`/admin/topics/${topicId}/slots/bulk`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ slots }),
+    });
+    if (!res.ok) {
+      const error = await res.json();
+      throw new Error(error.detail || 'Failed to create slots');
+    }
+    return res.json();
   },
 };
 
