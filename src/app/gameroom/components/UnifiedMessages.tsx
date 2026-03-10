@@ -46,7 +46,6 @@ export default function UnifiedMessages() {
     ) {
       return styles.botBobMessage;
     }
-    debugger;
     switch (msg.message_type) {
       case "answer_attempt":
         if (msg.submission_result === "already_snapped")

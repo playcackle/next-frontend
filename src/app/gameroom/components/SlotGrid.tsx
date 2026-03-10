@@ -10,7 +10,7 @@ import SlotTile from "./SlotTile";
 
 function SlotGrid() {
   const slots = useAtomValue(slotsAtom);
-  const [useGridLayout, setUseGridLayout] = useState(false);
+  const [useGridLayout, setUseGridLayout] = useState(true);
 
   return (
     <div>
