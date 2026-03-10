@@ -73,35 +73,8 @@ export default async function Home({
         </section>
 
         {user ? (
-          <>
-            {/* Section 1: Global Leaderboard */}
-            <section className={styles.section}>
-              <div className={styles.sectionHeader}>
-                <h2 className={styles.sectionTitle}>
-                  <span className={styles.sectionTitleAccent}>Global</span>{" "}
-                  Leaderboard
-                </h2>
-                <Link href="/leaderboard" className={styles.seeAllLink}>
-                  See All
-                </Link>
-              </div>
-              <HomeLeaderboard />
-            </section>
-
-            {/* Section 2: Your Stats */}
-            <section className={styles.section}>
-              <div className={styles.sectionHeader}>
-                <h2 className={styles.sectionTitle}>
-                  <span className={styles.sectionTitleAccent}>Your</span> Stats
-                </h2>
-                <Link href="/profile" className={styles.seeAllLink}>
-                  Full Profile
-                </Link>
-              </div>
-              <HomeUserStats userId={user.id} />
-            </section>
-
-            {/* Section 3: Gamerooms */}
+          <div className={styles.twoColLayout}>
+            {/* Left column: Gamerooms */}
             <section className={styles.section}>
               <div className={styles.sectionHeader}>
                 <h2 className={styles.sectionTitle}>
@@ -113,7 +86,35 @@ export default async function Home({
               </div>
               <HomeGamerooms gamerooms={gamerooms} />
             </section>
-          </>
+
+            {/* Right column: Stats + Leaderboard stacked */}
+            <div className={styles.rightCol}>
+              <section className={styles.section}>
+                <div className={styles.sectionHeader}>
+                  <h2 className={styles.sectionTitle}>
+                    <span className={styles.sectionTitleAccent}>Your</span> Stats
+                  </h2>
+                  <Link href="/profile" className={styles.seeAllLink}>
+                    Full Profile
+                  </Link>
+                </div>
+                <HomeUserStats userId={user.id} />
+              </section>
+
+              <section className={styles.section}>
+                <div className={styles.sectionHeader}>
+                  <h2 className={styles.sectionTitle}>
+                    <span className={styles.sectionTitleAccent}>Global</span>{" "}
+                    Leaderboard
+                  </h2>
+                  <Link href="/leaderboard" className={styles.seeAllLink}>
+                    See All
+                  </Link>
+                </div>
+                <HomeLeaderboard />
+              </section>
+            </div>
+          </div>
         ) : (
           <section className={styles.authSection}>
             <AuthButtons />
