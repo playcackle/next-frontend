@@ -2,7 +2,7 @@
 
 import { Flex } from "@radix-ui/themes";
 import { useAtom, useAtomValue } from "jotai";
-import React from "react";
+import React, { useState } from "react";
 import styles from "../gameroom.module.css";
 import { useAnswer } from "../hooks/useGameState";
 import {
@@ -10,6 +10,7 @@ import {
   timeRemainingAtom,
   unifiedInputAtom,
 } from "../store/gameAtoms";
+import { containsBannedLanguage } from "../utils/profanityFilter";
 import AnswerBubbles, { BubbleAnswer } from "./answerChips/AnswerBubbles";
 
 interface UnifiedInputFormProps {
@@ -28,18 +29,32 @@ export default function UnifiedInputForm({
   const isRoundBreak = useAtomValue(isRoundBreakAtom);
   const [input, setInput] = useAtom(unifiedInputAtom);
   const { clearAnswer } = useAnswer();
+  const [profanityError, setProfanityError] = useState(false);
 
   const timeExpired = timeRemaining === 0;
   const isAnswerMode = !isRoundBreak && !timeExpired;
   const placeholderText = isAnswerMode ? "Type.." : "Chat...";
 
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setInput(e.target.value);
+    // Clear error as soon as the user edits the input
+    if (profanityError) setProfanityError(false);
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (input.trim()) {
-      onSubmit(input.trim(), isAnswerMode);
-      setInput("");
-      clearAnswer();
+    const trimmed = input.trim();
+    if (!trimmed) return;
+
+    if (containsBannedLanguage(trimmed)) {
+      setProfanityError(true);
+      return;
     }
+
+    onSubmit(trimmed, isAnswerMode);
+    setInput("");
+    clearAnswer();
+    setProfanityError(false);
   };
 
   return (
@@ -57,16 +72,23 @@ export default function UnifiedInputForm({
           />
         </div>
 
-        <Flex direction="row" gap="2">
-          <input
-            type="text"
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            placeholder={placeholderText}
-            className={`${styles.unifiedInput} ${
-              isAnswerMode ? styles.answerMode : styles.chatMode
-            }`}
-          />
+        <Flex direction="column" gap="1">
+          {profanityError && (
+            <span className={styles.profanityError}>
+              Abusive or racist language is not allowed.
+            </span>
+          )}
+          <Flex direction="row" gap="2">
+            <input
+              type="text"
+              value={input}
+              onChange={handleInputChange}
+              placeholder={placeholderText}
+              className={`${styles.unifiedInput} ${
+                isAnswerMode ? styles.answerMode : styles.chatMode
+              } ${profanityError ? styles.inputError : ""}`}
+            />
+          </Flex>
         </Flex>
       </Flex>
     </form>

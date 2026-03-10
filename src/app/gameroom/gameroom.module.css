@@ -1420,6 +1420,32 @@
     linear-gradient(90deg, #b700ff, #00ddff) border-box;
 }
 
+/* Language sanitizer error state */
+.inputError {
+  background:
+    linear-gradient(rgba(10, 10, 20, 0.95), rgba(10, 10, 20, 0.95)) padding-box,
+    linear-gradient(90deg, #ff2222, #ff6600) border-box !important;
+  animation: inputShake 0.35s ease-in-out;
+}
+
+@keyframes inputShake {
+  0%   { transform: translateX(0); }
+  20%  { transform: translateX(-6px); }
+  40%  { transform: translateX(6px); }
+  60%  { transform: translateX(-4px); }
+  80%  { transform: translateX(4px); }
+  100% { transform: translateX(0); }
+}
+
+.profanityError {
+  font-size: 0.7rem;
+  color: #ff4444;
+  font-family: var(--retro-font-alt);
+  letter-spacing: 0.5px;
+  padding-left: 2px;
+  text-shadow: 0 0 6px rgba(255, 68, 68, 0.5);
+}
+
 .unifiedInput:focus {
   outline: none;
   caret-color: #b700ff;
