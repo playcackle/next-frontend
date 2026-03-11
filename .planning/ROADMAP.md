@@ -15,7 +15,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 1: State Sync** - Client reliably recovers game state across round transitions and reconnections (completed 2026-02-26)
 - [x] **Phase 2: Chat UX** - Message types in the unified feed are visually distinct at a glance (completed 2026-03-02)
 - [x] **Phase 3: Onboarding** - New users are guided through game mechanics before their first round (completed 2026-03-11, outside GSD)
-- [ ] **Phase 4: Landing Page** - Authenticated players see their progression stats, high scores, and playstyle data on the home page
+- [x] **Phase 4: Landing Page** - Authenticated players see their progression stats, high scores, and playstyle data on the home page (completed 2026-03-11, outside GSD)
 
 ## Phase Details
 
@@ -81,4 +81,4 @@ Phases execute in numeric order: 1 → 2 → 3 → 4
 | 1. State Sync | 2/2 | Complete   | 2026-02-26 |
 | 2. Chat UX | 1/2 | Complete    | 2026-03-02 |
 | 3. Onboarding | 1/1 | Complete    | 2026-03-11 |
-| 4. Landing Page | 0/? | Not started | - |
+| 4. Landing Page | 1/1 | Complete    | 2026-03-11 |

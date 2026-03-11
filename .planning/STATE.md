@@ -5,15 +5,15 @@
 See: .planning/PROJECT.md (updated 2026-02-25)
 
 **Core value:** Players must always know where they are in the game and what their actions mean — reliable state, readable feedback, and visible progress are what keep them coming back.
-**Current focus:** Phase 4 — Landing Page
+**Current focus:** Milestone v1.0 complete — all 4 phases done
 
 ## Current Position
 
-Phase: 3 of 4 complete (Onboarding done outside GSD)
-Status: Phase 3 complete — Phase 4 (Landing Page) not yet planned
-Last activity: 2026-03-11 — Phase 3 Onboarding marked complete (implemented outside GSD)
+Phase: 4 of 4 complete
+Status: All phases complete — milestone ready to archive
+Last activity: 2026-03-11 — Phase 4 Landing Page marked complete (implemented outside GSD)
 
-Progress: [███████████████░░░░░] 75%
+Progress: [████████████████████] 100%
 
 ## Performance Metrics
 
