@@ -5,16 +5,15 @@
 See: .planning/PROJECT.md (updated 2026-02-25)
 
 **Core value:** Players must always know where they are in the game and what their actions mean — reliable state, readable feedback, and visible progress are what keep them coming back.
-**Current focus:** Phase 2 — Chat UX
+**Current focus:** Phase 4 — Landing Page
 
 ## Current Position
 
-Phase: 2 of 4 (Chat UX)
-Plan: 2 of 2 in current phase
-Status: Complete — pending verification
-Last activity: 2026-03-02 — Completed plan 02-02: getMessageTypeClass refactor + badge rendering + color scheme tuning
+Phase: 3 of 4 complete (Onboarding done outside GSD)
+Status: Phase 3 complete — Phase 4 (Landing Page) not yet planned
+Last activity: 2026-03-11 — Phase 3 Onboarding marked complete (implemented outside GSD)
 
-Progress: [████░░░░░░] 40%
+Progress: [███████████████░░░░░] 75%
 
 ## Performance Metrics
 
