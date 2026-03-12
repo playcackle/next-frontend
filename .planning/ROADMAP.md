@@ -35,7 +35,11 @@ Archive: `.planning/milestones/v1.0-ROADMAP.md`
   3. Hook boundary violations, state management anti-patterns, and unclear data flows are identified — findings documented
   4. All `any`/`unknown` usages, missing return types, and unsafe assertions are catalogued — findings documented
   5. A single consolidated report exists with all findings rated by impact and effort, and with concrete remediation recommendations ordered by priority
-**Plans**: TBD
+**Plans**: 2 plans
+
+Plans:
+- [ ] 05-01-PLAN.md — Code quality audit (AUDIT-01) and performance audit (AUDIT-02)
+- [ ] 05-02-PLAN.md — Architecture audit (AUDIT-03), type safety audit (AUDIT-04), and consolidated FINDINGS.md (AUDIT-05)
 
 ## Progress
 
@@ -45,4 +49,4 @@ Archive: `.planning/milestones/v1.0-ROADMAP.md`
 | 2. Chat UX | v1.0 | 2/2 | Complete | 2026-03-02 |
 | 3. Onboarding | v1.0 | 1/1 | Complete | 2026-03-11 |
 | 4. Landing Page | v1.0 | 1/1 | Complete | 2026-03-11 |
-| 5. Codebase Audit | v1.1 | 0/? | Not started | - |
+| 5. Codebase Audit | v1.1 | 0/2 | In progress | - |
