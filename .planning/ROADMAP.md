@@ -21,7 +21,7 @@ Archive: `.planning/milestones/v1.0-ROADMAP.md`
 
 ### v1.1 Audit
 
-- [ ] **Phase 5: Codebase Audit** — Systematic analysis across code quality, performance, architecture, and type safety producing a prioritized findings report
+- [x] **Phase 5: Codebase Audit** — Systematic analysis across code quality, performance, architecture, and type safety producing a prioritized findings report (completed 2026-03-12)
 
 ## Phase Details
 
@@ -49,4 +49,4 @@ Plans:
 | 2. Chat UX | v1.0 | 2/2 | Complete | 2026-03-02 |
 | 3. Onboarding | v1.0 | 1/1 | Complete | 2026-03-11 |
 | 4. Landing Page | v1.0 | 1/1 | Complete | 2026-03-11 |
-| 5. Codebase Audit | 1/2 | In Progress|  | - |
+| 5. Codebase Audit | 2/2 | Complete   | 2026-03-12 | - |
