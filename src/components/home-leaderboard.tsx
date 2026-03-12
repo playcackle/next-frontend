@@ -1,15 +1,16 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { playersApi, LeaderboardEntry as ApiLeaderboardEntry } from "@/lib/api/players";
 import styles from "@/app/page.module.css";
+
+type Period = "week" | "month" | "year";
 
 type LeaderboardEntry = {
   rank: number;
   name: string;
   score: number;
 };
-
-type Period = "week" | "month" | "year";
 
 const MOCK: Record<Period, LeaderboardEntry[]> = {
   week: [
@@ -35,12 +36,36 @@ const MOCK: Record<Period, LeaderboardEntry[]> = {
   ],
 };
 
+function mapApiToEntry(apiEntry: ApiLeaderboardEntry): LeaderboardEntry {
+  return {
+    rank: apiEntry.rank,
+    name: apiEntry.player_name,
+    score: apiEntry.total_score,
+  };
+}
+
 export default function HomeLeaderboard() {
   const [period, setPeriod] = useState<Period>("week");
-  const [data, setData] = useState<LeaderboardEntry[]>(MOCK.week);
+  const [data, setData] = useState<LeaderboardEntry[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    setData(MOCK[period]);
+    async function fetchLeaderboard() {
+      try {
+        setLoading(true);
+        const response = await playersApi.getLeaderboard(5);
+        setData(response.entries.map(mapApiToEntry));
+        setError(null);
+      } catch (err) {
+        console.error("Failed to fetch leaderboard:", err);
+        setError("Failed to load leaderboard");
+        setData(MOCK.week);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchLeaderboard();
   }, [period]);
 
   const PERIODS: { key: Period; label: string }[] = [
@@ -57,23 +82,34 @@ export default function HomeLeaderboard() {
             key={key}
             className={`${styles.periodBtn} ${period === key ? styles.periodBtnActive : ""}`}
             onClick={() => setPeriod(key)}
+            disabled
           >
             {label}
           </button>
         ))}
       </div>
 
-      <ol className={styles.leaderList}>
-        {data.map((entry) => (
-          <li key={entry.rank} className={`${styles.leaderRow} ${entry.rank === 1 ? styles.leaderRowFirst : ""}`}>
-            <span className={`${styles.leaderRank} ${entry.rank <= 3 ? styles[`rank${entry.rank}`] : ""}`}>
-              {entry.rank}
-            </span>
-            <span className={styles.leaderName}>{entry.name}</span>
-            <span className={styles.leaderScore}>{entry.score.toLocaleString()}</span>
-          </li>
-        ))}
-      </ol>
+      {loading ? (
+        <div className={styles.leaderList}>
+          <li className={styles.leaderRow}>Loading...</li>
+        </div>
+      ) : error ? (
+        <div className={styles.leaderList}>
+          <li className={styles.leaderRow}>{error}</li>
+        </div>
+      ) : (
+        <ol className={styles.leaderList}>
+          {data.map((entry) => (
+            <li key={entry.rank} className={`${styles.leaderRow} ${entry.rank === 1 ? styles.leaderRowFirst : ""}`}>
+              <span className={`${styles.leaderRank} ${entry.rank <= 3 ? styles[`rank${entry.rank}`] : ""}`}>
+                {entry.rank}
+              </span>
+              <span className={styles.leaderName}>{entry.name}</span>
+              <span className={styles.leaderScore}>{entry.score.toLocaleString()}</span>
+            </li>
+          ))}
+        </ol>
+      )}
     </div>
   );
 }

@@ -42,6 +42,20 @@ export type PlayerProfileStats = {
   avg_near_miss_similarity: number | null;
 };
 
+export type LeaderboardEntry = {
+  rank: number;
+  player_id: string;
+  player_name: string;
+  total_score: number;
+  games_played: number;
+  total_slots_snapped: number;
+};
+
+export type LeaderboardResponse = {
+  entries: LeaderboardEntry[];
+  total_players: number;
+};
+
 // ============================================================================
 // Players API
 // ============================================================================
@@ -55,6 +69,18 @@ export const playersApi = {
     if (!res.ok) {
       const error = await res.json();
       throw new Error(error.detail || 'Failed to fetch player profile');
+    }
+    return res.json();
+  },
+
+  /**
+   * Get global leaderboard (all-time)
+   */
+  async getLeaderboard(limit: number = 20): Promise<LeaderboardResponse> {
+    const res = await apiFetch(`/leaderboard?limit=${limit}`);
+    if (!res.ok) {
+      const error = await res.json();
+      throw new Error(error.detail || 'Failed to fetch leaderboard');
     }
     return res.json();
   },
