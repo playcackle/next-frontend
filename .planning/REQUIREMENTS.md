@@ -1,48 +1,70 @@
 # Requirements: Quiz Game Frontend
 
-**Defined:** 2026-03-11
+**Defined:** 2026-03-13
 **Core Value:** Players must always know where they are in the game and what their actions mean — reliable state, readable feedback, and visible progress are what keep them coming back.
 
-## v1.1 Requirements
+## v1.2 Requirements
 
-### Audit
+Requirements for the Code Health milestone. Each maps to roadmap phases.
 
-- [x] **AUDIT-01**: Codebase is audited for code quality issues — duplication, oversized components, complexity hotspots, naming inconsistencies
-- [x] **AUDIT-02**: Codebase is audited for performance issues — unnecessary re-renders, bundle size, slow render paths, animation overhead bypassing performance mode
-- [x] **AUDIT-03**: Codebase is audited for architectural concerns — hook boundaries, state management patterns, data flow clarity, separation of concerns
-- [x] **AUDIT-04**: Codebase is audited for type safety gaps — `any`/`unknown` usage, missing return types, unsafe type assertions, loose event typing
-- [x] **AUDIT-05**: Findings are consolidated into a prioritized report with impact/effort ratings and remediation recommendations
+### CSS
+
+- [ ] **CSS-01**: Developer can navigate gameroom styles by component — `gameroom.module.css` is split into per-component modules for each component that currently imports it (PlayerAvatar, UnifiedInputForm, StatsRow, BotBobPinnedMessage, RoomHeader, SlotTile, SlotGrid, UnifiedMessages), with only layout/page-level styles remaining in `gameroom.module.css`
+- [ ] **CSS-02**: Post-game CSS is consolidated — `PostGameModal.module.css` and `postgame.module.css` are rationalized into a single coherent file (or clearly scoped separate files with no overlapping concerns)
+- [ ] **CSS-03**: Oversized module CSS files in admin and other routes are split or reorganized — no single module file exceeds a reasonable size threshold
+
+### Bugs
+
+- [ ] **BUG-01**: Game room loads without React invariant violation — Rules of Hooks violation in `page.tsx` is fixed (hooks moved before conditional return)
+- [ ] **BUG-02**: Answer reveal animation fires correctly — `AnswerReveal.tsx` type mismatch (`string` vs `number[]`) is resolved and `styles.visible` is applied when expected
+
+### Performance
+
+- [ ] **PERF-01**: All visual effects in `triggerCorrectAnswerEffects` respect performance mode — DOM animations, screen shake, and overlays are gated on `performanceModeAtom`
+- [ ] **PERF-02**: `LeaderBoard`, `AnswerReveal`, `PostGameShowcase`, and `page.tsx` subscribe to granular atom selectors instead of full `gameStateAtom` — eliminating unnecessary re-renders on every game tick
+
+### Reliability
+
+- [ ] **REL-01**: Socket event listeners do not accumulate — `useGameEvents.ts` `onEvent` cleanup callbacks are captured and called on unmount
 
 ## Future Requirements
 
-### Improvements (v1.2)
+### Architecture
 
-- **IMPR-01**: High-impact issues identified in audit are resolved
-- **IMPR-02**: Quick wins (low effort, high impact) are implemented first
+- **ARCH-01**: Dual performance mode systems consolidated — `performance-atom.ts` and `performance-context.tsx` use different localStorage keys; requires product decision on `prefers-reduced-motion` handling before migration
+- **ARCH-02**: `sound-effects.tsx` extracted — 1,448-line file split into pure audio engine module + thin React wrapper with dynamic import
+- **ARCH-03**: `AdminApiClient` split into domain-specific clients (`LobbyAdminClient`, `ContentAdminClient`, `AIAdminClient`)
 
 ## Out of Scope
 
 | Feature | Reason |
 |---------|--------|
-| Backend game logic changes | Frontend-only project |
-| New features | This milestone is audit-only — improvements go in v1.2 |
-| Full refactors | Scope to findings + recommendations, not execution |
+| Dual performance mode consolidation (FINDING-A06) | Requires product decision on prefers-reduced-motion handling — deferred to future milestone |
+| sound-effects.tsx extraction (FINDING-Q01) | Large refactor with bundle implications — separate milestone |
+| AdminApiClient split (FINDING-Q02) | Not on game-critical path — deferred |
+| Backend game logic changes | Frontend-only project, game server is external |
+| New game modes | Scope limited to code health improvements |
 
 ## Traceability
 
+Which phases cover which requirements. Updated during roadmap creation.
+
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| AUDIT-01 | Phase 5 | Complete |
-| AUDIT-02 | Phase 5 | Complete |
-| AUDIT-03 | Phase 5 | Complete |
-| AUDIT-04 | Phase 5 | Complete |
-| AUDIT-05 | Phase 5 | Complete |
+| CSS-01 | — | Pending |
+| CSS-02 | — | Pending |
+| CSS-03 | — | Pending |
+| BUG-01 | — | Pending |
+| BUG-02 | — | Pending |
+| PERF-01 | — | Pending |
+| PERF-02 | — | Pending |
+| REL-01 | — | Pending |
 
 **Coverage:**
-- v1.1 requirements: 5 total
-- Mapped to phases: 5
-- Unmapped: 0 ✓
+- v1.2 requirements: 8 total
+- Mapped to phases: 0
+- Unmapped: 8 ⚠️ (to be filled by roadmapper)
 
 ---
-*Requirements defined: 2026-03-11*
-*Last updated: 2026-03-11 after v1.1 milestone start*
+*Requirements defined: 2026-03-13*
+*Last updated: 2026-03-13 after initial definition*
