@@ -184,26 +184,6 @@ export type FuzzyMatchConfigResponse = {
   config: FuzzyMatchConfig;
 };
 
-export type TopicUploadResult = {
-  topic_name: string;
-  topic_id: number;
-  slots_created: number;
-  aliases_created: number;
-};
-
-export type ExcelUploadResponse = {
-  status: string;
-  message: string;
-  topics_created: number;
-  topics_updated: number;
-  total_slots_created: number;
-  total_aliases_created: number;
-  collection_id: number | null;
-  collection_name: string | null;
-  details: TopicUploadResult[];
-  errors: string[];
-};
-
 // ============================================================================
 // Collections API
 // ============================================================================
@@ -356,7 +336,7 @@ export const topicsApi = {
 
   /**
    * Delete a topic
-   */
+    */
   async delete(id: number): Promise<void> {
     const res = await apiFetch(`/admin/topics/${id}`, {
       method: 'DELETE',
@@ -365,43 +345,6 @@ export const topicsApi = {
       const error = await res.json();
       throw new Error(error.detail || 'Failed to delete topic');
     }
-  },
-
-  /**
-   * Upload slots from an Excel file
-   *
-   * Uses the same parsing logic as populate_initial_data().
-   * Each sheet in the Excel file becomes a topic.
-   * Topics can optionally be linked to collections, or you can link them later via collectionsApi.
-   */
-  async uploadExcel(
-    file: File,
-    options?: {
-      collectionIds?: number[];
-      updateExisting?: boolean;
-    }
-  ): Promise<ExcelUploadResponse> {
-    const formData = new FormData();
-    formData.append('file', file);
-
-    if (options?.collectionIds && options.collectionIds.length > 0) {
-      formData.append('collection_ids', options.collectionIds.join(','));
-    }
-
-    formData.append('update_existing', (options?.updateExisting ?? false).toString());
-
-    const res = await apiFetch(`/admin/upload-slots`, {
-      method: 'POST',
-      body: formData,
-    });
-
-    if (!res.ok) {
-      const error = await res.json();
-      throw new Error(error.detail || 'Failed to upload Excel file');
-    }
-
-    const result: ExcelUploadResponse = await res.json();
-    return result;
   },
 };
 

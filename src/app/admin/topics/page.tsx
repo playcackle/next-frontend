@@ -3,7 +3,6 @@
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import { topicsApi, collectionsApi, type Topic, type Collection } from "@/lib/api/admin";
-import SlotExcelUpload from "../components/SlotExcelUpload";
 import AIGenerate from "../components/AIGenerate";
 import styles from "./page.module.css";
 
@@ -14,7 +13,6 @@ export default function TopicsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [filterCollection, setFilterCollection] = useState<number | null>(null);
-  const [showUpload, setShowUpload] = useState(false);
   const [showAIGenerate, setShowAIGenerate] = useState(false);
 
   useEffect(() => {
@@ -106,12 +104,6 @@ export default function TopicsPage() {
           >
             {showAIGenerate ? "✖️ CLOSE AI" : "🤖 AI GENERATE"}
           </button>
-          <button
-            className={styles.uploadToggle}
-            onClick={() => setShowUpload(!showUpload)}
-          >
-            {showUpload ? "✖️ CLOSE UPLOAD" : "⬆️ UPLOAD SLOTS"}
-          </button>
         </div>
       </div>
 
@@ -121,16 +113,6 @@ export default function TopicsPage() {
           <AIGenerate onComplete={() => {
             loadData();
             setShowAIGenerate(false);
-          }} />
-        </div>
-      )}
-
-      {/* Excel Upload Section */}
-      {showUpload && (
-        <div className={styles.uploadSection}>
-          <SlotExcelUpload onUploadComplete={() => {
-            loadData();
-            setShowUpload(false);
           }} />
         </div>
       )}
