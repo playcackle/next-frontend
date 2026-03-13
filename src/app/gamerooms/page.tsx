@@ -7,6 +7,7 @@ type LobbyInfo = {
   collection_name: string;
   status: string;
   player_count: number;
+  max_players?: number | null;
   join_base_url?: string | null;
   game_ws_url?: string | null;
   chat_ws_url?: string | null;
@@ -24,7 +25,7 @@ export default async function GameroomsPage() {
 
   const gamerooms = await fetchGamerooms();
 
-  return <GameroomsClient gamerooms={gamerooms} />;
+  return <GameroomsClient initialGamerooms={gamerooms} />;
 }
 
 async function fetchGamerooms(): Promise<LobbyInfo[]> {

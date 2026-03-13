@@ -3,7 +3,6 @@
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import { topicsApi, collectionsApi, type Topic, type Collection } from "@/lib/api/admin";
-import SlotExcelUpload from "../components/SlotExcelUpload";
 import AIGenerate from "../components/AIGenerate";
 import styles from "./page.module.css";
 
@@ -14,7 +13,6 @@ export default function TopicsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [filterCollection, setFilterCollection] = useState<number | null>(null);
-  const [showUpload, setShowUpload] = useState(false);
   const [showAIGenerate, setShowAIGenerate] = useState(false);
 
   useEffect(() => {
@@ -99,39 +97,22 @@ export default function TopicsPage() {
           <span className={styles.neonText}>TOPIC</span>
           <span className={styles.neonTextPink}>BROWSER</span>
         </h1>
-        <div style={{ display: 'flex', gap: '0.5rem' }}>
-          <button
-            className={styles.uploadToggle}
-            onClick={() => setShowAIGenerate(!showAIGenerate)}
-          >
-            {showAIGenerate ? "✖️ CLOSE AI" : "🤖 AI GENERATE"}
-          </button>
-          <button
-            className={styles.uploadToggle}
-            onClick={() => setShowUpload(!showUpload)}
-          >
-            {showUpload ? "✖️ CLOSE UPLOAD" : "⬆️ UPLOAD SLOTS"}
-          </button>
-        </div>
+        <button
+          className={styles.uploadToggle}
+          onClick={() => setShowAIGenerate(true)}
+        >
+          ＋ NEW TOPIC
+        </button>
       </div>
 
       {/* AI Generate Section */}
       {showAIGenerate && (
         <div className={styles.uploadSection}>
-          <AIGenerate onComplete={() => {
-            loadData();
-            setShowAIGenerate(false);
-          }} />
-        </div>
-      )}
-
-      {/* Excel Upload Section */}
-      {showUpload && (
-        <div className={styles.uploadSection}>
-          <SlotExcelUpload onUploadComplete={() => {
-            loadData();
-            setShowUpload(false);
-          }} />
+          <AIGenerate
+            onComplete={() => { loadData(); setShowAIGenerate(false); }}
+            onClose={() => setShowAIGenerate(false)}
+            title="🤖 New Topic"
+          />
         </div>
       )}
 

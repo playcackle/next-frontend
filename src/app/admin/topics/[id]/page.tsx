@@ -27,6 +27,7 @@ export default function TopicDetailPage() {
   const [topicExample, setTopicExample] = useState("");
   const [collections, setCollections] = useState<Collection[]>([]);
   const [showCreateSlot, setShowCreateSlot] = useState(false);
+  const [showAIGenerate, setShowAIGenerate] = useState(false);
 
   // New slot form state
   const [newSlotCanonical, setNewSlotCanonical] = useState("");
@@ -261,19 +262,32 @@ export default function TopicDetailPage() {
                 Slots ({topic.slots.length})
               </h2>
               <div style={{ display: 'flex', gap: '0.5rem' }}>
-                <AIGenerate 
-                  topicId={topic.id} 
-                  topicName={topic.name}
-                  onComplete={loadData}
-                />
                 <button
                   className={styles.createSlotButton}
-                  onClick={() => setShowCreateSlot(!showCreateSlot)}
+                  style={{ background: 'rgba(255,0,255,0.2)', borderColor: '#ff00ff', color: '#ff00ff' }}
+                  onClick={() => { setShowAIGenerate(true); setShowCreateSlot(false); }}
+                >
+                  🤖 MORE SLOTS
+                </button>
+                <button
+                  className={styles.createSlotButton}
+                  onClick={() => { setShowCreateSlot(!showCreateSlot); setShowAIGenerate(false); }}
                 >
                   {showCreateSlot ? "✕ CANCEL" : "+ NEW SLOT"}
                 </button>
               </div>
             </div>
+
+            {/* AI Generate More Slots */}
+            {showAIGenerate && (
+              <AIGenerate
+                topicId={topic.id}
+                topicName={topic.name}
+                onComplete={() => { loadData(); setShowAIGenerate(false); }}
+                onClose={() => setShowAIGenerate(false)}
+                title="🤖 Generate More Slots"
+              />
+            )}
 
             {/* Create Slot Form */}
             {showCreateSlot && (

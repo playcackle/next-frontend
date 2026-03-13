@@ -7,7 +7,7 @@ const CONTENT_SERVICE_URL =
 const PLAYER_SERVICE_URL =
   process.env.PLAYER_SERVICE_URL || "http://localhost:8004";
 
-const COLLECTION_PATHS = ["/collections", "/topics", "/slots", "/upload-slots", "/generate"];
+const COLLECTION_PATHS = ["/collections", "/topics", "/slots", "/generate"];
 const PLAYER_PATHS = ["/players"];
 
 type RouteParams = { path?: string[] };

@@ -4,39 +4,26 @@ import { useState, useMemo } from "react";
 import GameroomTile from "@/components/gameroom-tile";
 import Link from "next/link";
 import styles from "./gamerooms.module.css";
+import { useRealtimeLobbies, type LobbyInfo } from "@/hooks/useRealtimeLobbies";
 
-type LobbyInfo = {
-  lobby_id: string;
-  collection_name: string;
-  status: string;
-  player_count: number;
-  join_base_url?: string | null;
-};
-
-type Props = { gamerooms: LobbyInfo[] };
+type Props = { initialGamerooms: LobbyInfo[] };
 
 type SortKey = "name" | "players_asc" | "players_desc" | "availability";
 type StatusFilter = "all" | "open" | "in_progress" | "full";
 
-const STATUS_LABELS: Record<string, string> = {
-  open: "Open",
-  in_progress: "In Progress",
-  full: "Full",
-  waiting: "Waiting",
-};
-
-const MAX_PLAYERS = 25;
-
 function getRoomStatus(room: LobbyInfo): StatusFilter {
-  if (room.player_count >= MAX_PLAYERS) return "full";
-  if (room.status === "in_progress" || room.status === "playing") return "in_progress";
+  const maxPlayers = room.max_players ?? 25;
+  if (room.player_count >= maxPlayers) return "full";
+  if (room.status === "IN_ROUND" || room.status === "ROUND_BREAK" || room.status === "POST_GAME_SHOWCASE") return "in_progress";
   return "open";
 }
 
-export default function GameroomsClient({ gamerooms }: Props) {
+export default function GameroomsClient({ initialGamerooms }: Props) {
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
   const [sortKey, setSortKey] = useState<SortKey>("availability");
+
+  const gamerooms = useRealtimeLobbies(initialGamerooms);
 
   const filtered = useMemo(() => {
     let list = gamerooms.filter((r) => {
@@ -56,9 +43,9 @@ export default function GameroomsClient({ gamerooms }: Props) {
       if (sortKey === "players_asc") return a.player_count - b.player_count;
       if (sortKey === "players_desc") return b.player_count - a.player_count;
       // availability: most open slots first
-      return (
-        (MAX_PLAYERS - b.player_count) - (MAX_PLAYERS - a.player_count)
-      );
+      const maxA = a.max_players ?? 25;
+      const maxB = b.max_players ?? 25;
+      return (maxA - b.player_count) - (maxB - a.player_count);
     });
 
     return list;
@@ -182,18 +169,7 @@ export default function GameroomsClient({ gamerooms }: Props) {
       ) : (
         <div className={styles.gameroomsGrid}>
           {filtered.map((room) => (
-            <div key={room.lobby_id} className={styles.tileWrapper}>
-              <GameroomTile gameroom={room} />
-              {room.status && (
-                <span
-                  className={`${styles.statusBadge} ${
-                    styles[`status_${getRoomStatus(room)}`]
-                  }`}
-                >
-                  {STATUS_LABELS[room.status] ?? room.status}
-                </span>
-              )}
-            </div>
+            <GameroomTile key={room.lobby_id} gameroom={room} />
           ))}
         </div>
       )}

@@ -213,12 +213,12 @@
 /* Status badge overlaid on tile */
 .statusBadge {
   position: absolute;
-  top: 0.6rem;
-  right: 0.6rem;
-  padding: 0.2rem 0.6rem;
-  border-radius: 20px;
+  top: 0.5rem;
+  left: 0.5rem;
+  padding: 0.15rem 0.5rem;
+  border-radius: 4px;
   font-family: var(--retro-font);
-  font-size: 0.6rem;
+  font-size: 0.55rem;
   text-transform: uppercase;
   letter-spacing: 0.5px;
   pointer-events: none;
