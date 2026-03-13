@@ -3,7 +3,7 @@
 import { Flex } from "@radix-ui/themes";
 import { useAtom, useAtomValue } from "jotai";
 import React from "react";
-import styles from "../gameroom.module.css";
+import styles from "./UnifiedInputForm.module.css";
 import { useAnswer } from "../hooks/useGameState";
 import {
   isRoundBreakAtom,
