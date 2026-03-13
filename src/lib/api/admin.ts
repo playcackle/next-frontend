@@ -38,6 +38,9 @@ export type Topic = {
   example_text: string | null;
   collection_ids: number[];
   slot_count?: number;
+  category?: string | null;
+  mode?: string | null;
+  topic_type?: string | null;
 };
 
 export type TopicDetail = Topic & {
@@ -49,6 +52,9 @@ export type TopicCreate = {
   prompt?: string;
   example_text?: string;
   collection_ids: number[];
+  category?: string;
+  mode?: string;
+  topic_type?: string;
 };
 
 export type TopicUpdate = {
@@ -56,6 +62,9 @@ export type TopicUpdate = {
   prompt?: string;
   example_text?: string;
   collection_ids?: number[];
+  category?: string;
+  mode?: string;
+  topic_type?: string;
 };
 
 export type Slot = {
@@ -470,6 +479,9 @@ export type TopicGenerateRequest = {
   example: string;
   num_slots: number;
   research_prompt?: string;
+  topic_type?: string;
+  category?: string;
+  mode?: string;
 };
 
 export type SlotProposal = {
@@ -487,6 +499,9 @@ export type TopicGenerateResponse = {
   slots: SlotProposal[];
   research_data: string;
   slots_generated: number;
+  category: string | null;
+  mode: string | null;
+  topic_type: string | null;
   metadata: Record<string, unknown>;
 };
 
@@ -496,13 +511,13 @@ export type TopicPromptResponse = {
   topic_prompt: string;
 };
 
-export type EstimateSlotsResponse = {
-  item_count: number | "unknown";
-  category_size: "small" | "medium" | "large";
-  is_too_large: boolean;
-  can_generate: boolean;
+export type TopicAnalysisResponse = {
+  topic_type: string;
+  category: string;
+  mode: string;
+  estimated_count: number;
+  is_suitable: boolean;
   recommended_slots: number;
-  reasoning: string;
   suggestions: string[];
 };
 
@@ -542,14 +557,14 @@ export const generationApi = {
   },
 
   /**
-   * Estimate recommended number of slots for a topic
-   * Uses Perplexity to research and LLM to suggest a count
+   * Analyse a topic before generation — fast single LLM call.
+   * Returns classification (type, category, mode), estimated count, suitability, and slot recommendation.
    */
-  async estimateSlots(topicName: string, example: string): Promise<EstimateSlotsResponse> {
-    const res = await apiFetch(`/admin/generate/estimate-slots?topic_name=${encodeURIComponent(topicName)}&example=${encodeURIComponent(example)}`);
+  async analyseTopic(topicName: string, example: string): Promise<TopicAnalysisResponse> {
+    const res = await apiFetch(`/admin/generate/analyse?topic_name=${encodeURIComponent(topicName)}&example=${encodeURIComponent(example)}`);
     if (!res.ok) {
       const error = await res.json();
-      throw new Error(error.detail || 'Failed to estimate slots');
+      throw new Error(error.detail || 'Failed to analyse topic');
     }
     return res.json();
   },
