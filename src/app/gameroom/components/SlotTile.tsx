@@ -3,7 +3,7 @@
 import { useUser } from "@/hooks/useUser";
 import { useAtomValue } from "jotai";
 import React, { useMemo, useRef } from "react";
-import styles from "../gameroom.module.css";
+import styles from "./SlotTile.module.css";
 import { animationStateAtom } from "../store/gameAtoms";
 import { Slot } from "../types/state";
 

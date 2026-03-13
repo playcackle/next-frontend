@@ -1,0 +1,438 @@
+/* SlotTile component styles — extracted from gameroom.module.css */
+
+/* ===== Slot tile base ===== */
+.slotTile {
+  background-color: var(--neon-pink);
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+  position: relative;
+  overflow: hidden;
+  min-height: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 1;
+}
+
+.bonusTile {
+  background-color: var(--neon-purple);
+  border-color: rgba(255, 255, 255, 0.3);
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+}
+
+.answered {
+  opacity: 1; /* Changed from 0.8 to fully opaque for better visibility */
+  cursor: default;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid rgba(0, 255, 136, 0.5); /* Added green border to indicate answered state */
+  box-shadow: 0 0 15px rgba(0, 255, 136, 0.3); /* Green glow for answered tiles */
+}
+
+/* ===== Slot contents ===== */
+/* New styles for the answered content with correct answer and player badge */
+.answeredContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center; /* Center content vertically */
+  width: 100%;
+  height: 100%;
+  padding: 0.5rem;
+  background: rgba(0, 0, 0, 0.4);
+}
+
+.correctAnswer {
+  font-size: 0.85rem; /* Increased from 0.75rem for better visibility */
+  font-weight: bold;
+  color: white;
+  text-shadow:
+    0 0 10px rgba(255, 255, 255, 0.7),
+    0 2px 4px rgba(0, 0, 0, 0.5); /* Added drop shadow for depth */
+  font-family: var(--retro-font);
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  /* Add a minimum height to ensure the text has enough space */
+  min-height: 2.5rem;
+  text-align: center; /* Center the text */
+  line-height: 1.3; /* Better line spacing */
+}
+
+/* ===== Question mark ===== */
+/* Make slot mark larger */
+.questionMark {
+  font-size: 3.5rem; /* Increased font size */
+  font-weight: bold;
+  color: rgba(255, 255, 255, 0.9);
+  text-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  font-family: var(--retro-font);
+  padding: 0.5rem;
+}
+
+/* ===== Player badge ===== */
+
+/* Enhanced badge entrance animation */
+@keyframes badgeAppear {
+  0% {
+    opacity: 0;
+    transform: translateY(30px) scale(0.3) rotate(-10deg);
+    filter: brightness(0.5) blur(3px);
+  }
+  30% {
+    opacity: 0.8;
+    transform: translateY(-10px) scale(1.3) rotate(5deg);
+    filter: brightness(2) blur(0px);
+  }
+  50% {
+    opacity: 1;
+    transform: translateY(-5px) scale(1.15) rotate(-2deg);
+    filter: brightness(2.5) blur(0px);
+  }
+  70% {
+    opacity: 1;
+    transform: translateY(2px) scale(0.95) rotate(1deg);
+    filter: brightness(1.8) blur(0px);
+  }
+  85% {
+    transform: translateY(-1px) scale(1.02) rotate(0deg);
+    filter: brightness(1.4) blur(0px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1) rotate(0deg);
+    filter: brightness(1.2) blur(0px);
+  }
+}
+
+/* Enhanced playerBadge with more dramatic styling */
+.playerBadge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(
+    135deg,
+    rgba(0, 0, 0, 0.9) 0%,
+    rgba(30, 30, 60, 0.85) 100%
+  ); /* Darker, more contrasted background */
+  border-radius: 2px;
+  padding: 0.4rem 0.7rem; /* Slightly larger padding */
+  gap: 0.4rem;
+  position: relative;
+  margin-top: 0.5rem;
+  width: 100%;
+  z-index: 2;
+  align-self: center;
+  animation: badgeAppear 1.2s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+  backdrop-filter: blur(10px);
+  overflow: hidden;
+}
+
+/* Add a shimmer effect to the badge */
+.playerBadge::before {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(
+    45deg,
+    transparent 30%,
+    rgba(255, 255, 255, 0.3) 50%,
+    transparent 70%
+  );
+  pointer-events: none;
+}
+
+@keyframes badgeShimmer {
+  0% {
+    transform: translateX(-100%) translateY(-100%);
+  }
+  100% {
+    transform: translateX(100%) translateY(100%);
+  }
+}
+
+/* Add a subtle glow effect to the player badge */
+.playerBadge::after {
+  content: "";
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: transparent;
+  z-index: -1;
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.3);
+  opacity: 0;
+}
+
+/* Enhance the player badge avatar with a subtle pulse */
+.playerBadgeAvatar {
+  width: 20px; /* Increased from 18px */
+  height: 20px; /* Increased from 18px */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 3px;
+  font-size: 0.65rem; /* Slightly larger font */
+  font-weight: bold;
+  color: white;
+  text-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  font-family: var(--retro-font-alt);
+  animation: avatarPulse 3s ease-in-out 1s infinite alternate;
+}
+
+/* Add a subtle pulse animation for the avatar */
+@keyframes avatarPulse {
+  0% {
+    box-shadow: 0 0 3px rgba(0, 0, 0, 0.5);
+  }
+  100% {
+    box-shadow: 0 0 8px rgba(255, 255, 255, 0.7);
+  }
+}
+
+.playerBadgeName {
+  font-size: 0.75rem; /* Increased from 0.7rem */
+  font-weight: 600; /* Added bold weight */
+  color: white;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
+  font-family: var(--retro-font-alt);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5); /* Added text shadow for readability */
+}
+
+/* ===== Pulse animations ===== */
+
+/* Animation styles */
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    filter: brightness(1) saturate(1);
+    box-shadow: 0 0 10px var(--neon-green);
+  }
+  25% {
+    transform: scale(1.15) rotate(2deg);
+    filter: brightness(2) saturate(1.5);
+    box-shadow:
+      0 0 40px var(--neon-green),
+      0 0 80px var(--neon-green);
+  }
+  50% {
+    transform: scale(1.2) rotate(-1deg);
+    filter: brightness(2.5) saturate(2);
+    box-shadow:
+      0 0 60px var(--neon-green),
+      0 0 120px var(--neon-green),
+      0 0 180px var(--neon-green);
+  }
+  75% {
+    transform: scale(1.1) rotate(1deg);
+    filter: brightness(2) saturate(1.5);
+    box-shadow:
+      0 0 40px var(--neon-green),
+      0 0 80px var(--neon-green);
+  }
+  100% {
+    transform: scale(1);
+    filter: brightness(1.2) saturate(1.1);
+    box-shadow: 0 0 15px var(--neon-green);
+  }
+}
+
+@keyframes pulsePurple {
+  0% {
+    transform: scale(1);
+    filter: brightness(1) saturate(1);
+    box-shadow: 0 0 15px var(--neon-purple);
+  }
+  25% {
+    transform: scale(1.2) rotate(-2deg);
+    filter: brightness(2.5) saturate(2);
+    box-shadow:
+      0 0 50px var(--neon-purple),
+      0 0 100px var(--neon-purple);
+  }
+  50% {
+    transform: scale(1.25) rotate(1deg);
+    filter: brightness(3) saturate(2.5);
+    box-shadow:
+      0 0 80px var(--neon-purple),
+      0 0 160px var(--neon-purple),
+      0 0 240px var(--neon-purple);
+  }
+  75% {
+    transform: scale(1.15) rotate(-1deg);
+    filter: brightness(2.5) saturate(2);
+    box-shadow:
+      0 0 50px var(--neon-purple),
+      0 0 100px var(--neon-purple);
+  }
+  100% {
+    transform: scale(1);
+    filter: brightness(1.3) saturate(1.2);
+    box-shadow: 0 0 20px var(--neon-purple);
+  }
+}
+
+.correctPulse {
+  animation:
+    pulse 0.8s ease-in-out 3,
+    screenShake 0.4s ease-in-out 2;
+  z-index: 10;
+}
+
+.bonusTile.correctPulse {
+  animation:
+    pulsePurple 0.8s ease-in-out 3,
+    screenShake 0.4s ease-in-out 2;
+  z-index: 10;
+}
+
+/* ===== Screen shake ===== */
+
+/* Intense screen shake for successful slot claims */
+@keyframes screenShake {
+  0% {
+    transform: translateX(0) translateY(0);
+  }
+  10% {
+    transform: translateX(-8px) translateY(-4px) rotate(1deg);
+  }
+  20% {
+    transform: translateX(8px) translateY(4px) rotate(-1deg);
+  }
+  30% {
+    transform: translateX(-6px) translateY(6px) rotate(0.5deg);
+  }
+  40% {
+    transform: translateX(6px) translateY(-6px) rotate(-0.5deg);
+  }
+  50% {
+    transform: translateX(-4px) translateY(4px) rotate(1deg);
+  }
+  60% {
+    transform: translateX(4px) translateY(-4px) rotate(-1deg);
+  }
+  70% {
+    transform: translateX(-2px) translateY(2px) rotate(0.5deg);
+  }
+  80% {
+    transform: translateX(2px) translateY(-2px) rotate(-0.5deg);
+  }
+  90% {
+    transform: translateX(-1px) translateY(1px) rotate(0deg);
+  }
+  100% {
+    transform: translateX(0) translateY(0) rotate(0deg);
+  }
+}
+
+/* ===== Success glow ===== */
+
+/* Intense glow effect for successful tiles */
+.successGlow {
+  position: absolute;
+  top: -20px;
+  left: -20px;
+  right: -20px;
+  bottom: -20px;
+  background: radial-gradient(circle, var(--neon-green) 0%, transparent 70%);
+  opacity: 0;
+  animation: successGlowPulse 1.5s ease-out forwards;
+  pointer-events: none;
+  z-index: -1;
+}
+
+.successGlow.bonus {
+  background: radial-gradient(circle, var(--neon-purple) 0%, transparent 70%);
+}
+
+@keyframes successGlowPulse {
+  0% {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  20% {
+    opacity: 0.9;
+    transform: scale(1.2);
+  }
+  40% {
+    opacity: 0.7;
+    transform: scale(1.8);
+  }
+  70% {
+    opacity: 0.3;
+    transform: scale(2.5);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(3);
+  }
+}
+
+/* ===== Slot highlight and bonus glow ===== */
+
+/* Add a highlight effect for the slot being answered by another player */
+.slotTile.otherPlayerAnswering {
+  animation: otherPlayerAnswering 1.5s ease-in-out;
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.8);
+}
+
+@keyframes otherPlayerAnswering {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+  }
+  50% {
+    transform: scale(1.1);
+    box-shadow: 0 0 30px rgba(255, 255, 255, 0.8);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+  }
+}
+
+/* Add a special glow effect for bonus slots */
+.bonusTile.answered {
+  animation: bonusGlow 2s ease-in-out infinite alternate;
+}
+
+@keyframes bonusGlow {
+  0% {
+    box-shadow:
+      0 0 10px var(--neon-purple),
+      0 0 20px var(--neon-purple);
+  }
+  100% {
+    box-shadow:
+      0 0 20px var(--neon-purple),
+      0 0 40px var(--neon-purple),
+      0 0 60px var(--neon-purple);
+  }
+}
+
+/* ===== Responsive ===== */
+
+@media (max-width: 768px) {
+  .questionMark {
+    font-size: 2.5rem;
+  }
+}
