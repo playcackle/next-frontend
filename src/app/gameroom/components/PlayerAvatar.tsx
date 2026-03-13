@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import { getPlayerAvatar } from "../utils";
-import styles from "../gameroom.module.css";
+import styles from "./PlayerAvatar.module.css";
 
 interface PlayerAvatarProps {
   playerId: string;
