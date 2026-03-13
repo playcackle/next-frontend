@@ -31,15 +31,16 @@ Players must always know where they are in the game and what their actions mean 
 - ✓ 41 findings documented in prioritized FINDINGS.md with impact/effort ratings and concrete remediation — v1.1
 - ✓ 2 confirmed runtime bugs surfaced: Rules of Hooks violation (crash risk) and answer reveal animation never firing — v1.1
 
-### Active (v1.2 targets — to be defined in /gsd:new-milestone)
+### Active (v1.2 — Code Health)
 
-Top candidates from `FINDINGS.md` priority table:
-- Fix Rules of Hooks violation in `page.tsx` — crash risk (FINDING-A01)
-- Fix answer reveal animation — type mismatch means it has never fired (FINDING-T10)
-- Gate all effects in `triggerCorrectAnswerEffects` on `performanceModeAtom` (FINDING-P06)
-- Consolidate dual performance mode systems (`performance-atom.ts` vs `performance-context.tsx`) (FINDING-A06)
-- Replace `useGameState()` calls with granular atom selectors across 4 components (FINDING-P01–P04)
-- Fix `onEvent` cleanup discard in `useGameEvents` — listener accumulation (FINDING-Q13/A09)
+- [ ] Split `gameroom.module.css` (1,739 lines) into per-component CSS modules
+- [ ] Rationalize `PostGameModal.module.css` vs `postgame.module.css` duplication
+- [ ] Audit and tidy oversized module CSS files across admin and other routes
+- [ ] Fix Rules of Hooks violation in `page.tsx` — crash risk (FINDING-A01)
+- [ ] Fix answer reveal animation type mismatch — never fires (FINDING-T10)
+- [ ] Gate all effects in `triggerCorrectAnswerEffects` on `performanceModeAtom` (FINDING-P06)
+- [ ] Fix `onEvent` cleanup discard in `useGameEvents` — listener accumulation (FINDING-Q13/A09)
+- [ ] Replace `useGameState()` with granular atom selectors across 4 components (FINDING-P01–P04)
 
 ### Out of Scope
 
@@ -80,5 +81,15 @@ Top candidates from `FINDINGS.md` priority table:
 | Audit-only v1.1 milestone before v1.2 improvements | Ship audit findings first so v1.2 planning is evidence-based, not assumption-based | ✓ Good — surfaced 2 confirmed bugs that would otherwise ship undetected |
 | Dual performance systems must be consolidated (not patched) | `performance-atom.ts` and `performance-context.tsx` use different localStorage keys — patching one leaves the other wrong | ⚠️ Revisit — requires product decision on `prefers-reduced-motion` handling before migration |
 
+## Current Milestone: v1.2 Code Health
+
+**Goal:** Eliminate confirmed runtime bugs, split the monolithic gameroom CSS into per-component modules, and fix the highest-impact structural findings from the v1.1 audit.
+
+**Target features:**
+- CSS split: `gameroom.module.css` → per-component modules; rationalize postgame CSS duplication; tidy other large module files
+- Bug fixes: Rules of Hooks crash risk (`page.tsx`), answer reveal animation never firing (`AnswerReveal.tsx`)
+- Performance: Gate `triggerCorrectAnswerEffects` on `performanceModeAtom`; replace `useGameState()` with granular atom selectors
+- Reliability: Fix `onEvent` cleanup discard to prevent listener accumulation
+
 ---
-*Last updated: 2026-03-12 after v1.1 milestone*
+*Last updated: 2026-03-13 after v1.2 milestone started*
