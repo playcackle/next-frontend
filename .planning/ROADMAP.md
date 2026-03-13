@@ -48,7 +48,15 @@ Archive: `.planning/milestones/v1.1-ROADMAP.md`
   2. `gameroom.module.css` contains only layout and page-level styles — no component-scoped rules
   3. `PostGameModal.module.css` and `postgame.module.css` are rationalized — overlapping post-game concerns are resolved into clearly scoped files with no duplicated class responsibilities
   4. The game room renders identically to pre-split in the browser (no visual regressions)
-**Plans**: TBD
+**Plans**: 6 plans
+
+Plans:
+- [ ] 06-01-PLAN.md — Extract PlayerAvatar, RoomHeader, BotBobPinnedMessage CSS modules
+- [ ] 06-02-PLAN.md — Extract StatsRow CSS module
+- [ ] 06-03-PLAN.md — Extract SlotTile CSS module (tile, badge, animations)
+- [ ] 06-04-PLAN.md — Extract SlotGrid and UnifiedInputForm CSS modules
+- [ ] 06-05-PLAN.md — Extract UnifiedMessages CSS module
+- [ ] 06-06-PLAN.md — Strip gameroom.module.css and rationalize post-game CSS (CSS-02)
 
 ### Phase 7: Admin/Route CSS Tidy
 **Goal**: No single CSS module file in admin or other routes is oversized or difficult to navigate
