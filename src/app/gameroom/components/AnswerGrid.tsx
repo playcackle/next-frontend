@@ -14,30 +14,29 @@ export const AnswerGrid: React.FC<AnswerGridProps> = ({ slots }) => {
   const foundCount = snappedMap.size;
   const remaining = totalAnswers - foundCount;
 
-  const prevFoundCount = useRef(foundCount);
-  const [newlyFound, setNewlyFound] = useState<Set<string>>(new Set());
-  const [snappedOrder, setSnappedOrder] = useState<string[]>(() =>
+  const snappedOrderRef = useRef<string[]>(
     slots.filter((s) => s.is_snapped).map((s) => s.id),
+  );
+  const [newlyFound, setNewlyFound] = useState<Set<string>>(new Set());
+  const [snappedOrder, setSnappedOrder] = useState<string[]>(
+    () => snappedOrderRef.current,
   );
 
   useEffect(() => {
-    if (foundCount > prevFoundCount.current) {
-      const newIds = slots
-        .filter((s) => s.is_snapped)
-        .slice(prevFoundCount.current)
-        .map((s) => s.id);
-      setSnappedOrder((prev) => {
-        const existing = new Set(prev);
-        const trulyNew = newIds.filter((id) => !existing.has(id));
-        return trulyNew.length ? [...prev, ...trulyNew] : prev;
-      });
-      setNewlyFound(new Set(newIds));
-      const t = setTimeout(() => setNewlyFound(new Set()), 800);
-      prevFoundCount.current = foundCount;
-      return () => clearTimeout(t);
-    }
-    prevFoundCount.current = foundCount;
-  }, [foundCount, slots]);
+    const existing = new Set(snappedOrderRef.current);
+    const newIds = slots
+      .filter((s) => s.is_snapped && !existing.has(s.id))
+      .map((s) => s.id);
+
+    if (newIds.length === 0) return;
+
+    const updated = [...snappedOrderRef.current, ...newIds];
+    snappedOrderRef.current = updated;
+    setSnappedOrder(updated);
+    setNewlyFound(new Set(newIds));
+    const t = setTimeout(() => setNewlyFound(new Set()), 800);
+    return () => clearTimeout(t);
+  }, [slots]);
 
   const radius = 44;
   const circumference = 2 * Math.PI * radius;
