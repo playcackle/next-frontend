@@ -1,6 +1,6 @@
 import { useAtomValue } from "jotai";
 import React, { useEffect, useState } from "react";
-import styles from "../gameroom.module.css";
+import styles from "./StatsRow.module.css";
 import {
   isPostGameShowcaseAtom,
   isRoundBreakAtom,

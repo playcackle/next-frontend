@@ -1,0 +1,149 @@
+/* ── Stats tile layout ────────────────────────────────────── */
+
+/* First row: Stats tiles */
+.statsRow {
+  width: 100%;
+  display: flex;
+  direction: row;
+  justify-content: center;
+  gap: clamp(0.5rem, 1vw, 1rem);
+  height: clamp(60px, 12vh, 105px);
+  flex-shrink: 0;
+}
+
+.statsTile {
+  background-color: rgba(20, 20, 40, 0.7);
+  border-radius: 8px;
+  padding: 0.25rem; /* Reduced padding */
+  box-shadow: 0 0 10px rgba(0, 221, 255, 0.5);
+  border: 1px solid rgba(0, 221, 255, 0.3);
+  backdrop-filter: blur(5px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  height: 100%; /* Ensure full height */
+  overflow: hidden; /* Prevent overflow */
+  font-size: 0.8rem; /* Smaller font */
+  margin-bottom: 0.5rem; /* Reduced margin */
+  color: var(--neon-blue);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-family: var(--retro-font);
+  min-width: 19%;
+}
+
+/* ── Stats tile tooltip ───────────────────────────────────── */
+.statsTileWrapper {
+  position: relative;
+  display: flex;
+  height: 100%;
+  flex: 1;
+  min-width: 19%;
+}
+
+.statsTileWrapper .statsTile {
+  min-width: unset;
+  flex: 1;
+  cursor: default;
+}
+
+.statsTileTooltip {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(10, 10, 30, 0.96);
+  border: 1px solid rgba(0, 221, 255, 0.35);
+  border-radius: 8px;
+  padding: 0.45rem 0.75rem;
+  width: max-content;
+  max-width: 220px;
+  font-family: var(--retro-font-alt);
+  font-size: 0.72rem;
+  color: rgba(255, 255, 255, 0.75);
+  text-transform: none;
+  letter-spacing: 0;
+  line-height: 1.5;
+  text-align: center;
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity 0.18s ease,
+    visibility 0.18s ease;
+  z-index: 100;
+  backdrop-filter: blur(8px);
+  box-shadow:
+    0 4px 20px rgba(0, 0, 0, 0.5),
+    0 0 12px rgba(0, 221, 255, 0.15);
+  white-space: normal;
+}
+
+.statsTileTooltip::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 5px solid transparent;
+  border-top-color: rgba(0, 221, 255, 0.35);
+}
+
+.statsTileWrapper:hover .statsTileTooltip {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* ── Shared value/label classes ───────────────────────────── */
+
+.statsValue {
+  font-size: 1.5rem; /* Smaller font */
+  font-weight: bold;
+  color: white;
+  text-shadow: 0 0 10px rgba(0, 221, 255, 0.7);
+  font-family: var(--retro-font);
+}
+
+.playersCount {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.8);
+  margin-top: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-family: var(--retro-font);
+}
+
+/* Also used by page.tsx leaderboard — will be duplicated in gameroom.module.css until Plan 06 cleanup */
+.statsTitle {
+  font-size: 0.65rem;
+  color: rgba(255, 255, 255, 0.6);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-family: var(--retro-font);
+  margin: 0 0 0.15rem;
+  font-weight: normal;
+}
+
+/* ── Timer warning ────────────────────────────────────────── */
+
+/* Timer warning styles */
+.timerWarning {
+  color: #ffcc00;
+  animation: timerPulse 1s infinite;
+}
+
+@keyframes timerPulse {
+  0% {
+    text-shadow: 0 0 10px rgba(255, 204, 0, 0.7);
+  }
+  50% {
+    text-shadow:
+      0 0 20px rgba(255, 204, 0, 1),
+      0 0 30px rgba(255, 204, 0, 0.7);
+  }
+  100% {
+    text-shadow: 0 0 10px rgba(255, 204, 0, 0.7);
+  }
+}
