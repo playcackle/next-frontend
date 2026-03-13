@@ -1,5 +1,5 @@
 import React from "react";
-import styles from "../gameroom.module.css";
+import styles from "./RoomHeader.module.css";
 
 interface HeaderProps {
   roomName: string;
