@@ -51,20 +51,20 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| CSS-01 | — | Pending |
-| CSS-02 | — | Pending |
-| CSS-03 | — | Pending |
-| BUG-01 | — | Pending |
-| BUG-02 | — | Pending |
-| PERF-01 | — | Pending |
-| PERF-02 | — | Pending |
-| REL-01 | — | Pending |
+| CSS-01 | Phase 6 | Pending |
+| CSS-02 | Phase 6 | Pending |
+| CSS-03 | Phase 7 | Pending |
+| BUG-01 | Phase 8 | Pending |
+| BUG-02 | Phase 8 | Pending |
+| PERF-01 | Phase 8 | Pending |
+| PERF-02 | Phase 8 | Pending |
+| REL-01 | Phase 8 | Pending |
 
 **Coverage:**
 - v1.2 requirements: 8 total
-- Mapped to phases: 0
-- Unmapped: 8 ⚠️ (to be filled by roadmapper)
+- Mapped to phases: 8
+- Unmapped: 0 ✓
 
 ---
 *Requirements defined: 2026-03-13*
-*Last updated: 2026-03-13 after initial definition*
+*Last updated: 2026-03-13 after roadmap creation*
