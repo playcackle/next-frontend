@@ -1,0 +1,239 @@
+/* ============================
+   UNIFIED MESSAGES CONTAINER
+   ============================ */
+
+/* Updated: Messages container in chat position */
+.unifiedMessagesContainer {
+  background-color: rgba(20, 20, 40, 0.7);
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(183, 0, 255, 0.5);
+  backdrop-filter: blur(5px);
+  display: flex;
+  flex-direction: column;
+  transition: all 0.3s ease;
+  margin-left: 4px;
+  min-height: 0;
+  flex-grow: 1;
+  max-height: 60vh;
+}
+
+/* ============================
+   SCROLL AREA
+   ============================ */
+
+.messagesScrollArea {
+  flex: 1;
+  padding: 0.5rem;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  scroll-behavior: smooth;
+  min-height: 0;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(183, 0, 255, 0.6) rgba(0, 0, 0, 0.3);
+}
+
+.messagesScrollArea::-webkit-scrollbar {
+  width: 8px;
+}
+
+.messagesScrollArea::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 4px;
+  border: 1px solid rgba(183, 0, 255, 0.2);
+}
+
+.messagesScrollArea::-webkit-scrollbar-thumb {
+  background: linear-gradient(
+    180deg,
+    rgba(183, 0, 255, 0.8) 0%,
+    rgba(0, 221, 255, 0.6) 100%
+  );
+  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 0 10px rgba(183, 0, 255, 0.5);
+  transition: all 0.3s ease;
+}
+
+.messagesScrollArea::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(
+    180deg,
+    rgba(183, 0, 255, 1) 0%,
+    rgba(0, 221, 255, 0.8) 100%
+  );
+  box-shadow:
+    0 0 15px rgba(183, 0, 255, 0.8),
+    0 0 20px rgba(0, 221, 255, 0.5);
+}
+
+.messagesEmpty {
+  color: rgba(255, 255, 255, 0.6);
+  text-align: center;
+  padding: 2rem;
+  font-style: italic;
+  font-family: var(--retro-font-alt);
+}
+
+/* ============================
+   ANIMATIONS
+   ============================ */
+
+@keyframes messageAppear {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Animation keyframes for unified messages */
+@keyframes correctAnswerGlow {
+  0% {
+    box-shadow: 0 0 8px rgba(0, 255, 102, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(0, 255, 102, 0.6);
+  }
+  100% {
+    box-shadow: 0 0 8px rgba(0, 255, 102, 0.2);
+  }
+}
+
+/* ============================
+   BASE MESSAGE
+   ============================ */
+
+.unifiedMessage {
+  padding: 0.25rem;
+  padding-left: 0.5rem;
+  border-radius: 6px;
+  font-size: 0.7rem;
+  animation: messageAppear 0.3s ease-out;
+  font-family: var(--retro-font-alt);
+  border-left: 3px solid transparent;
+  background-color: rgba(0, 0, 0, 0.2);
+}
+
+/* Adjust message styling to work with avatars */
+.unifiedMessage {
+  padding: 0.1rem;
+}
+
+/* ============================
+   MESSAGE TYPE VARIANTS
+   ============================ */
+
+/* Message type specific styling */
+.chatMessage {
+  border-left-color: var(--neon-purple);
+  background-color: rgba(183, 0, 255, 0.05);
+}
+
+.answerMessage {
+  border-left-color: var(--neon-green);
+  background-color: rgba(0, 255, 102, 0.05);
+  font-family: var(--retro-font);
+}
+
+.successfulAnswerMessage {
+  border-left-color: var(--neon-green);
+  background-color: rgba(0, 255, 102, 0.05);
+  animation: correctAnswerGlow 1s ease-out;
+}
+
+.ownMessage {
+  background-color: rgba(0, 221, 255, 0.2);
+  border-left: 3px solid var(--neon-blue);
+}
+
+.ownMessage {
+  background-color: rgba(0, 221, 255, 0.1) !important;
+  border-left-color: var(--neon-blue) !important;
+}
+
+/* Bot Bob message in scrolling feed — blue, distinct from player chat (purple) */
+.botBobMessage {
+  border-left-color: var(--neon-blue);
+  background-color: rgba(0, 221, 255, 0.05);
+}
+
+/* Duplicate / already-snapped attempt — orange border, muted */
+.duplicateMessage {
+  border-left-color: #ff8c00;
+  background-color: rgba(255, 140, 0, 0.05);
+  opacity: 0.75;
+}
+
+/* Combined class: own message that is also a correct answer — green wins over blue tint */
+/* Addresses: .ownMessage uses !important so successfulAnswerMessage green is suppressed without this */
+.ownSuccessfulAnswerMessage {
+  background-color: rgba(0, 255, 102, 0.05) !important;
+  border-left-color: var(--neon-green) !important;
+}
+
+/* ============================
+   MESSAGE CONTENT STRUCTURE
+   ============================ */
+
+.messagePrefix {
+  font-weight: bold;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-right: 0.5rem;
+}
+
+.messageUser {
+  color: var(--neon-blue);
+  font-size: 0.8rem;
+}
+
+.messageTime {
+  font-size: 0.7rem;
+  color: rgba(255, 255, 255, 0.6);
+  margin-left: auto;
+}
+
+.messageContent {
+  margin-bottom: 0.25rem;
+  line-height: 1;
+  font-size: 1.1rem;
+}
+
+.canonicalAnswer {
+  color: var(--neon-green);
+  font-style: italic;
+  opacity: 0.8;
+}
+
+.messageContentWrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  min-width: 0;
+  padding-left: 0.25rem;
+}
+
+.messageContent {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+/* ============================
+   PERFORMANCE MODE OVERRIDES
+   ============================ */
+
+/* Performance mode: suppress successfulAnswerMessage glow animation */
+:global(.performance-mode) .successfulAnswerMessage {
+  animation: none;
+}
+
+/* Performance mode: suppress botBobMessage inset glow */
+:global(.performance-mode) .botBobMessage {
+  box-shadow: none;
+}

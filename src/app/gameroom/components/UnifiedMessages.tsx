@@ -4,7 +4,7 @@ import { useUser } from "@/hooks/useUser";
 import { Flex } from "@radix-ui/themes";
 import { useAtomValue } from "jotai";
 import { useEffect, useRef } from "react";
-import styles from "../gameroom.module.css";
+import styles from "./UnifiedMessages.module.css";
 import {
   botBobLastMessageAtom,
   isRoundBreakAtom,
