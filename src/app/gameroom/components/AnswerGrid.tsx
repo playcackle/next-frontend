@@ -166,6 +166,26 @@ export const AnswerGrid: React.FC<AnswerGridProps> = ({ slots }) => {
           </p>
         </div>
       )}
+
+      {/* Hints section — only shows unsnapped slots that have a text_preview */}
+      {(() => {
+        const hintSlots = slots.filter(
+          (s) => !s.is_snapped && s.text_preview && s.text_preview.trim() !== "",
+        );
+        if (hintSlots.length === 0) return null;
+        return (
+          <div className={styles.hintsSection}>
+            <p className={styles.hintsSectionLabel}>Hints</p>
+            <div className={styles.hintsGrid}>
+              {hintSlots.map((slot) => (
+                <div key={slot.id} className={styles.hintChip}>
+                  <span className={styles.hintChipText}>{slot.text_preview}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        );
+      })()}
     </div>
   );
 };

@@ -279,3 +279,54 @@
 .answerGridPlaceholder strong {
   color: white;
 }
+
+/* ── Hints section ────────────────────────────────────────── */
+.hintsSection {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.hintsSectionLabel {
+  font-family: var(--retro-font);
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: rgba(255, 255, 255, 0.35);
+  margin: 0;
+}
+
+.hintsGrid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.hintChip {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.35rem 0.75rem;
+  border-radius: 8px;
+  border: 1px dashed rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.04);
+  animation: hintFadeIn 0.3s ease both;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+.hintChipText {
+  font-family: var(--retro-font-alt);
+  font-size: 0.78rem;
+  color: rgba(255, 255, 255, 0.45);
+  letter-spacing: 0.5px;
+}
+
+@keyframes hintFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

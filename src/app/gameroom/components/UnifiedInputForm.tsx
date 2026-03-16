@@ -10,6 +10,7 @@ import {
   timeRemainingAtom,
   unifiedInputAtom,
 } from "../store/gameAtoms";
+import { containsBannedLanguage } from "../utils/profanityFilter";
 import AnswerBubbles, { BubbleAnswer } from "./answerChips/AnswerBubbles";
 
 interface UnifiedInputFormProps {
@@ -28,18 +29,52 @@ export default function UnifiedInputForm({
   const isRoundBreak = useAtomValue(isRoundBreakAtom);
   const [input, setInput] = useAtom(unifiedInputAtom);
   const { clearAnswer } = useAnswer();
+  const [profanityError, setProfanityError] = useState(false);
+  const [repeatError, setRepeatError] = useState(false);
+  const recentAnswers = React.useRef<string[]>([]);
+
+  const REPEAT_LIMIT = 5;
 
   const timeExpired = timeRemaining === 0;
   const isAnswerMode = !isRoundBreak && !timeExpired;
   const placeholderText = isAnswerMode ? "Type.." : "Chat...";
 
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setInput(e.target.value);
+    // Clear errors as soon as the user edits the input
+    if (profanityError) setProfanityError(false);
+    if (repeatError) setRepeatError(false);
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (input.trim()) {
-      onSubmit(input.trim(), isAnswerMode);
-      setInput("");
-      clearAnswer();
+    const trimmed = input.trim();
+    if (!trimmed) return;
+
+    if (containsBannedLanguage(trimmed)) {
+      setProfanityError(true);
+      return;
     }
+
+    // Block if the last REPEAT_LIMIT submissions were the same answer
+    const normalised = trimmed.toLowerCase();
+    const recent = recentAnswers.current;
+    if (
+      recent.length >= REPEAT_LIMIT &&
+      recent.slice(-REPEAT_LIMIT).every((a) => a === normalised)
+    ) {
+      setRepeatError(true);
+      return;
+    }
+
+    // Track this submission; keep only the last REPEAT_LIMIT entries
+    recentAnswers.current = [...recent, normalised].slice(-REPEAT_LIMIT);
+
+    onSubmit(trimmed, isAnswerMode);
+    setInput("");
+    clearAnswer();
+    setProfanityError(false);
+    setRepeatError(false);
   };
 
   return (
@@ -57,16 +92,28 @@ export default function UnifiedInputForm({
           />
         </div>
 
-        <Flex direction="row" gap="2">
-          <input
-            type="text"
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            placeholder={placeholderText}
-            className={`${styles.unifiedInput} ${
-              isAnswerMode ? styles.answerMode : styles.chatMode
-            }`}
-          />
+        <Flex direction="column" gap="1">
+          {profanityError && (
+            <span className={styles.profanityError}>
+              Abusive or racist language is not allowed.
+            </span>
+          )}
+          {repeatError && (
+            <span className={styles.profanityError}>
+              You cannot send the same answer more than {REPEAT_LIMIT} times in a row.
+            </span>
+          )}
+          <Flex direction="row" gap="2">
+            <input
+              type="text"
+              value={input}
+              onChange={handleInputChange}
+              placeholder={placeholderText}
+              className={`${styles.unifiedInput} ${
+                isAnswerMode ? styles.answerMode : styles.chatMode
+              } ${profanityError || repeatError ? styles.inputError : ""}`}
+            />
+          </Flex>
         </Flex>
       </Flex>
     </form>
