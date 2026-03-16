@@ -1,14 +1,35 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
+import { useAtomValue } from "jotai";
 import { Slot } from "../types/state";
+import { slotHeatAtom } from "../store/gameAtoms";
 import styles from "./AnswerGrid.module.css";
 
 interface AnswerGridProps {
   slots: Slot[];
 }
 
+const heatLevelFromSimilarity = (score: number): number => {
+  if (score >= 90) return 4;
+  if (score >= 80) return 3;
+  if (score >= 65) return 2;
+  if (score >= 40) return 1;
+  return 0;
+};
+
+const heatLevelFromAttempts = (attempts: number): number => {
+  if (attempts >= 10) return 4;
+  if (attempts >= 6) return 3;
+  if (attempts >= 3) return 2;
+  if (attempts >= 1) return 1;
+  return 0;
+};
+
+const HEAT_NAMES = ["empty", "cool", "warm", "hot", "inferno"] as const;
+
 export const AnswerGrid: React.FC<AnswerGridProps> = ({ slots }) => {
+  const slotHeat = useAtomValue(slotHeatAtom);
   const totalAnswers = slots.length;
   const snappedMap = new Map(slots.filter((s) => s.is_snapped).map((s) => [s.id, s]));
   const foundCount = snappedMap.size;
@@ -94,18 +115,16 @@ export const AnswerGrid: React.FC<AnswerGridProps> = ({ slots }) => {
           <div className={styles.answerDotRow}>
             {slots.map((slot) => {
               const attempts = slot.failed_attempts ?? 0;
+              const similarityScore = slotHeat[slot.id] ?? 0;
               const heatLevel = slot.is_snapped
                 ? "found"
-                : attempts >= 10
-                  ? "inferno"
-                  : attempts >= 6
-                    ? "hot"
-                    : attempts >= 3
-                      ? "warm"
-                      : attempts >= 1
-                        ? "cool"
-                        : "empty";
-              const showFlame = !slot.is_snapped && attempts >= 6;
+                : HEAT_NAMES[
+                    Math.max(
+                      heatLevelFromSimilarity(similarityScore),
+                      heatLevelFromAttempts(attempts)
+                    )
+                  ];
+              const showFlame = !slot.is_snapped && (attempts >= 6 || similarityScore >= 80);
 
               return (
                 <div

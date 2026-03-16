@@ -83,6 +83,7 @@ export type LobbyTickPayload = {
   time_remaining_seconds: number | null;
   player_count: number;
   scores: Score[];
+  slot_heats?: Record<string, number>;
 };
 
 export type NewRoundStartedPayload = {
