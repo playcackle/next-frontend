@@ -45,14 +45,15 @@ export default function UnifiedMessages() {
     }
     debugger;
     switch (msg.message_type) {
-      case "answer_attempt":
-        if (msg.submission_result === "already_snapped")
-          return styles.duplicateMessage;
-        if (msg.submission_result === "success")
-          return styles.successfulAnswerMessage;
-        return styles.chatMessage;
       case "successful_answer":
         return styles.successfulAnswerMessage;
+      case "failed_answer":
+        if (
+          msg.submission_result === "already_snapped" ||
+          msg.submission_result === "too_slow"
+        )
+          return styles.takenMessage;
+        return styles.chatMessage;
       default:
         return styles.chatMessage;
     }
@@ -77,7 +78,7 @@ export default function UnifiedMessages() {
                     ? styles.ownSuccessfulAnswerMessage
                     : msg.message_type === "chat"
                       ? styles.ownMessage
-                      : "" // duplicate — orange from .duplicateMessage preserved
+                      : "" // failed_answer — takenMessage styling takes precedence
                   : ""
               }`}
             >
