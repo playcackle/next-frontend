@@ -193,29 +193,32 @@ export const useGameEvents = (gameWsUrl: string, token: string) => {
   }, [updateGameState, triggerCorrectAnswerEffects]);
 
   useEffect(() => {
-    onEvent("lobby_state_sync", (data: LobbySyncPayload) =>
-      handleLobbySyncRef.current(data),
-    );
-    onEvent("lobby_tick", (data: LobbyTickPayload) =>
-      handleLobbyTickRef.current(data),
-    );
-    onEvent("round_over", (data: RoundOverPayload) =>
-      handleRoundOverRef.current(data),
-    );
-    onEvent("round_starting_soon", () => handleRoundStartingSoonRef.current());
-    onEvent("new_round_started", (data: NewRoundStartedPayload) =>
-      handleNewRoundStartedRef.current(data),
-    );
-    onEvent("game_over", (data: any) => handleGameOverRef.current(data));
-    onEvent("lobby_resetting_for_new_game", () =>
-      handleLobbyResettingRef.current(),
-    );
-    onEvent("slot_snapped", (data: SlotSnappedPayload) =>
-      handleSlotSnappedRef.current(data),
-    );
-    onEvent("submission_feedback", (data: SubmissionFeedbackPayload) =>
-      handleSubmissionFeedbackRef.current(data),
-    );
+    const cleanups = [
+      onEvent("lobby_state_sync", (data: LobbySyncPayload) =>
+        handleLobbySyncRef.current(data),
+      ),
+      onEvent("lobby_tick", (data: LobbyTickPayload) =>
+        handleLobbyTickRef.current(data),
+      ),
+      onEvent("round_over", (data: RoundOverPayload) =>
+        handleRoundOverRef.current(data),
+      ),
+      onEvent("round_starting_soon", () => handleRoundStartingSoonRef.current()),
+      onEvent("new_round_started", (data: NewRoundStartedPayload) =>
+        handleNewRoundStartedRef.current(data),
+      ),
+      onEvent("game_over", (data: any) => handleGameOverRef.current(data)),
+      onEvent("lobby_resetting_for_new_game", () =>
+        handleLobbyResettingRef.current(),
+      ),
+      onEvent("slot_snapped", (data: SlotSnappedPayload) =>
+        handleSlotSnappedRef.current(data),
+      ),
+      onEvent("submission_feedback", (data: SubmissionFeedbackPayload) =>
+        handleSubmissionFeedbackRef.current(data),
+      ),
+    ];
+    return () => cleanups.forEach((fn) => fn?.());
   }, [onEvent]);
 
   return { sendEvent, connectionStatus };
