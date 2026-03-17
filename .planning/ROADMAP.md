@@ -36,6 +36,7 @@ Archive: `.planning/milestones/v1.1-ROADMAP.md`
 - [x] **Phase 6: Gameroom CSS Split** - Split `gameroom.module.css` into per-component modules and rationalize postgame CSS duplication (completed 2026-03-13)
 - [x] **Phase 7: Admin/Route CSS Tidy** - Audit and reorganize oversized module CSS files across admin and other routes (completed 2026-03-17)
 - [x] **Phase 8: Bug Fixes and Performance** - Fix confirmed runtime bugs, gate effects on performance mode, fix listener accumulation, and replace full-state subscriptions with granular selectors (completed 2026-03-17)
+- [ ] **Phase 9: CSS-01 Gap Closure** - Restore SlotGrid styles, remove dead SlotTile import, remove debugger statement, and verify browser visual regression
 
 ## Phase Details
 
@@ -90,6 +91,23 @@ Plans:
 - [ ] 08-02-PLAN.md — Fix AnswerReveal type mismatch and replace with slotsAtom subscription
 - [ ] 08-03-PLAN.md — Gate DOM effects on performanceModeAtom, fix listener cleanup, replace LeaderBoard/PostGameShowcase subscriptions
 
+### Phase 9: CSS-01 Gap Closure
+**Goal**: SlotGrid renders with correct styles and no broken imports; no production-unsafe code artifacts; browser visual regression approved
+**Depends on**: Phase 8
+**Requirements**: CSS-01
+**Gap Closure**: Closes gaps from v1.2 audit
+**Success Criteria** (what must be TRUE):
+  1. `SlotGrid.module.css` contains the full layout toggle and grid styles (restored from git history — commit `6a5e42c`)
+  2. `SlotGrid.tsx` does not import `SlotTile` — the TILES layout branch is cleanly removed; only the GRID (AnswerGrid) path remains
+  3. The layout toggle is either removed or updated to reflect GRID-only mode (no toggle pointing to a non-existent component)
+  4. `UnifiedMessages.tsx` has no `debugger;` statement
+  5. Browser visual checks pass: home page, leaderboard page, admin lobby page, answer reveal animation, performance mode DOM suppression, listener stress test
+**Plans**: 2 plans
+
+Plans:
+- [ ] 09-01-PLAN.md — Restore SlotGrid.module.css, remove SlotTile TILES mode from SlotGrid.tsx, remove debugger statement
+- [ ] 09-02-PLAN.md — Human visual regression checkpoint (Phases 7 + 8 browser checks)
+
 ## Progress
 
 | Phase | Milestone | Plans Complete | Status | Completed |
@@ -102,3 +120,4 @@ Plans:
 | 6. Gameroom CSS Split | 6/6 | Complete    | 2026-03-17 | - |
 | 7. Admin/Route CSS Tidy | 3/3 | Complete    | 2026-03-17 | - |
 | 8. Bug Fixes and Performance | 3/3 | Complete   | 2026-03-17 | - |
+| 9. CSS-01 Gap Closure | v1.2 | 0/2 | Pending | - |
