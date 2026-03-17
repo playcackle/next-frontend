@@ -35,7 +35,7 @@ Archive: `.planning/milestones/v1.1-ROADMAP.md`
 
 - [x] **Phase 6: Gameroom CSS Split** - Split `gameroom.module.css` into per-component modules and rationalize postgame CSS duplication (completed 2026-03-13)
 - [x] **Phase 7: Admin/Route CSS Tidy** - Audit and reorganize oversized module CSS files across admin and other routes (completed 2026-03-17)
-- [ ] **Phase 8: Bug Fixes and Performance** - Fix confirmed runtime bugs, gate effects on performance mode, fix listener accumulation, and replace full-state subscriptions with granular selectors
+- [x] **Phase 8: Bug Fixes and Performance** - Fix confirmed runtime bugs, gate effects on performance mode, fix listener accumulation, and replace full-state subscriptions with granular selectors (completed 2026-03-17)
 
 ## Phase Details
 
@@ -101,4 +101,4 @@ Plans:
 | 5. Codebase Audit | v1.1 | 2/2 | Complete | 2026-03-12 |
 | 6. Gameroom CSS Split | 6/6 | Complete    | 2026-03-17 | - |
 | 7. Admin/Route CSS Tidy | 3/3 | Complete    | 2026-03-17 | - |
-| 8. Bug Fixes and Performance | 2/3 | In Progress|  | - |
+| 8. Bug Fixes and Performance | 3/3 | Complete   | 2026-03-17 | - |

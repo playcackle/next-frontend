@@ -15,17 +15,17 @@ Requirements for the Code Health milestone. Each maps to roadmap phases.
 
 ### Bugs
 
-- [ ] **BUG-01**: Game room loads without React invariant violation — Rules of Hooks violation in `page.tsx` is fixed (hooks moved before conditional return)
+- [x] **BUG-01**: Game room loads without React invariant violation — Rules of Hooks violation in `page.tsx` is fixed (hooks moved before conditional return)
 - [x] **BUG-02**: Answer reveal animation fires correctly — `AnswerReveal.tsx` type mismatch (`string` vs `number[]`) is resolved and `styles.visible` is applied when expected
 
 ### Performance
 
-- [ ] **PERF-01**: All visual effects in `triggerCorrectAnswerEffects` respect performance mode — DOM animations, screen shake, and overlays are gated on `performanceModeAtom`
+- [x] **PERF-01**: All visual effects in `triggerCorrectAnswerEffects` respect performance mode — DOM animations, screen shake, and overlays are gated on `performanceModeAtom`
 - [x] **PERF-02**: `LeaderBoard`, `AnswerReveal`, `PostGameShowcase`, and `page.tsx` subscribe to granular atom selectors instead of full `gameStateAtom` — eliminating unnecessary re-renders on every game tick
 
 ### Reliability
 
-- [ ] **REL-01**: Socket event listeners do not accumulate — `useGameEvents.ts` `onEvent` cleanup callbacks are captured and called on unmount
+- [x] **REL-01**: Socket event listeners do not accumulate — `useGameEvents.ts` `onEvent` cleanup callbacks are captured and called on unmount
 
 ## Future Requirements
 
@@ -54,11 +54,11 @@ Which phases cover which requirements. Updated during roadmap creation.
 | CSS-01 | Phase 6 | Complete |
 | CSS-02 | Phase 6 | Complete |
 | CSS-03 | Phase 7 | Complete |
-| BUG-01 | Phase 8 | Pending |
+| BUG-01 | Phase 8 | Complete |
 | BUG-02 | Phase 8 | Complete |
-| PERF-01 | Phase 8 | Pending |
+| PERF-01 | Phase 8 | Complete |
 | PERF-02 | Phase 8 | Complete |
-| REL-01 | Phase 8 | Pending |
+| REL-01 | Phase 8 | Complete |
 
 **Coverage:**
 - v1.2 requirements: 8 total

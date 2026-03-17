@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Code Health
 status: planning
-stopped_at: Completed 08-bug-fixes-and-performance 08-01-PLAN.md
-last_updated: "2026-03-17T13:26:20.388Z"
+stopped_at: Completed 08-bug-fixes-and-performance 08-03-PLAN.md
+last_updated: "2026-03-17T13:26:49.078Z"
 last_activity: 2026-03-13 — Roadmap created, phases 6-8 defined
 progress:
   total_phases: 3
-  completed_phases: 2
+  completed_phases: 3
   total_plans: 12
-  completed_plans: 11
+  completed_plans: 12
   percent: 0
 ---
 
@@ -58,6 +58,7 @@ Progress: [░░░░░░░░░░] 0%
 | Phase 07-admin-route-css-tidy P03 | 2min | 2 tasks | 0 files |
 | Phase 08-bug-fixes-and-performance P02 | 2min | 1 tasks | 1 files |
 | Phase 08-bug-fixes-and-performance P01 | 5 | 1 tasks | 1 files |
+| Phase 08-bug-fixes-and-performance P03 | 2min | 2 tasks | 4 files |
 
 ### Decisions
 
@@ -86,6 +87,9 @@ See PROJECT.md Key Decisions table for all decisions from v1.0 and v1.1.
 - [Phase 08-bug-fixes-and-performance]: useGameState() replaced with useAtomValue(slotsAtom) in AnswerReveal — granular atom subscription prevents full-state re-renders (PERF-02)
 - [Phase 08-bug-fixes-and-performance]: Use optional chaining (gameroom?.game_ws_url ?? '') as hook arguments so WebSocket hooks can be called unconditionally before the !gameroom guard
 - [Phase 08-bug-fixes-and-performance]: Replace useGameState() wrapper with direct useSetAtom(updateGameStateAtom) — avoids subscribing to full game state just for write access
+- [Phase 08-bug-fixes-and-performance]: applyDOMAnimation (slot-level) remains ungated — only body-level overlays are performance-gated
+- [Phase 08-bug-fixes-and-performance]: onEvent cleanups pattern: capture all return values in cleanups array, call fn?.() in useEffect cleanup
+- [Phase 08-bug-fixes-and-performance]: Components needing <3 fields from game state subscribe to derived atoms directly, removing useGameState intermediary
 
 ### Pending Todos
 
@@ -97,6 +101,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-03-17T13:26:20.386Z
-Stopped at: Completed 08-bug-fixes-and-performance 08-01-PLAN.md
+Last session: 2026-03-17T13:26:49.077Z
+Stopped at: Completed 08-bug-fixes-and-performance 08-03-PLAN.md
 Resume file: None
