@@ -1,11 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useGameState } from "../hooks/useGameState";
+import { useAtomValue } from "jotai";
+import { slotsAtom } from "../store/gameAtoms";
 import styles from "./AnswerReveal.module.css";
 
 type QuizAnswer = {
-  id: number;
+  id: string;
   answer: string;
   isRare?: boolean;
   isAnswered: boolean;
@@ -13,10 +14,10 @@ type QuizAnswer = {
 };
 
 export default function AnswerReveal() {
-  const [visibleAnswers, setVisibleAnswers] = useState<number[]>([]);
+  const [visibleAnswers, setVisibleAnswers] = useState<string[]>([]);
   const [answers, setAnswers] = useState<QuizAnswer[]>([]);
 
-  const { slots } = useGameState();
+  const slots = useAtomValue(slotsAtom);
 
   useEffect(() => {
     const answers = slots.map(
@@ -27,7 +28,7 @@ export default function AnswerReveal() {
           isRare: x.is_rare,
           isAnswered: x.is_snapped,
           answeredBy: x.snapped_by_display_name,
-        } as unknown as QuizAnswer)
+        } as QuizAnswer)
     );
     setAnswers(answers);
   }, [slots]);
