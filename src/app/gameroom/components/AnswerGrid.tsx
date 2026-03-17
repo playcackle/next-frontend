@@ -3,7 +3,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useAtomValue } from "jotai";
 import { isRoundBreakAtom, roundHintsAtom } from "../store/gameAtoms";
-import PlayerAvatar from "./PlayerAvatar";
 import { Slot } from "../types/state";
 import styles from "./AnswerGrid.module.css";
 
@@ -192,25 +191,16 @@ export const AnswerGrid: React.FC<AnswerGridProps> = ({ slots }) => {
         );
       })()}
 
-      {/* BotBob hints — hidden during round breaks */}
-      {!isRoundBreak && (
-        <div className={styles.botBobPanel}>
-          <div className={styles.botBobHeader}>
-            <PlayerAvatar playerId="botbob" displayName="BotBob" size="small" />
-            <span className={styles.botBobTitle}>BOT BOB</span>
-          </div>
-          <div className={styles.botBobList}>
-            {hints.length === 0 ? (
-              <div className={styles.botBobEmpty}>
-                Give it a minute. This is painful to watch.
+      {/* Round hints — hidden during round breaks */}
+      {!isRoundBreak && hints.length > 0 && (
+        <div className={styles.hintsSection}>
+          <p className={styles.hintsSectionLabel}>Hints</p>
+          <div className={styles.hintsGrid}>
+            {hints.map((hint, index) => (
+              <div key={index} className={styles.hintChip}>
+                <span className={styles.hintChipText}>{hint.text}</span>
               </div>
-            ) : (
-              hints.map((hint, index) => (
-                <div key={index} className={styles.botBobItem}>
-                  {hint.text}
-                </div>
-              ))
-            )}
+            ))}
           </div>
         </div>
       )}
