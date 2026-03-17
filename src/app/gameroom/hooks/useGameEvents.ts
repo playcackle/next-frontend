@@ -14,7 +14,7 @@ import {
   getRandomSnappedSound,
   playSound,
 } from "../utils";
-import { clearRoundHintsAtom } from "../store/gameAtoms";
+import { clearRoundHintsAtom, clearSlotHeatAtom, slotHeatAtom } from "../store/gameAtoms";
 import { useGameActions } from "./useGameActions";
 import { useGameSocket } from "./useGameSocket";
 import { useGameState } from "./useGameState";
@@ -24,6 +24,8 @@ export const useGameEvents = (gameWsUrl: string, token: string) => {
   const { updateGameState, slots } = useGameState();
   const { triggerCorrectAnswerEffects } = useGameActions();
   const clearRoundHints = useSetAtom(clearRoundHintsAtom);
+  const setSlotHeat = useSetAtom(slotHeatAtom);
+  const clearSlotHeat = useSetAtom(clearSlotHeatAtom);
 
   const slotsRef = useRef(slots);
   useEffect(() => {
@@ -67,6 +69,9 @@ export const useGameEvents = (gameWsUrl: string, token: string) => {
       timeRemaining: data.time_remaining_seconds ?? 0,
       scores: data.scores ?? [],
     });
+    if (data.slot_heats) {
+      setSlotHeat(data.slot_heats);
+    }
   });
 
   const handleRoundOverRef = useRef((data: RoundOverPayload) => {
@@ -98,6 +103,7 @@ export const useGameEvents = (gameWsUrl: string, token: string) => {
       accolades: [], // Clear accolades for new round
     });
     clearRoundHints();
+    clearSlotHeat();
     playSound("newRound");
   });
 

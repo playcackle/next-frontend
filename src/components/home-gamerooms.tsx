@@ -1,6 +1,6 @@
 "use client";
 
-import styles from "@/app/page.module.css";
+import styles from "./home-gamerooms.module.css";
 import GameroomTile from "@/components/gameroom-tile";
 import { useRealtimeLobbies, type LobbyInfo } from "@/hooks/useRealtimeLobbies";
 import Link from "next/link";

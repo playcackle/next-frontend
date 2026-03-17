@@ -1,0 +1,150 @@
+/* Styles for home-user-stats.tsx — extracted from page.module.css (Phase 7) */
+
+/* ── User stats grid ──────────────────────────────────────── */
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem;
+}
+
+.statCard {
+  background: rgba(20, 20, 40, 0.7);
+  border-radius: 10px;
+  padding: 1rem 0.75rem;
+  text-align: center;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.statCard:hover {
+  transform: translateY(-3px);
+}
+
+.statCard_blue {
+  border-color: rgba(0, 221, 255, 0.25);
+  box-shadow: 0 0 12px rgba(0, 221, 255, 0.06);
+}
+.statCard_pink {
+  border-color: rgba(255, 0, 170, 0.25);
+  box-shadow: 0 0 12px rgba(255, 0, 170, 0.06);
+}
+.statCard_purple {
+  border-color: rgba(183, 0, 255, 0.25);
+  box-shadow: 0 0 12px rgba(183, 0, 255, 0.06);
+}
+.statCard_green {
+  border-color: rgba(0, 255, 102, 0.25);
+  box-shadow: 0 0 12px rgba(0, 255, 102, 0.06);
+}
+
+.statCard_blue:hover {
+  box-shadow: 0 0 20px rgba(0, 221, 255, 0.18);
+}
+.statCard_pink:hover {
+  box-shadow: 0 0 20px rgba(255, 0, 170, 0.18);
+}
+.statCard_purple:hover {
+  box-shadow: 0 0 20px rgba(183, 0, 255, 0.18);
+}
+.statCard_green:hover {
+  box-shadow: 0 0 20px rgba(0, 255, 102, 0.18);
+}
+
+.statValue {
+  font-family: var(--retro-font);
+  font-size: 1.6rem;
+  font-weight: 800;
+  line-height: 1;
+  margin-bottom: 0.4rem;
+}
+
+.statValue_blue {
+  color: var(--neon-blue);
+  text-shadow: 0 0 8px rgba(0, 221, 255, 0.5);
+}
+.statValue_pink {
+  color: var(--neon-pink);
+  text-shadow: 0 0 8px rgba(255, 0, 170, 0.5);
+}
+.statValue_purple {
+  color: var(--neon-purple);
+  text-shadow: 0 0 8px rgba(183, 0, 255, 0.5);
+}
+.statValue_green {
+  color: var(--neon-green);
+  text-shadow: 0 0 8px rgba(0, 255, 102, 0.5);
+}
+
+.statLabel {
+  font-family: var(--retro-font);
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.statsLoadingRow {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem;
+}
+
+.statsSkeletonCard {
+  height: 80px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  animation: skeleton 1.4s ease infinite;
+}
+
+@keyframes skeleton {
+  0%,
+  100% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.statsError {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1.5rem;
+  text-align: center;
+  font-family: var(--retro-font);
+  font-size: 0.82rem;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.retryBtn {
+  padding: 0.4rem 1.25rem;
+  border-radius: 20px;
+  border: 1px solid var(--neon-blue);
+  background: rgba(0, 221, 255, 0.1);
+  color: var(--neon-blue);
+  font-family: var(--retro-font);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.retryBtn:hover {
+  background: rgba(0, 221, 255, 0.2);
+  box-shadow: 0 0 10px rgba(0, 221, 255, 0.3);
+}
+
+@media (max-width: 640px) {
+  .statsGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .statsLoadingRow {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

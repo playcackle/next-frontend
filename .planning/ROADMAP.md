@@ -34,7 +34,7 @@ Archive: `.planning/milestones/v1.1-ROADMAP.md`
 **Milestone Goal:** Eliminate confirmed runtime bugs, split the monolithic gameroom CSS into per-component modules, and fix the highest-impact structural findings from the v1.1 audit.
 
 - [x] **Phase 6: Gameroom CSS Split** - Split `gameroom.module.css` into per-component modules and rationalize postgame CSS duplication (completed 2026-03-13)
-- [ ] **Phase 7: Admin/Route CSS Tidy** - Audit and reorganize oversized module CSS files across admin and other routes
+- [x] **Phase 7: Admin/Route CSS Tidy** - Audit and reorganize oversized module CSS files across admin and other routes (completed 2026-03-17)
 - [ ] **Phase 8: Bug Fixes and Performance** - Fix confirmed runtime bugs, gate effects on performance mode, fix listener accumulation, and replace full-state subscriptions with granular selectors
 
 ## Phase Details
@@ -66,7 +66,12 @@ Plans:
   1. All oversized admin and route module CSS files (page.module.css 568L, admin pages 450-601L) are audited and split or reorganized
   2. No single module CSS file outside the gameroom exceeds a reasonable size threshold (e.g., no file larger than the largest per-component module from Phase 6)
   3. Admin pages render correctly after reorganization (no visual regressions)
-**Plans**: TBD
+**Plans**: 3 plans
+
+Plans:
+- [ ] 07-01-PLAN.md — Split src/app/page.module.css into per-consumer modules (home-leaderboard, home-user-stats, home-gamerooms)
+- [ ] 07-02-PLAN.md — Add section navigation headers to 5 single-consumer oversized admin/route CSS files
+- [ ] 07-03-PLAN.md — Build verification and visual regression checkpoint
 
 ### Phase 8: Bug Fixes and Performance
 **Goal**: The game room runs without confirmed bugs, respects performance mode fully, and avoids unnecessary re-renders and listener accumulation
@@ -78,7 +83,12 @@ Plans:
   3. All DOM animations, screen shake, and overlays in `triggerCorrectAnswerEffects` are gated on `performanceModeAtom` — performance mode off means no effects fire
   4. Socket event listeners do not accumulate across re-renders — `useGameEvents` cleanup correctly captures and calls all `onEvent` return values on unmount
   5. `LeaderBoard`, `AnswerReveal`, `PostGameShowcase`, and `page.tsx` subscribe to granular atom selectors instead of full `gameStateAtom` — no unnecessary re-renders on game ticks that don't affect their data
-**Plans**: TBD
+**Plans**: 3 plans
+
+Plans:
+- [ ] 08-01-PLAN.md — Fix Rules of Hooks in page.tsx and replace useGameState() with useSetAtom(updateGameStateAtom)
+- [ ] 08-02-PLAN.md — Fix AnswerReveal type mismatch and replace with slotsAtom subscription
+- [ ] 08-03-PLAN.md — Gate DOM effects on performanceModeAtom, fix listener cleanup, replace LeaderBoard/PostGameShowcase subscriptions
 
 ## Progress
 
@@ -89,6 +99,6 @@ Plans:
 | 3. Onboarding | v1.0 | 1/1 | Complete | 2026-03-11 |
 | 4. Landing Page | v1.0 | 1/1 | Complete | 2026-03-11 |
 | 5. Codebase Audit | v1.1 | 2/2 | Complete | 2026-03-12 |
-| 6. Gameroom CSS Split | 6/6 | Complete   | 2026-03-13 | - |
-| 7. Admin/Route CSS Tidy | v1.2 | 0/? | Not started | - |
-| 8. Bug Fixes and Performance | v1.2 | 0/? | Not started | - |
+| 6. Gameroom CSS Split | 6/6 | Complete    | 2026-03-17 | - |
+| 7. Admin/Route CSS Tidy | 3/3 | Complete    | 2026-03-17 | - |
+| 8. Bug Fixes and Performance | v1.2 | 0/3 | Not started | - |

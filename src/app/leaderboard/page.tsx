@@ -3,7 +3,6 @@
 import SynthwaveBackground from "@/components/synthwave-background";
 import { Button } from "@radix-ui/themes";
 import { useEffect, useState } from "react";
-import pageStyles from "../page.module.css";
 import styles from "./leaderboard.module.css";
 
 type LeaderboardEntry = {
@@ -106,10 +105,10 @@ export default function LeaderboardPage() {
   ];
 
   return (
-    <div className={pageStyles.container}>
+    <div className={styles.container}>
       <SynthwaveBackground />
 
-      <main className={pageStyles.main}>
+      <main className={styles.main}>
         <h1 className={styles.leaderboardTitle}>Leaderboard</h1>
 
         <div className={styles.leaderboardControls}>
@@ -170,7 +169,7 @@ export default function LeaderboardPage() {
         </div>
       </main>
 
-      <footer className={pageStyles.footer}>
+      <footer className={styles.footer}>
         <p>© {new Date().getFullYear()} Retro Quiz | All Rights Reserved</p>
       </footer>
     </div>

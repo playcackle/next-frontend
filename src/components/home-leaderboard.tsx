@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { playersApi, LeaderboardEntry as ApiLeaderboardEntry } from "@/lib/api/players";
-import styles from "@/app/page.module.css";
+import styles from "./home-leaderboard.module.css";
 
 type Period = "week" | "month" | "year";
 
