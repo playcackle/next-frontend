@@ -101,4 +101,4 @@ Plans:
 | 5. Codebase Audit | v1.1 | 2/2 | Complete | 2026-03-12 |
 | 6. Gameroom CSS Split | 6/6 | Complete    | 2026-03-17 | - |
 | 7. Admin/Route CSS Tidy | 3/3 | Complete    | 2026-03-17 | - |
-| 8. Bug Fixes and Performance | 1/3 | In Progress|  | - |
+| 8. Bug Fixes and Performance | 2/3 | In Progress|  | - |
