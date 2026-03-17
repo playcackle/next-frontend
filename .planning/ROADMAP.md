@@ -83,7 +83,12 @@ Plans:
   3. All DOM animations, screen shake, and overlays in `triggerCorrectAnswerEffects` are gated on `performanceModeAtom` — performance mode off means no effects fire
   4. Socket event listeners do not accumulate across re-renders — `useGameEvents` cleanup correctly captures and calls all `onEvent` return values on unmount
   5. `LeaderBoard`, `AnswerReveal`, `PostGameShowcase`, and `page.tsx` subscribe to granular atom selectors instead of full `gameStateAtom` — no unnecessary re-renders on game ticks that don't affect their data
-**Plans**: TBD
+**Plans**: 3 plans
+
+Plans:
+- [ ] 08-01-PLAN.md — Fix Rules of Hooks in page.tsx and replace useGameState() with useSetAtom(updateGameStateAtom)
+- [ ] 08-02-PLAN.md — Fix AnswerReveal type mismatch and replace with slotsAtom subscription
+- [ ] 08-03-PLAN.md — Gate DOM effects on performanceModeAtom, fix listener cleanup, replace LeaderBoard/PostGameShowcase subscriptions
 
 ## Progress
 
@@ -96,4 +101,4 @@ Plans:
 | 5. Codebase Audit | v1.1 | 2/2 | Complete | 2026-03-12 |
 | 6. Gameroom CSS Split | 6/6 | Complete    | 2026-03-17 | - |
 | 7. Admin/Route CSS Tidy | 3/3 | Complete    | 2026-03-17 | - |
-| 8. Bug Fixes and Performance | v1.2 | 0/? | Not started | - |
+| 8. Bug Fixes and Performance | v1.2 | 0/3 | Not started | - |
