@@ -95,5 +95,5 @@ Plans:
 | 4. Landing Page | v1.0 | 1/1 | Complete | 2026-03-11 |
 | 5. Codebase Audit | v1.1 | 2/2 | Complete | 2026-03-12 |
 | 6. Gameroom CSS Split | 6/6 | Complete    | 2026-03-17 | - |
-| 7. Admin/Route CSS Tidy | v1.2 | 0/3 | Not started | - |
+| 7. Admin/Route CSS Tidy | 1/3 | In Progress|  | - |
 | 8. Bug Fixes and Performance | v1.2 | 0/? | Not started | - |
