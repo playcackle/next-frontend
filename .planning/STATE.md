@@ -5,9 +5,9 @@ milestone_name: Observability & Performance
 status: planning
 stopped_at: —
 last_updated: "2026-03-17T00:00:00.000Z"
-last_activity: 2026-03-17 — Milestone v1.3 started
+last_activity: 2026-03-17 — Roadmap created for v1.3
 progress:
-  total_phases: 0
+  total_phases: 4
   completed_phases: 0
   total_plans: 0
   completed_plans: 0
@@ -21,14 +21,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-17)
 
 **Core value:** Players must always know where they are in the game and what their actions mean — reliable state, readable feedback, and visible progress are what keep them coming back.
-**Current focus:** v1.3 Observability & Performance — Defining requirements
+**Current focus:** Phase 10 — Sentry Foundation
 
 ## Current Position
 
-Phase: Not started (defining requirements)
-Plan: —
-Status: Defining requirements
-Last activity: 2026-03-17 — Milestone v1.3 started
+Phase: 10 of 13 (Sentry Foundation)
+Plan: — of —
+Status: Ready to plan
+Last activity: 2026-03-17 — Roadmap created, ready to begin Phase 10 planning
 
 Progress: [░░░░░░░░░░] 0%
 
@@ -46,50 +46,18 @@ Progress: [░░░░░░░░░░] 0%
 | - | - | - | - |
 
 ## Accumulated Context
-| Phase 06-gameroom-css-split P05 | 5 | 1 tasks | 2 files |
-| Phase 06-gameroom-css-split P03 | 8 | 1 tasks | 2 files |
-| Phase 06-gameroom-css-split P04 | 8 | 2 tasks | 4 files |
-| Phase 06-gameroom-css-split P02 | 2 | 1 tasks | 2 files |
-| Phase 06 P01 | 10min | 3 tasks | 6 files |
-| Phase 06-gameroom-css-split P06 | 3 | 2 tasks | 3 files |
-| Phase 06-gameroom-css-split P06 | 15 | 3 tasks | 3 files |
-| Phase 07-admin-route-css-tidy P01 | 3min | 2 tasks | 9 files |
-| Phase 07-admin-route-css-tidy P02 | 4min | 2 tasks | 5 files |
-| Phase 07-admin-route-css-tidy P03 | 2min | 2 tasks | 0 files |
-| Phase 08-bug-fixes-and-performance P02 | 2min | 1 tasks | 1 files |
-| Phase 08-bug-fixes-and-performance P01 | 5 | 1 tasks | 1 files |
-| Phase 08-bug-fixes-and-performance P03 | 2min | 2 tasks | 4 files |
 
 ### Decisions
 
-See PROJECT.md Key Decisions table for all decisions from v1.0 and v1.1.
+See PROJECT.md Key Decisions table for all decisions from v1.0–v1.2.
 
-**v1.2 context:**
-- CSS split scope: gameroom.module.css (1,739 lines) imported by 9 files — PlayerAvatar, UnifiedInputForm, StatsRow, BotBobPinnedMessage, RoomHeader, SlotTile, SlotGrid, UnifiedMessages, page.tsx
-- Some components already have own modules: AnswerGrid, AnswerReveal, PostGameModal, countdown, leaderboard, postgame
-- PostGameModal.module.css (415 lines) and postgame.module.css (406 lines) are distinct files — different class names but overlapping post-game concerns; need rationalization
-- Dual performance mode systems (FINDING-A06) deferred — requires product decision on prefers-reduced-motion; NOT in v1.2 scope
-- Full CSS overhaul includes admin/other route large module files (page.module.css 568L, admin pages 450-601L, etc.)
-- [Phase 06-gameroom-css-split]: UnifiedMessages: include both .ownMessage rules verbatim (second uses !important for correct specificity)
-- [Phase 06-gameroom-css-split]: SlotTile styles extracted to SlotTile.module.css; page-level animation classes (colorBurstOverlay, particles, etc.) remain in gameroom.module.css
-- [Phase 06]: CSS extracted verbatim — no property values changed, pure structural refactor
-- [Phase 06]: gameroom.module.css NOT modified yet — cleanup deferred to later plan per plan spec
-- [Phase 06-gameroom-css-split]: gradientShift keyframes defined in UnifiedInputForm.module.css — referenced by .unifiedInputFormOnly::before but absent from gameroom.module.css everywhere in codebase
-- [Phase 06-gameroom-css-split]: statsTitle missing from gameroom.module.css — defined in StatsRow.module.css with retro label styling; will need duplication note until Plan 06 cleanup
-- [Phase 06-gameroom-css-split]: gameroom.module.css reduced to 611 lines (from 1,739) removing all 8 extracted component class blocks
-- [Phase 06-gameroom-css-split]: PostGameModal.module.css and postgame.module.css confirmed distinct — scope comments document intentional separation
-- [Phase 06-gameroom-css-split]: gameroom.module.css reduced to 611 lines (from 1,739) by removing all 8 extracted component class blocks
-- [Phase 06-gameroom-css-split]: PostGameModal and postgame CSS files intentionally separate — different class names, different component scopes; scope comments added (CSS-02)
-- [Phase 07-admin-route-css-tidy]: page.module.css split into 3 component modules; .footer moved to leaderboard.module.css; .container/.main added to leaderboard.module.css (were undefined no-ops)
-- [Phase 07-admin-route-css-tidy]: Upgraded existing inline comments to dashed style for visual consistency; scrollbar and keyframe blocks got own headers; no CSS property values changed
-- [Phase 07-admin-route-css-tidy]: Visual regression check approved by human — no issues found on home page or admin pages; phase 07 CSS refactoring confirmed visually correct
-- [Phase 08-bug-fixes-and-performance]: AnswerReveal.QuizAnswer.id changed from number to string to align with Slot.id — fixes visibleAnswers.includes() always returning false (BUG-02)
-- [Phase 08-bug-fixes-and-performance]: useGameState() replaced with useAtomValue(slotsAtom) in AnswerReveal — granular atom subscription prevents full-state re-renders (PERF-02)
-- [Phase 08-bug-fixes-and-performance]: Use optional chaining (gameroom?.game_ws_url ?? '') as hook arguments so WebSocket hooks can be called unconditionally before the !gameroom guard
-- [Phase 08-bug-fixes-and-performance]: Replace useGameState() wrapper with direct useSetAtom(updateGameStateAtom) — avoids subscribing to full game state just for write access
-- [Phase 08-bug-fixes-and-performance]: applyDOMAnimation (slot-level) remains ungated — only body-level overlays are performance-gated
-- [Phase 08-bug-fixes-and-performance]: onEvent cleanups pattern: capture all return values in cleanups array, call fn?.() in useEffect cleanup
-- [Phase 08-bug-fixes-and-performance]: Components needing <3 fields from game state subscribe to derived atoms directly, removing useGameState intermediary
+**v1.3 context:**
+- Sentry must be installed via wizard (`npx @sentry/wizard@latest`), not manually — wizard sets all three config files and `next.config.mjs` correctly
+- `withSentryConfig` must be outermost wrapper in `next.config.mjs`: `withSentryConfig(withBundleAnalyzer(config), sentryOpts)` — reversed order breaks source map upload silently
+- `tracesSampleRate` must NOT be 1.0 in production — real-time app will exhaust quota; target 0.1
+- Tunnel route required from Phase 10 start — not retrofittable without a gap in observability
+- Sentry v8 vs v9: accept what wizard installs, do not pin manually
+- `why-did-you-render` React 19 compat is LOW confidence — verify before Phase 12; fall back to React DevTools Profiler if incompatible
 
 ### Pending Todos
 
@@ -97,10 +65,11 @@ None.
 
 ### Blockers/Concerns
 
-None.
+- [Phase 10] Sentry SDK config option names (`hideSourceMaps`, `deleteSourcemapsAfterUpload`) must be verified against current docs before writing `next.config.mjs` — training cutoff August 2025
+- [Phase 12] `@welldone-software/why-did-you-render` React 19 compatibility unverified — check before installing
 
 ## Session Continuity
 
-Last session: 2026-03-17T13:26:49.077Z
-Stopped at: Completed 08-bug-fixes-and-performance 08-03-PLAN.md
+Last session: 2026-03-17
+Stopped at: Roadmap written, all 4 phases defined, ready to plan Phase 10
 Resume file: None
