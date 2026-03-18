@@ -3,16 +3,13 @@
 // Note that this config is unrelated to the Vercel Edge Runtime and is also required when running locally.
 // https://docs.sentry.io/platforms/javascript/guides/nextjs/
 
-import * as Sentry from "@sentry/nextjs";
-
-Sentry.init({
-  dsn: process.env.NEXT_PUBLIC_SENTRY_DSN,
-
-  // CRITICAL: 0.1 — never 1.0 for a real-time game app (quota protection)
-  tracesSampleRate: 0.1,
-
-  environment: process.env.NODE_ENV,
-
-  // Enable logs to be sent to Sentry
-  enableLogs: true,
-});
+import("@sentry/nextjs")
+  .then((Sentry) => {
+    Sentry.init({
+      dsn: process.env.NEXT_PUBLIC_SENTRY_DSN,
+      tracesSampleRate: 0.1,
+      environment: process.env.NODE_ENV,
+      enableLogs: true,
+    });
+  })
+  .catch(() => {});

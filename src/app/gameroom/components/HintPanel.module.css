@@ -50,11 +50,13 @@
 }
 
 .hintEmpty {
-  color: rgba(255, 255, 255, 0.8);
-  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.35);
+  font-size: 0.8rem;
   font-family: var(--retro-font-alt);
-  font-weight: bold;
-  padding: 0.25rem 0;
+  font-weight: normal;
+  font-style: italic;
+  padding: 0.25rem 0.4rem;
+  letter-spacing: 0.02em;
 }
 
 @keyframes hintAppear {
