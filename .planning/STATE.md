@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.3
 milestone_name: Observability & Performance
 status: planning
-stopped_at: Completed 10-sentry-foundation plan 01 (10-01-PLAN.md)
-last_updated: "2026-03-18T07:41:28.512Z"
+stopped_at: "Checkpoint: Task 3 human-verify — awaiting Sentry dashboard verification for 10-02-PLAN.md"
+last_updated: "2026-03-18T07:54:50.048Z"
 last_activity: 2026-03-17 — Roadmap created, ready to begin Phase 10 planning
 progress:
   total_phases: 4
-  completed_phases: 0
+  completed_phases: 1
   total_plans: 2
-  completed_plans: 1
+  completed_plans: 2
   percent: 0
 ---
 
@@ -47,6 +47,7 @@ Progress: [░░░░░░░░░░] 0%
 
 ## Accumulated Context
 | Phase 10-sentry-foundation P01 | 25 | 3 tasks | 8 files |
+| Phase 10-sentry-foundation P02 | 9min | 2 tasks | 5 files |
 
 ### Decisions
 
@@ -62,6 +63,8 @@ See PROJECT.md Key Decisions table for all decisions from v1.0–v1.2.
 - [Phase 10-sentry-foundation]: Wizard placed instrumentation files in src/ — edited at actual location, not relocated
 - [Phase 10-sentry-foundation]: tracesSampleRate: 0.1 across all runtimes — real-time game would exhaust Sentry quota at 1.0
 - [Phase 10-sentry-foundation]: sendDefaultPii removed — user identity set explicitly via setSentryUser() in Plan 02
+- [Phase 10-sentry-foundation]: game_ws_url used as Sentry room identifier — LobbyJoinSuccess type has no id field; game_ws_url uniquely identifies the room
+- [Phase 10-sentry-foundation]: Module-level lastConnectErrorCapture guard in useGameSocket — per-instance ref resets on hook remount; module scope persists across reconnect cycles
 
 ### Pending Todos
 
@@ -74,6 +77,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-03-18T07:41:28.510Z
-Stopped at: Completed 10-sentry-foundation plan 01 (10-01-PLAN.md)
+Last session: 2026-03-18T07:54:50.046Z
+Stopped at: Checkpoint: Task 3 human-verify — awaiting Sentry dashboard verification for 10-02-PLAN.md
 Resume file: None

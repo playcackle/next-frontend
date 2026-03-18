@@ -48,7 +48,7 @@ Archive: `.planning/milestones/v1.2-ROADMAP.md`
 
 #### Phase Checklist
 
-- [ ] **Phase 10: Sentry Foundation** - SDK installed, errors captured, user and room context attached, quota-safe config
+- [x] **Phase 10: Sentry Foundation** - SDK installed, errors captured, user and room context attached, quota-safe config (completed 2026-03-18)
 - [ ] **Phase 11: Error Boundaries** - Global and gameroom boundaries layered; socket errors explicitly captured
 - [ ] **Phase 12: Performance Baselines** - Re-render hotspots, bundle, Web Vitals, and socket overhead measured and documented
 - [ ] **Phase 13: Performance Fixes** - Top 3 highest-impact bottlenecks fixed and verified against baselines
@@ -116,7 +116,7 @@ Plans:
 | 7. Admin/Route CSS Tidy | v1.2 | 3/3 | Complete | 2026-03-17 |
 | 8. Bug Fixes and Performance | v1.2 | 3/3 | Complete | 2026-03-17 |
 | 9. CSS-01 Gap Closure | v1.2 | manual | Complete | 2026-03-17 |
-| 10. Sentry Foundation | 1/2 | In Progress|  | - |
+| 10. Sentry Foundation | 2/2 | Complete   | 2026-03-18 | - |
 | 11. Error Boundaries | v1.3 | 0/? | Not started | - |
 | 12. Performance Baselines | v1.3 | 0/? | Not started | - |
 | 13. Performance Fixes | v1.3 | 0/? | Not started | - |
