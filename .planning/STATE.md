@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.3
 milestone_name: Observability & Performance
 status: planning
-stopped_at: Completed 12-performance-baselines 12-01-PLAN.md
-last_updated: "2026-03-18T12:48:29.110Z"
+stopped_at: Completed 12-performance-baselines 12-02-PLAN.md
+last_updated: "2026-03-18T13:49:49.408Z"
 last_activity: 2026-03-17 — Roadmap created, ready to begin Phase 10 planning
 progress:
   total_phases: 4
-  completed_phases: 2
+  completed_phases: 3
   total_plans: 6
-  completed_plans: 5
+  completed_plans: 6
   percent: 0
 ---
 
@@ -52,6 +52,7 @@ Progress: [░░░░░░░░░░] 0%
 | Phase 11-error-boundaries P01 | 2 | 1 tasks | 1 files |
 | Phase 11-error-boundaries P02 | 15 | 3 tasks | 2 files |
 | Phase 12-performance-baselines P01 | 4 | 2 tasks | 5 files |
+| Phase 12-performance-baselines P02 | 30 | 3 tasks | 7 files |
 
 ### Decisions
 
@@ -79,6 +80,8 @@ See PROJECT.md Key Decisions table for all decisions from v1.0–v1.2.
 - [Phase 11-error-boundaries]: GameroomErrorBoundary OBS-04 verified: transient crash recovers silently, persistent crash shows minimal fallback, Sentry captures with boundary=gameroom tag
 - [Phase 12-performance-baselines]: npm run analyze uses --webpack flag: Next.js 16 defaults to Turbopack which is incompatible with @next/bundle-analyzer
 - [Phase 12-performance-baselines]: WebVitalsLogger only logs in NODE_ENV=development — gating ensures no production console noise before baselines are recorded
+- [Phase 12-performance-baselines]: WDYR removed from layout.tsx after crashing on Next.js 16 router internals — wdyr.ts and WdyrInit.tsx remain as artifacts but are not mounted; React Profiler callbacks replaced WDYR for re-render profiling
+- [Phase 12-performance-baselines]: LCP 4324ms (poor) is highest-priority fix target for Phase 13; lobby_tick handler overhead is low (~0.2ms); React component render times are fast (<1ms) — Phase 13 should focus on LCP/bundle size first
 
 ### Pending Todos
 
@@ -91,6 +94,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-03-18T12:48:29.108Z
-Stopped at: Completed 12-performance-baselines 12-01-PLAN.md
+Last session: 2026-03-18T13:49:49.407Z
+Stopped at: Completed 12-performance-baselines 12-02-PLAN.md
 Resume file: None

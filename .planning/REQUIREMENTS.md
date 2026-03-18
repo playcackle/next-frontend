@@ -15,11 +15,11 @@
 
 ### Performance
 
-- [ ] **PERF-01**: React re-render hotspots profiled across high-frequency gameroom components (UnifiedMessages, LeaderBoard, SlotGrid)
+- [x] **PERF-01**: React re-render hotspots profiled across high-frequency gameroom components (UnifiedMessages, LeaderBoard, SlotGrid)
 - [x] **PERF-02**: Next.js bundle analyzed for total size, code splitting opportunities, and unused imports
 - [x] **PERF-03**: Core Web Vitals (LCP, CLS, INP) measured and baselined
-- [ ] **PERF-04**: Socket event handling overhead profiled (message queue, atom update frequency in useGameEvents)
-- [ ] **PERF-05**: All performance findings documented with impact/effort ratings
+- [x] **PERF-04**: Socket event handling overhead profiled (message queue, atom update frequency in useGameEvents)
+- [x] **PERF-05**: All performance findings documented with impact/effort ratings
 - [ ] **PERF-06**: Top 3 highest-impact bottlenecks fixed and verified against baselines
 
 ## Future Requirements
@@ -54,11 +54,11 @@ Which phases cover which requirements. Updated during roadmap creation.
 | OBS-03 | Phase 11 | Complete |
 | OBS-04 | Phase 11 | Complete |
 | OBS-05 | Phase 10 | Complete |
-| PERF-01 | Phase 12 | Pending |
+| PERF-01 | Phase 12 | Complete |
 | PERF-02 | Phase 12 | Complete |
 | PERF-03 | Phase 12 | Complete |
-| PERF-04 | Phase 12 | Pending |
-| PERF-05 | Phase 12 | Pending |
+| PERF-04 | Phase 12 | Complete |
+| PERF-05 | Phase 12 | Complete |
 | PERF-06 | Phase 13 | Pending |
 
 **Coverage:**
