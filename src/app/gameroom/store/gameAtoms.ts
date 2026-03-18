@@ -63,6 +63,10 @@ export const showCountDownAtom = atom(
 
 export const answerAtom = atom<string>("");
 
+// Current authenticated user ID for gameroom components.
+// Set during room join flow to avoid Supabase dependency in hot-render path.
+export const currentUserIdAtom = atom<string | null>(null);
+
 // Unified message system atoms
 export const unifiedMessagesAtom = atom<UnifiedMessage[]>([]);
 export const unifiedInputAtom = atom<string>("");
