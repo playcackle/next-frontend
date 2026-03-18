@@ -94,7 +94,10 @@ Plans:
   3. Re-render counts for UnifiedMessages, LeaderBoard, and SlotGrid are profiled and hotspots identified with component names and trigger atoms
   4. Socket event handling overhead in `useGameEvents` is measured (time per event dispatch, atom update frequency during active play)
   5. All findings are written to a single document with impact and effort ratings, ordered by impact
-**Plans**: TBD
+**Plans**: 2 plans
+Plans:
+- [ ] 12-01-PLAN.md — Install @next/bundle-analyzer + WebVitalsLogger (PERF-02, PERF-03)
+- [ ] 12-02-PLAN.md — WDYR + Profiler instrumentation, socket timing probes, PERF-BASELINE.md (PERF-01, PERF-04, PERF-05)
 
 ### Phase 13: Performance Fixes
 **Goal**: The three highest-impact bottlenecks identified in Phase 12 are fixed, and each fix is verified to improve its corresponding Phase 12 baseline metric
