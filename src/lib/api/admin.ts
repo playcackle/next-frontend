@@ -2,8 +2,11 @@
  * API client for admin CRUD operations
  */
 
-const apiFetch = (path: string, init?: RequestInit) => {
-  return fetch(`/api${path.startsWith("/") ? path : `/${path}`}`, init);
+const apiFetch = async (path: string, init?: RequestInit): Promise<Response> => {
+  const res = await fetch(`/api${path.startsWith("/") ? path : `/${path}`}`, init);
+  if (res.status === 401) throw new Error("You must be logged in to access this.");
+  if (res.status === 403) throw new Error("You don't have permission to access this.");
+  return res;
 };
 
 // ============================================================================

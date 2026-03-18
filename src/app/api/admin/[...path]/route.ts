@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { createClient } from "@/lib/supabase/server";
 
 const LOBBY_MANAGER_URL =
   process.env.LOBBY_MANAGER_INTERNAL_URL || "http://localhost:8001";
@@ -52,6 +53,18 @@ const HOP_BY_HOP_HEADERS = [
   "transfer-encoding",
 ];
 
+const requireAdmin = async (): Promise<NextResponse | null> => {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+  if (user.app_metadata?.role !== "admin") {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
+  return null;
+};
+
 const forwardRequest = async (req: NextRequest, context: RouteContext) => {
   const segments = await resolvePathSegments(context);
   const targetUrl = buildTargetUrl(segments, req.nextUrl.search);
@@ -85,21 +98,31 @@ const forwardRequest = async (req: NextRequest, context: RouteContext) => {
 export const dynamic = "force-dynamic";
 
 export async function GET(req: NextRequest, context: RouteContext) {
+  const denied = await requireAdmin();
+  if (denied) return denied;
   return forwardRequest(req, context);
 }
 
 export async function POST(req: NextRequest, context: RouteContext) {
+  const denied = await requireAdmin();
+  if (denied) return denied;
   return forwardRequest(req, context);
 }
 
 export async function PUT(req: NextRequest, context: RouteContext) {
+  const denied = await requireAdmin();
+  if (denied) return denied;
   return forwardRequest(req, context);
 }
 
 export async function PATCH(req: NextRequest, context: RouteContext) {
+  const denied = await requireAdmin();
+  if (denied) return denied;
   return forwardRequest(req, context);
 }
 
 export async function DELETE(req: NextRequest, context: RouteContext) {
+  const denied = await requireAdmin();
+  if (denied) return denied;
   return forwardRequest(req, context);
 }
