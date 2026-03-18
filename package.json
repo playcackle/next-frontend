@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "build": "next build",
+    "analyze": "ANALYZE=true next build --webpack",
     "dev": "next dev",
     "lint": "eslint .",
     "start": "next start",
@@ -39,6 +40,7 @@
     "socket.io-client": "^4.8.1"
   },
   "devDependencies": {
+    "@next/bundle-analyzer": "^16.1.7",
     "@types/canvas-confetti": "^1.9.0",
     "@types/node": "^24",
     "@types/react": "19.2.7",
