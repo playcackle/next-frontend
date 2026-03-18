@@ -104,7 +104,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  overflow: visible;
+  overflow: hidden;
 }
 
 /* Heat levels: cool blue → warm amber → orange → hot pink → inferno */
@@ -157,10 +157,10 @@
 /* Flame icon */
 .dotFlame {
   position: absolute;
-  top: -18px;
+  top: 50%;
   left: 50%;
-  transform: translateX(-50%);
-  font-size: 14px;
+  transform: translate(-50%, -50%);
+  font-size: 12px;
   line-height: 1;
   pointer-events: none;
   animation: flameBob 0.8s ease-in-out infinite alternate;
@@ -168,18 +168,17 @@
 }
 
 .dotFlameInferno {
-  font-size: 18px;
-  top: -22px;
+  font-size: 14px;
   filter: drop-shadow(0 0 6px rgba(255, 0, 100, 1));
   animation: flameBob 0.5s ease-in-out infinite alternate;
 }
 
 @keyframes flameBob {
   from {
-    transform: translateX(-50%) scale(1) rotate(-5deg);
+    transform: translate(-50%, -50%) scale(1) rotate(-5deg);
   }
   to {
-    transform: translateX(-50%) scale(1.15) rotate(5deg);
+    transform: translate(-50%, -50%) scale(1.15) rotate(5deg);
   }
 }
 
