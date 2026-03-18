@@ -7,6 +7,7 @@ import type React from "react";
 import { Suspense } from "react";
 import "./globals.css";
 import { Provider } from "./provider";
+import { WebVitalsLogger } from "./_components/WebVitalsLogger";
 
 export const metadata: Metadata = {
   title: "Cackle",
@@ -30,6 +31,7 @@ export default async function RootLayout({
           overflow: "hidden",
         }}
       >
+        <WebVitalsLogger />
         <Theme appearance="dark" hasBackground={false}>
           <div className="crt-container">
             <div className="crt-content">

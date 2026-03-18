@@ -2,9 +2,9 @@
 
 ## Pre-existing Issues (Out of Scope)
 
-### TypeScript error in webpack build path
+### TypeScript errors in route files (surfaced by webpack build)
 
-**File:** `src/app/api/admin/[...path]/route.ts`
-**Error:** `Type "RouteContext" is not a valid type for the function's second argument. Expected "RouteContext", got "{ params: RouteParams; }".`
-**Context:** This error does NOT appear in `npx tsc --noEmit` (passes clean) and does NOT appear in the Turbopack `next build`. It only surfaces when running `next build --webpack` (the analyze path). Pre-existing issue unrelated to Phase 12 work.
-**Action required:** Fix route parameter types to match Next.js 16 RouteContext signature.
+**Files:** `src/app/api/admin/[...path]/route.ts`, `src/app/api/players/[...path]/route.ts`
+**Error:** Generated `.next/types/app/api/.../route.ts` exposes RouteParams incompatible with Next.js 16 async params (`params: Promise<any>` required).
+**Context:** These errors do NOT appear in Turbopack `next build` or in `npx tsc --noEmit` when `.next/types/` does not exist. The `tsconfig.json` includes `.next/types/**/*.ts`. Running `npm run analyze` (webpack build) generates `.next/types/` which then triggers these pre-existing errors. The `WebVitalsLogger.tsx` and `layout.tsx` changes from 12-01 are clean.
+**Action required:** Update `RouteParams` type in both route files to use `Promise<{ path: string[] }>` for Next.js 16 async params compatibility.
