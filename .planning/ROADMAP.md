@@ -79,7 +79,10 @@ Plans:
   2. A simulated render crash inside the gameroom component tree triggers a silent recovery attempt before any fallback is shown
   3. When a gameroom crash is unrecoverable, the fallback UI is minimal (does not expose stack traces or internal state to the user)
   4. Both boundary types report the caught error to Sentry with the room context available at the time of the crash
-**Plans**: TBD
+**Plans**: 2 plans
+Plans:
+- [ ] 11-01-PLAN.md — app/error.tsx segment boundary for non-gameroom pages (OBS-03)
+- [ ] 11-02-PLAN.md — GameroomErrorBoundary silent-retry class component + layout wiring (OBS-04)
 
 ### Phase 12: Performance Baselines
 **Goal**: Measured, documented baselines exist for bundle size, Core Web Vitals, React re-render counts on high-frequency components, and socket event handling overhead — ready to use as acceptance criteria for Phase 13
@@ -117,6 +120,6 @@ Plans:
 | 8. Bug Fixes and Performance | v1.2 | 3/3 | Complete | 2026-03-17 |
 | 9. CSS-01 Gap Closure | v1.2 | manual | Complete | 2026-03-17 |
 | 10. Sentry Foundation | 2/2 | Complete    | 2026-03-18 | - |
-| 11. Error Boundaries | v1.3 | 0/? | Not started | - |
+| 11. Error Boundaries | v1.3 | 0/2 | Not started | - |
 | 12. Performance Baselines | v1.3 | 0/? | Not started | - |
 | 13. Performance Fixes | v1.3 | 0/? | Not started | - |
