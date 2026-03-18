@@ -14,7 +14,7 @@ import {
   getRandomSnappedSound,
   playSound,
 } from "../utils";
-import { clearRoundHintsAtom } from "../store/gameAtoms";
+import { clearRoundHintsAtom, clearSlotHeatAtom, slotHeatAtom } from "../store/gameAtoms";
 import { useGameActions } from "./useGameActions";
 import { useGameSocket } from "./useGameSocket";
 import { useGameState } from "./useGameState";
@@ -24,6 +24,8 @@ export const useGameEvents = (gameWsUrl: string, token: string) => {
   const { updateGameState, slots } = useGameState();
   const { triggerCorrectAnswerEffects } = useGameActions();
   const clearRoundHints = useSetAtom(clearRoundHintsAtom);
+  const setSlotHeat = useSetAtom(slotHeatAtom);
+  const clearSlotHeat = useSetAtom(clearSlotHeatAtom);
 
   const slotsRef = useRef(slots);
   useEffect(() => {
@@ -67,6 +69,9 @@ export const useGameEvents = (gameWsUrl: string, token: string) => {
       timeRemaining: data.time_remaining_seconds ?? 0,
       scores: data.scores ?? [],
     });
+    if (data.slot_heats) {
+      setSlotHeat(data.slot_heats);
+    }
   });
 
   const handleRoundOverRef = useRef((data: RoundOverPayload) => {
@@ -98,6 +103,7 @@ export const useGameEvents = (gameWsUrl: string, token: string) => {
       accolades: [], // Clear accolades for new round
     });
     clearRoundHints();
+    clearSlotHeat();
     playSound("newRound");
   });
 
@@ -187,29 +193,32 @@ export const useGameEvents = (gameWsUrl: string, token: string) => {
   }, [updateGameState, triggerCorrectAnswerEffects]);
 
   useEffect(() => {
-    onEvent("lobby_state_sync", (data: LobbySyncPayload) =>
-      handleLobbySyncRef.current(data),
-    );
-    onEvent("lobby_tick", (data: LobbyTickPayload) =>
-      handleLobbyTickRef.current(data),
-    );
-    onEvent("round_over", (data: RoundOverPayload) =>
-      handleRoundOverRef.current(data),
-    );
-    onEvent("round_starting_soon", () => handleRoundStartingSoonRef.current());
-    onEvent("new_round_started", (data: NewRoundStartedPayload) =>
-      handleNewRoundStartedRef.current(data),
-    );
-    onEvent("game_over", (data: any) => handleGameOverRef.current(data));
-    onEvent("lobby_resetting_for_new_game", () =>
-      handleLobbyResettingRef.current(),
-    );
-    onEvent("slot_snapped", (data: SlotSnappedPayload) =>
-      handleSlotSnappedRef.current(data),
-    );
-    onEvent("submission_feedback", (data: SubmissionFeedbackPayload) =>
-      handleSubmissionFeedbackRef.current(data),
-    );
+    const cleanups = [
+      onEvent("lobby_state_sync", (data: LobbySyncPayload) =>
+        handleLobbySyncRef.current(data),
+      ),
+      onEvent("lobby_tick", (data: LobbyTickPayload) =>
+        handleLobbyTickRef.current(data),
+      ),
+      onEvent("round_over", (data: RoundOverPayload) =>
+        handleRoundOverRef.current(data),
+      ),
+      onEvent("round_starting_soon", () => handleRoundStartingSoonRef.current()),
+      onEvent("new_round_started", (data: NewRoundStartedPayload) =>
+        handleNewRoundStartedRef.current(data),
+      ),
+      onEvent("game_over", (data: any) => handleGameOverRef.current(data)),
+      onEvent("lobby_resetting_for_new_game", () =>
+        handleLobbyResettingRef.current(),
+      ),
+      onEvent("slot_snapped", (data: SlotSnappedPayload) =>
+        handleSlotSnappedRef.current(data),
+      ),
+      onEvent("submission_feedback", (data: SubmissionFeedbackPayload) =>
+        handleSubmissionFeedbackRef.current(data),
+      ),
+    ];
+    return () => cleanups.forEach((fn) => fn?.());
   }, [onEvent]);
 
   return { sendEvent, connectionStatus };

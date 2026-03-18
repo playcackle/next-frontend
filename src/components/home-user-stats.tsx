@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { playersApi, type PlayerProfileStats } from "@/lib/api/players";
-import styles from "@/app/page.module.css";
+import styles from "./home-user-stats.module.css";
 
 type Props = { userId: string };
 

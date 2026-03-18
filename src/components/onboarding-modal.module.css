@@ -353,6 +353,72 @@
   border-bottom: 12px solid #fff;
 }
 
+.tourTailDownCenter {
+  bottom: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-left: 9px solid transparent;
+  border-right: 9px solid transparent;
+  border-top: 12px solid #fff;
+}
+
+.tourOrange { color: #f97316; font-weight: bold; }
+
+/* Hot Wire slot */
+.tourSlotHotWire {
+  background: #f97316;
+  box-shadow: 0 0 8px rgba(249, 115, 22, 0.7);
+  border: 1px solid rgba(255, 200, 100, 0.4);
+  animation: hotWirePulse 1.4s ease-in-out infinite alternate;
+}
+
+@keyframes hotWirePulse {
+  from { box-shadow: 0 0 4px rgba(249, 115, 22, 0.5); }
+  to   { box-shadow: 0 0 12px rgba(249, 115, 22, 0.9); }
+}
+
+/* Slots + hints wrapper */
+.tourSlotsWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+/* Hints strip below slots */
+.tourHintsStrip {
+  background: rgba(20, 20, 40, 0.8);
+  border: 1px solid rgba(0, 221, 255, 0.2);
+  border-radius: 4px;
+  padding: 0.3rem 0.45rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.tourHintsLabel {
+  font-family: var(--retro-font);
+  font-size: 0.45rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: rgba(0, 221, 255, 0.7);
+}
+
+.tourHintsChips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.2rem;
+}
+
+.tourHintChip {
+  font-family: var(--retro-font);
+  font-size: 0.48rem;
+  color: rgba(255, 255, 255, 0.8);
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 3px;
+  padding: 0.1rem 0.3rem;
+}
+
 /* Frozen game UI */
 .tourGame {
   border: 1px solid rgba(0, 221, 255, 0.25);

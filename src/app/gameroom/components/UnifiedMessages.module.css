@@ -140,9 +140,14 @@
 }
 
 .successfulAnswerMessage {
-  border-left-color: var(--neon-green);
-  background-color: rgba(0, 255, 102, 0.05);
-  animation: correctAnswerGlow 1s ease-out;
+  border-left: 4px solid var(--neon-green);
+  background-color: rgba(0, 255, 102, 0.18);
+  animation: correctAnswerGlow 1.5s ease-out;
+}
+
+.successfulAnswerMessage .messageContent {
+  color: var(--neon-green);
+  font-weight: bold;
 }
 
 .ownMessage {
@@ -161,18 +166,22 @@
   background-color: rgba(0, 221, 255, 0.05);
 }
 
-/* Duplicate / already-snapped attempt — orange border, muted */
-.duplicateMessage {
-  border-left-color: #ff8c00;
-  background-color: rgba(255, 140, 0, 0.05);
-  opacity: 0.75;
+/* Already-snapped attempt — red tint, struck-through text */
+.takenMessage {
+  border-left: 4px solid rgba(255, 50, 80, 0.85);
+  background-color: rgba(255, 50, 80, 0.12);
+}
+
+.takenMessage .messageContent {
+  text-decoration: line-through;
+  color: rgba(255, 255, 255, 0.45);
 }
 
 /* Combined class: own message that is also a correct answer — green wins over blue tint */
 /* Addresses: .ownMessage uses !important so successfulAnswerMessage green is suppressed without this */
 .ownSuccessfulAnswerMessage {
-  background-color: rgba(0, 255, 102, 0.05) !important;
-  border-left-color: var(--neon-green) !important;
+  background-color: rgba(0, 255, 102, 0.18) !important;
+  border-left: 4px solid var(--neon-green) !important;
 }
 
 /* ============================

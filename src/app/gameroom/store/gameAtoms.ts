@@ -69,6 +69,9 @@ export const unifiedInputAtom = atom<string>("");
 // Hints sent by BotBob during the current round, displayed in the dedicated HintPanel
 export const roundHintsAtom = atom<UnifiedMessage[]>([]);
 
+// Per-slot max similarity score seen this round (slot_id -> 0-100), sourced from lobby_tick
+export const slotHeatAtom = atom<Record<string, number>>({});
+
 export const animationStateAtom = atom<AnimationState>({
   attentionAnimation: "",
   slotId: null,
@@ -145,4 +148,8 @@ export const clearUnifiedMessagesAtom = atom(null, (get, set) => {
 
 export const clearRoundHintsAtom = atom(null, (get, set) => {
   set(roundHintsAtom, []);
+});
+
+export const clearSlotHeatAtom = atom(null, (get, set) => {
+  set(slotHeatAtom, {});
 });

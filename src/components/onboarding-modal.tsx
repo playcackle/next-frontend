@@ -39,8 +39,8 @@ const STEPS = [
     id: 5,
     type: "text" as const,
     icon: "!",
-    title: "BotBob & Hints",
-    body: "Stuck? Hints may drop mid-round. Sometimes they come from BotBob, our AI trickster who likes to stir chaos.",
+    title: "Hints & Hot Wire",
+    body: "Stuck? Hints may drop mid-round to nudge you in the right direction. Keep an eye out for Hot Wire slots — these are live wires waiting to be claimed. First player to answer correctly steals them.",
   },
   {
     id: 6,
@@ -76,8 +76,16 @@ function TourStep() {
         <div className={styles.tourCallout}>
           <span className={styles.tourCalloutNum}>4</span>
           <div className={styles.tourCalloutBody}>
-            <strong className={styles.tourCalloutTitle}>BotBob &amp; Hints</strong>
-            <p>Stuck? <strong>Hints may drop mid-round.</strong> Sometimes they come from <strong>BotBob</strong>, our AI trickster who likes to stir chaos.</p>
+            <strong className={styles.tourCalloutTitle}>Hints</strong>
+            <p>Stuck? <strong>Hints may drop mid-round</strong> to nudge you in the right direction. They appear below the answer slots.</p>
+          </div>
+          <div className={`${styles.tourTail} ${styles.tourTailDownCenter}`} />
+        </div>
+        <div className={styles.tourCallout}>
+          <span className={styles.tourCalloutNum}>5</span>
+          <div className={styles.tourCalloutBody}>
+            <strong className={styles.tourCalloutTitle}>Hot Wire slots</strong>
+            <p><strong className={styles.tourOrange}>Orange slots</strong> are <strong>Hot Wire</strong> — live wires up for grabs. First correct answer <strong>steals the slot.</strong></p>
           </div>
           <div className={`${styles.tourTail} ${styles.tourTailDownLeft}`} />
         </div>
@@ -115,24 +123,36 @@ function TourStep() {
             </div>
             <div className={styles.tourInput}>Type...</div>
           </div>
-          {/* Slots */}
-          <div className={styles.tourSlots}>
-            <div className={styles.tourSlotsHeader}>
-              <span className={styles.tourSlotsCount}>10</span>
-              <span className={styles.tourSlotsLabel}>10 answers found</span>
+          {/* Answer grid with hints below */}
+          <div className={styles.tourSlotsWrapper}>
+            {/* Slots */}
+            <div className={styles.tourSlots}>
+              <div className={styles.tourSlotsHeader}>
+                <span className={styles.tourSlotsCount}>10</span>
+                <span className={styles.tourSlotsLabel}>10 answers found</span>
+              </div>
+              <div className={styles.tourSlotsGrid}>
+                {[
+                  { label: "CAT" }, { label: "DOG" }, { label: "LION", purple: true },
+                  { label: "WHALE" }, { label: "BEAR" }, { label: "FOX" },
+                  { label: "RAT", hotWire: true }, { empty: true }, { empty: true }, { empty: true },
+                ].map((slot, i) => (
+                  <div key={i} className={`${styles.tourSlot} ${slot.purple ? styles.tourSlotPurple : ""} ${slot.hotWire ? styles.tourSlotHotWire : ""} ${slot.empty ? styles.tourSlotEmpty : ""}`}>
+                    {slot.empty ? <span className={styles.tourSlotQ}>?</span> : <span className={styles.tourSlotLabel}>{slot.label}</span>}
+                  </div>
+                ))}
+              </div>
             </div>
-            <div className={styles.tourSlotsGrid}>
-              {[
-                { label: "CAT" }, { label: "DOG" }, { label: "LION", purple: true },
-                { label: "WHALE" }, { label: "BEAR" }, { label: "FOX" },
-                { empty: true }, { empty: true }, { empty: true }, { empty: true },
-              ].map((slot, i) => (
-                <div key={i} className={`${styles.tourSlot} ${slot.purple ? styles.tourSlotPurple : ""} ${slot.empty ? styles.tourSlotEmpty : ""}`}>
-                  {slot.empty ? <span className={styles.tourSlotQ}>?</span> : <span className={styles.tourSlotLabel}>{slot.label}</span>}
-                </div>
-              ))}
+            {/* Hints strip */}
+            <div className={styles.tourHintsStrip}>
+              <span className={styles.tourHintsLabel}>Hints</span>
+              <div className={styles.tourHintsChips}>
+                <span className={styles.tourHintChip}>has whiskers</span>
+                <span className={styles.tourHintChip}>lives in the sea</span>
+              </div>
             </div>
           </div>
+
           {/* Leaderboard */}
           <div className={styles.tourLeader}>
             <div className={styles.tourLeaderTitle}>Leaderboard</div>
@@ -166,7 +186,7 @@ function TourStep() {
           <div className={`${styles.tourTail} ${styles.tourTailUpCenter}`} />
         </div>
         <div className={styles.tourCallout}>
-          <span className={styles.tourCalloutNum}>5</span>
+          <span className={styles.tourCalloutNum}>6</span>
           <div className={styles.tourCalloutBody}>
             <strong className={styles.tourCalloutTitle}>Beat the clock</strong>
             <p>Every room has a <strong>countdown timer</strong>. Find as many answers as you can <strong>before time runs out.</strong></p>

@@ -19,6 +19,10 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { io, Socket } from "socket.io-client";
 import { EventPayloadMap, GameEvent } from "../types/payloads";
 import { debounce } from "../utils";
+import { captureException } from "@/lib/sentry";
+
+// Module-level guard: capture at most once per 30 seconds across all socket instances
+let lastConnectErrorCapture = 0;
 
 type EventListener<T extends GameEvent> = (data: EventPayloadMap[T]) => void;
 
@@ -162,6 +166,11 @@ export const useGameSocket = (baseUrl: string, token: string) => {
     });
 
     socket.on("connect_error", (error) => {
+      const now = Date.now();
+      if (now - lastConnectErrorCapture > 30_000) {
+        lastConnectErrorCapture = now;
+        captureException(error, { tags: { source: "socket_connect_error" } });
+      }
       // Connection failed
       setSocketState((prev) => ({
         ...prev,

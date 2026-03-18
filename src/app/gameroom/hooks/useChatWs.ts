@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useSetAtom } from "jotai";
 import { io, Socket } from "socket.io-client";
+import { captureException } from "@/lib/sentry";
 import { UnifiedMessage, addUnifiedMessageAtom } from "../store/gameAtoms";
 
 interface ChatState {
@@ -62,6 +63,7 @@ export const useChatSocket = (baseUrl: string, token: string) => {
 
     socket.on("error", (err) => {
       console.error("Chat socket error:", err);
+      captureException(err, { tags: { source: "chat_socket_error" } });
       setChatState((prev) => ({
         ...prev,
         error: "Connection error",

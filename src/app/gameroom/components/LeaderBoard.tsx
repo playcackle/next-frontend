@@ -15,7 +15,8 @@ import {
 
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { useGameState } from "../hooks/useGameState";
+import { useAtomValue } from "jotai";
+import { accoladesAtom, scoresAtom } from "../store/gameAtoms";
 import type { Accolade } from "../types/state";
 import styles from "./leaderboard.module.css";
 
@@ -82,7 +83,8 @@ function AccoladeChip({ accolade }: { accolade: Accolade }) {
 }
 
 export default function Leaderboard() {
-  const { scores, accolades } = useGameState();
+  const scores = useAtomValue(scoresAtom);
+  const accolades = useAtomValue(accoladesAtom);
 
   // Helper to get accolades for a specific player
   const getPlayerAccolades = (playerId: string): Accolade[] => {

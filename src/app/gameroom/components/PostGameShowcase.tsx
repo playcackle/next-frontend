@@ -5,7 +5,8 @@ import { Award, Trophy } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { ACCOLADE_LIST } from "../constants";
-import { useGameState } from "../hooks/useGameState";
+import { useAtomValue } from "jotai";
+import { playerAccoladesAtom, scoresAtom } from "../store/gameAtoms";
 import type { PlayerAccolade } from "../types/payloads";
 import styles from "./postgame.module.css";
 import PostgameAccolades from "./PostGameModal";
@@ -77,7 +78,8 @@ function AccoladeChip({ accoladeType, count }: AccoladeChipProps) {
 // ============ MAIN COMPONENT ============
 
 export default function PostGameShowcase() {
-  const { scores, playerAccolades } = useGameState();
+  const scores = useAtomValue(scoresAtom);
+  const playerAccolades = useAtomValue(playerAccoladesAtom);
   const [showAccolades, setShowAccolades] = useState(true);
 
   // Build lookup map: player_id -> PlayerAccolades

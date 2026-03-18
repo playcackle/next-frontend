@@ -6,13 +6,16 @@
     "build": "next build",
     "dev": "next dev",
     "lint": "eslint .",
-    "start": "next start"
+    "start": "next start",
+    "check:sourcemaps": "find .next -name '*.map' | wc -l",
+    "build:check": "next build && npm run check:sourcemaps"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
     "@radix-ui/react-dialog": "^1.1.15",
     "@radix-ui/react-visually-hidden": "^1.2.4",
     "@radix-ui/themes": "latest",
+    "@sentry/nextjs": "^10.44.0",
     "@supabase/ssr": "^0.8.0",
     "@supabase/supabase-js": "^2.87.1",
     "animate.css": "latest",

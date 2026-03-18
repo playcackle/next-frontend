@@ -1,5 +1,6 @@
-import { useSetAtom } from "jotai";
+import { useAtomValue, useSetAtom } from "jotai";
 import { useCallback, useMemo } from "react";
+import { performanceModeAtom } from "@/atoms/performance-atom";
 import {
   answerAtom,
   resetGameStateAtom,
@@ -16,6 +17,7 @@ export const useGameActions = () => {
   const setAnswer = useSetAtom(answerAtom);
   const updateAnimationState = useSetAtom(updateAnimationStateAtom);
   const resetGameState = useSetAtom(resetGameStateAtom);
+  const performanceMode = useAtomValue(performanceModeAtom);
 
   const applyDOMAnimation = useCallback(
     (slotId: string, animationType: string) => {
@@ -92,43 +94,45 @@ export const useGameActions = () => {
     ) => {
       const element = document.getElementById(`slot-${slotId}`) as HTMLElement;
 
-      // ENHANCED: Add color burst overlay effect
-      const colorBurstOverlay = document.createElement("div");
-      colorBurstOverlay.className = `colorBurstOverlay ${
-        isBonus ? "bonus" : ""
-      }`;
-      document.body.appendChild(colorBurstOverlay);
+      if (!performanceMode) {
+        // ENHANCED: Add color burst overlay effect
+        const colorBurstOverlay = document.createElement("div");
+        colorBurstOverlay.className = `colorBurstOverlay ${
+          isBonus ? "bonus" : ""
+        }`;
+        document.body.appendChild(colorBurstOverlay);
 
-      // Remove color burst after animation
-      setTimeout(() => {
-        if (colorBurstOverlay.parentNode) {
-          colorBurstOverlay.parentNode.removeChild(colorBurstOverlay);
-        }
-      }, 1200);
-
-      // ENHANCED: Add screen shake to the main container
-      const mainContainer = (document.querySelector(".main") ||
-        document.body) as HTMLElement;
-      mainContainer.style.animation = "fullScreenShake 0.6s ease-in-out";
-
-      // Remove screen shake after animation
-      setTimeout(() => {
-        mainContainer.style.animation = "";
-      }, 600);
-
-      // ENHANCED: Add success glow to the slot element
-      if (element) {
-        const glowElement = document.createElement("div") as HTMLElement;
-        glowElement.className = `successGlow ${isBonus ? "bonus" : ""}`;
-        element.style.position = "relative";
-        element.appendChild(glowElement);
-
-        // Remove glow after animation
+        // Remove color burst after animation
         setTimeout(() => {
-          if (glowElement.parentNode) {
-            glowElement.parentNode.removeChild(glowElement);
+          if (colorBurstOverlay.parentNode) {
+            colorBurstOverlay.parentNode.removeChild(colorBurstOverlay);
           }
-        }, 1500);
+        }, 1200);
+
+        // ENHANCED: Add screen shake to the main container
+        const mainContainer = (document.querySelector(".main") ||
+          document.body) as HTMLElement;
+        mainContainer.style.animation = "fullScreenShake 0.6s ease-in-out";
+
+        // Remove screen shake after animation
+        setTimeout(() => {
+          mainContainer.style.animation = "";
+        }, 600);
+
+        // ENHANCED: Add success glow to the slot element
+        if (element) {
+          const glowElement = document.createElement("div") as HTMLElement;
+          glowElement.className = `successGlow ${isBonus ? "bonus" : ""}`;
+          element.style.position = "relative";
+          element.appendChild(glowElement);
+
+          // Remove glow after animation
+          setTimeout(() => {
+            if (glowElement.parentNode) {
+              glowElement.parentNode.removeChild(glowElement);
+            }
+          }, 1500);
+        }
       }
 
       updateAnimationState({
@@ -158,7 +162,7 @@ export const useGameActions = () => {
       // Reset animations after completion
       resetAnimations();
     },
-    [updateAnimationState, applyDOMAnimation, resetAnimations],
+    [updateAnimationState, applyDOMAnimation, resetAnimations, performanceMode],
   );
 
   const submitAnswer = (

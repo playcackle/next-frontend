@@ -1,5 +1,14 @@
 # Milestones
 
+## v1.2 Code Health (Shipped: 2026-03-17)
+
+**Phases completed:** 3 phases, 12 plans, 0 tasks
+
+**Key accomplishments:**
+- (none recorded)
+
+---
+
 ## v1.1 Audit (Shipped: 2026-03-12)
 
 **Phases completed:** 1 phase, 2 plans, 4 tasks

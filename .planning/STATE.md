@@ -1,16 +1,16 @@
 ---
 gsd_state_version: 1.0
-milestone: v1.2
-milestone_name: Code Health
+milestone: v1.3
+milestone_name: Observability & Performance
 status: planning
-stopped_at: Completed 06-gameroom-css-split 06-06-PLAN.md
-last_updated: "2026-03-13T22:30:25.290Z"
-last_activity: 2026-03-13 — Roadmap created, phases 6-8 defined
+stopped_at: Completed 11-error-boundaries 11-02-PLAN.md — OBS-04 human-verified and approved
+last_updated: "2026-03-18T12:19:50.299Z"
+last_activity: 2026-03-17 — Roadmap created, ready to begin Phase 10 planning
 progress:
-  total_phases: 3
-  completed_phases: 1
-  total_plans: 6
-  completed_plans: 6
+  total_phases: 4
+  completed_phases: 2
+  total_plans: 4
+  completed_plans: 4
   percent: 0
 ---
 
@@ -18,17 +18,17 @@ progress:
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-03-13)
+See: .planning/PROJECT.md (updated 2026-03-17)
 
 **Core value:** Players must always know where they are in the game and what their actions mean — reliable state, readable feedback, and visible progress are what keep them coming back.
-**Current focus:** v1.2 Code Health — Phase 6: Gameroom CSS Split
+**Current focus:** Phase 10 — Sentry Foundation
 
 ## Current Position
 
-Phase: 6 of 8 (Gameroom CSS Split)
-Plan: — (not yet planned)
+Phase: 10 of 13 (Sentry Foundation)
+Plan: — of —
 Status: Ready to plan
-Last activity: 2026-03-13 — Roadmap created, phases 6-8 defined
+Last activity: 2026-03-17 — Roadmap created, ready to begin Phase 10 planning
 
 Progress: [░░░░░░░░░░] 0%
 
@@ -46,34 +46,36 @@ Progress: [░░░░░░░░░░] 0%
 | - | - | - | - |
 
 ## Accumulated Context
-| Phase 06-gameroom-css-split P05 | 5 | 1 tasks | 2 files |
-| Phase 06-gameroom-css-split P03 | 8 | 1 tasks | 2 files |
-| Phase 06-gameroom-css-split P04 | 8 | 2 tasks | 4 files |
-| Phase 06-gameroom-css-split P02 | 2 | 1 tasks | 2 files |
-| Phase 06 P01 | 10min | 3 tasks | 6 files |
-| Phase 06-gameroom-css-split P06 | 3 | 2 tasks | 3 files |
-| Phase 06-gameroom-css-split P06 | 15 | 3 tasks | 3 files |
+| Phase 10-sentry-foundation P01 | 25 | 3 tasks | 8 files |
+| Phase 10-sentry-foundation P02 | 9min | 2 tasks | 5 files |
+| Phase 10-sentry-foundation P02 | 10 | 3 tasks | 5 files |
+| Phase 11-error-boundaries P01 | 2 | 1 tasks | 1 files |
+| Phase 11-error-boundaries P02 | 15 | 3 tasks | 2 files |
 
 ### Decisions
 
-See PROJECT.md Key Decisions table for all decisions from v1.0 and v1.1.
+See PROJECT.md Key Decisions table for all decisions from v1.0–v1.2.
 
-**v1.2 context:**
-- CSS split scope: gameroom.module.css (1,739 lines) imported by 9 files — PlayerAvatar, UnifiedInputForm, StatsRow, BotBobPinnedMessage, RoomHeader, SlotTile, SlotGrid, UnifiedMessages, page.tsx
-- Some components already have own modules: AnswerGrid, AnswerReveal, PostGameModal, countdown, leaderboard, postgame
-- PostGameModal.module.css (415 lines) and postgame.module.css (406 lines) are distinct files — different class names but overlapping post-game concerns; need rationalization
-- Dual performance mode systems (FINDING-A06) deferred — requires product decision on prefers-reduced-motion; NOT in v1.2 scope
-- Full CSS overhaul includes admin/other route large module files (page.module.css 568L, admin pages 450-601L, etc.)
-- [Phase 06-gameroom-css-split]: UnifiedMessages: include both .ownMessage rules verbatim (second uses !important for correct specificity)
-- [Phase 06-gameroom-css-split]: SlotTile styles extracted to SlotTile.module.css; page-level animation classes (colorBurstOverlay, particles, etc.) remain in gameroom.module.css
-- [Phase 06]: CSS extracted verbatim — no property values changed, pure structural refactor
-- [Phase 06]: gameroom.module.css NOT modified yet — cleanup deferred to later plan per plan spec
-- [Phase 06-gameroom-css-split]: gradientShift keyframes defined in UnifiedInputForm.module.css — referenced by .unifiedInputFormOnly::before but absent from gameroom.module.css everywhere in codebase
-- [Phase 06-gameroom-css-split]: statsTitle missing from gameroom.module.css — defined in StatsRow.module.css with retro label styling; will need duplication note until Plan 06 cleanup
-- [Phase 06-gameroom-css-split]: gameroom.module.css reduced to 611 lines (from 1,739) removing all 8 extracted component class blocks
-- [Phase 06-gameroom-css-split]: PostGameModal.module.css and postgame.module.css confirmed distinct — scope comments document intentional separation
-- [Phase 06-gameroom-css-split]: gameroom.module.css reduced to 611 lines (from 1,739) by removing all 8 extracted component class blocks
-- [Phase 06-gameroom-css-split]: PostGameModal and postgame CSS files intentionally separate — different class names, different component scopes; scope comments added (CSS-02)
+**v1.3 context:**
+- Sentry must be installed via wizard (`npx @sentry/wizard@latest`), not manually — wizard sets all three config files and `next.config.mjs` correctly
+- `withSentryConfig` must be outermost wrapper in `next.config.mjs`: `withSentryConfig(withBundleAnalyzer(config), sentryOpts)` — reversed order breaks source map upload silently
+- `tracesSampleRate` must NOT be 1.0 in production — real-time app will exhaust quota; target 0.1
+- Tunnel route required from Phase 10 start — not retrofittable without a gap in observability
+- Sentry v8 vs v9: accept what wizard installs, do not pin manually
+- `why-did-you-render` React 19 compat is LOW confidence — verify before Phase 12; fall back to React DevTools Profiler if incompatible
+- [Phase 10-sentry-foundation]: Wizard placed instrumentation files in src/ — edited at actual location, not relocated
+- [Phase 10-sentry-foundation]: tracesSampleRate: 0.1 across all runtimes — real-time game would exhaust Sentry quota at 1.0
+- [Phase 10-sentry-foundation]: sendDefaultPii removed — user identity set explicitly via setSentryUser() in Plan 02
+- [Phase 10-sentry-foundation]: game_ws_url used as Sentry room identifier — LobbyJoinSuccess type has no id field; game_ws_url uniquely identifies the room
+- [Phase 10-sentry-foundation]: Module-level lastConnectErrorCapture guard in useGameSocket — per-instance ref resets on hook remount; module scope persists across reconnect cycles
+- [Phase 10-sentry-foundation]: game_ws_url used as Sentry room identifier — LobbyJoinSuccess type has no id field; game_ws_url uniquely identifies the room
+- [Phase 10-sentry-foundation]: Module-level lastConnectErrorCapture guard in useGameSocket — per-instance ref resets on hook remount; module scope persists across reconnect cycles
+- [Phase 11-error-boundaries]: error.tsx uses captureException from @/lib/sentry (not @sentry/nextjs directly) — only global-error.tsx imports Sentry SDK directly
+- [Phase 11-error-boundaries]: No html/body wrapper in error.tsx — renders inside existing layout unlike global-error.tsx
+- [Phase 11-error-boundaries]: Silent-retry boundary requires class component, not error.tsx — Next.js error.tsx always shows fallback immediately; class component two-state machine is the only way to attempt silent recovery first
+- [Phase 11-error-boundaries]: recoveryAttempted gate mandatory in componentDidCatch — without it a persistent error causes infinite setState->crash loop
+- [Phase 11-error-boundaries]: componentStack NOT passed as Sentry tag in GameroomErrorBoundary — multi-line value truncated by Sentry; boundary='gameroom' tag sufficient for triage
+- [Phase 11-error-boundaries]: GameroomErrorBoundary OBS-04 verified: transient crash recovers silently, persistent crash shows minimal fallback, Sentry captures with boundary=gameroom tag
 
 ### Pending Todos
 
@@ -81,10 +83,11 @@ None.
 
 ### Blockers/Concerns
 
-None.
+- [Phase 10] Sentry SDK config option names (`hideSourceMaps`, `deleteSourcemapsAfterUpload`) must be verified against current docs before writing `next.config.mjs` — training cutoff August 2025
+- [Phase 12] `@welldone-software/why-did-you-render` React 19 compatibility unverified — check before installing
 
 ## Session Continuity
 
-Last session: 2026-03-13T22:30:25.288Z
-Stopped at: Completed 06-gameroom-css-split 06-06-PLAN.md
+Last session: 2026-03-18T12:19:50.298Z
+Stopped at: Completed 11-error-boundaries 11-02-PLAN.md — OBS-04 human-verified and approved
 Resume file: None

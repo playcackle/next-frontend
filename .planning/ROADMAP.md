@@ -4,7 +4,8 @@
 
 - ✅ **v1.0 MVP** — Phases 1-4 (shipped 2026-03-11)
 - ✅ **v1.1 Audit** — Phase 5 (shipped 2026-03-12)
-- 🚧 **v1.2 Code Health** — Phases 6-8 (in progress)
+- ✅ **v1.2 Code Health** — Phases 6-9 (shipped 2026-03-17)
+- 🚧 **v1.3 Observability & Performance** — Phases 10-13 (in progress)
 
 ## Phases
 
@@ -29,55 +30,80 @@ Archive: `.planning/milestones/v1.1-ROADMAP.md`
 
 </details>
 
-### 🚧 v1.2 Code Health (In Progress)
+<details>
+<summary>✅ v1.2 Code Health (Phases 6-9) — SHIPPED 2026-03-17</summary>
 
-**Milestone Goal:** Eliminate confirmed runtime bugs, split the monolithic gameroom CSS into per-component modules, and fix the highest-impact structural findings from the v1.1 audit.
+- [x] Phase 6: Gameroom CSS Split (6/6 plans) — completed 2026-03-13
+- [x] Phase 7: Admin/Route CSS Tidy (3/3 plans) — completed 2026-03-17
+- [x] Phase 8: Bug Fixes and Performance (3/3 plans) — completed 2026-03-17
+- [x] Phase 9: CSS-01 Gap Closure (manual fix) — completed 2026-03-17
 
-- [x] **Phase 6: Gameroom CSS Split** - Split `gameroom.module.css` into per-component modules and rationalize postgame CSS duplication (completed 2026-03-13)
-- [ ] **Phase 7: Admin/Route CSS Tidy** - Audit and reorganize oversized module CSS files across admin and other routes
-- [ ] **Phase 8: Bug Fixes and Performance** - Fix confirmed runtime bugs, gate effects on performance mode, fix listener accumulation, and replace full-state subscriptions with granular selectors
+Archive: `.planning/milestones/v1.2-ROADMAP.md`
+
+</details>
+
+### 🚧 v1.3 Observability & Performance (In Progress)
+
+**Milestone Goal:** Add Sentry error monitoring with smart error boundaries, and systematically profile and fix the top performance bottlenecks.
+
+#### Phase Checklist
+
+- [x] **Phase 10: Sentry Foundation** - SDK installed, errors captured, user and room context attached, quota-safe config (completed 2026-03-18)
+- [x] **Phase 11: Error Boundaries** - Global and gameroom boundaries layered; socket errors explicitly captured (completed 2026-03-18)
+- [ ] **Phase 12: Performance Baselines** - Re-render hotspots, bundle, Web Vitals, and socket overhead measured and documented
+- [ ] **Phase 13: Performance Fixes** - Top 3 highest-impact bottlenecks fixed and verified against baselines
 
 ## Phase Details
 
-### Phase 6: Gameroom CSS Split
-**Goal**: Developers can navigate and modify gameroom styles without opening a 1,739-line monolith
-**Depends on**: Phase 5
-**Requirements**: CSS-01, CSS-02
+### Phase 10: Sentry Foundation
+**Goal**: The Sentry error pipeline is live — errors reach Sentry, stack traces are readable, user and room context is attached, and the config is safe for production traffic
+**Depends on**: Phase 9 (v1.2 complete)
+**Requirements**: OBS-01, OBS-02, OBS-05
 **Success Criteria** (what must be TRUE):
-  1. Each of the 8 components (PlayerAvatar, UnifiedInputForm, StatsRow, BotBobPinnedMessage, RoomHeader, SlotTile, SlotGrid, UnifiedMessages) has its own CSS module containing only its styles
-  2. `gameroom.module.css` contains only layout and page-level styles — no component-scoped rules
-  3. `PostGameModal.module.css` and `postgame.module.css` are rationalized — overlapping post-game concerns are resolved into clearly scoped files with no duplicated class responsibilities
-  4. The game room renders identically to pre-split in the browser (no visual regressions)
-**Plans**: 6 plans
-
+  1. An unhandled JavaScript error thrown in the browser appears in Sentry with a readable (symbolicated) stack trace pointing to source files, not minified output
+  2. An unhandled promise rejection appears in Sentry automatically without any explicit call in application code
+  3. A Sentry event includes the logged-in user's identity (from Supabase auth) and the current game room ID and phase
+  4. A production build leaves zero `.map` files in `.next/` — source maps are uploaded to Sentry only
+  5. Sentry events from a browser running an ad blocker still reach Sentry via the tunnel route
+**Plans**: 2 plans
 Plans:
-- [ ] 06-01-PLAN.md — Extract PlayerAvatar, RoomHeader, BotBobPinnedMessage CSS modules
-- [ ] 06-02-PLAN.md — Extract StatsRow CSS module
-- [ ] 06-03-PLAN.md — Extract SlotTile CSS module (tile, badge, animations)
-- [ ] 06-04-PLAN.md — Extract SlotGrid and UnifiedInputForm CSS modules
-- [ ] 06-05-PLAN.md — Extract UnifiedMessages CSS module
-- [ ] 06-06-PLAN.md — Strip gameroom.module.css and rationalize post-game CSS (CSS-02)
+- [ ] 10-01-PLAN.md — SDK wizard install, withSentryConfig hardening, lib/sentry.ts helpers, global-error.tsx
+- [ ] 10-02-PLAN.md — SentryUserSync (auth context), gameroom context, socket error capture
 
-### Phase 7: Admin/Route CSS Tidy
-**Goal**: No single CSS module file in admin or other routes is oversized or difficult to navigate
-**Depends on**: Phase 6
-**Requirements**: CSS-03
+### Phase 11: Error Boundaries
+**Goal**: React render crashes are contained at two levels — global (whole app) and gameroom (mid-game crash attempts silent recovery before showing fallback)
+**Depends on**: Phase 10
+**Requirements**: OBS-03, OBS-04
 **Success Criteria** (what must be TRUE):
-  1. All oversized admin and route module CSS files (page.module.css 568L, admin pages 450-601L) are audited and split or reorganized
-  2. No single module CSS file outside the gameroom exceeds a reasonable size threshold (e.g., no file larger than the largest per-component module from Phase 6)
-  3. Admin pages render correctly after reorganization (no visual regressions)
+  1. A simulated render crash in a non-gameroom page shows a minimal error fallback UI instead of a white screen
+  2. A simulated render crash inside the gameroom component tree triggers a silent recovery attempt before any fallback is shown
+  3. When a gameroom crash is unrecoverable, the fallback UI is minimal (does not expose stack traces or internal state to the user)
+  4. Both boundary types report the caught error to Sentry with the room context available at the time of the crash
+**Plans**: 2 plans
+Plans:
+- [ ] 11-01-PLAN.md — app/error.tsx segment boundary for non-gameroom pages (OBS-03)
+- [ ] 11-02-PLAN.md — GameroomErrorBoundary silent-retry class component + layout wiring (OBS-04)
+
+### Phase 12: Performance Baselines
+**Goal**: Measured, documented baselines exist for bundle size, Core Web Vitals, React re-render counts on high-frequency components, and socket event handling overhead — ready to use as acceptance criteria for Phase 13
+**Depends on**: Phase 11
+**Requirements**: PERF-01, PERF-02, PERF-03, PERF-04, PERF-05
+**Success Criteria** (what must be TRUE):
+  1. A `@next/bundle-analyzer` report exists showing total bundle size, per-chunk breakdown, and any imports flagged as candidates for splitting or removal
+  2. Core Web Vitals (LCP, CLS, INP) are measured and recorded as baseline numbers for the home page and gameroom
+  3. Re-render counts for UnifiedMessages, LeaderBoard, and SlotGrid are profiled and hotspots identified with component names and trigger atoms
+  4. Socket event handling overhead in `useGameEvents` is measured (time per event dispatch, atom update frequency during active play)
+  5. All findings are written to a single document with impact and effort ratings, ordered by impact
 **Plans**: TBD
 
-### Phase 8: Bug Fixes and Performance
-**Goal**: The game room runs without confirmed bugs, respects performance mode fully, and avoids unnecessary re-renders and listener accumulation
-**Depends on**: Phase 7
-**Requirements**: BUG-01, BUG-02, PERF-01, PERF-02, REL-01
+### Phase 13: Performance Fixes
+**Goal**: The three highest-impact bottlenecks identified in Phase 12 are fixed, and each fix is verified to improve its corresponding Phase 12 baseline metric
+**Depends on**: Phase 12
+**Requirements**: PERF-06
 **Success Criteria** (what must be TRUE):
-  1. Game room page loads without a React invariant violation — Rules of Hooks violation in `page.tsx` is resolved (hooks are never called conditionally)
-  2. Answer reveal animation fires correctly when a correct answer is submitted — `AnswerReveal.tsx` type mismatch is fixed and `styles.visible` is applied as expected
-  3. All DOM animations, screen shake, and overlays in `triggerCorrectAnswerEffects` are gated on `performanceModeAtom` — performance mode off means no effects fire
-  4. Socket event listeners do not accumulate across re-renders — `useGameEvents` cleanup correctly captures and calls all `onEvent` return values on unmount
-  5. `LeaderBoard`, `AnswerReveal`, `PostGameShowcase`, and `page.tsx` subscribe to granular atom selectors instead of full `gameStateAtom` — no unnecessary re-renders on game ticks that don't affect their data
+  1. Three specific bottlenecks are identified from Phase 12 data (not assumptions) and named in the plan
+  2. Each fix produces a measurable improvement compared to its Phase 12 baseline (re-render count down, bundle size down, or Web Vital improved)
+  3. No existing game functionality regresses — leaderboard, chat feed, slot grid, and answer reveal all work correctly after fixes
 **Plans**: TBD
 
 ## Progress
@@ -89,6 +115,11 @@ Plans:
 | 3. Onboarding | v1.0 | 1/1 | Complete | 2026-03-11 |
 | 4. Landing Page | v1.0 | 1/1 | Complete | 2026-03-11 |
 | 5. Codebase Audit | v1.1 | 2/2 | Complete | 2026-03-12 |
-| 6. Gameroom CSS Split | 6/6 | Complete   | 2026-03-13 | - |
-| 7. Admin/Route CSS Tidy | v1.2 | 0/? | Not started | - |
-| 8. Bug Fixes and Performance | v1.2 | 0/? | Not started | - |
+| 6. Gameroom CSS Split | v1.2 | 6/6 | Complete | 2026-03-17 |
+| 7. Admin/Route CSS Tidy | v1.2 | 3/3 | Complete | 2026-03-17 |
+| 8. Bug Fixes and Performance | v1.2 | 3/3 | Complete | 2026-03-17 |
+| 9. CSS-01 Gap Closure | v1.2 | manual | Complete | 2026-03-17 |
+| 10. Sentry Foundation | 2/2 | Complete    | 2026-03-18 | - |
+| 11. Error Boundaries | 2/2 | Complete   | 2026-03-18 | - |
+| 12. Performance Baselines | v1.3 | 0/? | Not started | - |
+| 13. Performance Fixes | v1.3 | 0/? | Not started | - |
