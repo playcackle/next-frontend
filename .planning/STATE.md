@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.3
 milestone_name: Observability & Performance
 status: planning
-stopped_at: Completed 10-sentry-foundation 10-02-PLAN.md — Phase 10 fully complete
-last_updated: "2026-03-18T10:12:52.802Z"
+stopped_at: "Completed 11-error-boundaries 11-01-PLAN.md Task 1 — awaiting checkpoint:human-verify"
+last_updated: "2026-03-18T11:22:08.435Z"
 last_activity: 2026-03-17 — Roadmap created, ready to begin Phase 10 planning
 progress:
   total_phases: 4
   completed_phases: 1
-  total_plans: 2
-  completed_plans: 2
+  total_plans: 4
+  completed_plans: 3
   percent: 0
 ---
 
@@ -49,6 +49,7 @@ Progress: [░░░░░░░░░░] 0%
 | Phase 10-sentry-foundation P01 | 25 | 3 tasks | 8 files |
 | Phase 10-sentry-foundation P02 | 9min | 2 tasks | 5 files |
 | Phase 10-sentry-foundation P02 | 10 | 3 tasks | 5 files |
+| Phase 11-error-boundaries P01 | 2 | 1 tasks | 1 files |
 
 ### Decisions
 
@@ -68,6 +69,8 @@ See PROJECT.md Key Decisions table for all decisions from v1.0–v1.2.
 - [Phase 10-sentry-foundation]: Module-level lastConnectErrorCapture guard in useGameSocket — per-instance ref resets on hook remount; module scope persists across reconnect cycles
 - [Phase 10-sentry-foundation]: game_ws_url used as Sentry room identifier — LobbyJoinSuccess type has no id field; game_ws_url uniquely identifies the room
 - [Phase 10-sentry-foundation]: Module-level lastConnectErrorCapture guard in useGameSocket — per-instance ref resets on hook remount; module scope persists across reconnect cycles
+- [Phase 11-error-boundaries]: error.tsx uses captureException from @/lib/sentry (not @sentry/nextjs directly) — only global-error.tsx imports Sentry SDK directly
+- [Phase 11-error-boundaries]: No html/body wrapper in error.tsx — renders inside existing layout unlike global-error.tsx
 
 ### Pending Todos
 
@@ -80,6 +83,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-03-18T09:39:08.153Z
-Stopped at: Completed 10-sentry-foundation 10-02-PLAN.md — Phase 10 fully complete
+Last session: 2026-03-18T11:22:08.433Z
+Stopped at: Completed 11-error-boundaries 11-01-PLAN.md Task 1 — awaiting checkpoint:human-verify
 Resume file: None

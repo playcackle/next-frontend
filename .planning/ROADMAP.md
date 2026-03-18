@@ -120,6 +120,6 @@ Plans:
 | 8. Bug Fixes and Performance | v1.2 | 3/3 | Complete | 2026-03-17 |
 | 9. CSS-01 Gap Closure | v1.2 | manual | Complete | 2026-03-17 |
 | 10. Sentry Foundation | 2/2 | Complete    | 2026-03-18 | - |
-| 11. Error Boundaries | v1.3 | 0/2 | Not started | - |
+| 11. Error Boundaries | 1/2 | In Progress|  | - |
 | 12. Performance Baselines | v1.3 | 0/? | Not started | - |
 | 13. Performance Fixes | v1.3 | 0/? | Not started | - |
