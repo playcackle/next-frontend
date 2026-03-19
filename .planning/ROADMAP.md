@@ -145,7 +145,11 @@ Plans:
   2. A developer can initiate a Discord OAuth flow in a test environment and a valid player record is created in the database with no errors
   3. An email/password user who signs in via OAuth with the same email address is merged to one account — no duplicate records appear in auth.users
   4. The database trigger creates a player record for any OAuth sign-up regardless of which metadata fields the provider supplies (name, full_name, or user_name fallback chain)
-**Plans**: TBD
+**Plans**: 3 plans
+Plans:
+- [ ] 15-01-PLAN.md — SQL migration: harden handle_new_user() trigger with COALESCE fallback for OAuth providers
+- [ ] 15-02-PLAN.md — Register Google & Discord OAuth apps, enable in Supabase, confirm identity linking
+- [ ] 15-03-PLAN.md — End-to-end OAuth flow verification and Discord metadata shape confirmation
 
 ### Phase 16: OAuth UI and Profile Sync
 **Goal**: Players can sign in or register with Google or Discord from the login and register pages, with display name and avatar pre-populated from the provider on first sign-in, and existing email/password auth preserved
@@ -157,7 +161,11 @@ Plans:
   3. A new player signing in via Google or Discord has their avatar set from the provider profile picture, and the image renders correctly via Next.js Image component
   4. A returning player who has customized their display name or avatar does not have those values overwritten on subsequent OAuth sign-ins
   5. Email/password login and registration continue to work correctly alongside the new OAuth buttons
-**Plans**: TBD
+**Plans**: 3 plans
+Plans:
+- [ ] 15-01-PLAN.md — SQL migration: harden handle_new_user() trigger with COALESCE fallback for OAuth providers
+- [ ] 15-02-PLAN.md — Register Google & Discord OAuth apps, enable in Supabase, confirm identity linking
+- [ ] 15-03-PLAN.md — End-to-end OAuth flow verification and Discord metadata shape confirmation
 
 ## Progress
 
