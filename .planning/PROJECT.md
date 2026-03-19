@@ -2,7 +2,7 @@
 
 ## What This Is
 
-A real-time multiplayer quiz/trivia game platform built on Next.js 16 with Socket.IO. Players join game rooms, answer questions through a shared chat feed, and compete on live leaderboards. The platform serves returning players through a progression system and new players through onboarding. v1.0 shipped reliable state sync, readable chat feedback, user onboarding, and a rich player stats landing page.
+A real-time multiplayer quiz/trivia game platform built on Next.js 16 with Socket.IO. Players join game rooms, answer questions through a shared chat feed, and compete on live leaderboards. The platform serves returning players through a progression system and new players through onboarding. v1.0 shipped reliable state sync, readable chat feedback, user onboarding, and a rich player stats landing page. v1.3 added Sentry error monitoring, layered error boundaries, measured performance baselines, and fixed the top three performance bottlenecks (LCP, bundle size, hot-path Supabase call).
 
 ## Core Value
 
@@ -42,19 +42,19 @@ Players must always know where they are in the game and what their actions mean 
 - ✓ `onEvent` cleanup captures fixed in `useGameEvents` — 9 listeners properly unmounted — v1.2
 - ✓ `useGameState()` replaced with granular atom selectors in `LeaderBoard`, `AnswerReveal`, `PostGameShowcase`, `page.tsx` — v1.2
 
-### Active (v1.3 — Observability & Performance)
+### Validated (continued — v1.3)
 
-- [ ] Sentry SDK installed and configured with DSN
-- [ ] Unhandled errors and promise rejections automatically captured in Sentry
-- [ ] Global error boundary catches unexpected React render crashes at app level
-- [ ] Gameroom error boundary silently attempts recovery; shows minimal fallback only if crash is unrecoverable
-- [ ] Sentry events include user identity and current game room context
-- [ ] React re-render hotspots profiled across gameroom components
-- [ ] Next.js bundle analyzed for size, code splitting, and unused imports
-- [ ] Core Web Vitals (LCP, CLS, INP) measured and baselined
-- [ ] Socket event handling overhead profiled
-- [ ] All performance findings documented with impact/effort ratings
-- [ ] Top 3 highest-impact bottlenecks fixed
+- ✓ Sentry SDK installed and configured with DSN, source maps, quota-safe sampling (0.1), and tunnel route — OBS-01 v1.3
+- ✓ Unhandled errors, promise rejections, and Socket.IO connection errors automatically captured in Sentry — OBS-02 v1.3
+- ✓ Global error boundary catches unexpected React render crashes at app level — OBS-03 v1.3
+- ✓ Gameroom error boundary silently attempts recovery; shows minimal fallback only if crash is unrecoverable — OBS-04 v1.3
+- ✓ Sentry events include user identity (Supabase auth) and current game room context (roomId, game phase) — OBS-05 v1.3
+- ✓ React re-render hotspots profiled across UnifiedMessages, LeaderBoard, SlotGrid — PERF-01 v1.3
+- ✓ Next.js bundle analyzed for total size, code splitting opportunities, and unused imports — PERF-02 v1.3
+- ✓ Core Web Vitals (LCP, CLS, INP) measured and baselined; WebVitalsLogger active in all environments — PERF-03 v1.3
+- ✓ Socket event handling overhead profiled (lobby_tick ~0.2ms, all 9 onEvent handlers instrumented) — PERF-04 v1.3
+- ✓ All performance findings documented with impact/effort ratings in PERF-BASELINE.md — PERF-05 v1.3
+- ✓ Top 3 highest-impact bottlenecks fixed: LCP (INITIAL_SESSION guard), bundle (SentryUserSync lazy), UnifiedMessages hot path (currentUserIdAtom) — PERF-06 v1.3
 
 ### Out of Scope
 
@@ -65,7 +65,7 @@ Players must always know where they are in the game and what their actions mean 
 
 ## Context
 
-**Current state (v1.1):** ~13,000 LOC TypeScript. Next.js 16 App Router, React 19, TypeScript, Jotai atoms, Socket.IO client 4.8, Supabase auth, Radix UI, GSAP for animations. See `.planning/codebase/` for full analysis. See `.planning/phases/05-codebase-audit/FINDINGS.md` for the full audit report with 41 findings and a 45-entry remediation priority table.
+**Current state (v1.3 — shipped 2026-03-19):** ~13,755 LOC TypeScript. Next.js 16 App Router, React 19, TypeScript, Jotai atoms, Socket.IO client 4.8, Supabase auth, Radix UI, GSAP for animations, `@sentry/nextjs` (tracesSampleRate: 0.1). Phases 10-14 complete — Sentry monitoring live, error boundaries layered, performance baselines documented, top 3 bottlenecks fixed. See `.planning/codebase/` for full analysis. See `.planning/phases/05-codebase-audit/FINDINGS.md` for the full audit report. See `.planning/milestones/v1.3-MILESTONE-AUDIT.md` for v1.3 requirements coverage and tech debt log.
 
 **Real-time architecture:** Two separate WebSocket connections — `useGameSocket` for game events, `useChatSocket` for messaging. Game state stored in `gameStateAtom`; messages in `unifiedMessagesAtom`. Events flow through `useGameEvents` hook which updates atoms.
 
@@ -94,26 +94,26 @@ Players must always know where they are in the game and what their actions mean 
 | Own failed answer = neutral (not blue) | `.ownFailedAnswerMessage` resets `.ownMessage` blue !important | ✓ Good — avoids confusing blue styling for wrong answers |
 | Audit-only v1.1 milestone before v1.2 improvements | Ship audit findings first so v1.2 planning is evidence-based, not assumption-based | ✓ Good — surfaced 2 confirmed bugs that would otherwise ship undetected |
 | Dual performance systems must be consolidated (not patched) | `performance-atom.ts` and `performance-context.tsx` use different localStorage keys — patching one leaves the other wrong | ⚠️ Revisit — requires product decision on `prefers-reduced-motion` handling before migration |
+| `withSentryConfig` must be outermost wrapper in `next.config.mjs` | Reversed order breaks source map upload silently — `withSentryConfig(withBundleAnalyzer(config))` is the required ordering | ✓ Good — locked in STATE.md |
+| `game_ws_url` as Sentry room identifier | `LobbyJoinSuccess` type has no `id` field — `game_ws_url` uniquely identifies the room connection | ✓ Good — used in `setSentryGameContext` |
+| Module-level deduplication guard in `useGameSocket` | Per-instance `useRef` resets on hook remount during reconnect cycles; module scope persists across reconnect storms | ✓ Good — prevents Sentry event flooding |
+| Silent-retry boundary requires class component | Next.js `error.tsx` shows fallback immediately — class component two-state machine is the only way to attempt silent recovery first | ✓ Good — `GameroomErrorBoundary` implemented this way |
+| `npm run analyze` uses `--webpack` flag | Next.js 16 defaults to Turbopack which is incompatible with `@next/bundle-analyzer` | ✓ Good — webpack flag generates treemap HTML reports |
+| INITIAL_SESSION early return in `useUser.ts` | Supabase fires INITIAL_SESSION then SIGNED_IN on load; without guard, `router.refresh()` triggers a Server Component re-fetch that delays LCP to 4324ms | ✓ Good — LCP fix; initial state handled by `loadUser()` only |
+| Dynamic import of `SentryUserSync` in `Provider.tsx` (Client Component) | Next.js only code-splits dynamic imports from Client Components, not Server Components | ✓ Good — Supabase 645KB chunk deferred out of main entry bundle |
+| `currentUserIdAtom` set at page level, read in `UnifiedMessages` | Eliminates Supabase auth subscription from 1Hz gameroom hot-render path without losing own-message styling | ✓ Good — page.tsx re-renders are rare vs 1Hz lobby_tick |
 
-## Current Milestone: v1.3 Observability & Performance
+## Completed Milestone: v1.3 Observability & Performance (shipped 2026-03-19)
 
-**Goal:** Add Sentry error monitoring with smart error boundaries, and systematically profile + fix the top performance bottlenecks.
+**Delivered:** Sentry error monitoring live, layered error boundaries, measured performance baselines, and top-3 bottleneck fixes. All 11 requirements satisfied (OBS-01–05, PERF-01–06).
 
-**Target features:**
-- Sentry SDK integration (install from scratch, DSN config, user/room context)
-- Global + gameroom error boundaries (silent recovery where possible)
-- Performance profiling across re-renders, bundle, Web Vitals, socket overhead
-- Fix top 3 highest-impact findings
-
-## Current State (v1.2 — shipped 2026-03-17)
-
-**Shipped:** Code Health milestone complete. All 8 requirements satisfied across 4 phases (3 GSD + 1 manual fix). Codebase now has per-component CSS modules, no confirmed runtime bugs, performance-mode-gated DOM effects, and stable listener cleanup.
-
-**Tech debt carried forward:**
+**Tech debt carried forward into v1.4+:**
 - `useGameEvents.ts` still uses full `gameStateAtom` internally (intentional — orchestrating hook)
 - ARCH-01: Dual performance mode systems need product decision before consolidation
 - ARCH-02: `sound-effects.tsx` (1,448 lines) split deferred
 - ARCH-03: `AdminApiClient` domain split deferred
+- Production LCP improvement not directly measured — WebVitalsLogger now unconditional but no RUM endpoint
+- Nyquist VALIDATION.md files for phases 10-13 remain in draft status
 
 ---
-*Last updated: 2026-03-17 after v1.3 milestone started*
+*Last updated: 2026-03-19 after v1.3 milestone*
