@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.3
 milestone_name: Observability & Performance
 status: planning
-stopped_at: Completed 13-02-PLAN.md
-last_updated: "2026-03-19T08:52:00.773Z"
+stopped_at: Completed 14-01-PLAN.md
+last_updated: "2026-03-19T09:34:54.811Z"
 last_activity: 2026-03-17 — Roadmap created, ready to begin Phase 10 planning
 progress:
-  total_phases: 4
-  completed_phases: 4
-  total_plans: 9
-  completed_plans: 9
+  total_phases: 5
+  completed_phases: 5
+  total_plans: 10
+  completed_plans: 10
   percent: 0
 ---
 
@@ -58,6 +58,7 @@ Progress: [░░░░░░░░░░] 0%
 | Phase 13-performance-fixes P01 | 15 | 3 tasks | 1 files |
 | Phase 13-performance-fixes P03 | 8 | 3 tasks | 3 files |
 | Phase 13-performance-fixes P02 | 10 | 2 tasks | 1 files |
+| Phase 14-observability-polish P01 | 2 | 3 tasks | 3 files |
 
 ### Decisions
 
@@ -95,6 +96,9 @@ See PROJECT.md Key Decisions table for all decisions from v1.0–v1.2.
 - [Phase 13-performance-fixes]: currentUserIdAtom set in page.tsx (not hot-render path) via useUser() + useEffect — acceptable because page.tsx re-renders are rare compared to 1Hz lobby_tick
 - [Phase 13-performance-fixes]: SentryUserSync dynamic import uses ssr: false — component only sets Sentry user context, no server-side HTML output, safe to defer to client
 - [Phase 13-performance-fixes]: Dynamic import placed in Provider.tsx (Client Component) not layout.tsx (Server Component) — Next.js only code-splits dynamic imports from Client Components
+- [Phase 14-observability-polish]: Phase string derived inline in useEffect via ternary — no new atom, no second effect; both phase booleans added to dependency array for correct phase transition updates
+- [Phase 14-observability-polish]: WebVitalsLogger NODE_ENV guard removed entirely — console.log unconditional; satisfies PERF-03 production measurability without adding a sendBeacon endpoint
+- [Phase 14-observability-polish]: 12-02-SUMMARY key-files updated to created_then_removed — accurately reflects that wdyr.ts and WdyrInit.tsx existed only transiently during Phase 12-02
 
 ### Pending Todos
 
@@ -107,6 +111,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-03-19T08:46:44.446Z
-Stopped at: Completed 13-02-PLAN.md
+Last session: 2026-03-19T09:34:54.809Z
+Stopped at: Completed 14-01-PLAN.md
 Resume file: None
