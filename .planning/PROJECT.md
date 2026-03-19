@@ -103,6 +103,27 @@ Players must always know where they are in the game and what their actions mean 
 | Dynamic import of `SentryUserSync` in `Provider.tsx` (Client Component) | Next.js only code-splits dynamic imports from Client Components, not Server Components | ✓ Good — Supabase 645KB chunk deferred out of main entry bundle |
 | `currentUserIdAtom` set at page level, read in `UnifiedMessages` | Eliminates Supabase auth subscription from 1Hz gameroom hot-render path without losing own-message styling | ✓ Good — page.tsx re-renders are rare vs 1Hz lobby_tick |
 
+## Current Milestone: v1.4 Social Auth
+
+**Goal:** Let players sign in and register with Google and Discord OAuth alongside existing email/password auth, with profile data auto-filled from the provider on first sign-in.
+
+**Target features:**
+- Google OAuth sign-in and registration
+- Discord OAuth sign-in and registration
+- Auto-fill display name and avatar from provider on first sign-in
+- Email/password auth preserved alongside OAuth options
+
+### Active
+
+- [ ] User can sign in or register with Google account
+- [ ] User can sign in or register with Discord account
+- [ ] OAuth buttons appear on both login and register pages
+- [ ] Email/password auth remains available alongside OAuth
+- [ ] Display name pre-populated from provider on first OAuth sign-in
+- [ ] Avatar pre-populated from provider on first OAuth sign-in
+
+---
+
 ## Completed Milestone: v1.3 Observability & Performance (shipped 2026-03-19)
 
 **Delivered:** Sentry error monitoring live, layered error boundaries, measured performance baselines, and top-3 bottleneck fixes. All 11 requirements satisfied (OBS-01–05, PERF-01–06).
@@ -116,4 +137,4 @@ Players must always know where they are in the game and what their actions mean 
 - Nyquist VALIDATION.md files for phases 10-13 remain in draft status
 
 ---
-*Last updated: 2026-03-19 after v1.3 milestone*
+*Last updated: 2026-03-19 after v1.4 milestone start*

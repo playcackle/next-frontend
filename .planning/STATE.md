@@ -1,16 +1,16 @@
 ---
 gsd_state_version: 1.0
-milestone: v1.3
-milestone_name: Observability & Performance
-status: complete
-stopped_at: v1.3 milestone archived
+milestone: v1.4
+milestone_name: Social Auth
+status: in_progress
+stopped_at: Defining requirements
 last_updated: "2026-03-19T00:00:00.000Z"
-last_activity: 2026-03-19 — v1.3 milestone complete, planning next milestone
+last_activity: 2026-03-19 — Milestone v1.4 started
 progress:
-  total_phases: 5
-  completed_phases: 5
-  total_plans: 10
-  completed_plans: 10
+  total_phases: 0
+  completed_phases: 0
+  total_plans: 0
+  completed_plans: 0
   percent: 0
 ---
 
@@ -18,17 +18,17 @@ progress:
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-03-17)
+See: .planning/PROJECT.md (updated 2026-03-19)
 
 **Core value:** Players must always know where they are in the game and what their actions mean — reliable state, readable feedback, and visible progress are what keep them coming back.
-**Current focus:** Planning next milestone
+**Current focus:** v1.4 Social Auth
 
 ## Current Position
 
-Phase: v1.3 complete (Phases 10-14 all shipped)
+Phase: Not started (defining requirements)
 Plan: —
-Status: Milestone archived — planning next milestone
-Last activity: 2026-03-19 — v1.3 archived, all 11 requirements satisfied
+Status: Defining requirements
+Last activity: 2026-03-19 — Milestone v1.4 started
 
 Progress: [██████████] 100%
 
