@@ -3,8 +3,8 @@ gsd_state_version: 1.0
 milestone: v1.3
 milestone_name: Observability & Performance
 status: planning
-stopped_at: Completed 13-03-PLAN.md
-last_updated: "2026-03-19T08:46:32.976Z"
+stopped_at: Completed 13-02-PLAN.md
+last_updated: "2026-03-19T08:46:44.448Z"
 last_activity: 2026-03-17 — Roadmap created, ready to begin Phase 10 planning
 progress:
   total_phases: 4
@@ -93,6 +93,8 @@ See PROJECT.md Key Decisions table for all decisions from v1.0–v1.2.
 - [Phase 13-performance-fixes]: currentUserIdAtom set in page.tsx (not hot-render path) via useUser() + useEffect — acceptable because page.tsx re-renders are rare compared to 1Hz lobby_tick
 - [Phase 13-performance-fixes]: LCP measurement via WebVitalsLogger not visible in production build (NODE_ENV=production suppresses it — Phase 12 decision); fix accepted as code-correct based on user approval
 - [Phase 13-performance-fixes]: currentUserIdAtom set in page.tsx (not hot-render path) via useUser() + useEffect — acceptable because page.tsx re-renders are rare compared to 1Hz lobby_tick
+- [Phase 13-performance-fixes]: SentryUserSync dynamic import uses ssr: false — component only sets Sentry user context, no server-side HTML output, safe to defer to client
+- [Phase 13-performance-fixes]: Dynamic import placed in Provider.tsx (Client Component) not layout.tsx (Server Component) — Next.js only code-splits dynamic imports from Client Components
 
 ### Pending Todos
 
@@ -105,6 +107,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-03-19T08:46:18.923Z
-Stopped at: Completed 13-03-PLAN.md
+Last session: 2026-03-19T08:46:44.446Z
+Stopped at: Completed 13-02-PLAN.md
 Resume file: None
