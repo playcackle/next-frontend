@@ -53,19 +53,20 @@ Which phases cover which requirements. Updated during roadmap creation.
 | OBS-02 | Phase 10 | Complete |
 | OBS-03 | Phase 11 | Complete |
 | OBS-04 | Phase 11 | Complete |
-| OBS-05 | Phase 10 | Complete |
+| OBS-05 | Phase 10, Phase 14 (polish) | Complete (partial — phase context gap, Phase 14) |
 | PERF-01 | Phase 12 | Complete |
 | PERF-02 | Phase 12 | Complete |
-| PERF-03 | Phase 12 | Complete |
+| PERF-03 | Phase 12, Phase 14 (polish) | Complete (partial — dev-only measurement, Phase 14) |
 | PERF-04 | Phase 12 | Complete |
 | PERF-05 | Phase 12 | Complete |
-| PERF-06 | Phase 13 | Complete |
+| PERF-06 | Phase 13, Phase 14 (polish) | Complete (partial — production measurement gap, Phase 14) |
 
 **Coverage:**
 - v1.3 requirements: 11 total
 - Mapped to phases: 11
 - Unmapped: 0 ✓
+- Phase 14 closes tech debt on: OBS-05, PERF-03, PERF-06
 
 ---
 *Requirements defined: 2026-03-17*
-*Last updated: 2026-03-17 after roadmap creation*
+*Last updated: 2026-03-19 after v1.3 audit gap closure phase added*

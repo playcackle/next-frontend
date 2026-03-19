@@ -113,6 +113,17 @@ Plans:
 - [ ] 13-02-PLAN.md — Bundle fix: dynamic import SentryUserSync in Provider.tsx to move Supabase 645KB out of main chunk (PERF-06)
 - [ ] 13-03-PLAN.md — Gameroom fix: replace useUser() in UnifiedMessages with currentUserIdAtom (PERF-06)
 
+### Phase 14: Observability Polish
+**Goal**: Production observability gaps closed — Sentry captures real game phase context, Web Vitals are measurable in production, and SUMMARY documentation accurately reflects codebase state
+**Depends on**: Phase 13
+**Requirements**: OBS-05, PERF-03, PERF-06
+**Gap Closure:** Closes tech debt from v1.3 milestone audit
+**Success Criteria** (what must be TRUE):
+  1. `setSentryGameContext` receives the current game phase so Sentry events show real phase context (not "unknown")
+  2. `WebVitalsLogger` reports web vitals in production (not just dev), or a RUM endpoint is wired so LCP/CLS/INP improvements are verifiable post-deploy
+  3. `12-02-SUMMARY.md` accurately reflects that wdyr files were removed (not created)
+**Plans**: 0 plans
+
 ## Progress
 
 | Phase | Milestone | Plans Complete | Status | Completed |
@@ -129,4 +140,5 @@ Plans:
 | 10. Sentry Foundation | v1.3 | 2/2 | Complete | 2026-03-18 |
 | 11. Error Boundaries | v1.3 | 2/2 | Complete | 2026-03-18 |
 | 12. Performance Baselines | v1.3 | 2/2 | Complete | 2026-03-18 |
-| 13. Performance Fixes | 3/3 | Complete    | 2026-03-19 | - |
+| 13. Performance Fixes | v1.3 | 3/3 | Complete | 2026-03-19 |
+| 14. Observability Polish | v1.3 | 0/0 | Pending | - |
