@@ -17,6 +17,7 @@ export type GameroomTileProps = {
     player_count: number;
     max_players?: number | null;
     join_base_url?: string | null;
+    discord_invite_url?: string | null;
   };
 };
 
