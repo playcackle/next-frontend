@@ -185,5 +185,5 @@ Plans:
 | 12. Performance Baselines | v1.3 | 2/2 | Complete | 2026-03-18 |
 | 13. Performance Fixes | v1.3 | 3/3 | Complete | 2026-03-19 |
 | 14. Observability Polish | v1.3 | 1/1 | Complete | 2026-03-19 |
-| 15. Provider Infrastructure | 1/3 | In Progress|  | - |
+| 15. Provider Infrastructure | 2/3 | In Progress|  | - |
 | 16. OAuth UI and Profile Sync | v1.4 | 0/TBD | Not started | - |

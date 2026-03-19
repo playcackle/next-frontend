@@ -22,8 +22,8 @@ Requirements for the Social Auth milestone. Each maps to roadmap phases.
 ### Setup
 
 - [ ] **SETUP-01**: Google OAuth app registered in Google Cloud Console with Supabase callback URLs
-- [ ] **SETUP-02**: Discord OAuth app registered in Discord Developer Portal with Supabase callback URLs
-- [ ] **SETUP-03**: Automatic identity linking enabled in Supabase so existing email users don't get duplicate accounts
+- [x] **SETUP-02**: Discord OAuth app registered in Discord Developer Portal with Supabase callback URLs
+- [x] **SETUP-03**: Automatic identity linking enabled in Supabase so existing email users don't get duplicate accounts
 - [x] **SETUP-04**: Database trigger updated to handle OAuth metadata field names without NULL constraint errors
 - [ ] **SETUP-05**: `next.config.mjs` includes `remotePatterns` for Google and Discord avatar CDN hostnames
 
@@ -55,8 +55,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 | Requirement | Phase | Status |
 |-------------|-------|--------|
 | SETUP-01 | Phase 15 | Pending |
-| SETUP-02 | Phase 15 | Pending |
-| SETUP-03 | Phase 15 | Pending |
+| SETUP-02 | Phase 15 | Complete |
+| SETUP-03 | Phase 15 | Complete |
 | SETUP-04 | Phase 15 | Complete |
 | SETUP-05 | Phase 16 | Pending |
 | OAUTH-01 | Phase 16 | Pending |

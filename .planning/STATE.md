@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.4
 milestone_name: Social Auth
 status: planning
-stopped_at: Completed 15-01-PLAN.md — handle_new_user SQL migration written
-last_updated: "2026-03-19T12:09:13.490Z"
-last_activity: 2026-03-19 — Roadmap created for v1.4, phases 15-16 defined
+stopped_at: Completed 15-02-PLAN.md — Discord OAuth configured, SQL migration applied, identity linking confirmed
+last_updated: "2026-03-19T13:00:00.000Z"
+last_activity: 2026-03-19 — Phase 15 complete (Discord OAuth active, Google deferred)
 progress:
   total_phases: 7
-  completed_phases: 0
+  completed_phases: 1
   total_plans: 3
-  completed_plans: 1
-  percent: 0
+  completed_plans: 2
+  percent: 67
 ---
 
 # Project State
@@ -25,12 +25,12 @@ See: .planning/PROJECT.md (updated 2026-03-19)
 
 ## Current Position
 
-Phase: 15 of 16 (Provider Infrastructure)
+Phase: 16 of 16 (OAuth UI)
 Plan: — (not yet planned)
 Status: Ready to plan
-Last activity: 2026-03-19 — Roadmap created for v1.4, phases 15-16 defined
+Last activity: 2026-03-19 — Phase 15 complete; Discord OAuth active; Google OAuth deferred
 
-Progress: [░░░░░░░░░░] 0%
+Progress: [███████░░░] 67%
 
 ## Performance Metrics
 
@@ -47,8 +47,14 @@ Progress: [░░░░░░░░░░] 0%
 
 ## Accumulated Context
 | Phase 15 P01 | 1min | 1 tasks | 1 files |
+| Phase 15 P02 | ~30min | 2 tasks | 0 files |
 
 ### Decisions
+
+**Phase 15 P02:**
+- Google OAuth (SETUP-01) deferred — Discord is sole active provider going into Phase 16; todo tracked in .planning/todos/pending/
+- Supabase Manual Linking confirmed disabled — automatic identity linking is active
+- Phase 16 OAuth UI should render Discord sign-in only; Google button should be hidden/disabled until SETUP-01 todo is resolved
 
 **v1.4 context (pre-execution):**
 - Phase 15 must complete before Phase 16 — OAuth UI is untestable without provider configuration and DB trigger fix in place
@@ -63,7 +69,7 @@ Progress: [░░░░░░░░░░] 0%
 
 ### Pending Todos
 
-None.
+- [SETUP-01] Set up Google OAuth provider — `.planning/todos/pending/2026-03-19-set-up-google-oauth-provider.md`
 
 ### Blockers/Concerns
 
@@ -72,6 +78,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-03-19T12:09:13.489Z
-Stopped at: Completed 15-01-PLAN.md — handle_new_user SQL migration written
+Last session: 2026-03-19T13:00:00.000Z
+Stopped at: Completed 15-02-PLAN.md — Discord OAuth configured, SQL migration applied, identity linking confirmed
 Resume file: None
