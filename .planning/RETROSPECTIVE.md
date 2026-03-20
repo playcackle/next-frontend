@@ -91,14 +91,71 @@
 
 ---
 
+## Milestone: v1.3 — Observability & Performance
+
+**Shipped:** 2026-03-19
+**Phases:** 5 (Phases 10-14) | **Plans:** 10
+**Timeline:** 2026-03-18 → 2026-03-19 (2 days)
+
+### What Was Built
+
+1. **Sentry foundation** (Phase 10): SDK initialized across browser/Node.js/Edge, `src/lib/sentry.ts` abstraction layer, tunnel route /monitoring, quota-safe sampling (0.1), source map upload verification scripts
+2. **Sentry context wiring** (Phase 10): `SentryUserSync` component keeps user identity in sync with Supabase auth; `setSentryGameContext` attaches game_ws_url + real game phase (answering/round_break/post_game) to all events
+3. **Error boundaries** (Phase 11): `error.tsx` segment boundary for non-gameroom pages; `GameroomErrorBoundary` class component with two-state silent-retry machine (renders null on first crash, shows fallback only on second)
+4. **Performance baselines** (Phase 12): `@next/bundle-analyzer` treemaps (webpack mode), `WebVitalsLogger` with `useReportWebVitals`, React Profiler wrappers on UnifiedMessages/SlotGrid/LeaderBoard, `PerfProbe` on all 9 `useGameEvents` handlers, `PERF-BASELINE.md` with real numbers
+5. **LCP fix** (Phase 13): `INITIAL_SESSION` early return in `useUser.ts` — Supabase fires this on passive session restore; blocking `router.refresh()` eliminates the Server Component re-fetch that was recorded as LCP
+6. **Bundle fix** (Phase 13): `SentryUserSync` converted to `next/dynamic(ssr:false)` in `Provider.tsx` — defers Supabase 645KB chunk out of the main entry bundle
+7. **Hot-path fix** (Phase 13): `currentUserIdAtom` added to `gameAtoms.ts`; set once at page level in `page.tsx`, read in `UnifiedMessages` — eliminates `useUser()` Supabase subscription from the 1Hz gameroom re-render path
+8. **Observability polish** (Phase 14): Real game phase passed to `setSentryGameContext`, WebVitalsLogger made unconditional (all environments), `12-02-SUMMARY.md` doc corrected for WDYR files
+
+### What Worked
+
+- **Tech debt was audited before shipping** — the milestone audit (`v1.3-MILESTONE-AUDIT.md`) found three gaps before archival; Phase 14 gap closure resolved all of them cleanly in ~2 minutes
+- **Module-level deduplication guard pattern** (Sentry rate limiting in `useGameSocket`) solved a subtle hook remount problem that a `useRef` would have missed — identified and documented early
+- **React Profiler as WDYR fallback** worked better than expected — Profiler data was sufficient to identify LCP (not render counts) as the primary fix target, making Phase 13 decisions evidence-based
+- **Plans were right-sized** — 10 plans across 5 phases, most under 15 min each; no plan ran over 30 min; total wall time was 2 days
+- **`INITIAL_SESSION` guard** was a single-line early return that fixed LCP 4324ms (poor) — high-impact, low-effort fix that only came from having baseline data first
+
+### What Was Inefficient
+
+- **WDYR incompatibility** wasted ~30 min in Phase 12 — 4 fix attempts before removing it from layout; the React 19 / Next.js 16 incompatibility was flagged as a risk in STATE.md before starting but not pre-validated before installation
+- **WebVitalsLogger was dev-only** (Phase 12 decision, Phase 14 correction) — this required a separate gap-closure phase to fix a decision that should have been production-ready from the start; cost was low but the pattern of "gate for dev only, fix later" added an unnecessary task
+- **Production LCP measurement gap** — the LCP fix was accepted as code-correct without direct production measurement because WebVitalsLogger was dev-only at fix time; this is a monitoring quality gap carried forward
+- **`12-02-SUMMARY.md` was inaccurate** at merge time (WDYR files listed as `created` not `created_then_removed`) — SUMMARY files should be written after all deviations resolve, not during
+
+### Patterns Established
+
+- Sentry abstraction boundary: all application code imports from `src/lib/sentry.ts` — never `@sentry/nextjs` directly (exception: `global-error.tsx`)
+- Quota-safe sampling: `tracesSampleRate: 0.1` across all runtimes in real-time apps — full sampling exhausts quota
+- Silent-retry error boundary: class component required (not `error.tsx`) — two-state machine (hasError + recoveryAttempted), `componentDidCatch` for side effects, `getDerivedStateFromError` for state only
+- Named export dynamic import: `dynamic(() => import('@/...').then((m) => ({ default: m.Named })), { ssr: false })` — for null-rendering client components that pull large dependencies
+- Atom bridging for hot paths: when a hook introduces a heavy dependency (Supabase, external service) into a 1Hz render loop, bridge via a Jotai atom set at page level
+
+### Key Lessons
+
+1. **Pre-validate high-risk dependencies before installation** — WDYR incompatibility was a known risk in STATE.md but was installed without prior validation; a 1-minute check would have saved ~30 min of debugging
+2. **Production observability should be on from day one** — dev-only gating of WebVitalsLogger created a gap that required a separate fix phase; if it's worth measuring, measure in production from the start
+3. **Baseline data makes fix selection obvious** — without `PERF-BASELINE.md`, Phase 13 would have been guess-driven; LCP was clearly the priority once measured (4324ms vs <1ms component render times)
+4. **SUMMARY files should reflect final state, not intent** — write them after all deviations and fixes are committed; the WDYR created→removed mismatch in `12-02-SUMMARY.md` required a doc fix phase
+
+### Cost Observations
+
+- Sessions: ~4 sessions across 2 days
+- Fastest plan: Phase 14-01 (~2 min — 3 targeted fixes, 3 commits)
+- Slowest phase: Phase 12 (~34 min total — WDYR incompatibility investigation dominated)
+- All requirements satisfied: 11/11 — no scope changes mid-milestone
+
+---
+
 ## Cross-Milestone Trends
 
-| Metric | v1.0 | v1.1 |
-|--------|------|------|
-| Phases | 4 | 1 |
-| Plans | 6 | 2 |
-| Avg plan duration | ~2 min (GSD phases) | ~25 min |
-| Timeline | 14 days | 1 day |
-| LOC | ~13,000 TS | ~13,000 TS (audit-only) |
-| Outside-GSD phases | 2 (Phases 3, 4) | 0 |
-| Confirmed bugs found | 0 | 2 |
+| Metric | v1.0 | v1.1 | v1.3 |
+|--------|------|------|------|
+| Phases | 4 | 1 | 5 |
+| Plans | 6 | 2 | 10 |
+| Avg plan duration | ~2 min (GSD phases) | ~25 min | ~10 min |
+| Timeline | 14 days | 1 day | 2 days |
+| LOC | ~13,000 TS | ~13,000 TS (audit-only) | ~13,755 TS |
+| Outside-GSD phases | 2 (Phases 3, 4) | 0 | 0 |
+| Confirmed bugs found | 0 | 2 | 0 (1 LCP performance root cause) |
+| Requirements satisfied | 6/6 | 4/4 | 11/11 |

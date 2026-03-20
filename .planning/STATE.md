@@ -1,36 +1,36 @@
 ---
 gsd_state_version: 1.0
-milestone: v1.3
-milestone_name: Observability & Performance
+milestone: v1.4
+milestone_name: Social Auth
 status: planning
-stopped_at: "Checkpoint: 13-03 Task 3 human-verify — awaiting own-message styling visual confirmation"
-last_updated: "2026-03-18T15:55:24.123Z"
-last_activity: 2026-03-17 — Roadmap created, ready to begin Phase 10 planning
+stopped_at: Completed 15-02-PLAN.md — Discord OAuth configured, SQL migration applied, identity linking confirmed
+last_updated: "2026-03-19T13:00:00.000Z"
+last_activity: 2026-03-19 — Phase 15 complete (Discord OAuth active, Google deferred)
 progress:
-  total_phases: 4
-  completed_phases: 4
-  total_plans: 9
-  completed_plans: 9
-  percent: 0
+  total_phases: 7
+  completed_phases: 1
+  total_plans: 3
+  completed_plans: 2
+  percent: 67
 ---
 
 # Project State
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-03-17)
+See: .planning/PROJECT.md (updated 2026-03-19)
 
 **Core value:** Players must always know where they are in the game and what their actions mean — reliable state, readable feedback, and visible progress are what keep them coming back.
-**Current focus:** Phase 10 — Sentry Foundation
+**Current focus:** v1.4 Social Auth — Phase 15: Provider Infrastructure
 
 ## Current Position
 
-Phase: 10 of 13 (Sentry Foundation)
-Plan: — of —
+Phase: 16 of 16 (OAuth UI)
+Plan: — (not yet planned)
 Status: Ready to plan
-Last activity: 2026-03-17 — Roadmap created, ready to begin Phase 10 planning
+Last activity: 2026-03-19 — Phase 15 complete; Discord OAuth active; Google OAuth deferred
 
-Progress: [░░░░░░░░░░] 0%
+Progress: [███████░░░] 67%
 
 ## Performance Metrics
 
@@ -46,60 +46,38 @@ Progress: [░░░░░░░░░░] 0%
 | - | - | - | - |
 
 ## Accumulated Context
-| Phase 10-sentry-foundation P01 | 25 | 3 tasks | 8 files |
-| Phase 10-sentry-foundation P02 | 9min | 2 tasks | 5 files |
-| Phase 10-sentry-foundation P02 | 10 | 3 tasks | 5 files |
-| Phase 11-error-boundaries P01 | 2 | 1 tasks | 1 files |
-| Phase 11-error-boundaries P02 | 15 | 3 tasks | 2 files |
-| Phase 12-performance-baselines P01 | 4 | 2 tasks | 5 files |
-| Phase 12-performance-baselines P02 | 30 | 3 tasks | 7 files |
-| Phase 13-performance-fixes P02 | 5 | 1 tasks | 1 files |
-| Phase 13-performance-fixes P03 | 8 | 2 tasks | 3 files |
+| Phase 15 P01 | 1min | 1 tasks | 1 files |
+| Phase 15 P02 | ~30min | 2 tasks | 0 files |
 
 ### Decisions
 
-See PROJECT.md Key Decisions table for all decisions from v1.0–v1.2.
+**Phase 15 P02:**
+- Google OAuth (SETUP-01) deferred — Discord is sole active provider going into Phase 16; todo tracked in .planning/todos/pending/
+- Supabase Manual Linking confirmed disabled — automatic identity linking is active
+- Phase 16 OAuth UI should render Discord sign-in only; Google button should be hidden/disabled until SETUP-01 todo is resolved
 
-**v1.3 context:**
-- Sentry must be installed via wizard (`npx @sentry/wizard@latest`), not manually — wizard sets all three config files and `next.config.mjs` correctly
-- `withSentryConfig` must be outermost wrapper in `next.config.mjs`: `withSentryConfig(withBundleAnalyzer(config), sentryOpts)` — reversed order breaks source map upload silently
-- `tracesSampleRate` must NOT be 1.0 in production — real-time app will exhaust quota; target 0.1
-- Tunnel route required from Phase 10 start — not retrofittable without a gap in observability
-- Sentry v8 vs v9: accept what wizard installs, do not pin manually
-- `why-did-you-render` React 19 compat is LOW confidence — verify before Phase 12; fall back to React DevTools Profiler if incompatible
-- [Phase 10-sentry-foundation]: Wizard placed instrumentation files in src/ — edited at actual location, not relocated
-- [Phase 10-sentry-foundation]: tracesSampleRate: 0.1 across all runtimes — real-time game would exhaust Sentry quota at 1.0
-- [Phase 10-sentry-foundation]: sendDefaultPii removed — user identity set explicitly via setSentryUser() in Plan 02
-- [Phase 10-sentry-foundation]: game_ws_url used as Sentry room identifier — LobbyJoinSuccess type has no id field; game_ws_url uniquely identifies the room
-- [Phase 10-sentry-foundation]: Module-level lastConnectErrorCapture guard in useGameSocket — per-instance ref resets on hook remount; module scope persists across reconnect cycles
-- [Phase 10-sentry-foundation]: game_ws_url used as Sentry room identifier — LobbyJoinSuccess type has no id field; game_ws_url uniquely identifies the room
-- [Phase 10-sentry-foundation]: Module-level lastConnectErrorCapture guard in useGameSocket — per-instance ref resets on hook remount; module scope persists across reconnect cycles
-- [Phase 11-error-boundaries]: error.tsx uses captureException from @/lib/sentry (not @sentry/nextjs directly) — only global-error.tsx imports Sentry SDK directly
-- [Phase 11-error-boundaries]: No html/body wrapper in error.tsx — renders inside existing layout unlike global-error.tsx
-- [Phase 11-error-boundaries]: Silent-retry boundary requires class component, not error.tsx — Next.js error.tsx always shows fallback immediately; class component two-state machine is the only way to attempt silent recovery first
-- [Phase 11-error-boundaries]: recoveryAttempted gate mandatory in componentDidCatch — without it a persistent error causes infinite setState->crash loop
-- [Phase 11-error-boundaries]: componentStack NOT passed as Sentry tag in GameroomErrorBoundary — multi-line value truncated by Sentry; boundary='gameroom' tag sufficient for triage
-- [Phase 11-error-boundaries]: GameroomErrorBoundary OBS-04 verified: transient crash recovers silently, persistent crash shows minimal fallback, Sentry captures with boundary=gameroom tag
-- [Phase 12-performance-baselines]: npm run analyze uses --webpack flag: Next.js 16 defaults to Turbopack which is incompatible with @next/bundle-analyzer
-- [Phase 12-performance-baselines]: WebVitalsLogger only logs in NODE_ENV=development — gating ensures no production console noise before baselines are recorded
-- [Phase 12-performance-baselines]: WDYR removed from layout.tsx after crashing on Next.js 16 router internals — wdyr.ts and WdyrInit.tsx remain as artifacts but are not mounted; React Profiler callbacks replaced WDYR for re-render profiling
-- [Phase 12-performance-baselines]: LCP 4324ms (poor) is highest-priority fix target for Phase 13; lobby_tick handler overhead is low (~0.2ms); React component render times are fast (<1ms) — Phase 13 should focus on LCP/bundle size first
-- [Phase 13-performance-fixes]: SentryUserSync dynamic import uses ssr: false — component only sets Sentry user context, no server-side HTML, safe to defer
-- [Phase 13-performance-fixes]: Dynamic import in Provider.tsx (Client Component) not layout.tsx (Server Component) — Next.js only code-splits dynamic imports from Client Components
-- [Phase 13-performance-fixes]: INITIAL_SESSION early return in onAuthStateChange prevents router.refresh() on passive session restore — initial state handled by loadUser() only
-- [Phase 13-performance-fixes]: currentUserIdAtom set in page.tsx (not hot-render path) via useUser() + useEffect — acceptable because page.tsx re-renders are rare compared to 1Hz lobby_tick
+**v1.4 context (pre-execution):**
+- Phase 15 must complete before Phase 16 — OAuth UI is untestable without provider configuration and DB trigger fix in place
+- DB trigger COALESCE fallback is the highest-risk item — must precede first OAuth sign-in attempt in any environment
+- SETUP-05 (next.config.mjs remotePatterns) placed in Phase 16 — only relevant once profile-sync avatar display code exists
+- Account linking (LINK-01, LINK-02) deferred to v2 — known user_metadata overwrite bug in current Supabase SDK (auth-js#1067)
+- `/players/{id}/sync-oauth` backend endpoint does not yet exist — if not scoped in this milestone, stub with no-op and ship separately
+- Discord user_metadata field names are MEDIUM confidence (community-sourced) — log actual shape from live response before committing production sync code
+- Verify @supabase/supabase-js resolves below 2.91.0 before any planned upgrade (SIGNED_IN event deferral breaking change at 2.91.0)
+- [Phase 15]: Uniform COALESCE fallback chain (name→full_name→user_name→split_part) over provider-branching — more maintainable for future providers
+- [Phase 15]: Avatar column nullable so COALESCE(picture, avatar_url) returning NULL is safe — no constraint failure if provider supplies no avatar
 
 ### Pending Todos
 
-None.
+- [SETUP-01] Set up Google OAuth provider — `.planning/todos/pending/2026-03-19-set-up-google-oauth-provider.md`
 
 ### Blockers/Concerns
 
-- [Phase 10] Sentry SDK config option names (`hideSourceMaps`, `deleteSourcemapsAfterUpload`) must be verified against current docs before writing `next.config.mjs` — training cutoff August 2025
-- [Phase 12] `@welldone-software/why-did-you-render` React 19 compatibility unverified — check before installing
+- **Backend dependency:** `/players/{id}/sync-oauth` endpoint must exist or be stubbed before Phase 16 profile-sync logic can be fully wired
+- **Discord metadata shape:** Log actual `user_metadata` from a live Discord OAuth response during Phase 16 before finalizing sync code
 
 ## Session Continuity
 
-Last session: 2026-03-18T15:55:24.122Z
-Stopped at: Checkpoint: 13-03 Task 3 human-verify — awaiting own-message styling visual confirmation
+Last session: 2026-03-19T13:00:00.000Z
+Stopped at: Completed 15-02-PLAN.md — Discord OAuth configured, SQL migration applied, identity linking confirmed
 Resume file: None

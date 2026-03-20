@@ -21,8 +21,8 @@ decisions:
   - "atom<string | null>(null) — null means unauthenticated or not yet set; own-message styling simply won't apply, which is correct behavior"
 metrics:
   duration: "~8min"
-  completed: "2026-03-18"
-  tasks_completed: 2
+  completed: "2026-03-19"
+  tasks_completed: 3
   tasks_total: 3
   files_modified: 3
 ---
@@ -37,6 +37,7 @@ Remove `useUser()` from `UnifiedMessages` by routing user ID through a Jotai ato
 |------|------|--------|-------|
 | 1 | Add currentUserIdAtom to gameAtoms.ts | 7452772 | src/app/gameroom/store/gameAtoms.ts |
 | 2 | Remove useUser() from UnifiedMessages and wire setter | b92e9bf | src/app/gameroom/components/UnifiedMessages.tsx, src/app/gameroom/page.tsx |
+| 3 | Verify own-message styling works during gameplay | — | human-verify checkpoint: approved |
 
 ## What Was Built
 
@@ -67,6 +68,6 @@ None — plan executed exactly as written. The "no other useUser() call in gamer
 
 ## Self-Check: PASSED
 
-## Checkpoint Pending
+## Task 3 Verification
 
-**Task 3 (human-verify):** Visual verification of own-message styling during live gameplay. Build is clean; code review confirms correct implementation. Awaiting human approval.
+**Task 3 (human-verify):** User confirmed own-message styling works during gameplay. No Supabase import in UnifiedMessages. Build clean. Approved 2026-03-19.

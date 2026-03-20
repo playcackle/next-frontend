@@ -1,179 +1,176 @@
 # Project Research Summary
 
-**Project:** v1.3 Observability & Performance — Sentry error monitoring + Next.js/React performance profiling
-**Domain:** Real-time multiplayer quiz game — Next.js 16 App Router, React 19, Socket.IO, Jotai, Supabase
-**Researched:** 2026-03-17
-**Confidence:** MEDIUM
+**Project:** Cackle — v1.4 Social Auth milestone
+**Domain:** Google and Discord OAuth for an existing Next.js 15 + Supabase Auth SSR gaming app
+**Researched:** 2026-03-19
+**Confidence:** HIGH (OAuth flow and architecture); MEDIUM (provider metadata field shapes); LOW (user_metadata overwrite behavior with multiple linked providers)
 
 ## Executive Summary
 
-This milestone adds production observability and performance measurement to an existing real-time multiplayer quiz game (v1.2 complete). The recommended approach is a layered build: install the Sentry Next.js SDK via the official wizard first, then add error boundaries, then measure performance baselines, then fix the top bottlenecks. Each layer depends on the previous one — you cannot meaningfully profile re-renders without granular atom subscriptions (already in place from v1.2), and you cannot validate performance fixes without baselines established in the measurement phase. The entire milestone is additive; no existing game logic needs to change.
+Adding Google and Discord OAuth to this app is a well-constrained integration. Every package required is already installed — `@supabase/supabase-js@^2.87.1` exposes `signInWithOAuth`, and `@supabase/ssr@^0.8.0` manages the PKCE flow end-to-end. The existing `/auth/callback/route.ts` already performs `exchangeCodeForSession`, which is provider-agnostic and handles OAuth PKCE codes identically to email magic links. In terms of pure OAuth plumbing, the backend is effectively done. The implementation scope is: (1) external app registration in Google Cloud Console and Discord Developer Portal, (2) enabling providers in the Supabase dashboard, (3) one new shared UI component (`OAuthButtons`), (4) minor additions to the login and register pages, and (5) a first-sign-in detection and profile-sync step in the callback route.
 
-The key architectural insight is that this app's real-time nature makes standard observability defaults wrong. `tracesSampleRate: 1.0` will exhaust Sentry quota within hours during active play. Socket.IO event handlers are invisible to React error boundaries. `@next/bundle-analyzer` must be composed in the correct order with `withSentryConfig`. These are not edge cases — they are predictable failure modes that must be addressed at configuration time (Phase 1), not discovered later.
+The recommended approach is a two-phase delivery. Phase 1 covers all prerequisite infrastructure: dashboard configuration, provider app registration, and — critically — updating the existing `on_auth_user_created` database trigger to handle OAuth metadata field names before a single OAuth button is wired up. Phase 2 implements the UI, callback modifications, and the first-sign-in profile-population flow. Deferring account linking, additional providers, and a full "complete your profile" onboarding screen to post-launch is the correct call: these carry high complexity and low immediate value.
 
-The highest-risk components are `UnifiedMessages`, `LeaderBoard`, and `SlotGrid`, all of which receive high-frequency Jotai atom updates driven by Socket.IO events. The v1.2 granular atom refactor makes these components isolatable for profiling — re-render analysis is now viable where it was not before. The performance fix phase should target these three components first.
-
----
+The primary risks are all front-loaded infrastructure concerns, not implementation complexity. Three failure modes can make OAuth completely non-functional and are invisible until tested end-to-end with a real account: (1) the database trigger throwing a NOT NULL constraint violation when `name` is absent from OAuth metadata, (2) a three-way callback URL mismatch between the provider console, Supabase dashboard, and the `signInWithOAuth` call, and (3) automatic identity linking being disabled in Supabase, causing duplicate accounts for players who try OAuth with an existing email. All three must be verified in a staging environment before any OAuth button ships.
 
 ## Key Findings
 
 ### Recommended Stack
 
-The stack is narrow and appropriate for the problem. `@sentry/nextjs` (v8.x, installed via wizard) is the single unified SDK that handles browser, server, and edge runtimes for App Router — no split client/node SDK setup. `@next/bundle-analyzer` (must match Next.js major version: `^16.x`) wraps `webpack-bundle-analyzer` with the correct Next.js config. `web-vitals` (v4.x) provides real-user Core Web Vitals including INP, which replaced FID as a Core Web Vital in March 2024. `@welldone-software/why-did-you-render` (v8.x) is a dev-only diagnostic tool with a React 19 compatibility question that must be verified before installing — React DevTools Profiler is the zero-risk fallback.
+No new packages are required. The full OAuth capability is already present in the installed Supabase SDK. The only external dependencies are the two provider developer portals (Google Cloud Console, Discord Developer Portal) and the Supabase project dashboard — these require manual configuration steps that must happen before any code is testable.
 
 **Core technologies:**
-- `@sentry/nextjs@^8.x`: Error capture + performance tracing for App Router — install via wizard, not manually
-- `@next/bundle-analyzer@^16.x`: Bundle visualization — must match `next` major version; wrap inside `withSentryConfig`
-- `web-vitals@^4.x`: Real-user Core Web Vitals (LCP, CLS, INP, FCP, TTFB) — INP support requires v4+
-- `@welldone-software/why-did-you-render@^8.x`: Dev-only re-render diagnostics — verify React 19 compatibility before installing; fall back to React DevTools Profiler if incompatible
+- `@supabase/supabase-js@^2.87.1` — `signInWithOAuth` method; already installed, no upgrade needed
+- `@supabase/ssr@^0.8.0` — PKCE flow management, cookie-based session; already installed and wiring the existing callback route
+- Existing `/auth/callback/route.ts` — handles `exchangeCodeForSession` for any provider; no route changes needed, only additions
+
+**Critical version caveat:** A breaking behavior change in `@supabase/supabase-js@2.91.0` deferred the `SIGNED_IN` event emission via `setTimeout`, causing OAuth cookie writes to be missed in SSR. The current installed version (`^2.87.1`) resolves to below this. Verify before upgrading.
 
 ### Expected Features
 
-The research distinguishes clearly between features required for the milestone to function and features that add value but are not blocking.
+**Must have (table stakes):**
+- "Sign in with Google" button on `/login` and `/register` — standard UX expectation
+- "Sign in with Discord" button on `/login` and `/register` — gaming platform audience specifically expects Discord
+- OAuth error handling in `/auth/callback` for declined consent (`?error=` param, currently unhandled)
+- Display name pre-populated from provider on first sign-in — players skipping the registration form still need a name
+- Avatar pre-populated from provider on first sign-in
+- Email/password auth preserved without regression
 
-**Must have (table stakes for v1.3):**
-- Sentry SDK installed with DSN + all three config files (`sentry.client.config.ts`, `sentry.server.config.ts`, `sentry.edge.config.ts`)
-- Unhandled error auto-capture (free with SDK init)
-- Global `error.tsx` boundary — prevents white-screen crashes for the whole app
-- Gameroom `error.tsx`/`GameroomErrorBoundary` with silent recovery — players mid-game must not see a crash screen
-- User identity in Sentry scope via `SentryUserSync` + Supabase auth
-- Game room context in Sentry scope (`roomId`, `phase`)
-- Source maps uploaded to Sentry with `hideSourceMaps: true` — unreadable stack traces make the monitoring useless
-- Bundle analysis baseline before any fix work
-- Web Vitals baseline (LCP, CLS, INP) before any fix work
-- React re-render hotspots profiled on `UnifiedMessages`, `LeaderBoard`, `SlotGrid`
-- Top 3 highest-impact bottlenecks fixed and verified against baselines
-
-**Should have (P2, add after core is working):**
-- Sentry breadcrumbs on key game events (room join, round start, answer submit) — lightweight reproduction trail
-- Game phase context tag in Sentry (`answering` / `intermission` / `game_over`)
-- Socket overhead profiling via `performance.mark()` in `useGameEvents.ts`
+**Should have (competitive):**
+- Discord username as default display name — Discord handles are game identity; players feel immediately at home
+- Redirect to intended destination after OAuth — callback already supports `redirect_to` param; wiring it in `signInWithOAuth` is minimal work
+- Loading state on OAuth buttons — 1-3 second redirect lag feels broken without visual feedback
 
 **Defer (v2+):**
-- Sentry Alerts / notification thresholds — requires stable baseline and ops ownership
-- OpenTelemetry server-side tracing — only relevant if backend observability is added
-- Sentry Session Replay — privacy violation for a live quiz game; adds ~50KB bundle; high quota cost
-
-**Anti-features (do not implement):**
-- Sentry Session Replay (privacy risk outweighs benefit for a quiz game)
-- `window.onerror` / custom global handler (duplicates SDK, risks double-reporting)
-- Continuous production profiler (`@sentry/profiling-node` is server-side only, irrelevant here)
+- Account linking (connect Google + Discord to the same account) — known Supabase `user_metadata` overwrite bug makes this high-risk
+- Additional providers (GitHub, Apple, etc.) — add only on explicit user demand
+- Auto-merge OAuth account with existing email/password account — security-sensitive, Supabase does not support this safely without re-verification
+- Full `/auth/setup` "complete your profile" onboarding page — valuable but not blocking if the trigger generates a reasonable provisional username
 
 ### Architecture Approach
 
-The architecture is a layered set of new files and targeted modifications to existing ones. Sentry config files live at the project root (not inside `src/`); `src/instrumentation.ts` is the only correct server-side init point in App Router. All Sentry calls from application code route through `src/lib/sentry.ts` helpers — no component imports `@sentry/nextjs` directly. Error boundaries are layered: `global-error.tsx` is the last resort (destroys root layout), `GameroomErrorBoundary` is the first line of defence (attempts silent recovery, keeps app shell alive). `SentryUserSync` is a side-effect-only Client Component mounted in `provider.tsx` that subscribes to Supabase auth state and keeps Sentry user context current.
+The architecture is deliberately minimal: one new shared component (`OAuthButtons`), two modified pages (login, register), and one modified route handler (callback). All OAuth initiation must happen in a Client Component because `signInWithOAuth` returns a provider URL that the browser must navigate to — it cannot be called from a Server Action or Route Handler. The callback route handles new-user detection via a `created_at` timestamp comparison (< 5 seconds = new user) and conditionally fires a `POST /players/{id}/sync-oauth` call to populate display name and avatar. Returning users bypass the sync entirely to preserve any profile customizations.
 
 **Major components:**
-1. `sentry.{client,server,edge}.config.ts` (root) — SDK init for each runtime; all three required
-2. `src/instrumentation.ts` — App Router contract for server-side init; `register()` hook
-3. `src/lib/sentry.ts` — thin wrappers (`setSentryUser`, `setSentryGameContext`, `clearSentryUser`) isolating Sentry from components
-4. `src/components/SentryUserSync.tsx` — mounts in Provider; syncs Supabase auth state to Sentry user context
-5. `src/app/global-error.tsx` — top-level React boundary; captures to Sentry via `useEffect`
-6. `src/components/GameroomErrorBoundary.tsx` — class-based boundary; silent recovery attempt; captures with room context
-7. `next.config.mjs` (modified) — `withSentryConfig(withBundleAnalyzer(nextConfig), sentryOptions)` (order matters)
-
-**Build order is dependency-driven:**
-SDK init → `lib/sentry.ts` helpers → `SentryUserSync` + Provider → `global-error.tsx` → `GameroomErrorBoundary` → gameroom page wrapping → socket hook captures → optional `error.tsx`
+1. `OAuthButtons` (new, `src/components/OAuthButtons.tsx`) — Client Component; Google and Discord buttons; calls `signInWithOAuth` with `window.location.origin`-derived `redirectTo`
+2. `/auth/callback/route.ts` (modified) — adds new-user detection and profile sync after existing `exchangeCodeForSession`; adds `?error=` param handling for declined consent
+3. `on_auth_user_created` DB trigger (modified) — `COALESCE` across `name`, `full_name`, `user_name`, and email-prefix fallback to handle OAuth metadata field shapes
+4. Backend `/players/{id}/sync-oauth` endpoint (new, in backend service) — idempotent POST to set display name and avatar URL from provider data
 
 ### Critical Pitfalls
 
-1. **Source maps publicly accessible** — `hideSourceMaps: true` AND `deleteSourcemapsAfterUpload: true` are both required in `withSentryConfig`. The wizard does not always set both. Verify with `find .next -name "*.map"` after production build — expect zero results. Treat as a security gate in Phase 1.
+1. **Database trigger breaks on OAuth sign-up (NULL constraint)** — the existing trigger reads `raw_user_meta_data->>'name'`, which is absent for OAuth users. Update the trigger before any OAuth flow is tested: use `COALESCE(name, full_name, user_name, split_part(email,'@',1))`. Test with a real Google/Discord account against staging before shipping.
 
-2. **Sentry events blocked by ad blockers** — For a consumer game platform, a significant fraction of users run ad blockers that block `*.ingest.sentry.io`. Add a tunnel route (`src/app/api/sentry-tunnel/route.ts`) that proxies events through your own domain. Include DSN host validation to prevent SSRF. This is a single file — add it in Phase 1, not later.
+2. **Duplicate accounts when email already exists (identity linking off)** — verify "Enable automatic identity linking" is on in Supabase Auth Settings before any OAuth button is wired. Test the collision path explicitly: create an email/password account, then OAuth sign-in with the same email.
 
-3. **Socket.IO errors invisible to React error boundaries** — Error boundaries only catch render-time errors. Socket.IO `connect_error`, `useEffect` errors, and async errors are outside React's rendering cycle. Three layers are required together: error boundary (render crashes) + Sentry automatic global capture (async/unhandledrejection) + explicit `Sentry.captureException` in `connect_error` handlers. Missing any layer leaves a category of errors silent.
+3. **Three-way callback URL mismatch** — the redirect URI must be consistent across (a) Google Cloud Console / Discord Developer Portal, (b) Supabase Auth > URL Configuration, and (c) the `redirectTo` value in `signInWithOAuth`. Register both localhost and production URLs in all three places. Never hardcode the origin; derive from `NEXT_PUBLIC_SITE_URL` or `window.location.origin`.
 
-4. **Event flood exhausting Sentry quota** — `lobby_tick` and similar high-frequency events can generate thousands of Sentry events per minute if a handler throws. Set `tracesSampleRate: 0.1` (never `1.0` in production for a real-time app) and add a `beforeSend` filter to drop known-benign transport errors. Add a deduplication guard on `connect_error` (once per 30 seconds max). Configure this in Phase 1 before any production traffic.
+4. **PKCE code verifier cookie lost after sign-out** — confirmed bug in `@supabase/ssr` (issue #55): `signOut()` can clear the verifier cookie, breaking immediate OAuth re-login. Add explicit error handling in the callback route for the "both auth code and code verifier should be non-empty" case. Test sign-out then OAuth explicitly as a success criterion.
 
-5. **`@next/bundle-analyzer` + `withSentryConfig` composition order** — `withSentryConfig` must be the outermost wrapper: `withSentryConfig(withBundleAnalyzer(nextConfig), sentryOptions)`. Reversed order breaks Sentry's webpack plugin injection silently — source maps stop uploading with no error message.
-
----
+5. **Provider avatar URL breaks Next.js `<Image>`** — external hostnames must be listed in `images.remotePatterns` in `next.config.mjs`. Add `lh3.googleusercontent.com` and `cdn.discordapp.com` before writing any avatar display code. Discord avatar CDN URLs also go stale when the user changes their profile picture; store the URL as a hint, not a canonical source.
 
 ## Implications for Roadmap
 
-Research strongly suggests three phases with a clear dependency chain: foundation first, then boundaries, then profiling and fixes.
+A two-phase structure is strongly recommended. Phase 1 must be completed and verified end-to-end before Phase 2 begins — the pitfalls in Phase 1 can make the entire OAuth flow non-functional, and they are far easier to diagnose in isolation.
 
-### Phase 1: Sentry Foundation
-**Rationale:** Every other monitoring feature depends on the SDK being initialized. Source map security and event flood prevention must be configured before any production traffic hits the new SDK — these cannot be retrofitted safely. The tunnel route must also be present from the start to avoid a gap in observability for ad-blocker users.
-**Delivers:** Working Sentry pipeline — errors captured, stack traces readable, user context attached, events flowing through tunnel, quota-safe config
-**Addresses:** Sentry SDK install, unhandled error auto-capture, user identity, game room context, source maps, tunnel route
-**Avoids:** Source maps public (Pitfall 1), ad-blocker data loss (Pitfall 2), event flood (Pitfall 6), PII in events
+### Phase 1: Infrastructure and Provider Configuration
 
-### Phase 2: Error Boundaries
-**Rationale:** With Sentry initialized, error boundaries can be wired to `Sentry.captureException`. The gameroom boundary's silent recovery pattern requires `GameroomErrorBoundary` to be a class component (React 19 has no hook equivalent for `componentDidCatch`). Socket error capture belongs here because it closes the coverage gap left by boundaries-only thinking.
-**Delivers:** Layered error containment — gameroom crashes attempt silent recovery; global crashes show minimal fallback; socket errors are captured explicitly
-**Addresses:** Global `error.tsx`, `GameroomErrorBoundary` with silent recovery, socket error capture in `useGameSocket` + `useChatWs`
-**Avoids:** Silent socket error swallowing (Pitfall 3), single-boundary strategy anti-pattern, error boundary reset mismatching Socket.IO lifecycle
+**Rationale:** All three critical URL-related pitfalls (Pitfalls 2, 3) and the database trigger failure (Pitfall 1) are infrastructure concerns that must be resolved before any UI code is testable. Shipping Phase 1 complete means a developer can initiate an OAuth flow and see it succeed end-to-end, even with a placeholder UI.
 
-### Phase 3: Performance Baselines
-**Rationale:** Baselines must be established before any fix work — without them there is no way to verify improvement. This phase is measurement-only: bundle analysis, Web Vitals, and re-render profiling. The v1.2 granular atom refactor is a prerequisite that is already complete.
-**Delivers:** Documented baselines for bundle size, Web Vitals (LCP, CLS, INP), and re-render counts for `UnifiedMessages`, `LeaderBoard`, `SlotGrid`
-**Addresses:** Bundle analysis baseline, Web Vitals baseline, React re-render profiling, socket overhead measurement
-**Avoids:** `why-did-you-render` production leak (Pitfall 4), bundle analyzer in production (Pitfall 5), profiling with browser extensions active, measuring only the home page
+**Delivers:**
+- Google OAuth app registered in Google Cloud Console with Supabase callback URL
+- Discord OAuth app registered in Discord Developer Portal with `identify email` scopes and Supabase callback URL
+- Both providers enabled in Supabase Auth dashboard
+- Localhost and production redirect URLs registered in all three locations (provider console, Supabase allowlist, and code)
+- Automatic identity linking confirmed enabled in Supabase Auth settings
+- `on_auth_user_created` trigger updated with `COALESCE` fallback for OAuth metadata fields (with random-suffix collision handling for usernames)
+- Smoke tests passing: new user OAuth sign-in creates a valid player record; email/password user OAuth with same email merges to one account; Discord email scope is present in `auth.users.email`
 
-### Phase 4: Performance Fixes
-**Rationale:** Fixes without baselines are guesswork. This phase executes after baselines are documented and uses them as acceptance criteria. The top 3 bottlenecks identified in Phase 3 are addressed and verified against baselines.
-**Delivers:** Measurable improvement in the top 3 highest-impact bottlenecks, verified against Phase 3 baselines
-**Addresses:** Top 3 bottlenecks from bundle analysis + re-render + Web Vitals data
-**Avoids:** Fixing the wrong things (fixes must be chosen from Phase 3 data, not assumptions)
+**Addresses:** All P1 features that are dashboard-prerequisite
+**Avoids:** Pitfalls 1 (trigger NULL), 2 (duplicate accounts), 3 (URL mismatch)
+
+**Research flag:** Standard patterns — Supabase official docs cover all steps with HIGH confidence. No deeper research needed. The only uncertainty is verifying automatic identity linking is on in this specific project's dashboard.
+
+### Phase 2: OAuth UI and Callback Logic
+
+**Rationale:** With infrastructure validated, Phase 2 delivers the user-visible feature. The `OAuthButtons` component has no external dependencies beyond the browser Supabase client. The callback modifications add new-user detection and profile sync, with explicit error handling for declined consent and the PKCE verifier bug.
+
+**Delivers:**
+- `OAuthButtons` component (Google + Discord) added to `/login` and `/register` with a visual divider
+- `/auth/callback/route.ts` updated: handles `?error=` param for declined consent; detects new users via `created_at` comparison; calls `/players/{id}/sync-oauth` for new users only
+- `next.config.mjs` updated with `images.remotePatterns` for Google (`lh3.googleusercontent.com`) and Discord (`cdn.discordapp.com`) avatar CDN hostnames
+- Loading state on OAuth buttons
+- Redirect to intended destination wired via `redirect_to` param (already supported by the existing callback route)
+- End-to-end test matrix: new user, returning user, declined consent, sign-out then re-login
+
+**Uses:** `@supabase/supabase-js` `signInWithOAuth`, existing `createClient()` singleton, `window.location.origin` for `redirectTo`
+**Implements:** `OAuthButtons` component, callback route modifications
+**Avoids:** Pitfall 4 (PKCE verifier bug after sign-out), Pitfall 5 (avatar URL and `<Image>` config), anti-patterns from ARCHITECTURE.md (no Server Action initiation, no sync on every sign-in, no hardcoded origin)
+
+**Research flag:** One validation needed at runtime — log actual Discord `user_metadata` field names on first test sign-in and verify before committing production profile-sync code. Field names are MEDIUM confidence (community sources, not official per-provider specification).
 
 ### Phase Ordering Rationale
 
-- Phase 1 before everything else because Sentry init is a hard dependency for all capture features; source map security and quota config cannot be deferred to a follow-up phase without production risk.
-- Phase 2 after Phase 1 because `GameroomErrorBoundary.componentDidCatch` calls `Sentry.captureException` — if SDK is not initialized, boundary capture is a no-op and errors are still lost.
-- Phase 3 after Phase 2 because the performance profiling tools (`why-did-you-render`, React DevTools Profiler) produce misleading results if the error boundary layer is unstable — crashes during profiling sessions contaminate measurements.
-- Phase 4 after Phase 3 because baselines are the acceptance criteria for fixes. Shipping fixes before baselines means the milestone cannot be verified as complete.
+- Phase 1 before Phase 2 is a hard dependency: no OAuth UI can be tested without provider configuration and trigger fixes in place. Reversing this order means failures during UI development are ambiguous (infrastructure or code?).
+- The trigger update is the single highest-risk item. It is a database migration that must precede the first OAuth sign-in attempt in any environment. Placing it in Phase 1 ensures it is never accidentally skipped.
+- Avatar display (`next.config.mjs` `remotePatterns`) belongs in Phase 2 because it is only relevant once profile-sync code is written — but it must be done before any `<Image>` component renders a provider avatar URL.
+- Account linking, additional providers, and the `/auth/setup` confirmation page are correctly deferred. The `user_metadata` overwrite bug (supabase/auth-js #1067) has no confirmed fix in the current SDK version. Building account linking on top of this would create unpredictable behavior.
 
 ### Research Flags
 
-**Phases needing verification before execution:**
-- **Phase 1:** Sentry SDK v8 file locations and `withSentryConfig` options must be verified against current SDK docs (https://docs.sentry.io/platforms/javascript/guides/nextjs/) — training knowledge cutoff August 2025, minor breaking changes possible
-- **Phase 2:** `react-error-boundary` `resetKeys` API should be verified against https://github.com/bvaughn/react-error-boundary before using it as the recovery mechanism
-- **Phase 3:** Verify `@welldone-software/why-did-you-render` React 19 compatibility at https://github.com/welldone-software/why-did-you-render before installing — use React DevTools Profiler exclusively if incompatible
+**Phases needing verification during execution:**
+- **Phase 2 (Discord metadata fields):** Log actual `user_metadata` shape from a real Discord OAuth response before finalizing the profile-sync code. The `avatar_url` field presence and `custom_claims.global_name` availability are community-confirmed but not in official Supabase Discord docs. Plan a manual inspection step before committing the sync logic.
 
-**Phases with standard, well-documented patterns (low research need):**
-- **Phase 4:** Performance fix patterns (memoization, atom subscription granularity, lazy loading) are well-established; specific fixes will be guided by Phase 3 data
-
----
+**Phases with standard patterns (no research-phase needed):**
+- **Phase 1:** Supabase provider configuration is fully documented in official guides. Google Cloud Console and Discord Developer Portal steps are stable and HIGH confidence.
+- **Phase 2 (OAuthButtons, callback structure):** Established Next.js + Supabase App Router patterns. Official docs and multiple verified sources.
 
 ## Confidence Assessment
 
 | Area | Confidence | Notes |
 |------|------------|-------|
-| Stack | MEDIUM | `@sentry/nextjs` v8 and `@next/bundle-analyzer` patterns are well-established; `web-vitals` v4 INP support is HIGH confidence; `why-did-you-render` React 19 compat is LOW confidence — verify before Phase 3 |
-| Features | MEDIUM | Sentry SDK file names and config option names drawn from training knowledge; Next.js 16 bundle docs were verified via live fetch; flag Sentry-specific config for live verification before Phase 1 |
-| Architecture | MEDIUM | File placement, `instrumentation.ts` pattern, and `withSentryConfig` composition are established SDK patterns; `global-error.tsx` contract and class component requirement for `componentDidCatch` are HIGH confidence |
-| Pitfalls | MEDIUM-HIGH | Most pitfalls derived from codebase analysis (direct source) and stable API semantics; `hideSourceMaps` / `deleteSourcemapsAfterUpload` flag names should be verified against current SDK docs |
+| Stack | HIGH | All packages already installed and in use. OAuth capability confirmed in installed SDK version. One caveat: verify `@supabase/supabase-js` resolves below 2.91.0 breaking change before any planned upgrades. |
+| Features | HIGH | OAuth flow mechanics fully documented. Provider metadata field shapes at MEDIUM specifically for Discord `custom_claims` and avatar CDN URL construction. |
+| Architecture | HIGH | Integration points verified via direct codebase inspection. Client-Component-only constraint for `signInWithOAuth` is definitive. Callback route handler is already structurally correct. |
+| Pitfalls | HIGH | Critical pitfalls sourced from official Supabase docs, confirmed GitHub issues (`ssr#55`, `auth#1945`, `auth-js#1067`), and direct codebase analysis. Recovery strategies identified for all six pitfalls. |
 
-**Overall confidence:** MEDIUM — sufficient to proceed with planning; flag Sentry-specific API details for live verification at the start of Phase 1 execution.
+**Overall confidence:** HIGH
 
 ### Gaps to Address
 
-- **Sentry SDK exact config option names:** Training knowledge (August 2025). Verify `hideSourceMaps`, `deleteSourcemapsAfterUpload`, and `withSentryConfig` option shape against current docs before writing `next.config.mjs`. The Sentry wizard output is the ground truth — run it, review what it generates, then apply project-specific additions.
-- **`why-did-you-render` React 19 support:** LOW confidence. Check the library's GitHub issues before Phase 3. If unsupported, React DevTools Profiler covers the same ground for the profiling session — WDYR is a convenience, not a requirement.
-- **Sentry v8 vs v9:** Training cutoff is August 2025; Sentry may have released v9 by execution time. The wizard (`npx @sentry/wizard@latest`) selects the current stable version automatically — accept what the wizard installs rather than pinning manually.
-- **`instrumentation.ts` location (`src/` vs root):** Next.js 15/16 supports both; the project uses `src/` layout. Verify the wizard places it correctly or check Next.js 16 instrumentation docs for the `src/` variant.
+- **Discord `user_metadata` field names (LOW confidence):** `avatar_url` and `custom_claims.global_name` are community-sourced. Plan a logging step in the callback route during Phase 2 development to capture the real shape from a live Discord OAuth response before writing production profile-sync code.
 
----
+- **Backend `/players/{id}/sync-oauth` endpoint:** This endpoint does not yet exist in the backend service (`player_manager`). The Phase 2 callback modification depends on it. If backend work is not scoped in this milestone, stub with a no-op and ship the endpoint separately. This is the primary cross-service dependency for the milestone.
+
+- **Provisional username collision handling in the trigger:** The COALESCE fallback will produce display names like "Jane Smith" from Google, but the `username` column in `public.players` may enforce uniqueness. The trigger should append a random 4-digit suffix when deriving a username from provider data to avoid collisions. Finalize this strategy during Phase 1 implementation before migrating the trigger.
+
+- **`@supabase/supabase-js` version pin:** Confirm `package.json` resolves to a version below 2.91.0 (the SIGNED_IN event deferral breaking change). If any planned upgrade crosses this boundary, verify a fix has been released before including OAuth in the same deployment.
 
 ## Sources
 
 ### Primary (HIGH confidence)
-- Next.js 16 Bundle Optimization docs (official, fetched 2026-03-16): https://nextjs.org/docs/app/guides/package-bundling
-- Next.js 16 Instrumentation docs (official, fetched 2026-03-16): https://nextjs.org/docs/app/guides/instrumentation
-- React 19 error boundary docs: https://react.dev/reference/react/Component#catching-rendering-errors-with-an-error-boundary
-- Codebase analysis: `src/app/gameroom/hooks/useGameSocket.ts`, `useChatWs.ts`, `useGameEvents.ts`, `provider.tsx`, `src/lib/supabase/client.ts`
+- Supabase signInWithOAuth reference — method signature, PKCE flow: https://supabase.com/docs/reference/javascript/auth-signinwithoauth
+- Supabase Login with Google — Google Cloud Console setup: https://supabase.com/docs/guides/auth/social-login/auth-google
+- Supabase Login with Discord — Discord Developer Portal setup: https://supabase.com/docs/guides/auth/social-login/auth-discord
+- Supabase Redirect URLs — wildcard allowlist configuration: https://supabase.com/docs/guides/auth/redirect-urls
+- Supabase PKCE flow — confirms @supabase/ssr uses PKCE by default: https://supabase.com/docs/guides/auth/sessions/pkce-flow
+- Supabase Identity Linking — automatic linking configuration: https://supabase.com/docs/guides/auth/auth-identity-linking
+- Supabase troubleshooting: Database error saving new user: https://supabase.com/docs/guides/troubleshooting/database-error-saving-new-user-RU_EwB
+- Supabase ssr issue #55: PKCE code verifier cookie lost after signOut: https://github.com/supabase/ssr/issues/55
+- Supabase auth issue #1945: signUp does not error if email linked to social login: https://github.com/supabase/auth/issues/1945
+- Next.js images.remotePatterns documentation: https://github.com/vercel/next.js/discussions/58961
+- Codebase inspection: `src/app/auth/callback/route.ts`, `src/actions/auth.ts`, `src/app/login/page.tsx`, `src/app/register/page.tsx`, `src/hooks/useUser.ts`, `src/lib/supabase/client.ts`, `src/lib/supabase/server.ts`, `src/app/login/auth.module.css`
 
 ### Secondary (MEDIUM confidence)
-- Sentry Next.js SDK v8 patterns — training knowledge (August 2025 cutoff); verify at https://docs.sentry.io/platforms/javascript/guides/nextjs/
-- `@sentry/wizard` install flow and `instrumentation.ts` pattern — verify at Sentry docs before Phase 1 execution
-- `@next/bundle-analyzer` version-matching convention — documented Next.js pattern
-- Socket.IO client v4 `connect_error` event API — stable, HIGH confidence
+- Supabase discussion #5210: provider metadata field shapes (community-documented): https://github.com/orgs/supabase/discussions/5210
+- Supabase discussion #5666: Google full_name, avatar_url in user_metadata: https://github.com/orgs/supabase/discussions/5666
+- Supabase discussion #306: Database trigger for profile sync pattern: https://github.com/orgs/supabase/discussions/306
+- DEV.to: window.location.origin redirectTo pattern for Next.js + Supabase OAuth
 
 ### Tertiary (LOW confidence)
-- `@welldone-software/why-did-you-render` React 19 compatibility — unverified; check https://github.com/welldone-software/why-did-you-render before Phase 3
-- `react-error-boundary` `resetKeys` API — training knowledge; verify at https://github.com/bvaughn/react-error-boundary before Phase 2
+- Supabase auth-js issue #1067: user_metadata overwrite with multiple linked providers — no confirmed fix in current versions: https://github.com/supabase/auth-js/issues/1067
+- Supabase discussion #3334: Discord avatar_url CDN construction in user_metadata: https://github.com/orgs/supabase/discussions/3334
 
 ---
-*Research completed: 2026-03-17*
+*Research completed: 2026-03-19*
 *Ready for roadmap: yes*

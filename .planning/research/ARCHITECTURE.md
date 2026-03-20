@@ -1,380 +1,332 @@
 # Architecture Research
 
-**Domain:** Sentry integration + error boundaries + performance profiling in Next.js 16 App Router (React 19)
-**Researched:** 2026-03-17
-**Confidence:** MEDIUM — Sentry Next.js SDK v8 patterns are well-established as of August 2025. React 19 + Next.js 16 specifics verified from codebase inspection; Sentry API verified from SDK documentation patterns (web tools unavailable; flagged below).
+**Domain:** Google and Discord OAuth integration with existing @supabase/ssr + Next.js 15 App Router auth architecture
+**Researched:** 2026-03-19
+**Confidence:** HIGH — Supabase PKCE/OAuth + @supabase/ssr patterns are well-established and the existing callback route already handles code exchange. Integration points verified from codebase inspection. User_metadata field names for Google confirmed from multiple community sources; Discord avatar construction is LOW confidence (field names not definitively documented in official sources).
 
 ---
 
 ## Standard Architecture
 
-### System Overview
+### System Overview: OAuth Flow
 
 ```
 ┌──────────────────────────────────────────────────────────────────────┐
-│                         Next.js App Router                           │
-│                                                                      │
-│  src/app/global-error.tsx          ← App Router global error page   │
-│  src/app/layout.tsx                ← Wraps GlobalErrorBoundary       │
-│  src/app/error.tsx                 ← Route-segment fallback (opt-in) │
-├──────────────────────────────────────────────────────────────────────┤
-│                        Sentry Config Layer                           │
-│                                                                      │
-│  sentry.client.config.ts           ← Browser SDK init (DSN, scope)  │
-│  sentry.server.config.ts           ← Node/Edge SDK init             │
-│  sentry.edge.config.ts             ← Edge runtime (middleware)      │
-│  instrumentation.ts (src/)         ← Next.js hook loads server conf │
-├──────────────────────────────────────────────────────────────────────┤
-│                          Build Pipeline                              │
-│                                                                      │
-│  next.config.mjs                   ← withSentryConfig wrapper       │
-├──────────────────────────────────────────────────────────────────────┤
-│                       Gameroom Error Layer                           │
-│                                                                      │
-│  src/components/GameroomErrorBoundary.tsx   ← Class-based boundary  │
-│  src/app/gameroom/page.tsx                  ← Wrapped by above      │
-├──────────────────────────────────────────────────────────────────────┤
-│                       Identity / Context                             │
-│                                                                      │
-│  src/lib/sentry.ts                 ← setUser(), setContext() helpers │
-│  src/hooks/useUser.ts              ← Existing Supabase user hook     │
-│  src/app/provider.tsx              ← Mounts SentryUserSync          │
+│                      Browser (Client Component)                       │
+│                                                                       │
+│  /login or /register page                                             │
+│  OAuthButtons component                                               │
+│    → supabase.signInWithOAuth({ provider: 'google'|'discord',        │
+│        options: { redirectTo: '/auth/callback' } })                  │
+│    → browser redirects to Google/Discord consent screen              │
+└──────────────────────────┬───────────────────────────────────────────┘
+                            │  provider redirects back with ?code=...
+                            ▼
+┌──────────────────────────────────────────────────────────────────────┐
+│                  /auth/callback/route.ts (Route Handler)              │
+│                                                                       │
+│  exchangeCodeForSession(code)  ← ALREADY EXISTS, unchanged           │
+│    → sets cookie-based session via @supabase/ssr                     │
+│    → data.session.user.user_metadata populated from provider         │
+│                                                                       │
+│  [NEW] detect first sign-in:                                         │
+│    check data.session.user.created_at ≈ now (< 5s)                  │
+│    OR check backend: GET /players/{id}/profile → 404 = new user      │
+│                                                                       │
+│  if new user: POST /players/sync-oauth                               │
+│    { user_id, display_name, avatar_url }                             │
+│                                                                       │
+│  redirect to /?onboarding=1  (new)  OR  /  (returning)              │
+└──────────────────────────────────────────────────────────────────────┘
+                            │
+                            ▼
+┌──────────────────────────────────────────────────────────────────────┐
+│                   Supabase Auth + Database                            │
+│                                                                       │
+│  auth.users.user_metadata (raw_user_meta_data)                       │
+│    Google:  { full_name, avatar_url, email }                         │
+│    Discord: { full_name, avatar_url, custom_claims.global_name }     │
+│                                                                       │
+│  Database trigger on_auth_user_created:                              │
+│    → auto-creates player record in backend DB (already exists)       │
+│    → uses new.raw_user_meta_data->>'name' for username               │
+│    [RISK: trigger may run before metadata is available]              │
 └──────────────────────────────────────────────────────────────────────┘
 ```
 
 ### Component Responsibilities
 
-| Component | Responsibility | Typical Implementation |
-|-----------|----------------|------------------------|
-| `sentry.client.config.ts` | Browser-side SDK init: DSN, release, environment, replay, tracing | `Sentry.init()` called once at module load; included via `next.config.mjs` instrumentation |
-| `sentry.server.config.ts` | Server-side SDK init: same options minus Replay; source map upload | `Sentry.init()` with `integrations: [nodeProfilingIntegration()]` |
-| `instrumentation.ts` | Next.js 15/16 lifecycle hook; imports server config when `runtime !== 'edge'` | `export async function register()` — the only supported hook point for server-side Sentry init in App Router |
-| `next.config.mjs` (modified) | Wraps config with `withSentryConfig` to enable source map upload, bundle plugin, and `autoInstrumentServerFunctions` | ESM wrapper around existing `nextConfig` export |
-| `src/app/global-error.tsx` | App Router's top-level React error boundary; catches any uncaught render error in the entire tree | Must be a Client Component (`"use client"`); receives `error` and `reset` props; calls `Sentry.captureException(error)` in `useEffect` |
-| `src/app/error.tsx` | Route-segment error boundary; optional but can catch errors scoped to `/app` without destroying the entire layout | Same pattern as `global-error.tsx` but keeps Header/SynthwaveBackground alive |
-| `GameroomErrorBoundary.tsx` | Class-based React error boundary wrapping only the gameroom; attempts silent recovery; shows minimal fallback only on unrecoverable crash | Extends `React.Component`; `componentDidCatch` calls `Sentry.captureException` with gameroom context tag |
-| `src/lib/sentry.ts` | Thin helpers: `setSentryUser(user)`, `setSentryGameContext(roomId)`, `clearSentryUser()` | Wraps `Sentry.setUser()` and `Sentry.setContext()` so components never import Sentry directly |
-| `SentryUserSync` (client component) | Mounts in `provider.tsx`; subscribes to Supabase auth state and calls `setSentryUser` / `clearSentryUser` on change | Small `useEffect`-only component; no UI output |
+| Component | Responsibility | Implementation |
+|-----------|----------------|----------------|
+| `OAuthButtons` (new) | Render Google + Discord sign-in buttons; call `signInWithOAuth` on click | Client Component; one button per provider; no form submission |
+| `/auth/callback/route.ts` | Exchange OAuth code for session; detect new user; trigger profile sync | **Already exists** — add new-user detection + sync after `exchangeCodeForSession` |
+| `src/actions/auth.ts` | Server actions for signUp/signIn — no changes needed | Email/password path unchanged |
+| `/login/page.tsx` | Email/password form + OAuth buttons | Add `<OAuthButtons />` below the form |
+| `/register/page.tsx` | Registration form + OAuth buttons | Add `<OAuthButtons />` below the form |
+| `src/lib/supabase/client.ts` | Browser Supabase client (singleton) | **Unchanged** — `signInWithOAuth` called on this client |
 
 ---
 
 ## Recommended Project Structure
 
 ```
-next-frontend/
-├── sentry.client.config.ts          # Browser SDK init (project root)
-├── sentry.server.config.ts          # Server/Node SDK init (project root)
-├── sentry.edge.config.ts            # Edge runtime init (project root — only if middleware is used)
-├── next.config.mjs                  # MODIFIED: wrap with withSentryConfig
 src/
-├── instrumentation.ts               # MODIFIED or CREATED: register() hook
 ├── app/
-│   ├── global-error.tsx             # NEW: App Router global boundary
-│   ├── error.tsx                    # NEW (optional): route-segment boundary
-│   ├── layout.tsx                   # MODIFIED: add SentryUserSync inside Provider
-│   ├── provider.tsx                 # MODIFIED: mount <SentryUserSync />
-│   └── gameroom/
-│       ├── page.tsx                 # MODIFIED: wrap render in GameroomErrorBoundary
-│       └── layout.tsx               # OPTIONALLY: wrap here instead of page.tsx
+│   ├── auth/
+│   │   └── callback/
+│   │       └── route.ts          # MODIFIED: add new-user detection + profile sync
+│   ├── login/
+│   │   ├── page.tsx              # MODIFIED: add <OAuthButtons />
+│   │   └── auth.module.css       # MODIFIED: .divider, .socialButtons already exist
+│   └── register/
+│       └── page.tsx              # MODIFIED: add <OAuthButtons />
 ├── components/
-│   ├── GameroomErrorBoundary.tsx    # NEW: class-based boundary for gameroom
-│   └── SentryUserSync.tsx           # NEW: client component syncing auth → Sentry
-└── lib/
-    └── sentry.ts                    # NEW: setUser/setContext/clearUser helpers
+│   └── OAuthButtons.tsx          # NEW: Google + Discord buttons
+└── actions/
+    └── auth.ts                   # UNCHANGED
 ```
 
 ### Structure Rationale
 
-- **Sentry config files at project root:** This is where the Sentry Next.js SDK wizard places them and where `withSentryConfig` expects them. Do not put them inside `src/`.
-- **`src/instrumentation.ts`:** Next.js 15+ supports this path via `src/` layout. This file is the only guaranteed init point for server-side code in App Router — there is no `_app.tsx` equivalent.
-- **`src/lib/sentry.ts`:** Centralising the `setUser`/`setContext` API means components never import `@sentry/nextjs` directly, making the dependency easy to swap and keeping the Sentry surface narrow.
-- **`GameroomErrorBoundary.tsx` in `src/components/`:** Shared across any future use of the gameroom; not co-located in `gameroom/` because it is a cross-cutting infrastructure component.
-- **`SentryUserSync.tsx` in `src/components/`:** Purely a side-effect component; lives alongside other infrastructure components (Header, SynthwaveBackground, PerformanceInitializer).
+- **`OAuthButtons` in `src/components/`:** Shared between login and register pages. A single component eliminates duplication and ensures both pages stay in sync.
+- **Callback modification over new route:** The existing `/auth/callback/route.ts` already handles `exchangeCodeForSession` correctly. Adding OAuth profile sync here is the minimal-change approach — no new route, no new surface area.
+- **No new server actions for OAuth:** `signInWithOAuth` must be called on the browser Supabase client because it initiates a browser redirect. Server actions cannot redirect the browser to a third-party OAuth consent screen. This means OAuth initiation lives in Client Components only.
 
 ---
 
 ## Architectural Patterns
 
-### Pattern 1: App Router Global Error Boundary
+### Pattern 1: OAuth Initiation from a Client Component
 
-**What:** `src/app/global-error.tsx` is Next.js's designated top-level error boundary. It replaces the entire root layout when triggered.
+**What:** `signInWithOAuth` redirects the browser to the provider consent screen. It must be called from a Client Component with access to `window.location.origin` for the `redirectTo` URL.
 
-**When to use:** Always — this is the safety net for any unhandled render error anywhere in the app tree.
+**When to use:** Always for Google/Discord OAuth initiation. Cannot be done in a Server Action or Route Handler (they cannot issue browser redirects to external URLs).
 
-**Trade-offs:** Because it replaces `layout.tsx`, the app shell (Header, background) is gone. Keep the fallback minimal. A "reload" button and a Sentry feedback form are sufficient.
+**Trade-offs:** The `redirectTo` URL must be in Supabase's allowed redirect list in the dashboard. Localhost and production URLs are separate entries.
 
 **Example:**
 ```typescript
 "use client";
-import * as Sentry from "@sentry/nextjs";
-import { useEffect } from "react";
+import { createClient } from "@/lib/supabase/client";
 
-export default function GlobalError({
-  error,
-  reset,
-}: {
-  error: Error & { digest?: string };
-  reset: () => void;
-}) {
-  useEffect(() => {
-    Sentry.captureException(error);
-  }, [error]);
+export function OAuthButtons() {
+  const handleOAuth = async (provider: "google" | "discord") => {
+    const supabase = createClient();
+    await supabase.auth.signInWithOAuth({
+      provider,
+      options: {
+        redirectTo: `${window.location.origin}/auth/callback`,
+      },
+    });
+    // signInWithOAuth redirects the browser — no further client code runs
+  };
 
   return (
-    <html>
-      <body>
-        <h2>Something went wrong</h2>
-        <button onClick={reset}>Try again</button>
-      </body>
-    </html>
+    <div>
+      <button onClick={() => handleOAuth("google")}>Sign in with Google</button>
+      <button onClick={() => handleOAuth("discord")}>Sign in with Discord</button>
+    </div>
   );
 }
 ```
 
-### Pattern 2: Class-Based Gameroom Error Boundary with Silent Recovery
+### Pattern 2: First-Sign-In Detection in the Callback Route
 
-**What:** A React class component wrapping `GameroomPage` that catches render errors silently, attempts a reset, and only shows a fallback after the reset also fails.
+**What:** After `exchangeCodeForSession`, check whether this is the user's first time signing in. The cleanest approach is to compare `user.created_at` to the current timestamp: if the user was created within the last 5 seconds, they are new. An alternative is to check the backend player profile endpoint — a 404 means the player record does not yet exist.
 
-**When to use:** For the gameroom specifically — players should not see a crash screen mid-game. The boundary should capture to Sentry and attempt `this.setState({ hasError: false })` once (reset attempt counter), only falling back to UI on second consecutive failure.
+**When to use:** In `/auth/callback/route.ts` immediately after a successful `exchangeCodeForSession`.
 
-**Trade-offs:** Class components are required for `componentDidCatch`; there is no hook equivalent in React 19 as of the research date. The recovery attempt means one silent re-mount before the player sees anything.
+**Trade-offs:**
+- `created_at` timestamp comparison is simple but relies on clock tolerance. 5 seconds is a safe window.
+- Backend 404 check is more reliable but adds a network round-trip in the callback path. Worth it only if the trigger timing is unreliable.
+- The existing database trigger already creates a player record on `auth.users` insert. If the trigger runs fast (synchronous, same transaction), the backend 404 approach may always return 200 for new users by the time the callback fires. Prefer `created_at` comparison.
 
 **Example:**
 ```typescript
-import * as Sentry from "@sentry/nextjs";
+// In /auth/callback/route.ts, after exchangeCodeForSession succeeds:
+const { data: { session } } = await supabase.auth.getSession();
+const user = session?.user;
 
-interface State { hasError: boolean; attempts: number; }
+const isNewUser = user &&
+  (Date.now() - new Date(user.created_at).getTime()) < 5000;
 
-export class GameroomErrorBoundary extends React.Component<
-  { children: React.ReactNode; roomId?: string },
-  State
-> {
-  state: State = { hasError: false, attempts: 0 };
+if (isNewUser && user) {
+  const metadata = user.user_metadata;
+  // Google provides: full_name, avatar_url (or picture)
+  // Discord provides: full_name, avatar_url
+  const displayName = metadata.full_name ?? metadata.name ?? null;
+  const avatarUrl = metadata.avatar_url ?? metadata.picture ?? null;
 
-  static getDerivedStateFromError(): Partial<State> {
-    return { hasError: true };
-  }
-
-  componentDidCatch(error: Error, info: React.ErrorInfo) {
-    Sentry.withScope((scope) => {
-      scope.setTag("boundary", "gameroom");
-      if (this.props.roomId) scope.setTag("room_id", this.props.roomId);
-      scope.setExtra("componentStack", info.componentStack);
-      Sentry.captureException(error);
+  // POST to backend to set profile fields from OAuth provider
+  // Backend updates name and avatar_url on the player record
+  if (displayName || avatarUrl) {
+    await fetch(`${backendUrl}/players/${user.id}/sync-oauth`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ display_name: displayName, avatar_url: avatarUrl }),
     });
-
-    // Attempt silent recovery once
-    if (this.state.attempts < 1) {
-      setTimeout(() => {
-        this.setState({ hasError: false, attempts: this.state.attempts + 1 });
-      }, 200);
-    }
-  }
-
-  render() {
-    if (this.state.hasError && this.state.attempts >= 1) {
-      return <div>Game room encountered an error. Please rejoin.</div>;
-    }
-    return this.props.children;
   }
 }
+
+const safeRedirect = isNewUser ? "/?onboarding=1" : (redirectTo ?? "/");
+return NextResponse.redirect(new URL(safeRedirect, requestUrl.origin));
 ```
 
-### Pattern 3: Supabase User Identity Attached to Sentry Events
+### Pattern 3: Provider Metadata Field Access
 
-**What:** After `useUser()` resolves, call `Sentry.setUser()` so all subsequent events include user identity. Clear it on sign-out.
+**What:** Supabase populates `user.user_metadata` from the OAuth provider's identity token. Field names differ slightly per provider.
 
-**When to use:** Mount once at the top of the app in a dedicated side-effect component (`SentryUserSync`) inside `Provider`, after `JotaiProvider`.
+**When to use:** Anywhere that needs to read the user's name or avatar from their provider profile.
 
-**Trade-offs:** The component must be a Client Component. It re-runs on every auth state change via `supabase.auth.onAuthStateChange`, which is already tracked in `useUser.ts`. Duplicating the subscription is clean — `SentryUserSync` owns only the Sentry side-effect.
+**Provider field map (MEDIUM confidence — from community sources):**
 
-**Example:**
+| Field | Google | Discord |
+|-------|--------|---------|
+| Display name | `full_name` | `full_name` |
+| Avatar URL | `avatar_url` (sometimes `picture`) | `avatar_url` |
+| Provider username | n/a | `custom_claims.global_name` |
+
+**Safe access pattern:**
 ```typescript
-"use client";
-import { useEffect } from "react";
-import { createClient } from "@/lib/supabase/client";
-import { setSentryUser, clearSentryUser } from "@/lib/sentry";
+const displayName =
+  user.user_metadata?.full_name ??
+  user.user_metadata?.name ??
+  null;
 
-export function SentryUserSync() {
-  useEffect(() => {
-    const supabase = createClient();
-    supabase.auth.getUser().then(({ data }) => {
-      if (data.user) setSentryUser(data.user);
-    });
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
-        if (session?.user) {
-          setSentryUser(session.user);
-        } else {
-          clearSentryUser();
-        }
-      }
-    );
-
-    return () => subscription.unsubscribe();
-  }, []);
-
-  return null;
-}
+const avatarUrl =
+  user.user_metadata?.avatar_url ??
+  user.user_metadata?.picture ??
+  null;
 ```
 
-### Pattern 4: Socket.IO Error Capture
+**Note on Discord avatar_url:** Supabase constructs the Discord CDN URL from Discord's `avatar` hash and `id`. The resulting `avatar_url` in `user_metadata` should be a complete URL. However, this is not definitively documented — treat as LOW confidence and test against a real Discord OAuth response before shipping.
 
-**What:** Both `useGameSocket` and `useChatSocket` catch errors in their listener loops via `try/catch` and log to `console.error`. These need to be forwarded to Sentry without disrupting the existing debounced-error-log pattern.
+### Pattern 4: Returning Users — No Profile Sync
 
-**When to use:** In the `connect_error` and per-event `try/catch` blocks inside both socket hooks.
+**What:** When an existing user signs in via OAuth (not their first sign-in), the callback should not overwrite their profile. Player names and avatars may have been customised since initial OAuth sign-in.
 
-**Trade-offs:** Do not use `Sentry.captureException` in high-frequency paths (e.g., inside `lobby_tick` listeners) — it adds network overhead per call. Use `Sentry.captureException` only for `connect_error` (fatal) and unrecoverable states (`connectionStatus === "error"` after max reconnect). For listener-level errors, use `Sentry.addBreadcrumb` instead — it is local and captured with the next real exception.
+**When to use:** Enforce in callback: only sync profile data when `isNewUser === true`.
 
-**Example:**
-```typescript
-// In useGameSocket — connect_error handler
-socket.on("connect_error", (error) => {
-  // Capture fatal connection failures
-  Sentry.withScope((scope) => {
-    scope.setTag("socket", "game");
-    scope.setExtra("reconnectAttempts", prev.reconnectAttempts);
-    Sentry.captureException(error);
-  });
-  // ... existing state update
-});
-
-// In event listener loop — add breadcrumb, not captureException
-try {
-  callback(data);
-} catch (error) {
-  Sentry.addBreadcrumb({
-    category: "socket.event",
-    message: `Error in ${eventName} listener`,
-    level: "error",
-    data: { eventName },
-  });
-  debouncedErrorLog(`Error in ${eventName} listener:`, error);
-}
-```
+**Trade-offs:** If a user wants to re-sync their avatar from their provider later, that is a separate feature (profile settings page) — out of scope for v1.4.
 
 ---
 
 ## Data Flow
 
-### Error Capture Flow
+### New User OAuth Sign-In
 
 ```
-Render Error (any component)
+User clicks "Sign in with Google"
     ↓
-GameroomErrorBoundary.componentDidCatch (if inside gameroom)
-    OR
-global-error.tsx (if outside gameroom or GEB re-throws)
+OAuthButtons.handleOAuth("google")
     ↓
-Sentry.captureException(error, { tags: { boundary, room_id } })
+supabase.signInWithOAuth({ provider: "google", redirectTo: "/auth/callback" })
     ↓
-Sentry event enriched with: user identity (set by SentryUserSync)
-                              gameroom context (set by GameroomErrorBoundary)
+Browser redirects to Google consent screen
     ↓
-Sentry ingestion endpoint
+Google redirects to /auth/callback?code=ABC...
+    ↓
+route.ts: exchangeCodeForSession("ABC")
+    → Supabase exchanges code for access + refresh tokens
+    → sets cookie-based session (existing @supabase/ssr mechanism)
+    → user.user_metadata populated from Google: { full_name, avatar_url }
+    ↓
+isNewUser check: user.created_at within last 5 seconds → true
+    ↓
+POST /players/{id}/sync-oauth  { display_name, avatar_url }
+    → backend updates player record name + avatar
+    ↓
+redirect → /?onboarding=1
+    ↓
+useUser.ts onAuthStateChange fires SIGNED_IN
+    → router.refresh() (existing behaviour)
+    → user sees home page with onboarding modal
 ```
 
-### Socket Error Capture Flow
+### Returning User OAuth Sign-In
 
 ```
-socket.on("connect_error", error)
+User clicks "Sign in with Google"
     ↓
-Sentry.captureException → full event with user + room context
-
-socket.on(eventName, data) → callback throws
+(same OAuth redirect flow)
     ↓
-Sentry.addBreadcrumb → low-cost local record
+route.ts: exchangeCodeForSession succeeds
     ↓
-If another exception fires → breadcrumb trail visible in Sentry
+isNewUser check: false (user.created_at > 5s ago)
+    ↓
+No profile sync
+    ↓
+redirect → / (or redirect_to param)
+    ↓
+onAuthStateChange fires SIGNED_IN → router.refresh()
 ```
 
-### User Identity Flow
+### Existing Email/Password Auth (Unchanged)
 
 ```
-App boots → SentryUserSync mounts (inside Provider)
+LoginPage.handleSubmit
     ↓
-supabase.auth.getUser() resolves
+supabase.signInWithPassword({ email, password })
     ↓
-setSentryUser({ id: user.id, email: user.email })  [lib/sentry.ts]
-    ↓
-All subsequent Sentry events tagged with user identity
-    ↓
-Auth state change (SIGNED_OUT) → clearSentryUser()
-```
-
-### Build Pipeline Flow
-
-```
-next.config.mjs
-    ↓
-withSentryConfig(nextConfig, { org, project, authToken })
-    ↓
-Sentry webpack plugin: uploads source maps → Sentry after each build
-                        instruments server functions automatically
+onAuthStateChange fires SIGNED_IN → router.push("/")
 ```
 
 ---
 
-## New vs Modified Files
+## New vs Modified Components
 
-### New Files (do not exist yet)
+### New Files
 
-| File | Type | Purpose |
-|------|------|---------|
-| `sentry.client.config.ts` (root) | New | Browser SDK init: DSN, Replay, tracing |
-| `sentry.server.config.ts` (root) | New | Server SDK init: DSN, profiling |
-| `sentry.edge.config.ts` (root) | New (optional) | Edge SDK init — only needed if middleware.ts exists |
-| `src/instrumentation.ts` | New | register() hook to load server config in App Router |
-| `src/app/global-error.tsx` | New | Top-level React error boundary (replaces root layout on crash) |
-| `src/app/error.tsx` | New (optional) | Route-segment boundary — keeps layout shell alive for non-root errors |
-| `src/components/GameroomErrorBoundary.tsx` | New | Class-based boundary with silent recovery + Sentry capture |
-| `src/components/SentryUserSync.tsx` | New | Mounts in Provider; syncs Supabase auth → Sentry.setUser |
-| `src/lib/sentry.ts` | New | Thin wrappers: setSentryUser, setSentryGameContext, clearSentryUser |
+| File | Purpose |
+|------|---------|
+| `src/components/OAuthButtons.tsx` | Google + Discord OAuth buttons; shared between login and register |
 
-### Modified Files (already exist)
+### Modified Files
 
-| File | Change |
-|------|--------|
-| `next.config.mjs` | Wrap export with `withSentryConfig(nextConfig, sentryOptions)` |
-| `src/app/provider.tsx` | Add `<SentryUserSync />` after `<PerformanceInitializer />` |
-| `src/app/gameroom/page.tsx` | Wrap return in `<GameroomErrorBoundary roomId={gameroom?.id}>` |
-| `src/app/gameroom/hooks/useGameSocket.ts` | Add `Sentry.captureException` in `connect_error`; add `Sentry.addBreadcrumb` in event listener catches |
-| `src/app/gameroom/hooks/useChatWs.ts` | Add `Sentry.captureException` in `socket.on("error", ...)` handler |
+| File | What Changes |
+|------|-------------|
+| `src/app/auth/callback/route.ts` | Add new-user detection + profile sync after `exchangeCodeForSession` |
+| `src/app/login/page.tsx` | Render `<OAuthButtons />` below the email/password form; add a divider |
+| `src/app/register/page.tsx` | Render `<OAuthButtons />` below the registration form; add a divider |
+
+### Unchanged Files
+
+| File | Why Unchanged |
+|------|---------------|
+| `src/lib/supabase/client.ts` | OAuth uses the same browser singleton |
+| `src/lib/supabase/server.ts` | Callback route already uses this for `exchangeCodeForSession` |
+| `src/hooks/useUser.ts` | `onAuthStateChange` picks up OAuth SIGNED_IN event automatically |
+| `src/actions/auth.ts` | Email/password signUp and signIn remain separate paths |
+| `src/middleware.ts` | Session refresh via @supabase/ssr is provider-agnostic |
 
 ---
 
 ## Build Order (Dependency-Aware)
 
-Phase ordering matters because `GameroomErrorBoundary` depends on `src/lib/sentry.ts`, and socket captures depend on the SDK being initialised.
-
 ```
-1. Install SDK + write sentry config files
-   sentry.client.config.ts
-   sentry.server.config.ts
-   src/instrumentation.ts
-   Modify: next.config.mjs
+1. Supabase dashboard config (prerequisite — not code)
+   - Enable Google provider: add Client ID + Secret from Google Cloud Console
+   - Enable Discord provider: add Client ID + Secret from Discord Developer Portal
+   - Add /auth/callback to allowed redirect URLs (localhost + production)
 
-2. Write lib/sentry.ts helpers
-   (no dependencies — pure wrappers)
+2. OAuthButtons component  (src/components/OAuthButtons.tsx)
+   - No dependencies; can be built and tested in isolation
 
-3. Write SentryUserSync + modify Provider
-   Depends on: lib/sentry.ts, supabase client
+3. Modify /login/page.tsx and /register/page.tsx
+   - Add <OAuthButtons /> and visual divider
+   - Depends on: OAuthButtons component
+   - auth.module.css already has .divider, .socialButtons, .socialButton classes
 
-4. Write global-error.tsx
-   Depends on: Sentry SDK init
+4. Modify /auth/callback/route.ts
+   - Add new-user detection and profile sync
+   - Depends on: backend /players/{id}/sync-oauth endpoint existing
+   - If endpoint does not exist yet, stub with a no-op and ship endpoint separately
 
-5. Write GameroomErrorBoundary
-   Depends on: lib/sentry.ts
+5. Backend: /players/{id}/sync-oauth endpoint (backend service — separate work)
+   - Accepts POST with display_name + avatar_url
+   - Updates player record; idempotent
 
-6. Modify gameroom/page.tsx to use boundary
-   Depends on: GameroomErrorBoundary
-
-7. Modify socket hooks for error capture
-   Depends on: Sentry SDK init, lib/sentry.ts
-
-8. Optional: src/app/error.tsx
-   Depends on: Sentry SDK init
+6. Verify end-to-end flow (Google first, then Discord)
 ```
 
 ---
@@ -385,96 +337,86 @@ Phase ordering matters because `GameroomErrorBoundary` depends on `src/lib/sentr
 
 | Service | Integration Pattern | Notes |
 |---------|---------------------|-------|
-| Sentry ingestion | `@sentry/nextjs` SDK via `Sentry.captureException` / `Sentry.addBreadcrumb` | SDK handles batching, envelope transport; no direct HTTP calls needed |
-| Sentry source maps | `withSentryConfig` webpack plugin at build time | Requires `SENTRY_AUTH_TOKEN` in CI env; `authToken` in `withSentryConfig` options |
-| Supabase auth | `supabase.auth.getUser()` + `onAuthStateChange` in `SentryUserSync` | Reuses existing `createClient()` from `src/lib/supabase/client.ts` — no new Supabase setup |
+| Google OAuth | Supabase handles provider redirect and token exchange; app calls `signInWithOAuth({ provider: "google" })` | Requires Google Cloud Console project, OAuth 2.0 credentials, and authorized redirect URI pointing to Supabase |
+| Discord OAuth | Same pattern as Google | Requires Discord Developer Portal application with OAuth2 redirect URI pointing to Supabase |
+| Supabase Auth | `signInWithOAuth` on browser client; `exchangeCodeForSession` in callback route (already exists) | @supabase/ssr PKCE flow is default — no configuration change needed |
+| Backend (lobby_manager) | POST to `/players/{id}/sync-oauth` from callback route | New endpoint needed; called once per new OAuth user |
 
 ### Internal Boundaries
 
 | Boundary | Communication | Notes |
 |----------|---------------|-------|
-| `SentryUserSync` → Sentry | `lib/sentry.ts` helpers | Never call `Sentry.setUser` directly in components — route through helpers |
-| `GameroomErrorBoundary` → Sentry | `Sentry.withScope` + `captureException` inside `componentDidCatch` | `withScope` ensures room_id tag is scoped to this event only |
-| `useGameSocket` / `useChatWs` → Sentry | `captureException` for connection errors; `addBreadcrumb` for listener errors | Keep high-frequency paths on `addBreadcrumb` to avoid cost |
-| `global-error.tsx` → Sentry | `Sentry.captureException(error)` in `useEffect` | `useEffect` is required because App Router error components cannot run server-side capture directly |
+| `OAuthButtons` → Supabase client | Direct import of `createClient()` from `@/lib/supabase/client` | Same singleton used everywhere else — no new client setup |
+| `callback/route.ts` → backend | `fetch` to `NEXT_PUBLIC_LOBBY_MANAGER_URL` | Same pattern as `/api/admin/[...path]` proxy routes |
+| OAuth session → `useUser.ts` | Supabase `onAuthStateChange` fires `SIGNED_IN` automatically after cookie session is set | No changes to `useUser.ts` needed |
+| OAuth session → Sentry | `SentryUserSync` already subscribed to `onAuthStateChange` | OAuth SIGNED_IN fires same event as email/password — Sentry user context set automatically |
 
 ---
 
 ## Anti-Patterns
 
-### Anti-Pattern 1: Calling Sentry.captureException in High-Frequency Event Handlers
+### Anti-Pattern 1: Calling signInWithOAuth in a Server Action
 
-**What people do:** Add `Sentry.captureException` directly inside `lobby_tick` listeners or other debounced game-event loops.
+**What people do:** Wrap the OAuth initiation in a `"use server"` action to match the pattern of `signUp` and `signIn`.
 
-**Why it's wrong:** `lobby_tick` fires multiple times per second. Each `captureException` call enqueues a network request to Sentry. This kills performance and floods the Sentry quota.
+**Why it's wrong:** Server Actions run on the server and cannot redirect the browser to a third-party OAuth consent screen. `signInWithOAuth` returns a URL for the browser to navigate to — the browser must execute this redirect, not the server.
 
-**Do this instead:** Use `Sentry.addBreadcrumb` for event-level errors. Only call `captureException` for connection-level failures (`connect_error`, max reconnect exceeded) — these are infrequent and genuinely diagnostic.
+**Do this instead:** Keep `signInWithOAuth` in a Client Component with `"use client"`. Use the returned `data.url` directly — Supabase handles the redirect automatically when `skipBrowserRedirect` is not set.
 
-### Anti-Pattern 2: Placing Error Boundaries as Siblings Instead of Wrappers
+### Anti-Pattern 2: Syncing Profile on Every OAuth Sign-In
 
-**What people do:** Put `<GameroomErrorBoundary>` at the same level as the content it should protect, or outside the component tree rather than wrapping it.
+**What people do:** Always POST to the profile sync endpoint after every OAuth callback, overwriting whatever the user has set.
 
-**Why it's wrong:** A boundary only catches errors thrown by its children during render. A sibling boundary catches nothing. In `page.tsx`, the boundary must be the outermost wrapper of all gameroom JSX.
+**Why it's wrong:** Players may have changed their display name or avatar after initial sign-up. Overwriting on every sign-in destroys those customisations.
 
-**Do this instead:** `<GameroomErrorBoundary roomId={gameroom?.id}>{/* all game UI */}</GameroomErrorBoundary>` as the outermost element in the return.
+**Do this instead:** Only sync on first sign-in (`isNewUser === true`). A separate "sync from provider" action in profile settings is the right place for voluntary re-sync.
 
-### Anti-Pattern 3: Importing @sentry/nextjs Directly in Components
+### Anti-Pattern 3: Reading provider metadata before the session is confirmed
 
-**What people do:** `import * as Sentry from "@sentry/nextjs"` sprinkled across multiple component files.
+**What people do:** Access `user.user_metadata` from the redirect URL parameters or from the client before the session cookie is set.
 
-**Why it's wrong:** Creates a wide dependency surface; makes mocking in tests harder; Sentry import in a Server Component causes build errors because the browser SDK is not available in the Node runtime.
+**Why it's wrong:** `user_metadata` is populated by Supabase after `exchangeCodeForSession` completes. Reading it before this point gives empty or stale data.
 
-**Do this instead:** All Sentry calls route through `src/lib/sentry.ts`. That file can guard with `typeof window !== "undefined"` for client-only calls, and can be replaced with a no-op mock in tests.
+**Do this instead:** Always read `user_metadata` from the session returned by (or fetched after) `exchangeCodeForSession` in the callback route handler.
 
-### Anti-Pattern 4: Using global-error.tsx as the Only Error Boundary
+### Anti-Pattern 4: Hard-coding the redirectTo origin
 
-**What people do:** Rely solely on `global-error.tsx` and skip the gameroom-level boundary.
+**What people do:** `redirectTo: "https://myapp.com/auth/callback"` — hard-coded production URL in the component.
 
-**Why it's wrong:** `global-error.tsx` destroys the entire app shell including the root `<html>` layout. For a single gameroom crash, this means players lose navigation, background, and all UI. A gameroom-specific boundary catches the crash earlier, attempts recovery, and keeps the app shell alive.
+**Why it's wrong:** Breaks local development and staging environments. Also breaks if the site is accessed from a non-canonical URL.
 
-**Do this instead:** Layered boundaries: `global-error.tsx` as the last resort, `GameroomErrorBoundary` as the first line of defence for gameroom crashes.
-
-### Anti-Pattern 5: Initializing Sentry in a Client Component Instead of instrumentation.ts
-
-**What people do:** Call `Sentry.init()` inside a `"use client"` component's `useEffect`, or in a custom `_app` equivalent.
-
-**Why it's wrong:** In App Router, there is no `_app`. A Client Component `useEffect` init only runs after the first render, missing any SSR errors. Server-side Sentry init in a component never runs at all on the server.
-
-**Do this instead:** `instrumentation.ts` with `export async function register()` is the App Router contract for server-side init. `sentry.client.config.ts` is auto-loaded by `withSentryConfig` for the browser. These are the only correct init points.
+**Do this instead:** `redirectTo: \`${window.location.origin}/auth/callback\`` — always derives the origin from the current browser context.
 
 ---
 
-## Scaling Considerations
-
-| Scale | Architecture Adjustments |
-|-------|--------------------------|
-| Current (single game server) | Current architecture is sufficient. Keep Sentry sample rates conservative (tracesSampleRate: 0.1, replaysSessionSampleRate: 0.05) to avoid quota burn. |
-| Multiple game servers / regions | Add `Sentry.setContext("server", { region })` at connection time in `useGameSocket`. Tag events per-server so filtering is possible. |
-| High concurrent users | Consider `beforeSend` filter in Sentry config to drop known-benign errors (e.g., socket disconnects on page unload) before they hit quota. |
-
----
-
-## Confidence Notes
+## Confidence Assessment
 
 | Claim | Confidence | Basis |
 |-------|------------|-------|
-| File placement (root-level sentry configs, `src/instrumentation.ts`) | MEDIUM | Established pattern in Sentry Next.js SDK v8; web verification unavailable |
-| `withSentryConfig` in `next.config.mjs` (ESM) | MEDIUM | Next.js 16 uses `.mjs`; Sentry SDK v8 supports ESM `next.config.mjs`; web verification unavailable |
-| `global-error.tsx` as App Router boundary | HIGH | Next.js App Router docs-defined contract; visible in codebase patterns |
-| Class component required for `componentDidCatch` | HIGH | React 19 has no hook equivalent for error boundaries (confirmed as of Aug 2025) |
-| `Sentry.addBreadcrumb` vs `captureException` in high-frequency paths | HIGH | Sentry SDK performance guidance; no web verification needed — this is SDK semantics |
-| `SentryUserSync` using existing `createClient()` | HIGH | `src/lib/supabase/client.ts` confirmed in codebase; singleton pattern confirmed |
+| signInWithOAuth must be called from a Client Component | HIGH | SDK design — requires browser redirect; confirmed in multiple official Supabase docs and community sources |
+| Existing /auth/callback/route.ts handles OAuth unchanged | HIGH | Codebase inspection — exchangeCodeForSession is provider-agnostic |
+| @supabase/ssr PKCE flow is default | HIGH | @supabase/ssr documentation; confirmed in WebSearch results |
+| Google user_metadata fields: full_name, avatar_url | MEDIUM | Multiple community sources agree; official docs list general field names without provider-specific detail |
+| Discord user_metadata fields: full_name, avatar_url | LOW | Community sources confirm avatar_url; field names not definitively in official Supabase Discord docs |
+| created_at timestamp for new-user detection | MEDIUM | Common pattern in community; timing window (5s) is heuristic — alternative is backend 404 check |
+| Database trigger creates player record on auth.users insert | HIGH | Confirmed in src/actions/auth.ts comment: "database trigger auto-creates player record" |
+| useUser.ts onAuthStateChange picks up OAuth SIGNED_IN | HIGH | Supabase fires SIGNED_IN for all auth methods including OAuth — confirmed by event contract |
 
 ---
 
 ## Sources
 
-- Sentry Next.js SDK documentation (https://docs.sentry.io/platforms/javascript/guides/nextjs/) — MEDIUM confidence, web tools unavailable, pattern verified from SDK v8 knowledge
-- Next.js App Router error handling docs (https://nextjs.org/docs/app/building-your-application/routing/error-handling) — HIGH confidence for `global-error.tsx` and `error.tsx` contracts
-- Codebase inspection: `src/app/gameroom/hooks/useGameSocket.ts`, `useChatWs.ts`, `useGameEvents.ts`, `page.tsx`, `provider.tsx`, `layout.tsx`, `src/lib/supabase/client.ts`, `src/hooks/useUser.ts`
-- React 19 documentation: class component requirement for `componentDidCatch` unchanged
+- Supabase signInWithOAuth reference: https://supabase.com/docs/reference/javascript/auth-signinwithoauth
+- Supabase server-side Next.js guide: https://supabase.com/docs/guides/auth/server-side/nextjs
+- Supabase managing user data: https://supabase.com/docs/guides/auth/managing-user-data
+- Supabase Login with Discord: https://supabase.com/docs/guides/auth/social-login/auth-discord
+- Supabase Login with Google: https://supabase.com/docs/guides/auth/social-login/auth-google
+- Community: Discord avatar_url in user_metadata: https://github.com/orgs/supabase/discussions/3334
+- Community: Google full_name, avatar_url in user_metadata: https://github.com/orgs/supabase/discussions/5666
+- Community: Database trigger for profile sync: https://github.com/orgs/supabase/discussions/306
+- Codebase inspection: src/app/auth/callback/route.ts, src/actions/auth.ts, src/app/login/page.tsx, src/app/register/page.tsx, src/hooks/useUser.ts, src/lib/supabase/client.ts, src/lib/supabase/server.ts, src/app/login/auth.module.css
 
 ---
 
-*Architecture research for: Sentry + error boundaries + performance profiling in Next.js 16 App Router*
-*Researched: 2026-03-17*
+*Architecture research for: Google + Discord OAuth integration with @supabase/ssr in Next.js 15 App Router*
+*Researched: 2026-03-19*

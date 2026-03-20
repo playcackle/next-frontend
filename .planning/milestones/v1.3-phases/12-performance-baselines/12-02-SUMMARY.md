@@ -19,16 +19,17 @@ affects:
 
 # Tech tracking
 tech-stack:
-  added: ["@welldone-software/why-did-you-render (devDependency, installed but not active in layout)"]
+  added: ["@welldone-software/why-did-you-render (devDependency, installed and remains in package.json, but files were removed and it is inactive)"]
   patterns:
     - "React Profiler wrapper pattern: <Profiler id='...' onRender={onRenderCallback}> around each target component, callback guarded by NODE_ENV=development and phase==='update'"
     - "PerfProbe pattern: performance.now() before/after onEvent handler, logs [PerfProbe] {event}: {N}ms in dev only"
     - "WDYR opt-in pattern: ComponentName.whyDidYouRender = true after function definition (guarded by NODE_ENV check)"
 
 key-files:
+  created_then_removed:
+    - src/wdyr.ts               # created during Phase 12-02, removed after WDYR incompatibility confirmed
+    - src/app/_components/WdyrInit.tsx  # created during Phase 12-02, removed after WDYR incompatibility confirmed
   created:
-    - src/wdyr.ts
-    - src/app/_components/WdyrInit.tsx
     - .planning/phases/12-performance-baselines/PERF-BASELINE.md
   modified:
     - src/app/gameroom/page.tsx

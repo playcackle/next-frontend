@@ -15,6 +15,7 @@ export type LobbyInfo = {
   chat_ws_url?: string | null;
   admin_base_url?: string | null;
   discord_url?: string | null;
+  discord_invite_url?: string | null;
 };
 
 export function useRealtimeLobbies(initialLobbies: LobbyInfo[]) {
@@ -48,6 +49,7 @@ export function useRealtimeLobbies(initialLobbies: LobbyInfo[]) {
               chat_ws_url: payload.new.chat_ws_url,
               admin_base_url: payload.new.admin_base_url,
               discord_url: payload.new.discord_url,
+              discord_invite_url: payload.new.discord_invite_url,
             };
             setLobbies((prev) => [...prev, newLobby]);
           } else if (payload.eventType === "UPDATE") {
@@ -62,6 +64,7 @@ export function useRealtimeLobbies(initialLobbies: LobbyInfo[]) {
                       join_base_url: payload.new.join_base_url,
                       game_ws_url: payload.new.game_ws_url,
                       chat_ws_url: payload.new.chat_ws_url,
+                      discord_invite_url: payload.new.discord_invite_url,
                     }
                   : lobby
               )

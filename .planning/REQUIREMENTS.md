@@ -1,47 +1,52 @@
 # Requirements: Quiz Game Frontend
 
-**Defined:** 2026-03-17
+**Defined:** 2026-03-19
 **Core Value:** Players must always know where they are in the game and what their actions mean — reliable state, readable feedback, and visible progress are what keep them coming back.
 
-## v1.3 Requirements
+## v1.4 Requirements
 
-### Observability
+Requirements for the Social Auth milestone. Each maps to roadmap phases.
 
-- [x] **OBS-01**: Sentry SDK installed and configured with DSN, source maps uploaded securely, quota-safe sampling, and tunnel route for ad-blocker users
-- [x] **OBS-02**: Unhandled errors, promise rejections, and Socket.IO connection errors automatically captured in Sentry
-- [x] **OBS-03**: Global error boundary catches unexpected React render crashes at app level
-- [x] **OBS-04**: Gameroom error boundary silently attempts recovery; shows minimal fallback only if crash is unrecoverable
-- [x] **OBS-05**: Sentry events include user identity (from Supabase auth) and current game room context (roomId, game phase)
+### OAuth
 
-### Performance
+- [ ] **OAUTH-01**: User can sign in or register with Google account from /auth/login and /auth/register
+- [ ] **OAUTH-02**: User can sign in or register with Discord account from /auth/login and /auth/register
+- [ ] **OAUTH-03**: Email/password login and registration remain available alongside OAuth options
 
-- [x] **PERF-01**: React re-render hotspots profiled across high-frequency gameroom components (UnifiedMessages, LeaderBoard, SlotGrid)
-- [x] **PERF-02**: Next.js bundle analyzed for total size, code splitting opportunities, and unused imports
-- [x] **PERF-03**: Core Web Vitals (LCP, CLS, INP) measured and baselined
-- [x] **PERF-04**: Socket event handling overhead profiled (message queue, atom update frequency in useGameEvents)
-- [x] **PERF-05**: All performance findings documented with impact/effort ratings
-- [x] **PERF-06**: Top 3 highest-impact bottlenecks fixed and verified against baselines
+### Profile
+
+- [ ] **PROF-01**: On first OAuth sign-in, player's display name is pre-populated from provider (Google name / Discord username)
+- [ ] **PROF-02**: On first OAuth sign-in, player's avatar is pre-populated from provider profile picture
+- [ ] **PROF-03**: Profile sync fires only on first sign-in — returning users retain any customizations they have made
+
+### Setup
+
+- [ ] **SETUP-01**: Google OAuth app registered in Google Cloud Console with Supabase callback URLs
+- [x] **SETUP-02**: Discord OAuth app registered in Discord Developer Portal with Supabase callback URLs
+- [x] **SETUP-03**: Automatic identity linking enabled in Supabase so existing email users don't get duplicate accounts
+- [x] **SETUP-04**: Database trigger updated to handle OAuth metadata field names without NULL constraint errors
+- [ ] **SETUP-05**: `next.config.mjs` includes `remotePatterns` for Google and Discord avatar CDN hostnames
 
 ## Future Requirements
 
-### Observability
+### Account Linking
 
-- **OBS-F01**: Sentry alert thresholds configured — requires stable baseline and ops ownership
-- **OBS-F02**: Sentry breadcrumbs on key game events (room join, round start, answer submit)
-- **OBS-F03**: Game phase context tag in Sentry (answering / intermission / game_over)
+- **LINK-01**: User can connect a Google account to an existing email/password account
+- **LINK-02**: User can connect a Discord account to an existing email/password account
 
-### Performance
+### Additional Providers
 
-- **PERF-F01**: Server-side OpenTelemetry tracing — only relevant if backend observability is added
+- **PROV-01**: User can sign in or register with Apple account
 
 ## Out of Scope
 
 | Feature | Reason |
 |---------|--------|
-| Sentry Session Replay | Privacy violation for a live quiz game; adds ~50KB bundle; high quota cost |
-| `window.onerror` / custom global handler | Duplicates SDK, risks double-reporting |
-| Backend game logic changes | Frontend-only project, game server is external |
-| ARCH-01: Dual performance mode consolidation | Requires product decision on prefers-reduced-motion — deferred from v1.2 |
+| Apple Sign In | Not requested for this milestone; requires Apple Developer account setup |
+| Account linking (connect multiple providers) | Known `user_metadata` overwrite bug in current Supabase SDK — high risk, deferred |
+| Auto-merge OAuth with existing email account | Security-sensitive; Supabase does not support safely without re-verification |
+| Full /auth/setup onboarding page | DB trigger generates provisional name; dedicated setup page deferred to future |
+| Declined consent error page | Basic redirect sufficient; dedicated error UI deferred |
 
 ## Traceability
 
@@ -49,23 +54,23 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| OBS-01 | Phase 10 | Complete |
-| OBS-02 | Phase 10 | Complete |
-| OBS-03 | Phase 11 | Complete |
-| OBS-04 | Phase 11 | Complete |
-| OBS-05 | Phase 10 | Complete |
-| PERF-01 | Phase 12 | Complete |
-| PERF-02 | Phase 12 | Complete |
-| PERF-03 | Phase 12 | Complete |
-| PERF-04 | Phase 12 | Complete |
-| PERF-05 | Phase 12 | Complete |
-| PERF-06 | Phase 13 | Complete |
+| SETUP-01 | Phase 15 | Pending |
+| SETUP-02 | Phase 15 | Complete |
+| SETUP-03 | Phase 15 | Complete |
+| SETUP-04 | Phase 15 | Complete |
+| SETUP-05 | Phase 16 | Pending |
+| OAUTH-01 | Phase 16 | Pending |
+| OAUTH-02 | Phase 16 | Pending |
+| OAUTH-03 | Phase 16 | Pending |
+| PROF-01 | Phase 16 | Pending |
+| PROF-02 | Phase 16 | Pending |
+| PROF-03 | Phase 16 | Pending |
 
 **Coverage:**
-- v1.3 requirements: 11 total
+- v1.4 requirements: 11 total
 - Mapped to phases: 11
 - Unmapped: 0 ✓
 
 ---
-*Requirements defined: 2026-03-17*
-*Last updated: 2026-03-17 after roadmap creation*
+*Requirements defined: 2026-03-19*
+*Last updated: 2026-03-19 — traceability confirmed after roadmap creation*

@@ -1,11 +1,28 @@
 # Milestones
 
+## v1.3 Observability & Performance (Shipped: 2026-03-19)
+
+**Phases completed:** 5 phases, 10 plans
+**Timeline:** 2026-03-18 → 2026-03-19 (2 days)
+**Codebase:** ~13,755 LOC TypeScript (+632 insertions, -127 deletions across 29 files)
+
+**Key accomplishments:**
+1. Sentry pipeline live across all three runtimes (browser, Node.js, Edge) with quota-safe sampling (0.1), tunnel route /monitoring for ad-blocker bypass, and `src/lib/sentry.ts` abstraction keeping SDK imports contained
+2. User identity and game room context wired into Sentry via `SentryUserSync` (Supabase auth) and `setSentryGameContext` (game_ws_url + real phase: answering/round_break/post_game)
+3. Global error boundary (`error.tsx`) catches non-gameroom render crashes; `GameroomErrorBoundary` class component adds silent-retry recovery before showing minimal fallback
+4. Performance baselines documented in `PERF-BASELINE.md`: LCP 4324ms (poor), bundle Supabase chunk 645KB, lobby_tick handler ~0.2ms, UnifiedMessages ~0.18ms/render, SlotGrid ~0.78ms/render
+5. LCP fixed: `INITIAL_SESSION` early return in `useUser.ts` prevents passive session restore from triggering `router.refresh()` and a hero repaint
+6. Bundle split: `SentryUserSync` lazy-loaded via `next/dynamic(ssr:false)` in `Provider.tsx`, deferring Supabase 645KB out of the main entry chunk
+7. Hot-path decoupled: `useUser()` removed from `UnifiedMessages`; user ID now flows through `currentUserIdAtom` set once at page level, eliminating Supabase auth subscription from the 1Hz gameroom re-render path
+8. WebVitalsLogger (LCP/CLS/INP/FCP/TTFB) now logs unconditionally in all environments including production
+
+**Archive:** `.planning/milestones/v1.3-ROADMAP.md`, `.planning/milestones/v1.3-REQUIREMENTS.md`, `.planning/milestones/v1.3-MILESTONE-AUDIT.md`
+
+---
+
 ## v1.2 Code Health (Shipped: 2026-03-17)
 
 **Phases completed:** 3 phases, 12 plans, 0 tasks
-
-**Key accomplishments:**
-- (none recorded)
 
 ---
 

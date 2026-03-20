@@ -107,9 +107,10 @@ export default function GameroomPage() {
 
   useEffect(() => {
     if (gameroom?.game_ws_url) {
-      setSentryGameContext(gameroom.game_ws_url);
+      const phase = isPostGameShowcase ? "post_game" : isRoundBreak ? "round_break" : "answering";
+      setSentryGameContext(gameroom.game_ws_url, phase);
     }
-  }, [gameroom?.game_ws_url]);
+  }, [gameroom?.game_ws_url, isRoundBreak, isPostGameShowcase]);
 
   useEffect(() => {
     setCurrentUserId(user?.id ?? null);
