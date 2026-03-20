@@ -217,6 +217,39 @@
   filter: brightness(1.3);
 }
 
+.discordLink {
+  position: relative;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: 0.75rem;
+  padding: 0.35rem 0.75rem;
+  border-radius: 4px;
+  font-family: var(--retro-font-alt);
+  font-size: 0.75rem;
+  letter-spacing: 0.5px;
+  color: #5865f2;
+  background: rgba(88, 101, 242, 0.12);
+  border: 1px solid rgba(88, 101, 242, 0.35);
+  text-decoration: none;
+  transition: background 0.2s ease, box-shadow 0.2s ease, color 0.2s ease;
+}
+
+.discordLink:hover,
+.discordLink:focus-visible {
+  background: rgba(88, 101, 242, 0.25);
+  box-shadow: 0 0 8px rgba(88, 101, 242, 0.5);
+  color: #8891f5;
+  outline: none;
+}
+
+.discordIcon {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+}
+
 .lobbyCard:hover::before {
   opacity: 0.4;
   background: linear-gradient(45deg, transparent 50%, var(--lobby-color) 100%);
