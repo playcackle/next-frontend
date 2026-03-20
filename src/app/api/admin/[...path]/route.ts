@@ -46,24 +46,26 @@ const HOP_BY_HOP_HEADERS = [
   "transfer-encoding",
 ];
 
-const requireAdmin = async (): Promise<NextResponse | null> => {
+const requireAdmin = async (): Promise<{ error: NextResponse } | { accessToken: string }> => {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    return { error: NextResponse.json({ error: "Unauthorized" }, { status: 401 }) };
   }
   if (user.app_metadata?.role !== "admin") {
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    return { error: NextResponse.json({ error: "Forbidden" }, { status: 403 }) };
   }
-  return null;
+  const { data: { session } } = await supabase.auth.getSession();
+  return { accessToken: session!.access_token };
 };
 
-const forwardRequest = async (req: NextRequest, context: RouteContext) => {
+const forwardRequest = async (req: NextRequest, context: RouteContext, accessToken: string) => {
   const segments = await resolvePathSegments(context);
   const targetUrl = buildTargetUrl(segments, req.nextUrl.search);
 
   const headers = new Headers(req.headers);
   headers.set("host", new URL(targetUrl).host);
+  headers.set("authorization", `Bearer ${accessToken}`);
   HOP_BY_HOP_HEADERS.forEach((header) => headers.delete(header));
   headers.delete("content-length");
 
@@ -91,31 +93,31 @@ const forwardRequest = async (req: NextRequest, context: RouteContext) => {
 export const dynamic = "force-dynamic";
 
 export async function GET(req: NextRequest, context: RouteContext) {
-  const denied = await requireAdmin();
-  if (denied) return denied;
-  return forwardRequest(req, context);
+  const result = await requireAdmin();
+  if ("error" in result) return result.error;
+  return forwardRequest(req, context, result.accessToken);
 }
 
 export async function POST(req: NextRequest, context: RouteContext) {
-  const denied = await requireAdmin();
-  if (denied) return denied;
-  return forwardRequest(req, context);
+  const result = await requireAdmin();
+  if ("error" in result) return result.error;
+  return forwardRequest(req, context, result.accessToken);
 }
 
 export async function PUT(req: NextRequest, context: RouteContext) {
-  const denied = await requireAdmin();
-  if (denied) return denied;
-  return forwardRequest(req, context);
+  const result = await requireAdmin();
+  if ("error" in result) return result.error;
+  return forwardRequest(req, context, result.accessToken);
 }
 
 export async function PATCH(req: NextRequest, context: RouteContext) {
-  const denied = await requireAdmin();
-  if (denied) return denied;
-  return forwardRequest(req, context);
+  const result = await requireAdmin();
+  if ("error" in result) return result.error;
+  return forwardRequest(req, context, result.accessToken);
 }
 
 export async function DELETE(req: NextRequest, context: RouteContext) {
-  const denied = await requireAdmin();
-  if (denied) return denied;
-  return forwardRequest(req, context);
+  const result = await requireAdmin();
+  if ("error" in result) return result.error;
+  return forwardRequest(req, context, result.accessToken);
 }

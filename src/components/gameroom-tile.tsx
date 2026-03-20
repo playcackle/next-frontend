@@ -17,6 +17,7 @@ export type GameroomTileProps = {
     player_count: number;
     max_players?: number | null;
     join_base_url?: string | null;
+    discord_invite_url?: string | null;
   };
 };
 
@@ -32,8 +33,8 @@ const STATUS_LABELS: Record<string, string> = {
   full: "Full",
 };
 
-function getStatusClass(status: string, playerCount: number, maxPlayers: number): string {
-  if (playerCount >= maxPlayers) return "full";
+function getStatusClass(status: string, playerCount: number, maxPlayers: number | null | undefined): string {
+  if (maxPlayers != null && playerCount >= maxPlayers) return "full";
   if (status === "IN_ROUND" || status === "ROUND_BREAK" || status === "POST_GAME_SHOWCASE") return "in_progress";
   return "open";
 }
@@ -46,7 +47,7 @@ export default function GameroomTile(props: GameroomTileProps) {
   const [errorMessage, setErrorMessage] = useState<string | undefined>();
   const setGameroom = useSetAtom(gameRoomAtom);
 
-  const maxPlayers = gameroom.max_players ?? 25;
+  const maxPlayers = gameroom.max_players;
   const statusClass = getStatusClass(gameroom.status, gameroom.player_count, maxPlayers);
 
   const handleClick = async () => {
@@ -66,7 +67,7 @@ export default function GameroomTile(props: GameroomTileProps) {
       return;
     }
     setErrorMessage(undefined);
-    setGameroom(gameRoom);
+    setGameroom({ ...gameRoom, discord_invite_url: gameroom.discord_invite_url ?? null });
     router.push(`/gameroom?name=${gameroom.collection_name}`);
   };
 
@@ -80,16 +81,18 @@ export default function GameroomTile(props: GameroomTileProps) {
       </div>
       <div className={styles.lobbyCapacity}>
         <span className={styles.capacityText}>
-          {maxPlayers - gameroom.player_count} / {maxPlayers} seats open
+          {maxPlayers != null
+            ? `${maxPlayers - gameroom.player_count} / ${maxPlayers} seats open`
+            : `${gameroom.player_count} players`}
         </span>
-        <div className={styles.capacityBar}>
-          <div
-            className={styles.capacityFill}
-            style={{
-              width: `${Math.min(100, (gameroom.player_count / maxPlayers) * 100)}%`,
-            }}
-          ></div>
-        </div>
+        {maxPlayers != null && (
+          <div className={styles.capacityBar}>
+            <div
+              className={styles.capacityFill}
+              style={{ width: `${Math.min(100, (gameroom.player_count / maxPlayers) * 100)}%` }}
+            ></div>
+          </div>
+        )}
       </div>
       <ErrorModal
         onOpenChange={(change) => setShowModal(change)}

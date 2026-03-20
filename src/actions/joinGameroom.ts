@@ -9,6 +9,8 @@ export type LobbyJoinSuccess = {
   token: string;
   game_ws_url: string;
   chat_ws_url: string;
+  // Not returned by the API — injected client-side from LobbyInfo when joining
+  discord_invite_url?: string | null;
 };
 
 type LobbyJoinError = {

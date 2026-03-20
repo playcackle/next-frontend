@@ -12,8 +12,7 @@ type SortKey = "name" | "players_asc" | "players_desc" | "availability";
 type StatusFilter = "all" | "open" | "in_progress" | "full";
 
 function getRoomStatus(room: LobbyInfo): StatusFilter {
-  const maxPlayers = room.max_players ?? 25;
-  if (room.player_count >= maxPlayers) return "full";
+  if (room.max_players != null && room.player_count >= room.max_players) return "full";
   if (room.status === "IN_ROUND" || room.status === "ROUND_BREAK" || room.status === "POST_GAME_SHOWCASE") return "in_progress";
   return "open";
 }
@@ -42,9 +41,9 @@ export default function GameroomsClient({ initialGamerooms }: Props) {
       }
       if (sortKey === "players_asc") return a.player_count - b.player_count;
       if (sortKey === "players_desc") return b.player_count - a.player_count;
-      // availability: most open slots first
-      const maxA = a.max_players ?? 25;
-      const maxB = b.max_players ?? 25;
+      // availability: most open slots first; null max_players sorts last
+      const maxA = a.max_players ?? Infinity;
+      const maxB = b.max_players ?? Infinity;
       return (maxA - b.player_count) - (maxB - a.player_count);
     });
 
