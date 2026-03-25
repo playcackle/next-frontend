@@ -5,7 +5,7 @@ import { Box, Button, Flex } from "@radix-ui/themes";
 import type { AuthChangeEvent, Session } from "@supabase/supabase-js";
 import { AtSign, Lock } from "lucide-react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import styles from "../login/auth.module.css";
 
@@ -16,20 +16,27 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const ref = useRef<HTMLFormElement>(null);
   const router = useRouter();
+  const searchParams = useSearchParams();
   const supabase = useMemo(() => createClient(), []);
+
+  // Show callback errors from URL params
+  useEffect(() => {
+    const errorDesc = searchParams.get("error_description");
+    if (errorDesc) setError(errorDesc);
+  }, [searchParams]);
 
   useEffect(() => {
     let isMounted = true;
 
-    // If already signed in (e.g., email link), bounce to home
-    const checkUser = async () => {
-      const { data } = await supabase.auth.getUser();
+    // Use getSession (local, no API call) to avoid rate limiting
+    const checkSession = async () => {
+      const { data } = await supabase.auth.getSession();
       if (!isMounted) return;
-      if (data.user) {
+      if (data.session) {
         router.replace("/");
       }
     };
-    checkUser();
+    checkSession();
 
     // Redirect as soon as Supabase reports SIGNED_IN
     const {
@@ -38,7 +45,7 @@ export default function LoginPage() {
       (event: AuthChangeEvent, session: Session | null) => {
         if (!isMounted) return;
         if (event === "SIGNED_IN") {
-          router.push("/");
+          router.replace("/");
         }
       }
     );
@@ -93,7 +100,20 @@ export default function LoginPage() {
           <span className={styles.neonTextPink}>Didn't expect that.</span>
         </h1>
 
-        {error && <p style={{ color: "red" }}>{error}</p>}
+        {error && (
+          <div
+            style={{
+              color: "#ff0055",
+              backgroundColor: "rgba(255, 0, 85, 0.1)",
+              padding: "10px",
+              borderRadius: "5px",
+              marginBottom: "10px",
+              border: "1px solid #ff0055",
+            }}
+          >
+            {error}
+          </div>
+        )}
 
         <div className={styles.socialButtons}>
           <button

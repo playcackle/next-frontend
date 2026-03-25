@@ -46,7 +46,7 @@ export default function RegisterPage() {
       const backendUrl =
         process.env.NEXT_PUBLIC_LOBBY_MANAGER_URL || "http://localhost:8001";
       const response = await fetch(
-        `${backendUrl}/players/check-username/${encodeURIComponent(username)}`
+        `${backendUrl}/players/check-username/${encodeURIComponent(username)}`,
       );
 
       if (response.ok) {
@@ -65,7 +65,7 @@ export default function RegisterPage() {
       console.error("Error checking username:", err);
       setUsernameStatus("idle");
       setUsernameError(
-        "Could not connect to server. Please check your connection."
+        "Could not connect to server. Please check your connection.",
       );
     }
   };
@@ -123,7 +123,7 @@ export default function RegisterPage() {
             username: formData.get("name"),
             email: formData.get("email"),
           }),
-        }
+        },
       );
 
       if (!checkResponse.ok) {
@@ -172,8 +172,8 @@ export default function RegisterPage() {
         suppressHydrationWarning
       >
         <h1 className={styles.title}>
-          <span className={styles.neonText}>So, a new chall</span>
-          <span className={styles.neonTextPink}>enger? Cute.</span>
+          <span className={styles.neonText}>So, a new</span>
+          <span className={styles.neonTextPink}>challenger? Cute.</span>
         </h1>
 
         {error && (
@@ -262,8 +262,8 @@ export default function RegisterPage() {
                     usernameStatus === "taken"
                       ? "#ff0055"
                       : usernameStatus === "available"
-                      ? "#00ff88"
-                      : undefined,
+                        ? "#00ff88"
+                        : undefined,
                 }}
               />
               {usernameStatus === "checking" && (
