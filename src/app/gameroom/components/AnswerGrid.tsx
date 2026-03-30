@@ -29,8 +29,21 @@ const heatLevelFromAttempts = (attempts: number): number => {
 
 const HEAT_NAMES = ["empty", "cool", "warm", "hot", "inferno"] as const;
 
+const BOT_BOB_HINT_LABELS = [
+  "Fine. Here's your help, loser",
+  "Clues. Don't say we never gave you anything",
+  "Ok ok, here's a lifeline. Nerd",
+  "Clues incoming. Pretend you figured it out yourself",
+  "Hints dropped. You're welcome, nerd",
+  "BotBob says: use these, dork",
+] as const;
+
 export const AnswerGrid: React.FC<AnswerGridProps> = ({ slots }) => {
   const hints = useAtomValue(roundHintsAtom);
+  const hintLabel = React.useMemo(
+    () => BOT_BOB_HINT_LABELS[Math.floor(Math.random() * BOT_BOB_HINT_LABELS.length)],
+    [],
+  );
   const isRoundBreak = useAtomValue(isRoundBreakAtom);
   const slotHeat = useAtomValue(slotHeatAtom);
   const totalAnswers = slots.length;
@@ -202,7 +215,7 @@ export const AnswerGrid: React.FC<AnswerGridProps> = ({ slots }) => {
         if (hintSlots.length === 0) return null;
         return (
           <div className={styles.hintsSection}>
-            <p className={styles.hintsSectionLabel}>Hints</p>
+            <p className={styles.hintsSectionLabel}>{hintLabel}</p>
             <div className={styles.hintsGrid}>
               {hintSlots.map((slot) => (
                 <div key={slot.id} className={styles.hintChip}>
@@ -217,7 +230,7 @@ export const AnswerGrid: React.FC<AnswerGridProps> = ({ slots }) => {
       {/* Round hints — hidden during round breaks */}
       {!isRoundBreak && hints.length > 0 && (
         <div className={styles.hintsSection}>
-          <p className={styles.hintsSectionLabel}>Hints</p>
+          <p className={styles.hintsSectionLabel}>{hintLabel}</p>
           <div className={styles.hintsGrid}>
             {hints.map((hint, index) => (
               <div key={index} className={styles.hintChip}>
