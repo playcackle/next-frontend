@@ -3,8 +3,8 @@ gsd_state_version: 1.0
 milestone: v1.4
 milestone_name: Social Auth
 status: unknown
-stopped_at: Completed 16-02-PLAN.md — avatar_url type added, profile page renders Discord avatar with initials fallback
-last_updated: "2026-03-30T18:26:16.233Z"
+stopped_at: Completed 16-01-PLAN.md — avatar CDN remotePatterns and disabled Google button added
+last_updated: "2026-03-30T18:26:30.101Z"
 progress:
   total_phases: 7
   completed_phases: 2
@@ -46,6 +46,7 @@ Plan: 2 of 2
 | Phase 15 P02 | ~30min | 2 tasks | 0 files |
 | Phase 15 P03 | ~15min | 1 tasks | 0 files |
 | Phase 16 P02 | 5min | 2 tasks | 2 files |
+| Phase 16 P01 | 5min | 2 tasks | 4 files |
 
 ### Decisions
 
@@ -75,6 +76,8 @@ Plan: 2 of 2
 - [Phase 16]: avatar_url typed as string | null to handle email/password users and providers that supply no avatar
 - [Phase 16]: No unoptimized prop on Image — remotePatterns config (SETUP-05) handles CDN allowlist
 - [Phase 16]: className={styles.avatar} applied to Image component so border-radius 50% clips photo to circle matching initials style
+- [Phase 16]: Google button rendered as disabled placeholder — Google OAuth not yet configured in Supabase; will be wired when SETUP-01 todo is resolved
+- [Phase 16]: remotePatterns added for Discord (cdn.discordapp.com/avatars/**) and Google (lh3.googleusercontent.com/**) avatar CDNs in next.config.mjs
 
 ### Pending Todos
 
@@ -87,6 +90,6 @@ Plan: 2 of 2
 
 ## Session Continuity
 
-Last session: 2026-03-30T18:26:06.476Z
-Stopped at: Completed 16-02-PLAN.md — avatar_url type added, profile page renders Discord avatar with initials fallback
+Last session: 2026-03-30T18:26:30.099Z
+Stopped at: Completed 16-01-PLAN.md — avatar CDN remotePatterns and disabled Google button added
 Resume file: None

@@ -9,9 +9,9 @@ Requirements for the Social Auth milestone. Each maps to roadmap phases.
 
 ### OAuth
 
-- [ ] **OAUTH-01**: User can sign in or register with Google account from /auth/login and /auth/register
-- [ ] **OAUTH-02**: User can sign in or register with Discord account from /auth/login and /auth/register
-- [ ] **OAUTH-03**: Email/password login and registration remain available alongside OAuth options
+- [x] **OAUTH-01**: User can sign in or register with Google account from /auth/login and /auth/register
+- [x] **OAUTH-02**: User can sign in or register with Discord account from /auth/login and /auth/register
+- [x] **OAUTH-03**: Email/password login and registration remain available alongside OAuth options
 
 ### Profile
 
@@ -25,7 +25,7 @@ Requirements for the Social Auth milestone. Each maps to roadmap phases.
 - [x] **SETUP-02**: Discord OAuth app registered in Discord Developer Portal with Supabase callback URLs
 - [x] **SETUP-03**: Automatic identity linking enabled in Supabase so existing email users don't get duplicate accounts
 - [x] **SETUP-04**: Database trigger updated to handle OAuth metadata field names without NULL constraint errors
-- [ ] **SETUP-05**: `next.config.mjs` includes `remotePatterns` for Google and Discord avatar CDN hostnames
+- [x] **SETUP-05**: `next.config.mjs` includes `remotePatterns` for Google and Discord avatar CDN hostnames
 
 ## Future Requirements
 
@@ -58,10 +58,10 @@ Which phases cover which requirements. Updated during roadmap creation.
 | SETUP-02 | Phase 15 | Complete |
 | SETUP-03 | Phase 15 | Complete |
 | SETUP-04 | Phase 15 | Complete |
-| SETUP-05 | Phase 16 | Pending |
-| OAUTH-01 | Phase 16 | Pending |
-| OAUTH-02 | Phase 16 | Pending |
-| OAUTH-03 | Phase 16 | Pending |
+| SETUP-05 | Phase 16 | Complete |
+| OAUTH-01 | Phase 16 | Complete |
+| OAUTH-02 | Phase 16 | Complete |
+| OAUTH-03 | Phase 16 | Complete |
 | PROF-01 | Phase 16 | Complete |
 | PROF-02 | Phase 16 | Complete |
 | PROF-03 | Phase 16 | Complete |
