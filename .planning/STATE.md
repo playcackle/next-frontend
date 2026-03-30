@@ -2,16 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.4
 milestone_name: Social Auth
-status: planning
-stopped_at: Completed 15-03-PLAN.md — Discord OAuth end-to-end verified, metadata shape confirmed, Phase 15 complete
-last_updated: "2026-03-25T19:41:12.231Z"
-last_activity: 2026-03-25
+status: unknown
+stopped_at: Completed 16-02-PLAN.md — avatar_url type added, profile page renders Discord avatar with initials fallback
+last_updated: "2026-03-30T18:26:16.233Z"
 progress:
   total_phases: 7
-  completed_phases: 1
-  total_plans: 3
-  completed_plans: 3
-  percent: 67
+  completed_phases: 2
+  total_plans: 5
+  completed_plans: 5
 ---
 
 # Project State
@@ -21,16 +19,12 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-19)
 
 **Core value:** Players must always know where they are in the game and what their actions mean — reliable state, readable feedback, and visible progress are what keep them coming back.
-**Current focus:** v1.4 Social Auth — Phase 15: Provider Infrastructure
+**Current focus:** Phase 16 — oauth-ui-and-profile-sync
 
 ## Current Position
 
-Phase: 16 of 16 (oauth ui and profile sync)
-Plan: Not started
-Status: Ready to plan
-Last activity: 2026-03-25
-
-Progress: [███████░░░] 67%
+Phase: 16 (oauth-ui-and-profile-sync) — EXECUTING
+Plan: 2 of 2
 
 ## Performance Metrics
 
@@ -51,6 +45,7 @@ Progress: [███████░░░] 67%
 | Phase 15 P01 | 1min | 1 tasks | 1 files |
 | Phase 15 P02 | ~30min | 2 tasks | 0 files |
 | Phase 15 P03 | ~15min | 1 tasks | 0 files |
+| Phase 16 P02 | 5min | 2 tasks | 2 files |
 
 ### Decisions
 
@@ -77,6 +72,9 @@ Progress: [███████░░░] 67%
 - Verify @supabase/supabase-js resolves below 2.91.0 before any planned upgrade (SIGNED_IN event deferral breaking change at 2.91.0)
 - [Phase 15]: Uniform COALESCE fallback chain (name→full_name→user_name→split_part) over provider-branching — more maintainable for future providers
 - [Phase 15]: Avatar column nullable so COALESCE(picture, avatar_url) returning NULL is safe — no constraint failure if provider supplies no avatar
+- [Phase 16]: avatar_url typed as string | null to handle email/password users and providers that supply no avatar
+- [Phase 16]: No unoptimized prop on Image — remotePatterns config (SETUP-05) handles CDN allowlist
+- [Phase 16]: className={styles.avatar} applied to Image component so border-radius 50% clips photo to circle matching initials style
 
 ### Pending Todos
 
@@ -89,6 +87,6 @@ Progress: [███████░░░] 67%
 
 ## Session Continuity
 
-Last session: 2026-03-25T00:00:00.000Z
-Stopped at: Completed 15-03-PLAN.md — Discord OAuth end-to-end verified, metadata shape confirmed, Phase 15 complete
+Last session: 2026-03-30T18:26:06.476Z
+Stopped at: Completed 16-02-PLAN.md — avatar_url type added, profile page renders Discord avatar with initials fallback
 Resume file: None

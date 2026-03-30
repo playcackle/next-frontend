@@ -15,9 +15,9 @@ Requirements for the Social Auth milestone. Each maps to roadmap phases.
 
 ### Profile
 
-- [ ] **PROF-01**: On first OAuth sign-in, player's display name is pre-populated from provider (Google name / Discord username)
-- [ ] **PROF-02**: On first OAuth sign-in, player's avatar is pre-populated from provider profile picture
-- [ ] **PROF-03**: Profile sync fires only on first sign-in — returning users retain any customizations they have made
+- [x] **PROF-01**: On first OAuth sign-in, player's display name is pre-populated from provider (Google name / Discord username)
+- [x] **PROF-02**: On first OAuth sign-in, player's avatar is pre-populated from provider profile picture
+- [x] **PROF-03**: Profile sync fires only on first sign-in — returning users retain any customizations they have made
 
 ### Setup
 
@@ -62,9 +62,9 @@ Which phases cover which requirements. Updated during roadmap creation.
 | OAUTH-01 | Phase 16 | Pending |
 | OAUTH-02 | Phase 16 | Pending |
 | OAUTH-03 | Phase 16 | Pending |
-| PROF-01 | Phase 16 | Pending |
-| PROF-02 | Phase 16 | Pending |
-| PROF-03 | Phase 16 | Pending |
+| PROF-01 | Phase 16 | Complete |
+| PROF-02 | Phase 16 | Complete |
+| PROF-03 | Phase 16 | Complete |
 
 **Coverage:**
 - v1.4 requirements: 11 total

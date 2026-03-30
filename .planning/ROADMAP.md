@@ -61,7 +61,7 @@ Archive: `.planning/milestones/v1.3-ROADMAP.md`
 **Milestone Goal:** Players can sign in and register with Google and Discord OAuth alongside existing email/password auth, with profile data auto-filled from the provider on first sign-in.
 
 - [x] **Phase 15: Provider Infrastructure** - Register OAuth apps, configure Supabase, fix DB trigger so first OAuth sign-in cannot fail with a NULL constraint error (completed 2026-03-25)
-- [ ] **Phase 16: OAuth UI and Profile Sync** - Add OAuth buttons to login/register pages, detect first sign-in in the callback route, and sync display name and avatar from the provider
+- [x] **Phase 16: OAuth UI and Profile Sync** - Add OAuth buttons to login/register pages, detect first sign-in in the callback route, and sync display name and avatar from the provider (completed 2026-03-30)
 
 ## Phase Details
 
@@ -163,8 +163,8 @@ Plans:
   5. Email/password login and registration continue to work correctly alongside the new OAuth buttons
 **Plans**: 2 plans
 Plans:
-- [ ] 16-01-PLAN.md — remotePatterns config, disabled Google button on login/register, Google button CSS
-- [ ] 16-02-PLAN.md — avatar_url type addition, profile page avatar Image rendering with initials fallback
+- [x] 16-01-PLAN.md — remotePatterns config, disabled Google button on login/register, Google button CSS
+- [x] 16-02-PLAN.md — avatar_url type addition, profile page avatar Image rendering with initials fallback
 
 ## Progress
 
@@ -185,4 +185,4 @@ Plans:
 | 13. Performance Fixes | v1.3 | 3/3 | Complete | 2026-03-19 |
 | 14. Observability Polish | v1.3 | 1/1 | Complete | 2026-03-19 |
 | 15. Provider Infrastructure | v1.4 | 3/3 | Complete | 2026-03-25 |
-| 16. OAuth UI and Profile Sync | v1.4 | 0/2 | Not started | - |
+| 16. OAuth UI and Profile Sync | v1.4 | 2/2 | Complete   | 2026-03-30 |
