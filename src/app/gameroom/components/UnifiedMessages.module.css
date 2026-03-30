@@ -35,6 +35,11 @@
   box-shadow: 0 0 12px rgba(0, 221, 255, 0.4);
 }
 
+.pinnedAvatar {
+  flex-shrink: 0;
+  align-self: center;
+}
+
 .pinnedBadge {
   font-size: 0.65rem;
   font-weight: bold;

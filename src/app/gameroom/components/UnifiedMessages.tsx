@@ -9,6 +9,7 @@ import {
   unifiedMessagesAtom,
   type UnifiedMessage,
 } from "../store/gameAtoms";
+import PlayerAvatar from "./PlayerAvatar";
 import styles from "./UnifiedMessages.module.css";
 
 export default function UnifiedMessages() {
@@ -72,12 +73,18 @@ export default function UnifiedMessages() {
         <div className={styles.pinnedMessageContainer}>
           <div className={`${styles.unifiedMessage} ${styles.botBobMessage} ${styles.pinnedMessage}`}>
             <Flex direction="row" gap="2" align="center">
+              <PlayerAvatar
+                playerId={pinnedMessage.player_id}
+                displayName={pinnedMessage.display_name}
+                size="small"
+                className={styles.pinnedAvatar}
+              />
               <div className={styles.messageContentWrapper}>
                 <Flex direction="row" gap="2" align="center">
                   <span className={styles.messageUser}>
                     {pinnedMessage.display_name}
                   </span>
-                  <span className={styles.pinnedBadge}>📌 PINNED</span>
+                  <span className={styles.pinnedBadge}>PINNED</span>
                 </Flex>
                 <div className={styles.messageContent}>
                   {pinnedMessage.text}
