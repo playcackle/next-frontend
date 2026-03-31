@@ -244,6 +244,47 @@
   min-height: 0;
 }
 
+/* Waiting layout: just chat + waiting panel */
+.waitingContentRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  min-height: 0;
+}
+
+.waitingPanel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  background-color: rgba(20, 20, 40, 0.7);
+  border-radius: 8px;
+  padding: 2rem;
+  border: 1px solid rgba(183, 0, 255, 0.4);
+  box-shadow: 0 0 20px rgba(183, 0, 255, 0.3);
+  backdrop-filter: blur(5px);
+}
+
+.waitingTitle {
+  font-family: var(--retro-font);
+  font-size: 1.1rem;
+  color: var(--neon-purple);
+  text-shadow: 0 0 10px rgba(183, 0, 255, 0.8);
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.waitingCount {
+  font-family: var(--retro-font-alt);
+  font-size: 2rem;
+  font-weight: bold;
+  color: var(--white);
+  text-shadow: 0 0 12px rgba(255, 255, 255, 0.5);
+  text-align: center;
+}
+
 /* Post-game showcase spans the middle and right columns */
 .postGameShowcaseWrapper {
   grid-column: 2 / 4;

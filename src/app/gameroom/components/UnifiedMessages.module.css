@@ -18,6 +18,39 @@
 }
 
 /* ============================
+   PINNED MESSAGE SECTION
+   ============================ */
+
+.pinnedMessageContainer {
+  padding: 0.5rem;
+  border-bottom: 2px solid rgba(183, 0, 255, 0.5);
+  background: linear-gradient(135deg, rgba(0, 221, 255, 0.1) 0%, rgba(183, 0, 255, 0.08) 100%);
+}
+
+.pinnedMessage {
+  border-left: 4px solid var(--neon-blue) !important;
+  background-color: rgba(0, 221, 255, 0.15) !important;
+  padding: 0.35rem !important;
+  border-radius: 6px;
+  box-shadow: 0 0 12px rgba(0, 221, 255, 0.4);
+}
+
+.pinnedAvatar {
+  flex-shrink: 0;
+  align-self: center;
+}
+
+.pinnedBadge {
+  font-size: 0.65rem;
+  font-weight: bold;
+  color: var(--neon-blue);
+  text-shadow: 0 0 4px rgba(0, 221, 255, 0.8);
+  letter-spacing: 0.5px;
+  margin-left: auto;
+  white-space: nowrap;
+}
+
+/* ============================
    SCROLL AREA
    ============================ */
 

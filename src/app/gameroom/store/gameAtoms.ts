@@ -33,6 +33,8 @@ const initGameState = {
   finalScore: [],
   playerAccolades: [],
   showCountDown: false,
+  lobbyStatus: null as import("../types/state").LobbyStatus,
+  minPlayersNeeded: 0,
 };
 // Core game state atoms
 export const gameStateAtom = atom<GameState>(initGameState);
@@ -60,6 +62,8 @@ export const finalScoreAtom = atom((get) => get(gameStateAtom).finalScore);
 export const showCountDownAtom = atom(
   (get) => get(gameStateAtom).showCountDown
 );
+export const lobbyStatusAtom = atom((get) => get(gameStateAtom).lobbyStatus);
+export const minPlayersNeededAtom = atom((get) => get(gameStateAtom).minPlayersNeeded);
 
 export const answerAtom = atom<string>("");
 

@@ -138,10 +138,11 @@ export default function GameroomTile(props: GameroomTileProps) {
         </a>
       )}
       <ErrorModal
-        onOpenChange={(change) => setShowModal(change)}
+        onOpenChange={setShowModal}
         open={showModal}
         title="Unable to join gameroom"
         message={errorMessage ?? "Unable to join. Please try again."}
+        showHomeButton={false}
       />
     </div>
   );

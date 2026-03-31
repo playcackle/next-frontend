@@ -204,8 +204,9 @@
 
 .answerChip {
   display: inline-flex;
-  flex-direction: column;
-  align-items: flex-start;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.6rem;
   padding: 0.45rem 0.85rem;
   border-radius: 10px;
   border: 1px solid var(--neon-pink);
@@ -214,6 +215,12 @@
     transform 0.3s ease,
     box-shadow 0.3s ease;
   animation: chipAppear 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+.answerChipContent {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
 }
 
 .answerChipBonus {
@@ -246,6 +253,24 @@
   color: rgba(255, 255, 255, 0.55);
   line-height: 1.2;
   white-space: nowrap;
+}
+
+.answerChipMultiplier {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 28px;
+  height: 28px;
+  border-radius: 4px;
+  background: var(--neon-purple);
+  border: 1px solid var(--neon-purple);
+  font-family: var(--retro-font);
+  font-size: 0.75rem;
+  font-weight: bold;
+  color: white;
+  text-shadow: 0 0 4px rgba(183, 0, 255, 0.8);
+  box-shadow: 0 0 8px rgba(183, 0, 255, 0.6);
+  flex-shrink: 0;
 }
 
 @keyframes chipAppear {

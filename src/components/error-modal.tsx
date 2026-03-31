@@ -13,6 +13,7 @@ interface ErrorModalProps {
   redirectTo?: string;
   showRetry?: boolean;
   onRetry?: () => void;
+  showHomeButton?: boolean;
 }
 
 export default function ErrorModal({
@@ -23,6 +24,7 @@ export default function ErrorModal({
   redirectTo = "/",
   showRetry = false,
   onRetry,
+  showHomeButton = true,
 }: ErrorModalProps) {
   const router = useRouter();
 
@@ -102,14 +104,16 @@ export default function ErrorModal({
               </Button>
             )}
 
-            <Button
-              className={styles.homeButton}
-              onClick={handleNavigateHome}
-              size="3"
-            >
-              <span className={styles.buttonIcon}>🏠</span>
-              Go Home
-            </Button>
+            {showHomeButton && (
+              <Button
+                className={styles.homeButton}
+                onClick={handleNavigateHome}
+                size="3"
+              >
+                <span className={styles.buttonIcon}>🏠</span>
+                Go Home
+              </Button>
+            )}
 
             <Dialog.Close>
               <Button className={styles.closeButton} size="3">

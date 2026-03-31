@@ -8,6 +8,7 @@ import {
   RoundOverPayload,
   SlotSnappedPayload,
   SubmissionFeedbackPayload,
+  WaitingForPlayersPayload,
 } from "../types/payloads";
 import {
   getRandomAttentionAnimation,
@@ -117,6 +118,7 @@ export const useGameEvents = (gameWsUrl: string, token: string) => {
       scores: data.scores ?? [],
       slots: data.slots ?? [],
       loading: false, // Clear loading gate once we have confirmed state
+      lobbyStatus: data.status,
     });
   });
 
@@ -173,6 +175,14 @@ export const useGameEvents = (gameWsUrl: string, token: string) => {
       timeRemaining: 0,
     });
     playSound("timeUp");
+  });
+
+  const handleWaitingForPlayersRef = useRef((data: WaitingForPlayersPayload) => {
+    updateGameState({
+      lobbyStatus: "WAITING",
+      playerCount: data.current_players,
+      minPlayersNeeded: data.min_players_needed,
+    });
   });
 
   const handleLobbyResettingRef = useRef(() => {
@@ -236,6 +246,7 @@ export const useGameEvents = (gameWsUrl: string, token: string) => {
         scores: data.scores ?? [],
         slots: data.slots ?? [],
         loading: false, // Clear loading gate once we have confirmed state
+        lobbyStatus: data.status,
       });
     };
 
@@ -314,6 +325,9 @@ export const useGameEvents = (gameWsUrl: string, token: string) => {
         if (process.env.NODE_ENV === 'development') {
           console.log(`[PerfProbe] submission_feedback: ${(performance.now() - _t0).toFixed(3)}ms`);
         }
+      }),
+      onEvent("waiting_for_players", (data: WaitingForPlayersPayload) => {
+        handleWaitingForPlayersRef.current(data);
       }),
     ];
     return () => cleanups.forEach((fn) => fn?.());

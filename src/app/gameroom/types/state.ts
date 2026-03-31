@@ -43,6 +43,15 @@ export type Accolade = {
   metric_value: number;
 };
 
+export type LobbyStatus =
+  | "WAITING"
+  | "STARTING_SOON"
+  | "IN_ROUND"
+  | "ROUND_BREAK"
+  | "POST_GAME_SHOWCASE"
+  | "GAME_OVER_NO_NEW_GAME"
+  | null;
+
 export type GameState = {
   playerCount: number;
   timeRemaining: number;
@@ -61,6 +70,8 @@ export type GameState = {
   finalScore: FinalScore[];
   playerAccolades: PlayerAccolade[];
   showCountDown: boolean;
+  lobbyStatus: LobbyStatus;
+  minPlayersNeeded: number;
 };
 
 export type AnimationState = {
