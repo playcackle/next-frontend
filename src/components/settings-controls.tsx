@@ -10,9 +10,10 @@ import styles from "./settings-controls.module.css";
 
 interface SettingsControlsProps {
   musicSrc: string;
+  musicStartAt?: number;
 }
 
-const SettingsControls: React.FC<SettingsControlsProps> = ({ musicSrc }) => {
+const SettingsControls: React.FC<SettingsControlsProps> = ({ musicSrc, musicStartAt }) => {
   const [isExpanded, setIsExpanded] = useState(false);
 
   return (
@@ -47,7 +48,7 @@ const SettingsControls: React.FC<SettingsControlsProps> = ({ musicSrc }) => {
 
           <div className={styles.settingItem}>
             <span className={styles.settingLabel}>Music</span>
-            <BackgroundMusic src={musicSrc} />
+            <BackgroundMusic src={musicSrc} startAt={musicStartAt} />
           </div>
         </div>
       </div>

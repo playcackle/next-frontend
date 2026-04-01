@@ -43,7 +43,7 @@ export default async function Home({
 
   return (
     <>
-      <SettingsControls musicSrc="/audio/Snapscore.wav" />
+      <SettingsControls musicSrc="/audio/05 Hold.m4a" musicStartAt={3} />
       {showOnboarding && <OnboardingModal show={showOnboarding} />}
 
       <div className={styles.pageWrapper}>

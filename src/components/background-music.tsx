@@ -7,9 +7,10 @@ import styles from "./background-music.module.css";
 
 interface BackgroundMusicProps {
   src: string;
+  startAt?: number;
 }
 
-const BackgroundMusic: React.FC<BackgroundMusicProps> = ({ src }) => {
+const BackgroundMusic: React.FC<BackgroundMusicProps> = ({ src, startAt = 0 }) => {
   const audioRef = useRef<HTMLAudioElement>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [volume, setVolume] = useState(0.5);
@@ -20,6 +21,9 @@ const BackgroundMusic: React.FC<BackgroundMusicProps> = ({ src }) => {
     if (audio) {
       audio.volume = volume;
       audio.muted = isMuted;
+      if (startAt > 0 && audio.currentTime === 0) {
+        audio.currentTime = startAt;
+      }
 
       const playPromise = audio.play();
       if (playPromise !== undefined) {
