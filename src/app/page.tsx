@@ -2,6 +2,7 @@ import { AuthButtons } from "@/components/auth-buttons";
 import HomeGamerooms from "@/components/home-gamerooms";
 import HomeUserStats from "@/components/home-user-stats";
 import OnboardingModal from "@/components/onboarding-modal";
+import PreLaunchCta from "@/components/pre-launch-cta";
 import SettingsControls from "@/components/settings-controls";
 import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
@@ -32,6 +33,8 @@ export default async function Home({
   const {
     data: { user },
   } = await supabase.auth.getUser();
+
+  const isLaunched = process.env.NEXT_PUBLIC_LAUNCHED === "true";
 
   const params = await searchParams;
   const authError = params.error;
@@ -79,7 +82,11 @@ export default async function Home({
           )}
         </section>
 
-        {user ? (
+        {!isLaunched ? (
+          <section className={styles.authSection}>
+            <PreLaunchCta />
+          </section>
+        ) : user ? (
           <div className={styles.twoColLayout}>
             {/* Left column: Gamerooms */}
             <section className={styles.section}>

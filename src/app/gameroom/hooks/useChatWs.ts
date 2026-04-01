@@ -54,8 +54,8 @@ export const useChatSocket = (baseUrl: string, token: string) => {
       addUnifiedMessage(data);
     });
 
-    socket.on("connection_success_chat", (data) => {
-      console.log("Chat connection success:", data.message);
+    socket.on("connection_success_chat", () => {
+      // Connection acknowledged by server — no action needed
     });
 
     socket.on("message_error", (data) => {

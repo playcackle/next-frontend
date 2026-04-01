@@ -1,0 +1,21 @@
+#!/usr/bin/env sh
+# Pre-push hook — runs typecheck + tests before allowing push.
+# Install: cp .github/hooks/pre-push .git/hooks/pre-push && chmod +x .git/hooks/pre-push
+
+echo "🔍 Running pre-push checks..."
+
+echo "→ TypeScript check"
+npx tsc --noEmit
+if [ $? -ne 0 ]; then
+  echo "❌ TypeScript errors found. Push aborted."
+  exit 1
+fi
+
+echo "→ Running tests"
+npx vitest run
+if [ $? -ne 0 ]; then
+  echo "❌ Tests failed. Push aborted."
+  exit 1
+fi
+
+echo "✅ All checks passed."

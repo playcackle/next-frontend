@@ -1,7 +1,7 @@
 "use client";
 
 import SoundEffects from "@/components/sound-effects";
-import React, { Profiler, useCallback, useEffect, useRef, useState, type ProfilerOnRenderCallback } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import styles from "./gameroom.module.css";
 
 // Import custom hooks
@@ -44,12 +44,6 @@ import {
   timeRemainingAtom,
   updateGameStateAtom,
 } from "./store/gameAtoms";
-
-const onRenderCallback: ProfilerOnRenderCallback = (id, phase, actualDuration, baseDuration) => {
-  if (process.env.NODE_ENV === 'development' && phase === 'update') {
-    console.log(`[Profiler] ${id} | actual: ${actualDuration.toFixed(2)}ms | base: ${baseDuration.toFixed(2)}ms`);
-  }
-};
 
 function NoGameroom() {
   return (
@@ -213,9 +207,7 @@ export default function GameroomPage() {
 
             <div className={isWaiting ? styles.waitingContentRow : styles.contentRow}>
               <Flex direction="column" gap="3">
-                <Profiler id="UnifiedMessages" onRender={onRenderCallback}>
-                  <UnifiedMessages />
-                </Profiler>
+                <UnifiedMessages />
                 <div className={styles.answerRow}>
                   <UnifiedInputForm
                     onSubmit={handleUnifiedSubmit}
@@ -241,9 +233,7 @@ export default function GameroomPage() {
                 <>
                   {isRoundBreak && <AnswerReveal />}
                   {isRoundBreak ? (
-                    <Profiler id="Leaderboard" onRender={onRenderCallback}>
-                      <Leaderboard />
-                    </Profiler>
+                    <Leaderboard />
                   ) : (
                     <div className={styles.slotColumnWrapper}>
                       <div
@@ -254,9 +244,7 @@ export default function GameroomPage() {
                           } as React.CSSProperties
                         }
                       >
-                        <Profiler id="SlotGrid" onRender={onRenderCallback}>
-                          <SlotGrid />
-                        </Profiler>
+                        <SlotGrid />
                       </div>
                     </div>
                   )}

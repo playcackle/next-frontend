@@ -264,67 +264,31 @@ export const useGameEvents = (gameWsUrl: string, token: string) => {
   useEffect(() => {
     const cleanups = [
       onEvent("lobby_state_sync", (data: LobbySyncPayload) => {
-        const _t0 = performance.now();
         handleLobbySyncRef.current(data);
-        if (process.env.NODE_ENV === 'development') {
-          console.log(`[PerfProbe] lobby_state_sync: ${(performance.now() - _t0).toFixed(3)}ms`);
-        }
       }),
       onEvent("lobby_tick", (data: LobbyTickPayload) => {
-        const _t0 = performance.now();
         handleLobbyTickRef.current(data);
-        if (process.env.NODE_ENV === 'development') {
-          console.log(`[PerfProbe] lobby_tick: ${(performance.now() - _t0).toFixed(3)}ms`);
-        }
       }),
       onEvent("round_over", (data: RoundOverPayload) => {
-        const _t0 = performance.now();
         handleRoundOverRef.current(data);
-        if (process.env.NODE_ENV === 'development') {
-          console.log(`[PerfProbe] round_over: ${(performance.now() - _t0).toFixed(3)}ms`);
-        }
       }),
       onEvent("round_starting_soon", () => {
-        const _t0 = performance.now();
         handleRoundStartingSoonRef.current();
-        if (process.env.NODE_ENV === 'development') {
-          console.log(`[PerfProbe] round_starting_soon: ${(performance.now() - _t0).toFixed(3)}ms`);
-        }
       }),
       onEvent("new_round_started", (data: NewRoundStartedPayload) => {
-        const _t0 = performance.now();
         handleNewRoundStartedRef.current(data);
-        if (process.env.NODE_ENV === 'development') {
-          console.log(`[PerfProbe] new_round_started: ${(performance.now() - _t0).toFixed(3)}ms`);
-        }
       }),
       onEvent("game_over", (data: any) => {
-        const _t0 = performance.now();
         handleGameOverRef.current(data);
-        if (process.env.NODE_ENV === 'development') {
-          console.log(`[PerfProbe] game_over: ${(performance.now() - _t0).toFixed(3)}ms`);
-        }
       }),
       onEvent("lobby_resetting_for_new_game", () => {
-        const _t0 = performance.now();
         handleLobbyResettingRef.current();
-        if (process.env.NODE_ENV === 'development') {
-          console.log(`[PerfProbe] lobby_resetting_for_new_game: ${(performance.now() - _t0).toFixed(3)}ms`);
-        }
       }),
       onEvent("slot_snapped", (data: SlotSnappedPayload) => {
-        const _t0 = performance.now();
         handleSlotSnappedRef.current(data);
-        if (process.env.NODE_ENV === 'development') {
-          console.log(`[PerfProbe] slot_snapped: ${(performance.now() - _t0).toFixed(3)}ms`);
-        }
       }),
       onEvent("submission_feedback", (data: SubmissionFeedbackPayload) => {
-        const _t0 = performance.now();
         handleSubmissionFeedbackRef.current(data);
-        if (process.env.NODE_ENV === 'development') {
-          console.log(`[PerfProbe] submission_feedback: ${(performance.now() - _t0).toFixed(3)}ms`);
-        }
       }),
       onEvent("waiting_for_players", (data: WaitingForPlayersPayload) => {
         handleWaitingForPlayersRef.current(data);

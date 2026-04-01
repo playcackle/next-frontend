@@ -18,6 +18,7 @@ export default function Header() {
   const pathname = usePathname();
   const gameroom = useAtomValue(gameRoomAtom);
   const inGameroom = pathname === "/gameroom";
+  const isLaunched = process.env.NEXT_PUBLIC_LAUNCHED === "true";
   const discordUrl =
     inGameroom && gameroom?.discord_invite_url
       ? gameroom.discord_invite_url
@@ -80,7 +81,7 @@ export default function Header() {
             </Button>
           </>
         )}
-        {!loading && !user && (
+        {!loading && !user && isLaunched && (
           <>
             <Link href="/login" className={styles.loginLink}>
               Back for more
