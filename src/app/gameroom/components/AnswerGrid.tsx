@@ -111,11 +111,16 @@ export const AnswerGrid: React.FC<AnswerGridProps> = ({ slots }) => {
           <div className={styles.answerDotRow}>
             {slots.map((slot) => {
               const dotState = slot.is_snapped ? "found" : "empty";
+              const isEmptyRare = !slot.is_snapped && slot.is_rare;
               return (
                 <div
                   key={slot.id}
-                  className={`${styles.answerDot} ${styles[`answerDot_${dotState}`]} ${slot.is_rare && slot.is_snapped ? styles.answerDotBonus : ""}`}
-                />
+                  className={`${styles.answerDot} ${styles[`answerDot_${dotState}`]} ${slot.is_rare && slot.is_snapped ? styles.answerDotBonus : ""} ${isEmptyRare ? styles.answerDotEmptyRare : ""}`}
+                >
+                  {isEmptyRare && (
+                    <span className={styles.answerDot2x}>2x</span>
+                  )}
+                </div>
               );
             })}
           </div>

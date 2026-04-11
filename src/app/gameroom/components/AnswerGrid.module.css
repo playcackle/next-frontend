@@ -93,8 +93,8 @@
 
 .answerDot {
   position: relative;
-  width: 24px;
-  height: 24px;
+  width: 32px;
+  height: 32px;
   border-radius: 5px;
   border: 1px solid transparent;
   transition:
@@ -104,13 +104,67 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  overflow: hidden;
+  overflow: visible;
 }
 
 /* Heat levels: cool blue → warm amber → orange → hot pink → inferno */
 .answerDot_empty {
   background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(255, 255, 255, 0.15);
+  border: 2px dashed var(--neon-pink);
+  border-color: var(--neon-pink);
+  opacity: 0.6;
+}
+
+.answerDot_empty::after {
+  content: "";
+  position: absolute;
+  inset: -2px;
+  border-radius: 5px;
+  background: repeating-linear-gradient(
+    45deg,
+    var(--neon-pink) 0px,
+    var(--neon-pink) 3px,
+    transparent 3px,
+    transparent 8px
+  );
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  padding: 2px;
+  opacity: 0.45;
+  pointer-events: none;
+}
+
+.answerDotEmptyRare {
+  border: 2px solid transparent !important;
+  background-clip: padding-box;
+  position: relative;
+}
+
+.answerDotEmptyRare::after {
+  background: repeating-linear-gradient(
+    45deg,
+    var(--neon-purple) 0px,
+    var(--neon-purple) 3px,
+    transparent 3px,
+    transparent 8px
+  ) !important;
+  opacity: 0.6 !important;
+}
+
+.answerDot2x {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--retro-font);
+  font-size: 0.65rem;
+  font-weight: bold;
+  color: var(--neon-purple);
+  text-shadow: 0 0 4px rgba(183, 0, 255, 0.8);
+  position: relative;
+  z-index: 2;
 }
 
 .answerDot_cool {
