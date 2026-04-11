@@ -86,18 +86,16 @@ export const useGameSocket = (baseUrl: string, token: string) => {
     // ========== CONNECTION EVENT HANDLERS ==========
 
     socket.on("connect", () => {
-      setSocketState((prev) => {
-        const isReconnect = prev.reconnectAttempts > 0 || prev.connectionStatus === "reconnecting";
-        if (isReconnect) {
-          // Request current server state on reconnects so the client catches up
-          socket.emit("request_state_sync");
-        }
-        return {
-          isConnected: true,
-          connectionStatus: "connected",
-          error: null,
-          reconnectAttempts: 0,
-        };
+      // Always request current server state on connect — covers both the
+      // initial join (so mid-game joiners learn the real lobby status
+      // instead of being stuck on a stale `waiting_for_players`) and
+      // reconnects (so the client catches up after a drop).
+      socket.emit("request_state_sync");
+      setSocketState({
+        isConnected: true,
+        connectionStatus: "connected",
+        error: null,
+        reconnectAttempts: 0,
       });
     });
 

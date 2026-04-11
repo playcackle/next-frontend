@@ -26,7 +26,7 @@ const LOADING_GRACE_PERIOD_MS = 3000;
 
 export const useGameEvents = (gameWsUrl: string, token: string) => {
   const { onEvent, sendEvent, isConnected, connectionStatus, reconnect } = useGameSocket(gameWsUrl, token);
-  const { updateGameState, slots } = useGameState();
+  const { updateGameState, slots, lobbyStatus } = useGameState();
   const { triggerCorrectAnswerEffects } = useGameActions();
   const clearRoundHints = useSetAtom(clearRoundHintsAtom);
   const setSlotHeat = useSetAtom(slotHeatAtom);
@@ -37,6 +37,11 @@ export const useGameEvents = (gameWsUrl: string, token: string) => {
   useEffect(() => {
     slotsRef.current = slots;
   }, [slots]);
+
+  const lobbyStatusRef = useRef(lobbyStatus);
+  useEffect(() => {
+    lobbyStatusRef.current = lobbyStatus;
+  }, [lobbyStatus]);
 
   const sendEventRef = useRef(sendEvent);
   useEffect(() => {
@@ -179,8 +184,17 @@ export const useGameEvents = (gameWsUrl: string, token: string) => {
   });
 
   const handleWaitingForPlayersRef = useRef((data: WaitingForPlayersPayload) => {
+    // If a round is already in progress (or we're in the break/showcase UI),
+    // a stale `waiting_for_players` event must not flip us back to the
+    // "Waiting for more idiots" panel. Only honor it when lobby is idle.
+    const currentStatus = lobbyStatusRef.current;
+    const isRoundActive =
+      currentStatus === "IN_ROUND" ||
+      currentStatus === "ROUND_BREAK" ||
+      currentStatus === "POST_GAME_SHOWCASE";
+
     updateGameState({
-      lobbyStatus: "WAITING",
+      ...(isRoundActive ? {} : { lobbyStatus: "WAITING" }),
       playerCount: data.current_players,
       minPlayersNeeded: data.min_players_needed,
     });
