@@ -170,9 +170,6 @@ export default function LobbiesPage() {
                 <h3 className={styles.lobbyTitle}>
                   Gameroom
                   <span className={styles.lobbyId}>#{lobby.lobby_id.slice(0, 8)}</span>
-                  {lobby.is_spawned && (
-                    <span className={styles.spawnedBadge}>spawned</span>
-                  )}
                   <span
                     className={styles.visibilityBadge}
                     style={{ color: getVisibilityColor(lobby.visibility) }}
@@ -227,6 +224,9 @@ export default function LobbiesPage() {
                   >
                     <Trash2 size={16} />
                   </button>
+                )}
+                {lobby.is_spawned && (
+                  <span className={styles.spawnedBadge}>spawned</span>
                 )}
               </div>
             </div>
