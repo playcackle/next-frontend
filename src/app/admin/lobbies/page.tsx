@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import { lobbiesApi, type Lobby } from "@/lib/api/admin";
+import { Settings, Trash2, Globe } from "lucide-react";
 import styles from "./page.module.css";
 
 export default function LobbiesPage() {
@@ -24,7 +25,7 @@ export default function LobbiesPage() {
     try {
       setError(null);
       const data = await lobbiesApi.getAll();
-      setLobbies(data || []);
+      setLobbies((data || []).sort((a, b) => a.lobby_id.localeCompare(b.lobby_id)));
     } catch (err) {
       console.error("Failed to load lobbies:", err);
       setError(err instanceof Error ? err.message : "Failed to load lobbies");
@@ -81,20 +82,6 @@ export default function LobbiesPage() {
 
   const handleConfigure = (lobbyId: string) => {
     router.push(`/admin/lobbies/${lobbyId}`);
-  };
-
-  const handleForceReset = async (lobbyId: string) => {
-    if (!confirm("Are you sure you want to force reset this gameroom?\n\nThis will interrupt active gameplay.")) {
-      return;
-    }
-
-    try {
-      await lobbiesApi.forceReset(lobbyId, "Admin forced reset");
-      alert("Gameroom reset successfully");
-      loadLobbies();
-    } catch (err) {
-      alert(err instanceof Error ? err.message : "Failed to reset gameroom");
-    }
   };
 
   const getStatusColor = (status: string) => {
@@ -212,52 +199,33 @@ export default function LobbiesPage() {
                     {lobby.collection_name || "None"}
                   </span>
                 </div>
-                {lobby.configuration && (
-                  <>
-                    <div className={styles.infoRow}>
-                      <span className={styles.infoLabel}>Rounds:</span>
-                      <span className={styles.infoValue}>
-                        {lobby.configuration.num_rounds || "N/A"}
-                      </span>
-                    </div>
-                    <div className={styles.infoRow}>
-                      <span className={styles.infoLabel}>Round Time:</span>
-                      <span className={styles.infoValue}>
-                        {lobby.configuration.round_duration || "N/A"}s
-                      </span>
-                    </div>
-                  </>
-                )}
               </div>
 
               <div className={styles.lobbyActions}>
                 <button
-                  className={styles.configureButton}
+                  className={styles.iconButton}
                   onClick={() => handleConfigure(lobby.lobby_id)}
+                  title="Configure"
                 >
-                  Configure
-                </button>
-                <button
-                  className={styles.resetButton}
-                  onClick={() => handleForceReset(lobby.lobby_id)}
-                >
-                  Force Reset
+                  <Settings size={16} />
                 </button>
                 {lobby.visibility === "hidden" && lobby.is_spawned && (
                   <button
-                    className={styles.makePublicButton}
+                    className={styles.iconButton}
                     onClick={() => handleMakePublic(lobby.lobby_id)}
+                    title="Make Public"
                   >
-                    Make Public
+                    <Globe size={16} />
                   </button>
                 )}
                 {lobby.is_spawned && lobby.railway_service_id && (
                   <button
-                    className={styles.teardownButton}
+                    className={styles.iconButtonDanger}
                     onClick={() => handleTeardown(lobby.railway_service_id!, lobby.lobby_id)}
                     disabled={tearingDown === lobby.railway_service_id}
+                    title={tearingDown === lobby.railway_service_id ? "Tearing down..." : "Teardown"}
                   >
-                    {tearingDown === lobby.railway_service_id ? "Tearing..." : "Teardown"}
+                    <Trash2 size={16} />
                   </button>
                 )}
               </div>

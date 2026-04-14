@@ -47,6 +47,8 @@ export default function LobbyDetailPage() {
 
   const [selectedCollection, setSelectedCollection] = useState<number | null>(null);
   const [applyMode, setApplyMode] = useState<"on_next_reset" | "immediate">("on_next_reset");
+  const [visibility, setVisibility] = useState<"public" | "private" | "hidden">("public");
+  const [visibilitySaving, setVisibilitySaving] = useState(false);
 
   // Host settings state
   const [hostSettings, setHostSettings] = useState<HostSettings | null>(null);
@@ -82,6 +84,10 @@ export default function LobbyDetailPage() {
 
       if (lobbyData.collection_id) {
         setSelectedCollection(lobbyData.collection_id);
+      }
+
+      if (lobbyData.visibility) {
+        setVisibility(lobbyData.visibility);
       }
 
       // Load host settings and fuzzy match config
@@ -222,6 +228,19 @@ export default function LobbyDetailPage() {
     }
   };
 
+  const handleVisibilityChange = async (newVisibility: "public" | "private" | "hidden") => {
+    try {
+      setVisibilitySaving(true);
+      const result = await lobbiesApi.updateVisibility(lobbyId, newVisibility);
+      setVisibility(result.visibility as "public" | "private" | "hidden");
+    } catch (err) {
+      alert(err instanceof Error ? err.message : "Failed to update visibility");
+      loadData();
+    } finally {
+      setVisibilitySaving(false);
+    }
+  };
+
   const handleResetToDefaults = () => {
     if (!confirm("Reset all parameters to default values?")) {
       return;
@@ -302,6 +321,46 @@ export default function LobbyDetailPage() {
           >
             Immediate (Disruptive)
           </button>
+        </div>
+      </div>
+
+      {/* Visibility Selector */}
+      <div className={styles.section}>
+        <h2 className={styles.sectionTitle}>Visibility</h2>
+        <div className={styles.visibilityControls}>
+          <Select.Root
+            value={visibility}
+            onValueChange={(value) => handleVisibilityChange(value as "public" | "private" | "hidden")}
+            disabled={visibilitySaving}
+          >
+            <Select.Trigger className={styles.selectTrigger}>
+              <Select.Value placeholder="Select visibility" />
+              <Select.Icon>
+                <ChevronDown size={16} />
+              </Select.Icon>
+            </Select.Trigger>
+            <Select.Portal>
+              <Select.Content className={styles.selectContent}>
+                <Select.Viewport>
+                  <Select.Item value="public" className={styles.selectItem}>
+                    <Select.ItemText>Public - Visible in lobby browser</Select.ItemText>
+                  </Select.Item>
+                  <Select.Item value="private" className={styles.selectItem}>
+                    <Select.ItemText>Private - Hidden, join via invite only</Select.ItemText>
+                  </Select.Item>
+                  <Select.Item value="hidden" className={styles.selectItem}>
+                    <Select.ItemText>Hidden - Not visible, spawn-only</Select.ItemText>
+                  </Select.Item>
+                </Select.Viewport>
+              </Select.Content>
+            </Select.Portal>
+          </Select.Root>
+          {visibilitySaving && <span className={styles.savingBadge}>Saving...</span>}
+          {lobby.is_spawned && visibility === "hidden" && (
+            <span className={styles.visibilityNote}>
+              Spawned gamerooms start hidden. Use this to temporarily hide from players.
+            </span>
+          )}
         </div>
       </div>
 

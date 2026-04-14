@@ -187,6 +187,36 @@
   align-items: center;
 }
 
+/* ── Visibility Controls ─────────────────────────────────── */
+.visibilityControls {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.visibilityControls .selectTrigger {
+  max-width: 400px;
+}
+
+.visibilityNote {
+  font-size: 0.85rem;
+  color: #999;
+  font-style: italic;
+  margin-top: 0.25rem;
+}
+
+.savingBadge {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  font-size: 0.75rem;
+  color: #00ffff;
+  font-weight: 500;
+  text-transform: none;
+  animation: pulse 2s ease-in-out infinite;
+}
+
 .selectTrigger {
   flex: 1;
   display: flex;
