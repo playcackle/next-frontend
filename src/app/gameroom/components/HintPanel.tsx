@@ -1,5 +1,10 @@
 "use client";
 
+// NOTE: This component is currently NOT IMPORTED anywhere in the UI.
+// It was intended to display BotBob hints but was superseded by AnswerGrid.tsx hints section.
+// Keeping file for future use case or removal after verification.
+// If you need to debug hint filtering, use AnswerGrid.tsx instead.
+
 import { useAtomValue } from "jotai";
 import PlayerAvatar from "./PlayerAvatar";
 import styles from "./HintPanel.module.css";
@@ -12,16 +17,15 @@ export default function HintPanel() {
 
   if (isRoundBreak) return null;
 
-  // Hide hints whose referenced slot has already been answered.
-  const snappedCanonicals = new Set(
+  const snappedSlotIds = new Set(
     slots
-      .filter((s) => s.is_snapped && s.canonical_text)
-      .map((s) => s.canonical_text.toLowerCase()),
+      .filter((s) => s.is_snapped && s.id)
+      .map((s) => String(s.id))
   );
-  const visibleHints = hints.filter(
-    (h) =>
-      !h.canonical_text || !snappedCanonicals.has(h.canonical_text.toLowerCase()),
-  );
+
+  const visibleHints = hints.filter((h) => {
+    return !h.slot_id || !snappedSlotIds.has(String(h.slot_id));
+  });
 
   return (
     <div className={styles.hintPanel}>
