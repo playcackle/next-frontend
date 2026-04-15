@@ -30,8 +30,8 @@ const HOST_ICONS: Record<string, LucideIcon> = {
 
 const HOST_ICON_COLORS: Record<string, string> = {
   welcome: "var(--neon-blue)",
-  round_start: "#f59e0b",
-  round_end: "#fbbf24",
+  round_start: "var(--neon-green)",
+  round_end: "var(--neon-pink)",
   near_miss: "#ff6b00",
   snipe: "rgba(183, 0, 255, 0.5)",
   save: "var(--neon-blue)",
@@ -60,14 +60,14 @@ export default function UnifiedMessages() {
   };
 
   const getMessageTypeClass = (msg: UnifiedMessage): string => {
+    if (msg.message_type === "host") {
+      return styles.hostMessage;
+    }
     if (
       msg.player_id === "botbob" ||
       msg.display_name.toLowerCase() === "botbob"
     ) {
       return styles.botBobMessage;
-    }
-    if (msg.message_type === "host") {
-      return styles.hostMessage;
     }
     switch (msg.message_type) {
       case "successful_answer":
@@ -86,7 +86,9 @@ export default function UnifiedMessages() {
 
   const getHostSubtypeClass = (subtype: string | undefined): string => {
     if (!subtype) return "";
-    return styles[`host${subtype.charAt(0).toUpperCase() + subtype.slice(1)}Message`] || "";
+    const camelCase = subtype.replace(/_([a-z])/g, (_, letter) => letter.toUpperCase());
+    const className = `host${camelCase.charAt(0).toUpperCase() + camelCase.slice(1)}Message`;
+    return styles[className] || "";
   };
 
   const getHostIcon = (subtype: string | undefined): LucideIcon | null => {
