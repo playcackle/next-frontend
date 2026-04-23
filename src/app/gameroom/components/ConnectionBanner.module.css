@@ -7,58 +7,124 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
-  padding: 0.5rem 1rem;
-  font-size: 0.85rem;
-  font-weight: 500;
+  gap: 0.75rem;
+  padding: 0.75rem 1.5rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  font-family: "Orbitron", "Rajdhani", sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
   color: #fff;
+  text-shadow: 0 0 8px currentColor;
+  border-bottom: 2px solid;
   animation: slideDown 0.3s ease-out;
+  backdrop-filter: blur(8px);
 }
 
+/* Reconnecting - neon amber/orange */
 .reconnecting {
-  background: linear-gradient(90deg, #d97706, #b45309);
+  background: linear-gradient(
+    90deg,
+    rgba(255, 170, 0, 0.85) 0%,
+    rgba(255, 100, 0, 0.85) 50%,
+    rgba(255, 170, 0, 0.85) 100%
+  );
+  border-color: #ffaa00;
+  box-shadow: 
+    0 0 20px rgba(255, 170, 0, 0.5),
+    0 0 40px rgba(255, 100, 0, 0.3),
+    inset 0 0 20px rgba(255, 200, 100, 0.1);
+  animation: slideDown 0.3s ease-out, neonPulseAmber 2s ease-in-out infinite;
 }
 
+/* Disconnected - neon red/pink */
 .disconnected {
-  background: linear-gradient(90deg, #dc2626, #b91c1c);
+  background: linear-gradient(
+    90deg,
+    rgba(255, 0, 100, 0.9) 0%,
+    rgba(255, 50, 80, 0.9) 50%,
+    rgba(255, 0, 100, 0.9) 100%
+  );
+  border-color: #ff0064;
+  box-shadow: 
+    0 0 20px rgba(255, 0, 100, 0.6),
+    0 0 40px rgba(255, 50, 80, 0.4),
+    inset 0 0 20px rgba(255, 100, 150, 0.1);
+  animation: slideDown 0.3s ease-out, neonPulseRed 1.5s ease-in-out infinite;
 }
 
+/* Connected - neon cyan/teal */
 .connected {
-  background: linear-gradient(90deg, #16a34a, #15803d);
-  animation: slideDown 0.3s ease-out, fadeOut 0.5s ease-out 1.5s forwards;
+  background: linear-gradient(
+    90deg,
+    rgba(0, 255, 200, 0.85) 0%,
+    rgba(0, 200, 255, 0.85) 50%,
+    rgba(0, 255, 200, 0.85) 100%
+  );
+  border-color: #00ffc8;
+  color: #0c0428;
+  text-shadow: 0 0 8px rgba(0, 255, 200, 0.8);
+  box-shadow: 
+    0 0 20px rgba(0, 255, 200, 0.5),
+    0 0 40px rgba(0, 200, 255, 0.3),
+    inset 0 0 20px rgba(100, 255, 230, 0.1);
+  animation: slideDown 0.3s ease-out, neonPulseCyan 1s ease-in-out 2, fadeOut 0.5s ease-out 1.5s forwards;
 }
 
 .spinner {
-  width: 14px;
-  height: 14px;
-  border: 2px solid rgba(255, 255, 255, 0.3);
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.2);
   border-top-color: #fff;
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
+  box-shadow: 
+    0 0 10px currentColor,
+    inset 0 0 6px rgba(255, 255, 255, 0.2);
 }
 
 .retryButton {
   margin-left: 0.75rem;
-  padding: 0.2rem 0.6rem;
-  background: rgba(255, 255, 255, 0.2);
-  border: 1px solid rgba(255, 255, 255, 0.4);
-  border-radius: 4px;
+  padding: 0.4rem 1rem;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  border-radius: 2px;
   color: #fff;
-  font-size: 0.8rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  font-family: inherit;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
   cursor: pointer;
-  transition: background 0.15s;
+  transition: all 0.2s ease;
+  text-shadow: 0 0 6px #fff;
+  box-shadow: 
+    0 0 8px rgba(255, 0, 100, 0.4),
+    inset 0 0 8px rgba(255, 255, 255, 0.05);
 }
 
 .retryButton:hover {
-  background: rgba(255, 255, 255, 0.35);
+  background: rgba(255, 255, 255, 0.15);
+  border-color: #fff;
+  box-shadow: 
+    0 0 15px rgba(255, 0, 100, 0.6),
+    0 0 30px rgba(255, 0, 100, 0.3),
+    inset 0 0 10px rgba(255, 255, 255, 0.1);
+  transform: scale(1.05);
+}
+
+.retryButton:active {
+  transform: scale(0.98);
 }
 
 @keyframes slideDown {
   from {
     transform: translateY(-100%);
+    opacity: 0;
   }
   to {
     transform: translateY(0);
+    opacity: 1;
   }
 }
 
@@ -72,5 +138,50 @@
 @keyframes spin {
   to {
     transform: rotate(360deg);
+  }
+}
+
+@keyframes neonPulseAmber {
+  0%, 100% {
+    box-shadow: 
+      0 0 20px rgba(255, 170, 0, 0.5),
+      0 0 40px rgba(255, 100, 0, 0.3),
+      inset 0 0 20px rgba(255, 200, 100, 0.1);
+  }
+  50% {
+    box-shadow: 
+      0 0 30px rgba(255, 170, 0, 0.7),
+      0 0 60px rgba(255, 100, 0, 0.4),
+      inset 0 0 30px rgba(255, 200, 100, 0.15);
+  }
+}
+
+@keyframes neonPulseRed {
+  0%, 100% {
+    box-shadow: 
+      0 0 20px rgba(255, 0, 100, 0.6),
+      0 0 40px rgba(255, 50, 80, 0.4),
+      inset 0 0 20px rgba(255, 100, 150, 0.1);
+  }
+  50% {
+    box-shadow: 
+      0 0 35px rgba(255, 0, 100, 0.8),
+      0 0 70px rgba(255, 50, 80, 0.5),
+      inset 0 0 30px rgba(255, 100, 150, 0.15);
+  }
+}
+
+@keyframes neonPulseCyan {
+  0%, 100% {
+    box-shadow: 
+      0 0 20px rgba(0, 255, 200, 0.5),
+      0 0 40px rgba(0, 200, 255, 0.3),
+      inset 0 0 20px rgba(100, 255, 230, 0.1);
+  }
+  50% {
+    box-shadow: 
+      0 0 35px rgba(0, 255, 200, 0.7),
+      0 0 60px rgba(0, 200, 255, 0.4),
+      inset 0 0 25px rgba(100, 255, 230, 0.15);
   }
 }
