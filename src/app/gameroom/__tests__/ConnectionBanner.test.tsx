@@ -62,7 +62,7 @@ describe("ConnectionBanner", () => {
     expect(onRetry).toHaveBeenCalledOnce();
   });
 
-  it("shows 'Reconnected' briefly after going from reconnecting → connected", () => {
+  it("shows 'Connected' briefly after going from reconnecting → connected", () => {
     const { store } = renderWithStore(<ConnectionBanner />, "reconnecting");
 
     // Should show reconnecting
@@ -73,7 +73,7 @@ describe("ConnectionBanner", () => {
       store.set(connectionStatusAtom, "connected");
     });
 
-    expect(screen.getByText("Reconnected")).toBeInTheDocument();
+    expect(screen.getByText("Connected")).toBeInTheDocument();
 
     // After 2 seconds, banner should disappear
     act(() => {

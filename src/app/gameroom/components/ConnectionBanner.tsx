@@ -88,7 +88,7 @@ export default function ConnectionBanner({ onRetry }: ConnectionBannerProps) {
           )}
         </>
       )}
-      {displayStatus === "connected" && <span>Reconnected</span>}
+      {displayStatus === "connected" && <span>Connected</span>}
     </div>
   );
 }
