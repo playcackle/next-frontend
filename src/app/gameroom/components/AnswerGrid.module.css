@@ -149,7 +149,7 @@
     var(--neon-purple) 0px,
     var(--neon-purple) 3px,
     transparent 3px,
-    transparent 8px
+    transparent 3px
   ) !important;
   opacity: 0.6 !important;
 }
