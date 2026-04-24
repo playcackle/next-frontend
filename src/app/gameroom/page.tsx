@@ -239,7 +239,9 @@ export default function GameroomPage() {
               {isWaiting ? (
                 <div className={styles.waitingPanel}>
                   <p className={styles.waitingTitle}>
-                    Waiting for more idiots to arrive
+                    {missingPlayers === 0
+                      ? "LFG!!!1!!!!"
+                      : "Waiting for more idiots to arrive"}
                   </p>
                   {missingPlayers > 0 && (
                     <p className={styles.waitingCount}>
