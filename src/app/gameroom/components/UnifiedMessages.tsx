@@ -8,6 +8,12 @@ import {
   Sparkles,
   Swords,
   Trophy,
+  Zap,
+  Sword,
+  Target,
+  Flame,
+  TrendingUp,
+  Clock,
   type LucideIcon,
 } from "lucide-react";
 import { useEffect, useRef } from "react";
@@ -26,6 +32,23 @@ const HOST_ICONS: Record<string, LucideIcon> = {
   near_miss: Crosshair,
   snipe: Swords,
   save: Sparkles,
+  // Intermission accolades
+  accolade_announcement: Trophy,
+  accolade_speed: Zap,
+  accolade_first: Sword,
+  accolade_accuracy: Target,
+  accolade_volume: Flame,
+  accolade_streak: TrendingUp,
+  accolade_clutch: Clock,
+  // Game-end
+  game_end_announcement: Trophy,
+  game_end_speed: Zap,
+  game_end_first: Sword,
+  game_end_volume: Flame,
+  game_end_streak: TrendingUp,
+  game_end_accuracy: Target,
+  game_end_clutch: Clock,
+  game_end: BotIcon,
 };
 
 const HOST_ICON_COLORS: Record<string, string> = {
@@ -35,6 +58,23 @@ const HOST_ICON_COLORS: Record<string, string> = {
   near_miss: "#ff6b00",
   snipe: "rgba(183, 0, 255, 0.5)",
   save: "var(--neon-blue)",
+  // Intermission accolades
+  accolade_announcement: "#ffd700",
+  accolade_speed: "#ff6b00",
+  accolade_first: "#8b0000",
+  accolade_accuracy: "#00ff00",
+  accolade_volume: "#ff4500",
+  accolade_streak: "#ff1493",
+  accolade_clutch: "#1e90ff",
+  // Game-end
+  game_end_announcement: "#ffd700",
+  game_end_speed: "#ff6b00",
+  game_end_first: "#8b0000",
+  game_end_volume: "#ff4500",
+  game_end_streak: "#ff1493",
+  game_end_accuracy: "#00ff00",
+  game_end_clutch: "#1e90ff",
+  game_end: "var(--neon-pink)",
 };
 
 export default function UnifiedMessages() {
