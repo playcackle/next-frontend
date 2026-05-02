@@ -1,0 +1,379 @@
+.container {
+  background: linear-gradient(135deg, rgba(10, 25, 10, 0.95) 0%, rgba(5, 15, 5, 0.98) 100%);
+  border: 2px solid #00ff64;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 0 30px rgba(0, 255, 100, 0.2), 0 0 60px rgba(0, 150, 50, 0.1);
+  margin-bottom: 1.5rem;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.title {
+  font-size: 1.4rem;
+  font-weight: 900;
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: #00ff64;
+  text-shadow: 0 0 10px #00ff64;
+}
+
+.closeButton {
+  background: none;
+  border: none;
+  color: #a0a0ff;
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 0.5rem;
+  line-height: 1;
+}
+
+.closeButton:hover {
+  color: #ff6b6b;
+}
+
+/* Error banner */
+.error {
+  padding: 1rem;
+  background: rgba(255, 0, 0, 0.1);
+  border: 2px solid #ff6b6b;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  color: #ff6b6b;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.9rem;
+}
+
+.error button {
+  background: none;
+  border: none;
+  color: #ff6b6b;
+  cursor: pointer;
+  font-size: 1rem;
+  margin-left: 1rem;
+}
+
+/* Edit step */
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.formField {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.formActions {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: flex-end;
+}
+
+.label {
+  color: #00ff64;
+  font-weight: 700;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.hint {
+  color: #555;
+  font-weight: 400;
+  font-size: 0.8rem;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.jsonTextarea {
+  padding: 1rem;
+  background: rgba(0, 0, 0, 0.7);
+  border: 2px solid rgba(0, 255, 100, 0.3);
+  border-radius: 8px;
+  color: #c0ffc0;
+  font-family: "Courier New", Courier, monospace;
+  font-size: 0.8rem;
+  line-height: 1.5;
+  resize: vertical;
+  transition: border-color 0.2s;
+  min-height: 300px;
+}
+
+.jsonTextarea:focus {
+  outline: none;
+  border-color: #00ff64;
+  box-shadow: 0 0 15px rgba(0, 255, 100, 0.2);
+}
+
+.parseError {
+  color: #ff6b6b;
+  font-size: 0.85rem;
+  margin: 0;
+  padding: 0.5rem 0.75rem;
+  background: rgba(255, 107, 107, 0.1);
+  border-radius: 4px;
+  border-left: 3px solid #ff6b6b;
+}
+
+/* Review step */
+.review {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.reviewSummary {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.noDiffs {
+  color: #666;
+  font-size: 0.9rem;
+  font-style: italic;
+}
+
+.validBadge {
+  background: rgba(0, 255, 100, 0.15);
+  border: 1px solid #00ff64;
+  color: #00ff64;
+  padding: 0.3rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.invalidBadge {
+  background: rgba(255, 107, 107, 0.15);
+  border: 1px solid #ff6b6b;
+  color: #ff6b6b;
+  padding: 0.3rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.85rem;
+}
+
+/* Diff list */
+.diffList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  max-height: 520px;
+  overflow-y: auto;
+  padding-right: 0.25rem;
+}
+
+.diffList::-webkit-scrollbar {
+  width: 6px;
+}
+
+.diffList::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.diffList::-webkit-scrollbar-thumb {
+  background: rgba(0, 255, 100, 0.3);
+  border-radius: 3px;
+}
+
+.diffCard {
+  background: rgba(0, 255, 100, 0.04);
+  border: 1px solid rgba(0, 255, 100, 0.2);
+  border-radius: 6px;
+  padding: 0.75rem 1rem;
+}
+
+.diffCardError {
+  background: rgba(255, 107, 107, 0.05);
+  border-color: rgba(255, 107, 107, 0.3);
+}
+
+.diffCardHeader {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.diffCanonical {
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+
+.diffId {
+  color: #444;
+  font-size: 0.75rem;
+  font-family: monospace;
+}
+
+.diffError {
+  color: #ff6b6b;
+  font-size: 0.8rem;
+  margin-left: auto;
+}
+
+.diffRow {
+  display: grid;
+  grid-template-columns: 120px 1fr 1.5rem 1fr;
+  gap: 0.5rem;
+  align-items: start;
+  font-size: 0.82rem;
+  padding: 0.2rem 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.diffField {
+  color: #00ff64;
+  font-family: monospace;
+  font-size: 0.78rem;
+  padding-top: 0.1rem;
+}
+
+.diffOld {
+  color: #888;
+  font-family: monospace;
+  word-break: break-word;
+  text-decoration: line-through;
+  opacity: 0.7;
+}
+
+.diffArrow {
+  color: #555;
+  text-align: center;
+}
+
+.diffNew {
+  color: #c0ffc0;
+  font-family: monospace;
+  word-break: break-word;
+}
+
+/* Review actions */
+.reviewActions {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+  margin-top: 0.5rem;
+}
+
+/* Buttons */
+.submitButton {
+  padding: 0.85rem 2rem;
+  background: linear-gradient(135deg, #00ff64 0%, #00cc44 100%);
+  color: #000;
+  font-weight: 900;
+  font-size: 0.95rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 0 20px rgba(0, 255, 100, 0.3);
+}
+
+.submitButton:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 0 30px rgba(0, 255, 100, 0.6);
+}
+
+.submitButton:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.cancelButton {
+  padding: 0.85rem 1.5rem;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.6);
+  font-weight: 700;
+  font-size: 0.95rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.cancelButton:hover {
+  background: rgba(255, 255, 255, 0.07);
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+.resetButton {
+  padding: 0.85rem 1.25rem;
+  background: transparent;
+  color: rgba(0, 255, 100, 0.6);
+  font-weight: 700;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border: 2px solid rgba(0, 255, 100, 0.3);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.resetButton:hover {
+  background: rgba(0, 255, 100, 0.08);
+  border-color: rgba(0, 255, 100, 0.5);
+}
+
+/* Loading */
+.loading {
+  text-align: center;
+  padding: 2.5rem;
+}
+
+.spinner {
+  width: 48px;
+  height: 48px;
+  border: 4px solid rgba(0, 255, 100, 0.2);
+  border-top-color: #00ff64;
+  border-radius: 50%;
+  animation: spin 0.9s linear infinite;
+  margin: 0 auto 1rem;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.loadingText {
+  color: #00ff64;
+  font-weight: 700;
+  font-size: 1.1rem;
+  margin: 0;
+}
+
+/* Done */
+.done {
+  text-align: center;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.doneText {
+  color: #00ff64;
+  font-size: 1.5rem;
+  font-weight: 900;
+  margin: 0;
+  text-shadow: 0 0 15px rgba(0, 255, 100, 0.5);
+}

@@ -1,5 +1,5 @@
 import { atom } from "jotai";
-import { atomWithStorage, RESET } from "jotai/utils";
+import { atomWithStorage } from "jotai/utils";
 
 // Key for localStorage
 const PERFORMANCE_STORAGE_KEY = "triviabox-performance-mode";
@@ -41,11 +41,3 @@ export const setPerformancePreferenceAtom = atom(
   }
 );
 
-// Reset atom to clear settings (useful for testing)
-export const resetPerformanceSettingsAtom = atom(null, (get, set) => {
-  set(performanceModeAtom, RESET);
-  set(performanceConfiguredAtom, RESET);
-  if (typeof window !== "undefined") {
-    document.body.classList.remove("performance-mode");
-  }
-});

@@ -9,7 +9,7 @@ import { useState } from "react";
 import ErrorModal from "./error-modal";
 import styles from "./gameroom-tile.module.css";
 
-export type GameroomTileProps = {
+type GameroomTileProps = {
   gameroom: {
     lobby_id: string;
     collection_name: string;

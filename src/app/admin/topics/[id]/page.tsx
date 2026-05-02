@@ -11,6 +11,8 @@ import {
   type Collection,
 } from "@/lib/api/admin";
 import AIGenerate from "../../components/AIGenerate";
+import SlotImport from "../../components/SlotImport";
+import SlotBulkEdit from "../../components/SlotBulkEdit";
 import styles from "./page.module.css";
 
 export default function TopicDetailPage() {
@@ -28,6 +30,8 @@ export default function TopicDetailPage() {
   const [collections, setCollections] = useState<Collection[]>([]);
   const [showCreateSlot, setShowCreateSlot] = useState(false);
   const [showAIGenerate, setShowAIGenerate] = useState(false);
+  const [showImport, setShowImport] = useState(false);
+  const [showBulkEdit, setShowBulkEdit] = useState(false);
 
   // New slot form state
   const [newSlotCanonical, setNewSlotCanonical] = useState("");
@@ -261,17 +265,31 @@ export default function TopicDetailPage() {
               <h2 className={styles.sectionTitle}>
                 Slots ({topic.slots.length})
               </h2>
-              <div style={{ display: 'flex', gap: '0.5rem' }}>
+              <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
                 <button
                   className={styles.createSlotButton}
                   style={{ background: 'rgba(255,0,255,0.2)', borderColor: '#ff00ff', color: '#ff00ff' }}
-                  onClick={() => { setShowAIGenerate(true); setShowCreateSlot(false); }}
+                  onClick={() => { setShowAIGenerate(true); setShowCreateSlot(false); setShowImport(false); setShowBulkEdit(false); }}
                 >
                   🤖 MORE SLOTS
                 </button>
                 <button
                   className={styles.createSlotButton}
-                  onClick={() => { setShowCreateSlot(!showCreateSlot); setShowAIGenerate(false); }}
+                  style={{ background: showBulkEdit ? 'rgba(0,255,100,0.15)' : undefined, borderColor: showBulkEdit ? '#00ff64' : undefined, color: showBulkEdit ? '#00ff64' : undefined }}
+                  onClick={() => { setShowBulkEdit(!showBulkEdit); setShowImport(false); setShowCreateSlot(false); setShowAIGenerate(false); }}
+                >
+                  {showBulkEdit ? "✕ CANCEL" : "✏️ BULK EDIT"}
+                </button>
+                <button
+                  className={styles.createSlotButton}
+                  style={{ background: showImport ? 'rgba(0,221,255,0.2)' : undefined, borderColor: showImport ? '#00ddff' : undefined, color: showImport ? '#00ddff' : undefined }}
+                  onClick={() => { setShowImport(!showImport); setShowCreateSlot(false); setShowAIGenerate(false); setShowBulkEdit(false); }}
+                >
+                  {showImport ? "✕ CANCEL" : "📋 IMPORT JSON"}
+                </button>
+                <button
+                  className={styles.createSlotButton}
+                  onClick={() => { setShowCreateSlot(!showCreateSlot); setShowAIGenerate(false); setShowImport(false); setShowBulkEdit(false); }}
                 >
                   {showCreateSlot ? "✕ CANCEL" : "+ NEW SLOT"}
                 </button>
@@ -286,6 +304,25 @@ export default function TopicDetailPage() {
                 onComplete={() => { loadData(); setShowAIGenerate(false); }}
                 onClose={() => setShowAIGenerate(false)}
                 title="🤖 Generate More Slots"
+              />
+            )}
+
+            {/* Bulk Edit */}
+            {showBulkEdit && (
+              <SlotBulkEdit
+                existingSlots={topic.slots}
+                onComplete={() => { loadData(); setShowBulkEdit(false); }}
+                onClose={() => setShowBulkEdit(false)}
+              />
+            )}
+
+            {/* JSON Import */}
+            {showImport && (
+              <SlotImport
+                topicId={topic.id}
+                existingSlots={topic.slots}
+                onComplete={() => { loadData(); setShowImport(false); }}
+                onClose={() => setShowImport(false)}
               />
             )}
 

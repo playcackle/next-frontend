@@ -8,10 +8,6 @@ export function getPerformanceTier(): PerformanceTier {
   const memory = (navigator as any).deviceMemory || 4;
 
   // Check actual rendering performance
-  const isHighPerformance =
-    cores >= 8 && // M4 will report ~10 cores
-    memory >= 8 && // Will max out at 8
-    !navigator.userAgent.includes("Mobile"); // Not a mobile device
 
   if (cores <= 2 || memory < 2) return "low";
   if (cores <= 4 || memory < 4) return "medium";
@@ -34,7 +30,7 @@ export function getTierDescription(tier: PerformanceTier): string {
   }
 }
 
-export function getTierSpecs(tier: PerformanceTier): string {
+export function getTierSpecs(_tier?: PerformanceTier): string {
   const memory = (navigator as any).deviceMemory;
   const cores = navigator.hardwareConcurrency;
   return `Detected: ${memory || "Unknown"} GB RAM, ${

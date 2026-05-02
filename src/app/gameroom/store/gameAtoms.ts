@@ -59,15 +59,10 @@ export const roundExampleAtom = atom((get) => get(gameStateAtom).roundExample);
 export const roundNumberAtom = atom((get) => get(gameStateAtom).roundNumber);
 export const totalRoundsAtom = atom((get) => get(gameStateAtom).totalRounds);
 export const isRoundBreakAtom = atom((get) => get(gameStateAtom).isRoundBreak);
-export const playerAccoladesAtom = atom(
-  (get) => get(gameStateAtom).playerAccolades,
-);
 export const loadingAtom = atom((get) => get(gameStateAtom).loading);
-export const soundsLoadedAtom = atom((get) => get(gameStateAtom).soundsLoaded);
 export const slotsAtom = atom((get) => get(gameStateAtom).slots);
 export const scoresAtom = atom((get) => get(gameStateAtom).scores);
 export const accoladesAtom = atom((get) => get(gameStateAtom).accolades);
-export const finalScoreAtom = atom((get) => get(gameStateAtom).finalScore);
 export const showCountDownAtom = atom(
   (get) => get(gameStateAtom).showCountDown,
 );

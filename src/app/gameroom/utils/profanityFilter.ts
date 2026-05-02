@@ -61,14 +61,3 @@ export function containsBannedLanguage(text: string): boolean {
   return BANNED_PATTERNS.some((pattern) => pattern.test(text));
 }
 
-/**
- * Returns a sanitized version of the text with banned words replaced by asterisks.
- * Used for display purposes if needed.
- */
-export function sanitizeText(text: string): string {
-  let sanitized = text;
-  for (const pattern of BANNED_PATTERNS) {
-    sanitized = sanitized.replace(pattern, (match) => "*".repeat(match.length));
-  }
-  return sanitized;
-}
