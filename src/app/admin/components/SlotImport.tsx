@@ -9,6 +9,7 @@ type ImportedSlot = {
   prompt: string;
   bot_bob_clue: string;
   is_rare: boolean;
+  aliases: string[];
   _invalid?: string;
 };
 
@@ -27,6 +28,19 @@ function validate(
   );
   if (dupeInBatch) return "duplicate in this import";
   return undefined;
+}
+
+function parseAliases(raw: unknown): string[] {
+  if (Array.isArray(raw)) {
+    return raw
+      .filter((a): a is string => typeof a === "string")
+      .map((a) => a.trim())
+      .filter(Boolean);
+  }
+  if (typeof raw === "string") {
+    return raw.split(",").map((a) => a.trim()).filter(Boolean);
+  }
+  return [];
 }
 
 function parseSlots(
@@ -56,7 +70,6 @@ function parseSlots(
     return { slots: [], error: 'Expected a JSON array or { "slots": [...] }' };
   }
 
-  // First pass: extract unique canonical texts within the batch (id/topic_id/alias_count ignored)
   const seenInBatch = new Set<string>();
   const slots: ImportedSlot[] = [];
 
@@ -74,10 +87,10 @@ function parseSlots(
       prompt: typeof obj.prompt === "string" ? obj.prompt.trim() : "",
       bot_bob_clue: typeof obj.bot_bob_clue === "string" ? obj.bot_bob_clue : "",
       is_rare: Boolean(obj.is_rare),
+      aliases: parseAliases(obj.aliases),
     });
   }
 
-  // Second pass: validate each slot (now we have the full batch to check dupes against)
   const validated = slots.map((slot, i) => {
     const err = validate(slot, i, slots, existingKeys);
     return err ? { ...slot, _invalid: err } : slot;
@@ -128,13 +141,12 @@ export default function SlotImport({
   const handleEdit = (
     index: number,
     field: keyof Omit<ImportedSlot, "_invalid">,
-    value: string | boolean
+    value: string | boolean | string[]
   ) => {
     setSlots((prev) => {
       const updated = prev.map((s, i) =>
         i === index ? { ...s, [field]: value } : s
       );
-      // Re-validate every slot so cross-batch duplicate status stays current
       return updated.map((s, i) => {
         const err = validate(s, i, updated, existingKeys);
         const next = { ...s };
@@ -148,7 +160,6 @@ export default function SlotImport({
   const handleDelete = (index: number) => {
     setSlots((prev) => {
       const updated = prev.filter((_, i) => i !== index);
-      // Re-validate after removal — a surviving dupe may now become valid
       return updated.map((s, i) => {
         const err = validate(s, i, updated, existingKeys);
         const next = { ...s };
@@ -169,9 +180,10 @@ export default function SlotImport({
     try {
       const result = await generationApi.createSlotsBulk(
         topicId,
-        valid.map(({ _invalid: _i, bot_bob_clue, ...s }) => ({
+        valid.map(({ _invalid: _i, bot_bob_clue, aliases, ...s }) => ({
           ...s,
           bot_bob_clue: bot_bob_clue || undefined,
+          aliases: aliases.length > 0 ? aliases : undefined,
         }))
       );
       setCreated(result.slots_created);
@@ -220,7 +232,7 @@ export default function SlotImport({
                 setJsonText(e.target.value);
                 setParseError(null);
               }}
-              placeholder={`[ { "canonical_text": "F-15 Eagle", "prompt": "Air superiority fighter", "bot_bob_clue": "Never lost a dogfight", "is_rare": false }, ... ]\n\nid, topic_id, alias_count and other extra fields are ignored.\nDuplicates within the paste and against existing topic slots are flagged.`}
+              placeholder={`[ { "canonical_text": "F-15 Eagle", "prompt": "Air superiority fighter", "bot_bob_clue": "Never lost a dogfight", "is_rare": false, "aliases": ["F-15", "Eagle"] }, ... ]\n\nid, topic_id, alias_count and other extra fields are ignored.\nDuplicates within the paste and against existing topic slots are flagged.`}
               rows={14}
               spellCheck={false}
             />
@@ -297,6 +309,21 @@ export default function SlotImport({
                 >
                   ✕
                 </button>
+                <div className={styles.aliasRow}>
+                  <span className={styles.aliasLabel}>aliases:</span>
+                  <input
+                    className={styles.cellInput}
+                    value={slot.aliases.join(", ")}
+                    onChange={(e) => {
+                      const aliases = e.target.value
+                        .split(",")
+                        .map((a) => a.trim())
+                        .filter(Boolean);
+                      handleEdit(i, "aliases", aliases);
+                    }}
+                    placeholder="alias1, alias2, ..."
+                  />
+                </div>
                 {slot._invalid && (
                   <span className={styles.invalidHint}>{slot._invalid}</span>
                 )}
