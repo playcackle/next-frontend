@@ -44,7 +44,7 @@ export default function RegisterPage() {
 
     try {
       const backendUrl =
-        process.env.NEXT_PUBLIC_LOBBY_MANAGER_URL || "http://localhost:8001";
+        process.env.NEXT_PUBLIC_PLAYER_SERVICE_URL || "http://localhost:8004";
       const response = await fetch(
         `${backendUrl}/players/check-username/${encodeURIComponent(username)}`,
       );
@@ -111,7 +111,7 @@ export default function RegisterPage() {
 
     try {
       const backendUrl =
-        process.env.NEXT_PUBLIC_LOBBY_MANAGER_URL || "http://localhost:8001";
+        process.env.NEXT_PUBLIC_PLAYER_SERVICE_URL || "http://localhost:8004";
 
       // Pre-flight check: Verify both username and email are available
       const checkResponse = await fetch(
