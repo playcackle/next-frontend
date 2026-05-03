@@ -167,6 +167,10 @@ export type HostSettings = {
   urgency_enabled: boolean;
   urgency_time_left_seconds: number;
   urgency_interval_seconds: number;
+  accolades_enabled: boolean;
+  accolade_initial_delay: number;
+  accolade_spacing: number;
+  num_accolades_to_show: number;
 };
 
 export type HostSettingsUpdate = {
@@ -180,6 +184,10 @@ export type HostSettingsUpdate = {
   urgency_enabled?: boolean;
   urgency_time_left_seconds?: number;
   urgency_interval_seconds?: number;
+  accolades_enabled?: boolean;
+  accolade_initial_delay?: number;
+  accolade_spacing?: number;
+  num_accolades_to_show?: number;
 };
 
 export type FuzzyMatchConfig = {

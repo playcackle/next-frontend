@@ -654,6 +654,54 @@ export default function LobbyDetailPage() {
               )}
             </>
           )}
+
+          {/* Accolade Presentation */}
+          {hostSettings.enabled && (
+            <>
+              <div className={styles.toggleControl}>
+                <label className={styles.toggleLabel}>
+                  <input
+                    type="checkbox"
+                    checked={hostSettings.accolades_enabled}
+                    onChange={(e) => updateHostSetting("accolades_enabled", e.target.checked)}
+                    disabled={hostSettingsSaving}
+                    className={styles.checkbox}
+                  />
+                  Enable Accolade Presentation
+                </label>
+              </div>
+
+              {hostSettings.accolades_enabled && (
+                <div className={styles.parameterGrid}>
+                  <ParameterSlider
+                    label="Num Accolades to Show"
+                    value={hostSettings.num_accolades_to_show}
+                    onChange={(value) => updateHostSetting("num_accolades_to_show", value)}
+                    min={0}
+                    max={10}
+                    unit="accolades"
+                    description="0 = show all accolades"
+                  />
+                  <ParameterSlider
+                    label="Initial Delay"
+                    value={hostSettings.accolade_initial_delay}
+                    onChange={(value) => updateHostSetting("accolade_initial_delay", value)}
+                    min={0}
+                    max={5}
+                    unit="seconds"
+                  />
+                  <ParameterSlider
+                    label="Accolade Spacing"
+                    value={hostSettings.accolade_spacing}
+                    onChange={(value) => updateHostSetting("accolade_spacing", value)}
+                    min={0.5}
+                    max={10}
+                    unit="seconds"
+                  />
+                </div>
+              )}
+            </>
+          )}
         </div>
       )}
 
