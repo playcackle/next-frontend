@@ -6,6 +6,7 @@ import React, { useState } from "react";
 import { useAnswer } from "../hooks/useGameState";
 import {
   isRoundBreakAtom,
+  lobbyStatusAtom,
   timeRemainingAtom,
   unifiedInputAtom,
 } from "../store/gameAtoms";
@@ -27,6 +28,7 @@ export default function UnifiedInputForm({
   // Use atomic selectors for optimal performance
   const timeRemaining = useAtomValue(timeRemainingAtom);
   const isRoundBreak = useAtomValue(isRoundBreakAtom);
+  const lobbyStatus = useAtomValue(lobbyStatusAtom);
   const [input, setInput] = useAtom(unifiedInputAtom);
   const { clearAnswer } = useAnswer();
   const [profanityError, setProfanityError] = useState(false);
@@ -36,7 +38,9 @@ export default function UnifiedInputForm({
   const REPEAT_LIMIT = 5;
 
   const timeExpired = timeRemaining === 0;
-  const isAnswerMode = !isRoundBreak && !timeExpired;
+  // Chat mode during: breaks, showcase, waiting, about to start, or game ended without restart
+  const isChatMode = isRoundBreak || lobbyStatus === "POST_GAME_SHOWCASE" || lobbyStatus === "WAITING" || lobbyStatus === "STARTING_SOON" || lobbyStatus === "GAME_OVER_NO_NEW_GAME";
+  const isAnswerMode = !isChatMode && !timeExpired;
   const placeholderText = isAnswerMode ? "Type.." : "Chat...";
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {

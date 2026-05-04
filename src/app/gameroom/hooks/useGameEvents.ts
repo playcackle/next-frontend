@@ -7,14 +7,21 @@ import {
   clearUnifiedMessagesAtom,
   connectionStatusAtom,
   gameStateAtom,
+  lobbyStatusAtom,
+  playAgainStateAtom,
+  resetPlayAgainStateAtom,
   slotHeatAtom,
   updateGameStateAtom,
+  updatePlayAgainStateAtom,
 } from "../store/gameAtoms";
 import {
   GameOverPayload,
   LobbySyncPayload,
   LobbyTickPayload,
   NewRoundStartedPayload,
+  PlayAgainCountUpdatePayload,
+  PlayAgainPromptPayload,
+  PlayAgainResultPayload,
   RoundOverPayload,
   SlotSnappedPayload,
   SubmissionFeedbackPayload,
@@ -46,6 +53,8 @@ export const useGameEvents = (gameWsUrl: string, token: string) => {
   const setSlotHeat = useSetAtom(slotHeatAtom);
   const clearSlotHeat = useSetAtom(clearSlotHeatAtom);
   const setConnectionStatus = useSetAtom(connectionStatusAtom);
+  const updatePlayAgainState = useSetAtom(updatePlayAgainStateAtom);
+  const resetPlayAgainState = useSetAtom(resetPlayAgainStateAtom);
 
   // triggerCorrectAnswerEffects closes over performanceModeAtom which can change;
   // a ref prevents re-registering all socket listeners on performance mode toggle
@@ -125,6 +134,18 @@ export const useGameEvents = (gameWsUrl: string, token: string) => {
           loading: false,
           lobbyStatus: data.status,
         });
+        
+        // Restore opt-in state from state sync (for reconnects during showcase)
+        if (data.status === "POST_GAME_SHOWCASE" && data.play_again_state) {
+          updatePlayAgainState({
+            showPrompt: true,
+            confirmedCount: data.play_again_state.confirmed_count,
+            totalWaiting: data.play_again_state.total_waiting,
+            neededToStart: data.play_again_state.needed_to_start,
+          });
+        } else if (data.status !== "POST_GAME_SHOWCASE") {
+          resetPlayAgainState();
+        }
       }),
 
       onEvent("lobby_tick", (data: LobbyTickPayload) => {
@@ -180,11 +201,41 @@ export const useGameEvents = (gameWsUrl: string, token: string) => {
           playerAccolades: data.player_accolades ?? [],
           showCountDown: false,
           timeRemaining: 0,
+          isRoundBreak: false,
+          lobbyStatus: "POST_GAME_SHOWCASE",
         });
         playSound("timeUp");
       }),
 
+      onEvent("play_again_prompt", (data: PlayAgainPromptPayload) => {
+        updatePlayAgainState({
+          showPrompt: true,
+          timeoutSeconds: data.timeout_seconds,
+          minPlayers: data.min_players,
+          playersWaiting: data.players_waiting,
+          confirmedCount: 0,
+          totalWaiting: data.players_waiting,
+          neededToStart: Math.max(0, data.min_players),
+          userResponse: null,
+        });
+      }),
+
+      onEvent("play_again_count_update", (data: PlayAgainCountUpdatePayload) => {
+        updatePlayAgainState({
+          confirmedCount: data.confirmed_count,
+          totalWaiting: data.total_waiting,
+          neededToStart: data.needed_to_start,
+        });
+      }),
+
+      onEvent("play_again_result", () => {
+        // Result received - no action needed, userResponse already set
+      }),
+
       onEvent("lobby_resetting_for_new_game", () => {
+        const playAgainState = store.get(playAgainStateAtom);
+        
+        // Clear the game state for new round
         updateGameState({
           roundNumber: 0,
           roundName: "",
@@ -198,7 +249,16 @@ export const useGameEvents = (gameWsUrl: string, token: string) => {
           showCountDown: false,
         });
         clearUnifiedMessages();
-        router.push("/");
+        
+        // If player opted in ("yes"), stay in lobby to receive new game content
+        // Otherwise redirect to home
+        if (playAgainState.userResponse !== "yes") {
+          store.set(resetPlayAgainStateAtom);
+          router.push("/");
+        } else {
+          // Reset play again state for the new game
+          store.set(resetPlayAgainStateAtom);
+        }
       }),
 
       onEvent("slot_snapped", (data: SlotSnappedPayload) => {

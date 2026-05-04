@@ -19,7 +19,11 @@ export type GameEvent =
   | "lobby_resetting_for_new_game"
   | "submission_feedback"
   | "submit_answer"
-  | "lobby_state_sync";
+  | "lobby_state_sync"
+  | "play_again_prompt"
+  | "play_again_count_update"
+  | "play_again_result"
+  | "play_again_response";
 
 export type ChatEvent =
   | "connection_success_chat"
@@ -77,6 +81,11 @@ export type LobbySyncPayload = {
   slots: Slot[];
   scores: Score[];
   accolades: PlayerAccolade[];
+  play_again_state?: {
+    confirmed_count: number;
+    total_waiting: number;
+    needed_to_start: number;
+  };
 };
 
 export type LobbyTickPayload = {
@@ -184,6 +193,30 @@ export type ChatEventPayloadMap = {
 };
 
 // ========================
+// Play Again Opt-In Payloads
+// ========================
+
+export type PlayAgainPromptPayload = {
+  message: string;
+  timeout_seconds: number;
+  min_players: number;
+  players_waiting: number;
+};
+
+export type PlayAgainCountUpdatePayload = {
+  confirmed_count: number;
+  total_waiting: number;
+  needed_to_start: number;
+};
+
+export type PlayAgainResultPayload = {
+  will_restart: boolean;
+  reason: string;
+  confirmed_players: number;
+  total_players: number;
+};
+
+// ========================
 // Event-to-Payload Mapping
 // ========================
 
@@ -203,6 +236,10 @@ export type EventPayloadMap = {
   submission_feedback: SubmissionFeedbackPayload;
   lobby_state_sync: LobbySyncPayload;
   submit_answer: any;
+  play_again_prompt: PlayAgainPromptPayload;
+  play_again_count_update: PlayAgainCountUpdatePayload;
+  play_again_result: PlayAgainResultPayload;
+  play_again_response: { want_to_play: boolean };
 };
 
 export type PlayerAction = {

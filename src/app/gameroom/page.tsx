@@ -23,6 +23,7 @@ import { setSentryGameContext } from "@/lib/sentry";
 import { Flex } from "@radix-ui/themes";
 import AnswerReveal from "./components/AnswerReveal";
 import Leaderboard from "./components/LeaderBoard";
+import OptInPanel from "./components/OptInPanel";
 import { useAnswerBubbles } from "./hooks/useAnswerBubbles";
 import { useChatSocket } from "./hooks/useChatWs";
 import { useGameActions } from "./hooks/useGameActions";
@@ -35,6 +36,7 @@ import {
   lobbyStatusAtom,
   minPlayersNeededAtom,
   playerCountAtom,
+  playAgainStateAtom,
   roundNameAtom,
   scoresAtom,
   showCountDownAtom,
@@ -79,9 +81,11 @@ export default function GameroomPage() {
   const lobbyStatus = useAtomValue(lobbyStatusAtom);
   const minPlayersNeeded = useAtomValue(minPlayersNeededAtom);
   const playerCount = useAtomValue(playerCountAtom);
+  const playAgainState = useAtomValue(playAgainStateAtom);
 
   const isWaiting =
     lobbyStatus === "WAITING" || lobbyStatus === "STARTING_SOON";
+  const isShowcase = lobbyStatus === "POST_GAME_SHOWCASE";
   const missingPlayers = Math.max(0, minPlayersNeeded - playerCount);
 
   // Granular atom subscription — avoids full-state re-render on every game tick
@@ -138,14 +142,21 @@ export default function GameroomPage() {
     setCurrentUserId(user?.id ?? null);
   }, [user?.id, setCurrentUserId]);
 
-  // Custom hooks
-  const { submitAnswer } = useGameActions();
-
   // WebSocket connections — must be called unconditionally before any conditional return
   const { sendEvent, reconnect: reconnectGame } = useGameEvents(
     gameroom?.game_ws_url ?? "",
     gameroom?.token ?? "",
   );
+
+  // Custom hooks
+  const { submitAnswer, sendPlayAgainResponse } = useGameActions();
+
+  // Handle play again response from OptInPanel
+  const handlePlayAgainResponse = (wantToPlay: boolean) => {
+    if (sendEvent) {
+      sendPlayAgainResponse(wantToPlay, sendEvent);
+    }
+  };
 
   // Chat socket connection
   function getBaseWsUrl(url: string) {
@@ -237,8 +248,9 @@ export default function GameroomPage() {
                 </div>
               ) : (
                 <>
+                  {isShowcase && <OptInPanel onPlayAgainResponse={handlePlayAgainResponse} />}
                   {isRoundBreak && <AnswerReveal />}
-                  {isRoundBreak ? (
+                  {isRoundBreak || isShowcase ? (
                     <Leaderboard />
                   ) : (
                     <div className={styles.slotColumnWrapper}>
@@ -256,7 +268,7 @@ export default function GameroomPage() {
                   )}
                 </>
               )}
-              {!isWaiting && !isRoundBreak && (
+              {!isWaiting && !isRoundBreak && !isShowcase && (
                 <div className={styles.leaderboardTile}>
                   <h3 className={styles.statsTitle}>Leaderboard</h3>
                   <div className={styles.ingameLeaderboard}>

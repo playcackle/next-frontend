@@ -176,3 +176,43 @@ export const clearRoundHintsAtom = atom(null, (get, set) => {
 export const clearSlotHeatAtom = atom(null, (get, set) => {
   set(slotHeatAtom, {});
 });
+
+// ========================
+// Play Again Opt-In State
+// ========================
+
+export type PlayAgainState = {
+  showPrompt: boolean;
+  timeoutSeconds: number;
+  minPlayers: number;
+  playersWaiting: number;
+  confirmedCount: number;
+  totalWaiting: number;
+  neededToStart: number;
+  userResponse: "pending" | "yes" | "no" | null;
+};
+
+const initPlayAgainState: PlayAgainState = {
+  showPrompt: false,
+  timeoutSeconds: 30,
+  minPlayers: 2,
+  playersWaiting: 0,
+  confirmedCount: 0,
+  totalWaiting: 0,
+  neededToStart: 0,
+  userResponse: null,
+};
+
+export const playAgainStateAtom = atom<PlayAgainState>(initPlayAgainState);
+
+export const updatePlayAgainStateAtom = atom(
+  null,
+  (get, set, update: Partial<PlayAgainState>) => {
+    const current = get(playAgainStateAtom);
+    set(playAgainStateAtom, { ...current, ...update });
+  },
+);
+
+export const resetPlayAgainStateAtom = atom(null, (get, set) => {
+  set(playAgainStateAtom, initPlayAgainState);
+});

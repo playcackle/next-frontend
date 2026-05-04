@@ -219,7 +219,7 @@ export const useGameSocket = (baseUrl: string, token: string) => {
     debounce(
       <T extends GameEvent>(
         event: T,
-        data: T extends "submit_answer" ? string : EventPayloadMap[T]
+        data: T extends "submit_answer" ? string : (T extends "play_again_response" ? { want_to_play: boolean } : EventPayloadMap[T])
       ) => {
         const socket = socketRef.current;
         if (!socket?.connected) {

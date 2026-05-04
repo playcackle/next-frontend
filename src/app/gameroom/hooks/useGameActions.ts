@@ -174,10 +174,18 @@ export const useGameActions = () => {
     setAnswer("");
   };
 
+  const sendPlayAgainResponse = (
+    wantToPlay: boolean,
+    sendEvent: (event: "play_again_response", data: { want_to_play: boolean }) => void,
+  ) => {
+    sendEvent("play_again_response", { want_to_play: wantToPlay });
+  };
+
   return {
     submitAnswer,
     resetGameState,
     triggerCorrectAnswerEffects,
     setAnimationWithTimeout,
+    sendPlayAgainResponse,
   };
 };
