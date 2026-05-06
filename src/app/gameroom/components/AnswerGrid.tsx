@@ -177,7 +177,7 @@ export const AnswerGrid: React.FC<AnswerGridProps> = ({ slots }) => {
         <div className={styles.answerGridPlaceholder}>
           <p>
             Type answers in the chat to fill this up. There are{" "}
-            <strong>{totalAnswers}</strong> answers to find. PST Hints may
+            <strong>{totalAnswers}</strong> answers to find. PSSSSST! Hints may
             appear below....
           </p>
         </div>
