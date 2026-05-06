@@ -12,20 +12,13 @@ interface ConnectionBannerProps {
   onRetry?: () => void;
 }
 
-/**
- * Lightweight banner that overlays the game UI during socket reconnection.
- * Replaces the old behaviour of hiding the entire game behind a loading screen.
- *
- * - "reconnecting" → amber banner with spinner
- * - "disconnected" → red banner with retry button (after max attempts)
- * - "connected" → brief green flash then auto-hide
- */
 export default function ConnectionBanner({ onRetry }: ConnectionBannerProps) {
   const status = useAtomValue(connectionStatusAtom);
   const [visible, setVisible] = useState(false);
   const [displayStatus, setDisplayStatus] = useState<ConnectionStatus>(status);
+  const showTimerRef = useRef<NodeJS.Timeout | null>(null);
   const hideTimerRef = useRef<NodeJS.Timeout | null>(null);
-  const wasDisconnectedRef = useRef(false);
+  const bannerWasShownRef = useRef(false);
 
   useEffect(() => {
     if (hideTimerRef.current) {
@@ -34,25 +27,47 @@ export default function ConnectionBanner({ onRetry }: ConnectionBannerProps) {
     }
 
     if (status === "reconnecting" || status === "disconnected") {
-      wasDisconnectedRef.current = true;
       setDisplayStatus(status);
-      setVisible(true);
-    } else if (status === "connected" && wasDisconnectedRef.current) {
-      // Show "connected" briefly, then fade out
-      setDisplayStatus("connected");
-      setVisible(true);
-      hideTimerRef.current = setTimeout(() => {
+      // Only start the delay timer if one isn't already running
+      if (!showTimerRef.current) {
+        showTimerRef.current = setTimeout(() => {
+          showTimerRef.current = null;
+          bannerWasShownRef.current = true;
+          setVisible(true);
+        }, 5000);
+      }
+    } else if (status === "connected") {
+      if (showTimerRef.current) {
+        clearTimeout(showTimerRef.current);
+        showTimerRef.current = null;
+      }
+      if (bannerWasShownRef.current) {
+        setDisplayStatus("connected");
+        setVisible(true);
+        hideTimerRef.current = setTimeout(() => {
+          setVisible(false);
+          bannerWasShownRef.current = false;
+          hideTimerRef.current = null;
+        }, 2000);
+      } else {
         setVisible(false);
-        wasDisconnectedRef.current = false;
-      }, 2000);
+      }
     } else {
-      // Initial "connecting" or steady-state "connected" — don't show banner
+      if (showTimerRef.current) {
+        clearTimeout(showTimerRef.current);
+        showTimerRef.current = null;
+      }
       setVisible(false);
     }
 
     return () => {
+      if (showTimerRef.current) {
+        clearTimeout(showTimerRef.current);
+        showTimerRef.current = null;
+      }
       if (hideTimerRef.current) {
         clearTimeout(hideTimerRef.current);
+        hideTimerRef.current = null;
       }
     };
   }, [status]);
@@ -88,7 +103,7 @@ export default function ConnectionBanner({ onRetry }: ConnectionBannerProps) {
           )}
         </>
       )}
-      {displayStatus === "connected" && <span>Connected</span>}
+      {displayStatus === "connected" && <span>Reconnected</span>}
     </div>
   );
 }
