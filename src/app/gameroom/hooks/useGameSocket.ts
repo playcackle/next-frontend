@@ -86,11 +86,11 @@ export const useGameSocket = (baseUrl: string, token: string) => {
     // ========== CONNECTION EVENT HANDLERS ==========
 
     socket.on("connect", () => {
-      // Always request current server state on connect — covers both the
-      // initial join (so mid-game joiners learn the real lobby status
-      // instead of being stuck on a stale `waiting_for_players`) and
-      // reconnects (so the client catches up after a drop).
-      socket.emit("request_state_sync");
+      // NOTE: We no longer emit "request_state_sync" here because the server
+      // already sends "lobby_state_sync" in on_connect. Having both caused a race
+      // condition where the client-requested sync could arrive with stale state
+      // (e.g. still showing IN_ROUND when the server had already transitioned
+      // to ROUND_BREAK). The server's auto-emitted state sync is authoritative.
       setSocketState({
         isConnected: true,
         connectionStatus: "connected",
