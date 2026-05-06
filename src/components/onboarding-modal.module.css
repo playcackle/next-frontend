@@ -310,6 +310,7 @@
 
 .tourPurple { color: #7c3aed; }
 .tourCyan   { color: #00dcff; font-weight: bold; }
+.tourYellow { color: #ffcc00; font-weight: bold; }
 
 /* Callout tails */
 .tourTail {
@@ -491,8 +492,20 @@
 }
 
 .tourStatAccent {
-  color: var(--neon-blue);
-  text-shadow: 0 0 6px var(--neon-blue);
+  color: #ffcc00;
+  text-shadow: 0 0 6px rgba(255, 204, 0, 0.8);
+  animation: timerPulseTour 1s infinite;
+}
+
+@keyframes timerPulseTour {
+  0%   { text-shadow: 0 0 6px rgba(255,204,0,0.6); }
+  50%  { text-shadow: 0 0 14px rgba(255,204,0,1), 0 0 20px rgba(255,204,0,0.5); }
+  100% { text-shadow: 0 0 6px rgba(255,204,0,0.6); }
+}
+
+.tourStatTileTimer {
+  border-color: rgba(255, 204, 0, 0.4);
+  box-shadow: 0 0 6px rgba(255, 204, 0, 0.2);
 }
 
 .tourContentRow {
@@ -535,79 +548,184 @@
   color: rgba(255,255,255,0.3);
 }
 
-.tourSlots {
+/* Tour Answer Grid - Hero */
+.tourAnswerHero {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.4rem;
+  background: rgba(20,20,40,0.7);
   border: 1px solid var(--neon-pink);
   border-radius: 5px;
-  background: rgba(20,20,40,0.7);
-  padding: 0.4rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.3rem;
   box-shadow: 0 0 6px rgba(255,0,170,0.2);
 }
 
-.tourSlotsHeader {
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
+.tourProgressRing {
+  position: relative;
+  width: 48px;
+  height: 48px;
+  flex-shrink: 0;
 }
 
-.tourSlotsCount {
-  font-family: var(--retro-font);
-  font-size: 1.1rem;
-  color: var(--neon-pink);
-  text-shadow: 0 0 8px var(--neon-pink);
+.tourProgressSvg {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+.tourProgressFill {
+  filter: drop-shadow(0 0 4px var(--neon-pink));
+}
+
+.tourProgressLabel {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   line-height: 1;
 }
 
-.tourSlotsLabel {
+.tourProgressCount {
   font-family: var(--retro-font);
-  font-size: 0.48rem;
-  letter-spacing: 0.5px;
+  font-size: 1rem;
+  font-weight: bold;
+  color: white;
+  text-shadow: 0 0 6px var(--neon-pink);
+}
+
+.tourProgressTotal {
+  font-family: var(--retro-font-alt);
+  font-size: 0.45rem;
+  color: rgba(255,255,255,0.5);
+}
+
+.tourAnswerStatus {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.tourAnswerTitle {
+  font-family: var(--retro-font);
+  font-size: 0.55rem;
+  color: white;
   text-transform: uppercase;
-  color: rgba(255,255,255,0.6);
+  letter-spacing: 0.5px;
+  margin: 0;
+  text-shadow: 0 0 5px var(--neon-pink);
 }
 
-.tourSlotsGrid {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
+.tourAnswerSub {
+  font-family: var(--retro-font-alt);
+  font-size: 0.45rem;
+  color: rgba(255,255,255,0.5);
+  margin: 0;
+}
+
+/* Tour Dot Row */
+.tourDotRow {
+  display: flex;
+  flex-wrap: wrap;
   gap: 3px;
-  flex: 1;
 }
 
-.tourSlot {
+.tourDot {
+  width: 22px;
+  height: 22px;
   border-radius: 3px;
-  background: var(--neon-pink);
-  border: 1px solid rgba(255,255,255,0.2);
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0.2rem;
-  min-height: 32px;
 }
 
-.tourSlotPurple {
+.tourDotFound {
+  background: var(--neon-pink);
+  border: 1px solid rgba(255,255,255,0.2);
+  box-shadow: 0 0 4px rgba(255,0,170,0.5);
+}
+
+.tourDotEmpty {
+  background: rgba(255,255,255,0.08);
+  border: 2px dashed rgba(255,0,170,0.4);
+}
+
+.tourDotPurple {
   background: var(--neon-purple, #b700ff);
-  box-shadow: 0 0 6px rgba(183,0,255,0.6);
+  border-color: var(--neon-purple, #b700ff);
+  box-shadow: 0 0 4px rgba(183,0,255,0.6);
 }
 
-.tourSlotEmpty {
-  background: rgba(255,0,170,0.1);
-  border: 1px dashed rgba(255,0,170,0.3);
+.tourDotPurple.tourDotEmpty {
+  background: rgba(183,0,255,0.1);
+  border: 2px dashed rgba(183,0,255,0.5);
 }
 
-.tourSlotLabel {
+.tourDot2x {
   font-family: var(--retro-font);
-  font-size: 0.5rem;
+  font-size: 0.45rem;
   font-weight: bold;
-  color: #fff;
-  letter-spacing: 0.5px;
+  color: white;
+  text-shadow: 0 0 3px rgba(183,0,255,0.8);
 }
 
-.tourSlotQ {
+/* Tour Chip Grid */
+.tourChipGrid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px;
+}
+
+.tourChip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 6px;
+  border-radius: 4px;
+  border: 1px solid var(--neon-pink);
+  background: rgba(255,0,170,0.12);
+}
+
+.tourChipPurple {
+  border-color: var(--neon-purple, #b700ff);
+  background: rgba(183,0,255,0.12);
+}
+
+.tourChipContent {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.tourChipText {
   font-family: var(--retro-font);
-  font-size: 0.9rem;
-  color: rgba(255,0,170,0.35);
+  font-size: 0.42rem;
+  font-weight: bold;
+  color: white;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.tourChipPlayer {
+  font-family: var(--retro-font-alt);
+  font-size: 0.35rem;
+  color: rgba(255,255,255,0.5);
+}
+
+.tourChipMultiplier {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 14px;
+  height: 14px;
+  border-radius: 2px;
+  background: var(--neon-purple, #b700ff);
+  font-family: var(--retro-font);
+  font-size: 0.4rem;
+  font-weight: bold;
+  color: white;
+  box-shadow: 0 0 4px rgba(183,0,255,0.6);
 }
 
 .tourLeader {
