@@ -14,7 +14,7 @@ import { ShareableStatCard } from "./components/ShareableStatCard";
 import { LiveLeaderboard } from "./components/LiveLeaderboard";
 import { InteractiveCharts } from "./components/InteractiveCharts";
 import { RetentionStats } from "./components/RetentionStats";
-import { Sparkles, Zap, Trophy, Star, Volume2, VolumeX } from "lucide-react";
+import { Sparkles, Zap, Trophy } from "lucide-react";
 
 // Mock data for demonstration
 const mockPlayerStats = {
@@ -71,9 +71,7 @@ type TabType = "overview" | "categories" | "achievements" | "analysis" | "charts
 export default function StatsDemoPage() {
   const [activeTab, setActiveTab] = useState<TabType>("overview");
   const [showWrappedStory, setShowWrappedStory] = useState(false);
-  const [soundEnabled, setSoundEnabled] = useState(false);
   const [showLevelUp, setShowLevelUp] = useState(false);
-  const [comboCount, setComboCount] = useState(0);
 
   // Simulate level up notification on mount
   useEffect(() => {
@@ -82,14 +80,6 @@ export default function StatsDemoPage() {
       setTimeout(() => setShowLevelUp(false), 3000);
     }, 2000);
     return () => clearTimeout(timer);
-  }, []);
-
-  // Simulate combo counter
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setComboCount(prev => (prev < 5 ? prev + 1 : 0));
-    }, 4000);
-    return () => clearInterval(interval);
   }, []);
 
   const tabs: { id: TabType; label: string; icon: React.ReactNode }[] = [
@@ -207,42 +197,6 @@ export default function StatsDemoPage() {
           onClose={() => setShowWrappedStory(false)}
         />
       )}
-
-      {/* Arcade HUD */}
-      <div className={styles.arcadeHud}>
-        <div className={styles.hudLeft}>
-          <div className={styles.hudItem}>
-            <span className={styles.hudLabel}>SCORE</span>
-            <span className={styles.hudValue}>{mockPlayerStats.total_score.toLocaleString()}</span>
-          </div>
-          <div className={styles.hudDivider} />
-          <div className={styles.hudItem}>
-            <span className={styles.hudLabel}>LEVEL</span>
-            <span className={styles.hudValueSmall}>15</span>
-          </div>
-        </div>
-        <div className={styles.hudCenter}>
-          {comboCount > 0 && (
-            <div className={styles.comboDisplay}>
-              <span className={styles.comboNumber}>{comboCount}x</span>
-              <span className={styles.comboLabel}>COMBO</span>
-            </div>
-          )}
-        </div>
-        <div className={styles.hudRight}>
-          <button 
-            className={styles.soundToggle}
-            onClick={() => setSoundEnabled(!soundEnabled)}
-            aria-label={soundEnabled ? "Mute sounds" : "Enable sounds"}
-          >
-            {soundEnabled ? <Volume2 size={18} /> : <VolumeX size={18} />}
-          </button>
-          <div className={styles.hudItem}>
-            <span className={styles.hudLabel}>RANK</span>
-            <span className={styles.hudRank}>#42</span>
-          </div>
-        </div>
-      </div>
 
       <header className={styles.header}>
         <div className={styles.headerContent}>

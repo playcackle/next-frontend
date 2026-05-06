@@ -9,145 +9,10 @@
   z-index: 1;
 }
 
-/* ============================================
-   ARCADE HUD - Top status bar
-   ============================================ */
-.arcadeHud {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 50px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 1.5rem;
-  background: linear-gradient(
-    180deg,
-    rgba(10, 5, 25, 0.95) 0%,
-    rgba(10, 5, 25, 0.8) 100%
-  );
-  border-bottom: 2px solid;
-  border-image: linear-gradient(90deg, transparent, var(--neon-blue), var(--neon-pink), var(--neon-blue), transparent) 1;
-  z-index: 100;
-}
-
-.hudLeft,
-.hudRight {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-}
-
-.hudCenter {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-}
-
-.hudItem {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0;
-}
-
-.hudLabel {
-  font-family: var(--retro-font);
-  font-size: 0.55rem;
-  text-transform: uppercase;
-  letter-spacing: 2px;
-  color: rgba(255, 255, 255, 0.4);
-}
-
-.hudValue {
-  font-family: var(--retro-font);
-  font-size: 1rem;
-  font-weight: 700;
-  color: var(--neon-blue);
-  text-shadow: 0 0 10px var(--neon-blue);
-  letter-spacing: 1px;
-}
-
-.hudValueSmall {
-  font-family: var(--retro-font);
-  font-size: 0.9rem;
-  font-weight: 700;
-  color: var(--neon-green);
-  text-shadow: 0 0 8px var(--neon-green);
-}
-
-.hudRank {
-  font-family: var(--retro-font);
-  font-size: 0.9rem;
-  font-weight: 700;
-  color: var(--neon-pink);
-  text-shadow: 0 0 8px var(--neon-pink);
-}
-
-.hudDivider {
-  width: 1px;
-  height: 24px;
-  background: linear-gradient(180deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-}
-
-.soundToggle {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-  border-radius: 6px;
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  background: rgba(255, 255, 255, 0.05);
-  color: rgba(255, 255, 255, 0.5);
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.soundToggle:hover {
-  background: rgba(255, 255, 255, 0.1);
-  color: var(--neon-blue);
-  border-color: var(--neon-blue);
-}
-
-/* Combo Display */
-.comboDisplay {
-  display: flex;
-  align-items: baseline;
-  gap: 0.35rem;
-  animation: comboIn 0.3s ease-out;
-}
-
-.comboNumber {
-  font-family: var(--retro-font);
-  font-size: 1.5rem;
-  font-weight: 900;
-  background: linear-gradient(180deg, #fff 0%, #ff0 50%, #f80 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  filter: drop-shadow(0 0 8px rgba(255, 200, 0, 0.6));
-}
-
-.comboLabel {
-  font-family: var(--retro-font);
-  font-size: 0.6rem;
-  color: #ff0;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  text-shadow: 0 0 5px #ff0;
-}
-
-@keyframes comboIn {
-  0% { transform: scale(1.5); opacity: 0; }
-  100% { transform: scale(1); opacity: 1; }
-}
-
 /* Level Up Toast */
 .levelUpToast {
   position: fixed;
-  top: 70px;
+  top: 20px;
   left: 50%;
   transform: translateX(-50%);
   display: flex;
@@ -204,7 +69,6 @@
 
 .header {
   margin-bottom: 2rem;
-  margin-top: 60px; /* Account for fixed HUD */
 }
 
 /* Title Badge */
