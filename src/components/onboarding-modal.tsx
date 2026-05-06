@@ -39,8 +39,8 @@ const STEPS = [
     id: 5,
     type: "text" as const,
     icon: "!",
-    title: "Hints & Hot Wire",
-    body: "Stuck? Hints may drop mid-round to nudge you in the right direction. Keep an eye out for Hot Wire slots — these are live wires waiting to be claimed. First player to answer correctly steals them.",
+    title: "Hints",
+    body: "Stuck? Hints may drop mid-round to nudge you in the right direction. Keep an eye on Bot Bob's messages — he'll snipe hints and clues to help you out.",
   },
   {
     id: 6,
@@ -77,18 +77,11 @@ function TourStep() {
           <span className={styles.tourCalloutNum}>4</span>
           <div className={styles.tourCalloutBody}>
             <strong className={styles.tourCalloutTitle}>Hints</strong>
-            <p>Stuck? <strong>Hints may drop mid-round</strong> to nudge you in the right direction. They appear below the answer slots.</p>
+            <p>Stuck? <strong>Hints may drop mid-round</strong> to nudge you. Watch <strong>Bot Bob&apos;s messages</strong> for clues.</p>
           </div>
           <div className={`${styles.tourTail} ${styles.tourTailDownCenter}`} />
         </div>
-        <div className={styles.tourCallout}>
-          <span className={styles.tourCalloutNum}>5</span>
-          <div className={styles.tourCalloutBody}>
-            <strong className={styles.tourCalloutTitle}>Hot Wire slots</strong>
-            <p><strong className={styles.tourOrange}>Orange slots</strong> are <strong>Hot Wire</strong> — live wires up for grabs. First correct answer <strong>steals the slot.</strong></p>
-          </div>
-          <div className={`${styles.tourTail} ${styles.tourTailDownLeft}`} />
-        </div>
+
       </div>
 
       {/* Frozen game UI */}
@@ -135,9 +128,9 @@ function TourStep() {
                 {[
                   { label: "CAT" }, { label: "DOG" }, { label: "LION", purple: true },
                   { label: "WHALE" }, { label: "BEAR" }, { label: "FOX" },
-                  { label: "RAT", hotWire: true }, { empty: true }, { empty: true }, { empty: true },
+                  { label: "RAT" }, { empty: true }, { empty: true }, { empty: true },
                 ].map((slot, i) => (
-                  <div key={i} className={`${styles.tourSlot} ${slot.purple ? styles.tourSlotPurple : ""} ${slot.hotWire ? styles.tourSlotHotWire : ""} ${slot.empty ? styles.tourSlotEmpty : ""}`}>
+                  <div key={i} className={`${styles.tourSlot} ${slot.purple ? styles.tourSlotPurple : ""} ${slot.empty ? styles.tourSlotEmpty : ""}`}>
                     {slot.empty ? <span className={styles.tourSlotQ}>?</span> : <span className={styles.tourSlotLabel}>{slot.label}</span>}
                   </div>
                 ))}
