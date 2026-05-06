@@ -149,6 +149,14 @@
   padding-top: clamp(0.25rem, 0.5vh, 0.5rem);
 }
 
+.optInCount {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: clamp(0.7rem, 1vw, 0.85rem);
+  font-family: var(--retro-font);
+  margin: 0 0 clamp(0.25rem, 0.4vh, 0.35rem) 0;
+  letter-spacing: 1px;
+}
+
 .responseStatus {
   color: var(--neon-green);
   font-weight: 600;

@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useAtomValue, useSetAtom } from "jotai";
 import { Gamepad2, LogOut } from "lucide-react";
 import { playAgainStateAtom, updatePlayAgainStateAtom } from "../store/gameAtoms";
@@ -13,7 +13,7 @@ interface OptInPanelProps {
 
 /**
  * OptInPanel - displays the "Rematch?" prompt during post-game showcase.
- * 
+ *
  * Shows:
  * - Player circles indicating who's in (green = confirmed, gray = pending, pink = out)
  * - In/Out buttons with Lucide icons
@@ -23,22 +23,52 @@ export default function OptInPanel({ onPlayAgainResponse, disabled = false }: Op
   const playAgainState = useAtomValue(playAgainStateAtom);
   const updatePlayAgainState = useSetAtom(updatePlayAgainStateAtom);
 
-  const { timeoutSeconds, confirmedCount, neededToStart, userResponse, playersWaiting } = playAgainState;
-  
+  const { timeoutSeconds, confirmedCount, neededToStart, userResponse, playersWaiting, showPrompt } = playAgainState;
+
+  // Local countdown that ticks down from the server-provided timeoutSeconds
+  const [countdown, setCountdown] = useState(timeoutSeconds);
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  // Reset and start countdown whenever the prompt appears or timeoutSeconds changes
+  useEffect(() => {
+    if (!showPrompt) {
+      setCountdown(timeoutSeconds);
+      return;
+    }
+    setCountdown(timeoutSeconds);
+    if (intervalRef.current) clearInterval(intervalRef.current);
+    intervalRef.current = setInterval(() => {
+      setCountdown((prev) => {
+        if (prev <= 1) {
+          clearInterval(intervalRef.current!);
+          intervalRef.current = null;
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
+      }
+    };
+  }, [showPrompt, timeoutSeconds]);
+
   // Build player status array for circles
   const totalPlayers = playersWaiting > 0 ? playersWaiting : 1;
   const confirmedPlayers = confirmedCount > 0 ? confirmedCount : 0;
-  
+
   // Determine user status
   const userStatus = userResponse === "yes" ? "in" : userResponse === "no" ? "out" : "pending";
-  
+
   // Create player circles data (user's circle is first)
   const playerCircles = [
     { status: userStatus, isUser: true },
-    ...Array(Math.max(0, totalPlayers - 1)).fill(null).map(() => ({ 
-      status: "pending" as const, 
-      isUser: false 
-    }))
+    ...Array(Math.max(0, totalPlayers - 1)).fill(null).map(() => ({
+      status: "pending" as const,
+      isUser: false,
+    })),
   ];
 
   const handleResponse = useCallback((wantToPlay: boolean) => {
@@ -48,8 +78,8 @@ export default function OptInPanel({ onPlayAgainResponse, disabled = false }: Op
     onPlayAgainResponse?.(wantToPlay);
   }, [onPlayAgainResponse, updatePlayAgainState]);
 
-  const progressPercentage = totalPlayers > 0 
-    ? Math.round((confirmedPlayers / totalPlayers) * 100) 
+  const progressPercentage = totalPlayers > 0
+    ? Math.round((confirmedPlayers / totalPlayers) * 100)
     : 0;
 
   return (
@@ -97,31 +127,33 @@ export default function OptInPanel({ onPlayAgainResponse, disabled = false }: Op
         </div>
 
         <div className={styles.statusContainer}>
+          <p className={styles.optInCount}>
+            {confirmedPlayers} / {totalPlayers} opted in
+          </p>
+
+          {neededToStart > 0 && (
+            <p className={styles.needMore}>
+              Need {neededToStart} more to start
+            </p>
+          )}
+
+          <div className={styles.progressBar}>
+            <div
+              className={styles.progressFill}
+              style={{ width: `${progressPercentage}%` }}
+            />
+          </div>
+
           {userResponse ? (
             <p className={styles.responseStatus}>
-              {userResponse === "yes" 
-                ? "You're in! Waiting for others..." 
+              {userResponse === "yes"
+                ? "You're in! Waiting for others..."
                 : "See you next time!"}
             </p>
           ) : (
-            <>
-              {confirmedPlayers < totalPlayers && (
-                <p className={styles.needMore}>
-                  Need {totalPlayers - confirmedPlayers} more to start
-                </p>
-              )}
-              
-              <div className={styles.progressBar}>
-                <div 
-                  className={styles.progressFill} 
-                  style={{ width: `${progressPercentage}%` }}
-                />
-              </div>
-              
-              <p className={styles.timeout}>
-                Auto-closing in {timeoutSeconds}s
-              </p>
-            </>
+            <p className={styles.timeout}>
+              Auto-closing in {countdown}s
+            </p>
           )}
         </div>
       </div>
