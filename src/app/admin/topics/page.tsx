@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import { topicsApi, collectionsApi, type Topic, type Collection } from "@/lib/api/admin";
 import AIGenerate from "../components/AIGenerate";
+import { AlertTriangle, Pencil, Trash2, Zap } from "lucide-react";
 import styles from "./page.module.css";
 
 export default function TopicsPage() {
@@ -81,7 +82,7 @@ export default function TopicsPage() {
     return (
       <div className={styles.container}>
         <div className={styles.error}>
-          <p>⚠️ {error}</p>
+          <span><AlertTriangle size={20} /> {error}</span>
           <button onClick={loadData} className={styles.retryButton}>
             RETRY
           </button>
@@ -111,7 +112,7 @@ export default function TopicsPage() {
           <AIGenerate
             onComplete={() => { loadData(); setShowAIGenerate(false); }}
             onClose={() => setShowAIGenerate(false)}
-            title="🤖 New Topic"
+            title={<><Zap size={16} /> New Topic</>}
           />
         </div>
       )}
@@ -168,13 +169,13 @@ export default function TopicsPage() {
                     className={styles.viewButton}
                     onClick={() => handleViewTopic(topic.id)}
                   >
-                    ✏️ EDIT
+                    <Pencil size={16} /> EDIT
                   </button>
                   <button
                     className={styles.deleteButton}
                     onClick={() => handleDeleteTopic(topic.id, topic.name)}
                   >
-                    🗑️ DELETE
+                    <Trash2 size={16} /> DELETE
                   </button>
                 </div>
               </div>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { Target, Star, TrendingUp, Gamepad2 } from "lucide-react";
 import styles from "./CategoryBreakdown.module.css";
 
 type Category = {
@@ -33,7 +34,7 @@ export function CategoryBreakdown({ categories }: Props) {
     <div className={styles.container}>
       <div className={styles.header}>
         <h2 className={styles.sectionTitle}>
-          <span className={styles.titleIcon}>🎯</span>
+          <span className={styles.titleIcon}><Target size={20} /></span>
           Category Performance
         </h2>
         
@@ -165,14 +166,14 @@ export function CategoryBreakdown({ categories }: Props) {
         <h3 className={styles.insightsTitle}>Quick Insights</h3>
         <div className={styles.insightCards}>
           <div className={styles.insightCard}>
-            <span className={styles.insightIcon}>🌟</span>
+            <span className={styles.insightIcon}><Star size={18} /></span>
             <div>
               <div className={styles.insightLabel}>Strongest Category</div>
               <div className={styles.insightValue}>{categories[0].name}</div>
             </div>
           </div>
           <div className={styles.insightCard}>
-            <span className={styles.insightIcon}>📈</span>
+            <span className={styles.insightIcon}><TrendingUp size={18} /></span>
             <div>
               <div className={styles.insightLabel}>Best Accuracy</div>
               <div className={styles.insightValue}>
@@ -181,7 +182,7 @@ export function CategoryBreakdown({ categories }: Props) {
             </div>
           </div>
           <div className={styles.insightCard}>
-            <span className={styles.insightIcon}>🎮</span>
+            <span className={styles.insightIcon}><Gamepad2 size={18} /></span>
             <div>
               <div className={styles.insightLabel}>Most Played</div>
               <div className={styles.insightValue}>
