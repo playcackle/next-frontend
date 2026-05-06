@@ -249,6 +249,14 @@
   }
 }
 
+.hintNudge {
+  font-family: var(--retro-font-alt);
+  font-size: 0.72rem;
+  color: rgba(0, 220, 255, 0.55);
+  margin: 0.35rem 0 0 0;
+  letter-spacing: 0.5px;
+}
+
 /* ── Answer chips ─────────────────────────────────────────── */
 .answerChipGrid {
   display: flex;

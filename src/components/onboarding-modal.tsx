@@ -19,7 +19,7 @@ const STEPS = [
     type: "text" as const,
     icon: "#",
     title: "Round Topic",
-    body: "Each game has 12 rounds. Every round has a topic. Type answers that fit the topic.",
+    body: "Each game has X rounds. Every round has a topic. Type answers that fit the topic.",
   },
   {
     id: 3,
@@ -39,15 +39,15 @@ const STEPS = [
     id: 5,
     type: "text" as const,
     icon: "!",
-    title: "Hints & Hot Wire",
-    body: "Stuck? Hints may drop mid-round to nudge you in the right direction. Keep an eye out for Hot Wire slots — these are live wires waiting to be claimed. First player to answer correctly steals them.",
+    title: "Hints",
+    body: "Stuck? Hints may drop mid-round below the answer grid as cyan chips. Bot Bob will also snipe clues in the chat — keep an eye on what he says.",
   },
   {
     id: 6,
     type: "text" as const,
     icon: "@",
     title: "Beat the Clock",
-    body: "Every room has a countdown timer. Find as many answers as you can before time runs out. Then watch the leaderboard explode.",
+    body: "Every room has a countdown timer. Find as many answers as you can before time runs out. Between rounds and after the game, Bot Bob will announce accolades and highlight top performers in the chat.",
   },
   {
     id: 7,
@@ -69,23 +69,33 @@ function TourStep() {
           <span className={styles.tourCalloutNum}>1</span>
           <div className={styles.tourCalloutBody}>
             <strong className={styles.tourCalloutTitle}>Round topic</strong>
-            <p>Each game has <strong>12 rounds</strong>. Every round has a <strong>topic</strong>. Type answers that fit the topic.</p>
+            <p>
+              Each game has <strong>12 rounds</strong>. Every round has a{" "}
+              <strong>topic</strong>. Type answers that fit the topic.
+            </p>
           </div>
           <div className={`${styles.tourTail} ${styles.tourTailDownRight}`} />
         </div>
         <div className={styles.tourCallout}>
-          <span className={styles.tourCalloutNum}>4</span>
+          <span className={styles.tourCalloutNum}>6</span>
           <div className={styles.tourCalloutBody}>
-            <strong className={styles.tourCalloutTitle}>Hints</strong>
-            <p>Stuck? <strong>Hints may drop mid-round</strong> to nudge you in the right direction. They appear below the answer slots.</p>
+            <strong className={styles.tourCalloutTitle}>Beat the clock</strong>
+            <p>
+              The <strong className={styles.tourYellow}>timer</strong> counts
+              down each round. Find as many answers as you can{" "}
+              <strong>before it hits zero</strong>.
+            </p>
           </div>
           <div className={`${styles.tourTail} ${styles.tourTailDownCenter}`} />
         </div>
         <div className={styles.tourCallout}>
           <span className={styles.tourCalloutNum}>5</span>
           <div className={styles.tourCalloutBody}>
-            <strong className={styles.tourCalloutTitle}>Hot Wire slots</strong>
-            <p><strong className={styles.tourOrange}>Orange slots</strong> are <strong>Hot Wire</strong> — live wires up for grabs. First correct answer <strong>steals the slot.</strong></p>
+            <strong className={styles.tourCalloutTitle}>Leaderboard</strong>
+            <p>
+              Live scores update as answers are claimed. Bot Bob announces{" "}
+              <strong>accolades</strong> in the chat after the game.
+            </p>
           </div>
           <div className={`${styles.tourTail} ${styles.tourTailDownLeft}`} />
         </div>
@@ -93,22 +103,26 @@ function TourStep() {
 
       {/* Frozen game UI */}
       <div className={styles.tourGame}>
-        {/* Header */}
-        <div className={styles.tourGameHeader}>
-          <span className={styles.tourGameTitle}>MAMMALS</span>
-        </div>
-        {/* Stats row */}
+        {/* Stats row — matches real StatsRow: cyan tiles, snarky h3 label + large white value */}
         <div className={styles.tourStatsRow}>
           {[
-            { label: "Looking for", value: "MAMMALS" },
-            { label: "Answer with", value: "Things from this category" },
-            { label: "Timer", value: "00:44", accent: true },
-            { label: "Don't miss up", value: "1 / 1" },
-            { label: "Roles in arena", value: "7" },
+            { label: "Looking for:", value: "MAMMALS" },
+            { label: "Example, n00b:", value: "Dog" },
+            { label: "Hurry up.", value: "00:28", accent: true },
+            { label: "Don't mess up.", value: "1 / 12" },
+            { label: "Dorks in arena:", value: "7" },
+            { label: "Gameroom:", value: "fun-room" },
           ].map((s) => (
-            <div key={s.label} className={styles.tourStatTile}>
+            <div
+              key={s.label}
+              className={`${styles.tourStatTile} ${s.accent ? styles.tourStatTileTimer : ""}`}
+            >
               <span className={styles.tourStatLabel}>{s.label}</span>
-              <span className={`${styles.tourStatValue} ${s.accent ? styles.tourStatAccent : ""}`}>{s.value}</span>
+              <span
+                className={`${styles.tourStatValue} ${s.accent ? styles.tourStatAccent : ""}`}
+              >
+                {s.value}
+              </span>
             </div>
           ))}
         </div>
@@ -118,34 +132,106 @@ function TourStep() {
           <div className={styles.tourChat}>
             <div className={styles.tourMessages}>
               {["cat", "dog", "lion", "whale", "bear", "fox"].map((m) => (
-                <div key={m} className={styles.tourMsg}>{m}</div>
+                <div key={m} className={styles.tourMsg}>
+                  {m}
+                </div>
               ))}
             </div>
             <div className={styles.tourInput}>Type...</div>
           </div>
           {/* Answer grid with hints below */}
           <div className={styles.tourSlotsWrapper}>
-            {/* Slots */}
-            <div className={styles.tourSlots}>
-              <div className={styles.tourSlotsHeader}>
-                <span className={styles.tourSlotsCount}>10</span>
-                <span className={styles.tourSlotsLabel}>10 answers found</span>
+            {/* Hero: progress ring + status */}
+            <div className={styles.tourAnswerHero}>
+              <div className={styles.tourProgressRing}>
+                <svg viewBox="0 0 100 100" className={styles.tourProgressSvg}>
+                  <circle
+                    cx="50"
+                    cy="50"
+                    r="44"
+                    fill="none"
+                    stroke="rgba(255,255,255,0.1)"
+                    strokeWidth="7"
+                  />
+                  <circle
+                    cx="50"
+                    cy="50"
+                    r="44"
+                    fill="none"
+                    stroke="var(--neon-pink)"
+                    strokeWidth="7"
+                    strokeLinecap="round"
+                    strokeDasharray="276.46"
+                    strokeDashoffset="82.94"
+                    className={styles.tourProgressFill}
+                  />
+                </svg>
+                <div className={styles.tourProgressLabel}>
+                  <span className={styles.tourProgressCount}>7</span>
+                  <span className={styles.tourProgressTotal}>/ 10</span>
+                </div>
               </div>
-              <div className={styles.tourSlotsGrid}>
-                {[
-                  { label: "CAT" }, { label: "DOG" }, { label: "LION", purple: true },
-                  { label: "WHALE" }, { label: "BEAR" }, { label: "FOX" },
-                  { label: "RAT", hotWire: true }, { empty: true }, { empty: true }, { empty: true },
-                ].map((slot, i) => (
-                  <div key={i} className={`${styles.tourSlot} ${slot.purple ? styles.tourSlotPurple : ""} ${slot.hotWire ? styles.tourSlotHotWire : ""} ${slot.empty ? styles.tourSlotEmpty : ""}`}>
-                    {slot.empty ? <span className={styles.tourSlotQ}>?</span> : <span className={styles.tourSlotLabel}>{slot.label}</span>}
+              <div className={styles.tourAnswerStatus}>
+                <p className={styles.tourAnswerTitle}>7 answers found</p>
+                <p className={styles.tourAnswerSub}>
+                  3 still to find — keep typing!
+                </p>
+              </div>
+            </div>
+            {/* Dot row */}
+            <div className={styles.tourDotRow}>
+              {[
+                { found: true },
+                { found: true },
+                { found: true, purple: true },
+                { found: true },
+                { found: true },
+                { found: true },
+                { found: true },
+                { empty: true },
+                { empty: true },
+                { empty: true, purple: true },
+              ].map((dot, i) => (
+                <div
+                  key={i}
+                  className={`${styles.tourDot} ${dot.found ? styles.tourDotFound : styles.tourDotEmpty} ${dot.purple ? styles.tourDotPurple : ""}`}
+                >
+                  {dot.empty && dot.purple && (
+                    <span className={styles.tourDot2x}>2x</span>
+                  )}
+                </div>
+              ))}
+            </div>
+            {/* Answer chips */}
+            <div className={styles.tourChipGrid}>
+              {[
+                { label: "CAT", player: "player_1" },
+                { label: "DOG", player: "player_2" },
+                { label: "LION", player: "player_1", purple: true },
+                { label: "WHALE", player: "player_3" },
+                { label: "BEAR", player: "player_2" },
+                { label: "FOX", player: "player_1" },
+                { label: "RAT", player: "player_4" },
+              ].map((chip, i) => (
+                <div
+                  key={i}
+                  className={`${styles.tourChip} ${chip.purple ? styles.tourChipPurple : ""}`}
+                >
+                  <div className={styles.tourChipContent}>
+                    <span className={styles.tourChipText}>{chip.label}</span>
+                    <span className={styles.tourChipPlayer}>{chip.player}</span>
                   </div>
-                ))}
-              </div>
+                  {chip.purple && (
+                    <span className={styles.tourChipMultiplier}>2x</span>
+                  )}
+                </div>
+              ))}
             </div>
             {/* Hints strip */}
             <div className={styles.tourHintsStrip}>
-              <span className={styles.tourHintsLabel}>Hints</span>
+              <span className={styles.tourHintsLabel}>
+                Fine. Here&apos;s your help, loser
+              </span>
               <div className={styles.tourHintsChips}>
                 <span className={styles.tourHintChip}>has whiskers</span>
                 <span className={styles.tourHintChip}>lives in the sea</span>
@@ -156,9 +242,19 @@ function TourStep() {
           {/* Leaderboard */}
           <div className={styles.tourLeader}>
             <div className={styles.tourLeaderTitle}>Leaderboard</div>
-            {[{ name: "player_1", score: 240 }, { name: "player_2", score: 190 }, { name: "player_3", score: 155 }, { name: "player_4", score: 120 }, { name: "player_5", score: 80 }].map((p, i) => (
+            {[
+              { name: "player_1", score: 240 },
+              { name: "player_2", score: 190 },
+              { name: "player_3", score: 155 },
+              { name: "player_4", score: 120 },
+              { name: "player_5", score: 80 },
+            ].map((p, i) => (
               <div key={p.name} className={styles.tourLeaderRow}>
-                <span className={`${styles.tourRank} ${i === 0 ? styles.rankGold : i === 1 ? styles.rankSilver : i === 2 ? styles.rankBronze : ""}`}>{i + 1}</span>
+                <span
+                  className={`${styles.tourRank} ${i === 0 ? styles.rankGold : i === 1 ? styles.rankSilver : i === 2 ? styles.rankBronze : ""}`}
+                >
+                  {i + 1}
+                </span>
                 <span className={styles.tourLeaderName}>{p.name}</span>
                 <span className={styles.tourLeaderScore}>{p.score}</span>
               </div>
@@ -173,26 +269,43 @@ function TourStep() {
           <span className={styles.tourCalloutNum}>3</span>
           <div className={styles.tourCalloutBody}>
             <strong className={styles.tourCalloutTitle}>Type fast</strong>
-            <p>Type answers directly in the chat. <strong>No submit button. No turns.</strong> If your answer is correct, <strong>it instantly fills a slot.</strong> If you&apos;re first — <strong>you claim it.</strong></p>
+            <p>
+              Type answers directly in the chat.{" "}
+              <strong>No submit button. No turns.</strong> If your answer is
+              correct, <strong>it instantly fills a slot.</strong> If
+              you&apos;re first — <strong>you claim it.</strong>
+            </p>
           </div>
           <div className={`${styles.tourTail} ${styles.tourTailUpRight}`} />
         </div>
         <div className={styles.tourCallout}>
           <span className={styles.tourCalloutNum}>2</span>
           <div className={styles.tourCalloutBody}>
-            <strong className={styles.tourCalloutTitle}>Find the answers</strong>
-            <p>Each round has a <strong>set number of answers</strong> to uncover. Every correct answer <strong>fills a slot on the board</strong>. Look for <strong className={styles.tourPurple}>purple slots</strong> — those answers are <strong>rare and worth extra points</strong>.</p>
+            <strong className={styles.tourCalloutTitle}>
+              Find the answers
+            </strong>
+            <p>
+              Each round has a <strong>set number of answers</strong> to
+              uncover. Every correct answer{" "}
+              <strong>fills a slot on the board</strong>. Look for{" "}
+              <strong className={styles.tourPurple}>purple slots</strong> —
+              those answers are <strong>rare and worth extra points</strong>.
+            </p>
           </div>
           <div className={`${styles.tourTail} ${styles.tourTailUpCenter}`} />
         </div>
         <div className={styles.tourCallout}>
-          <span className={styles.tourCalloutNum}>6</span>
+          <span className={styles.tourCalloutNum}>4</span>
           <div className={styles.tourCalloutBody}>
-            <strong className={styles.tourCalloutTitle}>Beat the clock</strong>
-            <p>Every room has a <strong>countdown timer</strong>. Find as many answers as you can <strong>before time runs out.</strong></p>
-            <p className={styles.tourCoda}>Then watch the leaderboard explode.</p>
+            <strong className={styles.tourCalloutTitle}>Hints</strong>
+            <p>
+              Hints appear as{" "}
+              <strong className={styles.tourCyan}>cyan chips</strong> below the
+              answer grid. Bot Bob also{" "}
+              <strong>snipes clues in the chat</strong>.
+            </p>
           </div>
-          <div className={`${styles.tourTail} ${styles.tourTailUpLeft}`} />
+          <div className={`${styles.tourTail} ${styles.tourTailUpCenter}`} />
         </div>
       </div>
     </div>
@@ -231,7 +344,12 @@ export default function OnboardingModal({ show }: OnboardingModalProps) {
   const isTour = current.type === "tour";
 
   return (
-    <Dialog.Root open={open} onOpenChange={(v) => { if (!v) dismiss(); }}>
+    <Dialog.Root
+      open={open}
+      onOpenChange={(v) => {
+        if (!v) dismiss();
+      }}
+    >
       <Dialog.Portal>
         <Dialog.Overlay className={styles.overlay} />
         <Dialog.Content
@@ -245,18 +363,27 @@ export default function OnboardingModal({ show }: OnboardingModalProps) {
           {/* Header */}
           <div className={styles.header}>
             <span className={styles.headerLabel}>HOW TO PLAY</span>
-            <button type="button" className={styles.skipBtn} onClick={dismiss} aria-label="Skip onboarding">
+            <button
+              type="button"
+              className={styles.skipBtn}
+              onClick={dismiss}
+              aria-label="Skip onboarding"
+            >
               SKIP
             </button>
           </div>
 
           {/* Step content */}
-          <div className={`${styles.stepBody} ${animating ? styles.stepBodyHidden : styles.stepBodyVisible} ${isTour ? styles.stepBodyTour : ""}`}>
+          <div
+            className={`${styles.stepBody} ${animating ? styles.stepBodyHidden : styles.stepBodyVisible} ${isTour ? styles.stepBodyTour : ""}`}
+          >
             {isTour ? (
               <TourStep />
             ) : (
               <>
-                <div className={styles.stepIcon} aria-hidden="true">{current.icon}</div>
+                <div className={styles.stepIcon} aria-hidden="true">
+                  {current.icon}
+                </div>
                 <h2 className={styles.stepTitle}>{current.title}</h2>
                 <p className={styles.stepText}>{current.body}</p>
               </>
@@ -264,7 +391,11 @@ export default function OnboardingModal({ show }: OnboardingModalProps) {
           </div>
 
           {/* Progress dots */}
-          <div className={styles.dots} role="tablist" aria-label="Onboarding steps">
+          <div
+            className={styles.dots}
+            role="tablist"
+            aria-label="Onboarding steps"
+          >
             {STEPS.map((s, i) => (
               <button
                 type="button"
@@ -280,22 +411,37 @@ export default function OnboardingModal({ show }: OnboardingModalProps) {
 
           {/* Navigation */}
           <div className={styles.nav}>
-            <button type="button" className={styles.navBtn} onClick={() => goTo(step - 1)} disabled={step === 0}>
+            <button
+              type="button"
+              className={styles.navBtn}
+              onClick={() => goTo(step - 1)}
+              disabled={step === 0}
+            >
               BACK
             </button>
             {isLast ? (
-              <button type="button" className={`${styles.navBtn} ${styles.navBtnPrimary}`} onClick={dismiss}>
+              <button
+                type="button"
+                className={`${styles.navBtn} ${styles.navBtnPrimary}`}
+                onClick={dismiss}
+              >
                 {"LET'S GO"}
               </button>
             ) : (
-              <button type="button" className={`${styles.navBtn} ${styles.navBtnPrimary}`} onClick={() => goTo(step + 1)}>
+              <button
+                type="button"
+                className={`${styles.navBtn} ${styles.navBtnPrimary}`}
+                onClick={() => goTo(step + 1)}
+              >
                 NEXT
               </button>
             )}
           </div>
 
           {/* Step counter */}
-          <p className={styles.stepCounter}>{step + 1} / {STEPS.length}</p>
+          <p className={styles.stepCounter}>
+            {step + 1} / {STEPS.length}
+          </p>
         </Dialog.Content>
       </Dialog.Portal>
     </Dialog.Root>

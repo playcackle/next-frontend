@@ -65,6 +65,10 @@ export const AnswerGrid: React.FC<AnswerGridProps> = ({ slots }) => {
     return () => clearTimeout(t);
   }, [slots]);
 
+  const snappedSlotIds = new Set(
+    slots.filter((s) => s.is_snapped && s.id).map((s) => String(s.id)),
+  );
+
   const radius = 44;
   const circumference = 2 * Math.PI * radius;
   const fillPct = totalAnswers > 0 ? foundCount / totalAnswers : 0;
@@ -173,7 +177,8 @@ export const AnswerGrid: React.FC<AnswerGridProps> = ({ slots }) => {
         <div className={styles.answerGridPlaceholder}>
           <p>
             Type answers in the chat to fill this up. There are{" "}
-            <strong>{totalAnswers}</strong> answers to find.
+            <strong>{totalAnswers}</strong> answers to find. PSSSSST! Hints may
+            appear below....
           </p>
         </div>
       )}

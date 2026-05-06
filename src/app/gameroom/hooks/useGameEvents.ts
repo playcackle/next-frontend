@@ -234,7 +234,7 @@ export const useGameEvents = (gameWsUrl: string, token: string) => {
 
       onEvent("lobby_resetting_for_new_game", () => {
         const playAgainState = store.get(playAgainStateAtom);
-        
+
         // Clear the game state for new round
         updateGameState({
           roundNumber: 0,
@@ -247,6 +247,7 @@ export const useGameEvents = (gameWsUrl: string, token: string) => {
           finalScore: [],
           playerAccolades: [],
           showCountDown: false,
+          lobbyStatus: "WAITING",
         });
         clearUnifiedMessages();
         

@@ -9,20 +9,20 @@ export default function HowToPlayPage() {
       <div className={styles.heading}>
         <h1 className={styles.title}>How to Play</h1>
         <p className={styles.subtitle}>
-          A quick tour of the game room — find answers, beat the clock, climb the board.
+          A quick tour of the game room — find answers, beat the clock, climb
+          the board.
         </p>
       </div>
 
       {/* ── Annotated UI ── */}
       <div className={styles.scene}>
-
         {/* ─── Callout 1: Round topic — top-left ─── */}
         <div className={`${styles.callout} ${styles.callout1}`}>
           <div className={styles.calloutNumber}>1</div>
           <div className={styles.calloutBody}>
             <h3 className={styles.calloutTitle}>Round topic</h3>
             <p>
-              Each game has <strong>12 rounds</strong>. Every round has a{" "}
+              Each game has <strong>X rounds</strong>. Every round has a{" "}
               <strong>topic</strong>. Type answers that fit the topic.
             </p>
           </div>
@@ -45,7 +45,6 @@ export default function HowToPlayPage() {
 
         {/* ─── Frozen game UI ─── */}
         <div className={styles.gameFrame}>
-
           {/* Header bar */}
           <div className={styles.uiHeader}>
             <span className={styles.uiRoomName}>MAMMALS</span>
@@ -59,11 +58,15 @@ export default function HowToPlayPage() {
             </div>
             <div className={styles.uiStatTile}>
               <span className={styles.uiStatLabel}>Answer with</span>
-              <span className={styles.uiStatValue}>Things from this category</span>
+              <span className={styles.uiStatValue}>
+                Things from this category
+              </span>
             </div>
             <div className={styles.uiStatTile}>
               <span className={styles.uiStatLabel}>Timer</span>
-              <span className={`${styles.uiStatValue} ${styles.timerVal}`}>00:44</span>
+              <span className={`${styles.uiStatValue} ${styles.timerVal}`}>
+                00:44
+              </span>
             </div>
             <div className={styles.uiStatTile}>
               <span className={styles.uiStatLabel}>Don&apos;t miss up</span>
@@ -77,12 +80,13 @@ export default function HowToPlayPage() {
 
           {/* Content row */}
           <div className={styles.uiContentRow}>
-
             {/* Chat column */}
             <div className={styles.uiChatCol} data-zone="chat">
               <div className={styles.uiMessages}>
                 {["cat", "dog", "lion", "whale", "bear", "fox"].map((m) => (
-                  <div key={m} className={styles.uiMessage}>{m}</div>
+                  <div key={m} className={styles.uiMessage}>
+                    {m}
+                  </div>
                 ))}
               </div>
               <div className={styles.uiInput}>Type...</div>
@@ -121,8 +125,12 @@ export default function HowToPlayPage() {
                   >
                     {!slot.empty ? (
                       <>
-                        <span className={styles.uiSlotAnswer}>{slot.label}</span>
-                        <span className={styles.uiSlotPlayer}>{slot.player}</span>
+                        <span className={styles.uiSlotAnswer}>
+                          {slot.label}
+                        </span>
+                        <span className={styles.uiSlotPlayer}>
+                          {slot.player}
+                        </span>
                       </>
                     ) : (
                       <span className={styles.uiSlotQ}>?</span>
@@ -143,7 +151,11 @@ export default function HowToPlayPage() {
                 { name: "player_5", score: 80 },
               ].map((p, i) => (
                 <div key={p.name} className={styles.uiLeaderRow}>
-                  <span className={`${styles.uiLeaderRank} ${i === 0 ? styles.rankGold : i === 1 ? styles.rankSilver : i === 2 ? styles.rankBronze : ""}`}>{i + 1}</span>
+                  <span
+                    className={`${styles.uiLeaderRank} ${i === 0 ? styles.rankGold : i === 1 ? styles.rankSilver : i === 2 ? styles.rankBronze : ""}`}
+                  >
+                    {i + 1}
+                  </span>
                   <span className={styles.uiLeaderName}>{p.name}</span>
                   <span className={styles.uiLeaderScore}>{p.score}</span>
                 </div>
@@ -161,8 +173,8 @@ export default function HowToPlayPage() {
             <p>
               Type answers directly in the chat.{" "}
               <strong>No submit button. No turns.</strong> If your answer is
-              correct, <strong>it instantly fills a slot.</strong> If you&apos;re
-              first — <strong>you claim it.</strong>
+              correct, <strong>it instantly fills a slot.</strong> If
+              you&apos;re first — <strong>you claim it.</strong>
             </p>
           </div>
           <div className={`${styles.calloutTail} ${styles.tailTopRight}`} />
@@ -174,10 +186,11 @@ export default function HowToPlayPage() {
           <div className={styles.calloutBody}>
             <h3 className={styles.calloutTitle}>Find the answers</h3>
             <p>
-              Each round has a <strong>set number of answers</strong> to uncover.
-              Every correct answer <strong>fills a slot on the board</strong>. Look
-              for <strong className={styles.purpleText}>purple slots</strong> — those
-              answers are <strong>rare and worth extra points</strong>.
+              Each round has a <strong>set number of answers</strong> to
+              uncover. Every correct answer{" "}
+              <strong>fills a slot on the board</strong>. Look for{" "}
+              <strong className={styles.purpleText}>purple slots</strong> —
+              those answers are <strong>rare and worth extra points</strong>.
             </p>
           </div>
           <div className={`${styles.calloutTail} ${styles.tailTopCenter}`} />
@@ -198,7 +211,6 @@ export default function HowToPlayPage() {
           </div>
           <div className={`${styles.calloutTail} ${styles.tailTopLeft}`} />
         </div>
-
       </div>
 
       {/* CTA */}

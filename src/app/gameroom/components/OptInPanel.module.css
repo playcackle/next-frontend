@@ -1,13 +1,15 @@
 .container {
-  background: linear-gradient(135deg, rgba(26, 26, 46, 0.95) 0%, rgba(22, 33, 62, 0.95) 100%);
-  border-radius: 16px;
-  padding: 24px;
-  box-shadow: 0 0 30px rgba(183, 0, 255, 0.3);
-  border: 2px solid var(--neon-purple);
-  min-height: 200px;
+  background-color: rgba(20, 20, 40, 0.8);
+  border-radius: 8px;
+  padding: clamp(0.75rem, 1.5vh, 1rem);
+  box-shadow: 0 0 5px var(--neon-pink), 0 0 10px var(--neon-pink),
+    inset 0 0 5px rgba(255, 0, 170, 0.3);
+  border: 1px solid rgba(255, 0, 170, 0.3);
   display: flex;
   flex-direction: column;
   justify-content: center;
+  min-width: 0;
+  overflow: hidden;
 }
 
 .content {
@@ -15,41 +17,46 @@
 }
 
 .title {
-  font-size: 1.75rem;
-  font-weight: 700;
-  color: var(--neon-pink);
-  margin: 0 0 8px 0;
-  text-shadow: 0 0 10px var(--neon-pink);
-  font-family: var(--font-display);
+  font-size: clamp(0.8rem, 1.2vw, 1rem);
+  margin-bottom: clamp(0.25rem, 0.5vh, 0.5rem);
+  color: #fff;
+  text-shadow: 0 0 10px rgba(255, 0, 170, 0.7);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-family: var(--retro-font);
 }
 
 .subtitle {
-  color: rgba(255, 255, 255, 0.8);
-  font-size: 0.95rem;
-  margin: 0 0 20px 0;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: clamp(0.65rem, 0.9vw, 0.8rem);
+  margin: 0 0 clamp(0.5rem, 1vh, 0.75rem) 0;
+  font-family: var(--retro-font);
 }
 
 .buttonGroup {
   display: flex;
-  gap: 16px;
+  gap: clamp(0.5rem, 1vw, 0.75rem);
   justify-content: center;
-  margin-bottom: 16px;
+  margin-bottom: clamp(0.5rem, 1vh, 0.75rem);
 }
 
 .button {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
-  padding: 16px 24px;
-  border-radius: 12px;
-  font-size: 1rem;
+  gap: clamp(0.25rem, 0.5vh, 0.4rem);
+  padding: clamp(0.5rem, 1vh, 0.75rem) clamp(0.75rem, 1.5vw, 1rem);
+  border-radius: 4px;
+  font-size: clamp(0.7rem, 1vw, 0.85rem);
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s ease;
-  border: 2px solid transparent;
+  transition: all 0.3s ease;
+  border: 1px solid transparent;
   outline: none;
-  min-width: 100px;
+  min-width: clamp(60px, 8vw, 80px);
+  font-family: var(--retro-font);
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
 .button:disabled {
@@ -57,27 +64,29 @@
   cursor: not-allowed;
 }
 
-.buttonIcon {
-  font-size: 1.5rem;
+.button svg {
+  width: clamp(16px, 2vw, 20px);
+  height: clamp(16px, 2vw, 20px);
 }
 
 .yesButton {
-  background: rgba(0, 255, 102, 0.15);
+  background: rgba(0, 255, 102, 0.1);
   color: var(--neon-green);
-  border-color: var(--neon-green);
-  box-shadow: 0 0 15px rgba(0, 255, 102, 0.3);
+  border-color: rgba(0, 255, 102, 0.4);
+  box-shadow: 0 0 5px rgba(0, 255, 102, 0.3);
 }
 
 .yesButton:hover:not(:disabled) {
-  background: rgba(0, 255, 102, 0.3);
+  background: rgba(0, 255, 102, 0.2);
   transform: translateY(-2px);
-  box-shadow: 0 0 25px rgba(0, 255, 102, 0.5);
+  box-shadow: 0 0 10px rgba(0, 255, 102, 0.5);
+  border-color: var(--neon-green);
 }
 
 .yesButton.selected {
   background: var(--neon-green);
   color: #000;
-  box-shadow: 0 0 20px var(--neon-green);
+  box-shadow: 0 0 10px var(--neon-green), 0 0 20px var(--neon-green);
 }
 
 .yesButton.selected svg {
@@ -87,91 +96,111 @@
 .noButton {
   background: rgba(255, 255, 255, 0.05);
   color: rgba(255, 255, 255, 0.6);
-  border-color: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.15);
 }
 
 .noButton:hover:not(:disabled) {
   background: rgba(255, 255, 255, 0.1);
-  border-color: rgba(255, 255, 255, 0.4);
+  border-color: rgba(255, 255, 255, 0.3);
   transform: translateY(-2px);
 }
 
 .noButton.selected {
-  background: rgba(255, 0, 170, 0.3);
-  border-color: var(--neon-pink);
+  background: rgba(255, 0, 170, 0.2);
+  border-color: rgba(255, 0, 170, 0.5);
   color: var(--neon-pink);
+  box-shadow: 0 0 5px rgba(255, 0, 170, 0.3);
 }
 
 /* Player circles indicator */
 .playerIndicators {
   display: flex;
   justify-content: center;
-  gap: 8px;
-  margin-bottom: 16px;
+  gap: clamp(0.25rem, 0.5vw, 0.4rem);
+  margin-bottom: clamp(0.5rem, 1vh, 0.75rem);
 }
 
 .playerCircle {
-  width: 24px;
-  height: 24px;
+  width: clamp(16px, 2vw, 20px);
+  height: clamp(16px, 2vw, 20px);
   border-radius: 50%;
-  border: 2px solid;
+  border: 1px solid;
   transition: all 0.3s ease;
 }
 
 .playerCircle.in {
   background: var(--neon-green);
   border-color: var(--neon-green);
-  box-shadow: 0 0 10px var(--neon-green);
+  box-shadow: 0 0 5px var(--neon-green);
 }
 
 .playerCircle.pending {
   background: transparent;
-  border-color: rgba(255, 255, 255, 0.3);
+  border-color: rgba(255, 255, 255, 0.2);
 }
 
 .playerCircle.out {
   background: transparent;
-  border-color: rgba(255, 0, 170, 0.5);
+  border-color: rgba(255, 0, 170, 0.4);
   opacity: 0.5;
 }
 
 .statusContainer {
-  padding-top: 8px;
+  padding-top: clamp(0.25rem, 0.5vh, 0.5rem);
+}
+
+.optInCount {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: clamp(0.7rem, 1vw, 0.85rem);
+  font-family: var(--retro-font);
+  margin: 0 0 clamp(0.25rem, 0.4vh, 0.35rem) 0;
+  letter-spacing: 1px;
+}
+
+.playersNeeded {
+  color: #fbbf24;
+  font-size: clamp(0.65rem, 0.9vw, 0.8rem);
+  font-family: var(--retro-font);
+  margin: 0 0 clamp(0.4rem, 0.75vh, 0.6rem) 0;
+  letter-spacing: 0.5px;
 }
 
 .responseStatus {
   color: var(--neon-green);
   font-weight: 600;
-  font-size: 1rem;
+  font-size: clamp(0.7rem, 1vw, 0.85rem);
   margin: 0;
-  text-shadow: 0 0 10px var(--neon-green);
+  text-shadow: 0 0 5px var(--neon-green);
+  font-family: var(--retro-font);
 }
 
 .needMore {
   color: #fbbf24;
-  font-size: 0.9rem;
-  margin: 0 0 12px 0;
+  font-size: clamp(0.65rem, 0.9vw, 0.8rem);
+  margin: 0 0 clamp(0.4rem, 0.75vh, 0.6rem) 0;
+  font-family: var(--retro-font);
 }
 
 .progressBar {
   width: 100%;
-  height: 6px;
+  height: 4px;
   background: rgba(255, 255, 255, 0.1);
-  border-radius: 3px;
+  border-radius: 2px;
   overflow: hidden;
-  margin-bottom: 12px;
+  margin-bottom: clamp(0.4rem, 0.75vh, 0.6rem);
 }
 
 .progressFill {
   height: 100%;
-  background: linear-gradient(90deg, var(--neon-green), var(--neon-blue));
-  border-radius: 3px;
+  background: var(--neon-green);
+  border-radius: 2px;
   transition: width 0.3s ease;
-  box-shadow: 0 0 10px var(--neon-green);
+  box-shadow: 0 0 5px var(--neon-green);
 }
 
 .timeout {
-  color: rgba(255, 255, 255, 0.5);
-  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.4);
+  font-size: clamp(0.6rem, 0.85vw, 0.75rem);
   margin: 0;
+  font-family: var(--retro-font);
 }
