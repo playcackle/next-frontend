@@ -16,7 +16,6 @@ export default function ConnectionBanner({ onRetry }: ConnectionBannerProps) {
   const status = useAtomValue(connectionStatusAtom);
   const [visible, setVisible] = useState(false);
   const [displayStatus, setDisplayStatus] = useState<ConnectionStatus>(status);
-  const showTimerRef = useRef<NodeJS.Timeout | null>(null);
   const hideTimerRef = useRef<NodeJS.Timeout | null>(null);
   const bannerWasShownRef = useRef(false);
 
@@ -28,19 +27,9 @@ export default function ConnectionBanner({ onRetry }: ConnectionBannerProps) {
 
     if (status === "reconnecting" || status === "disconnected") {
       setDisplayStatus(status);
-      // Only start the delay timer if one isn't already running
-      if (!showTimerRef.current) {
-        showTimerRef.current = setTimeout(() => {
-          showTimerRef.current = null;
-          bannerWasShownRef.current = true;
-          setVisible(true);
-        }, 5000);
-      }
+      bannerWasShownRef.current = true;
+      setVisible(true);
     } else if (status === "connected") {
-      if (showTimerRef.current) {
-        clearTimeout(showTimerRef.current);
-        showTimerRef.current = null;
-      }
       if (bannerWasShownRef.current) {
         setDisplayStatus("connected");
         setVisible(true);
@@ -53,18 +42,10 @@ export default function ConnectionBanner({ onRetry }: ConnectionBannerProps) {
         setVisible(false);
       }
     } else {
-      if (showTimerRef.current) {
-        clearTimeout(showTimerRef.current);
-        showTimerRef.current = null;
-      }
       setVisible(false);
     }
 
     return () => {
-      if (showTimerRef.current) {
-        clearTimeout(showTimerRef.current);
-        showTimerRef.current = null;
-      }
       if (hideTimerRef.current) {
         clearTimeout(hideTimerRef.current);
         hideTimerRef.current = null;
@@ -103,7 +84,7 @@ export default function ConnectionBanner({ onRetry }: ConnectionBannerProps) {
           )}
         </>
       )}
-      {displayStatus === "connected" && <span>Reconnected</span>}
+      {displayStatus === "connected" && <span>Connected</span>}
     </div>
   );
 }
