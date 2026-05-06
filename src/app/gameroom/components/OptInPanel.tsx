@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useAtomValue, useSetAtom } from "jotai";
 import { Gamepad2, LogOut } from "lucide-react";
-import { playAgainStateAtom, updatePlayAgainStateAtom } from "../store/gameAtoms";
+import { playerCountAtom, playAgainStateAtom, updatePlayAgainStateAtom } from "../store/gameAtoms";
 import styles from "./OptInPanel.module.css";
 
 interface OptInPanelProps {
@@ -22,8 +22,9 @@ interface OptInPanelProps {
 export default function OptInPanel({ onPlayAgainResponse, disabled = false }: OptInPanelProps) {
   const playAgainState = useAtomValue(playAgainStateAtom);
   const updatePlayAgainState = useSetAtom(updatePlayAgainStateAtom);
+  const playerCount = useAtomValue(playerCountAtom);
 
-  const { timeoutSeconds, confirmedCount, neededToStart, userResponse, playersWaiting, showPrompt } = playAgainState;
+  const { timeoutSeconds, confirmedCount, neededToStart, userResponse, showPrompt } = playAgainState;
 
   // Local countdown that ticks down from the server-provided timeoutSeconds
   const [countdown, setCountdown] = useState(timeoutSeconds);
@@ -55,8 +56,8 @@ export default function OptInPanel({ onPlayAgainResponse, disabled = false }: Op
     };
   }, [showPrompt, timeoutSeconds]);
 
-  // Build player status array for circles
-  const totalPlayers = playersWaiting > 0 ? playersWaiting : 1;
+  // Build player status array for circles — use the same playerCount atom as StatsRow
+  const totalPlayers = playerCount > 0 ? playerCount : 1;
   const confirmedPlayers = confirmedCount > 0 ? confirmedCount : 0;
 
   // Determine user status
