@@ -103,11 +103,11 @@ export default function OptInPanel({ onPlayAgainResponse, disabled = false }: Op
             {confirmedPlayers} / {totalPlayers} opted in
           </p>
 
-          {neededToStart > 0 && (
-            <p className={styles.needMore}>
-              Need {neededToStart} more to start
-            </p>
-          )}
+          <p className={styles.playersNeeded}>
+            {neededToStart > 0 
+              ? `${neededToStart} more needed to start` 
+              : "Ready to play!"}
+          </p>
 
           <div className={styles.progressBar}>
             <div
