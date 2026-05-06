@@ -22,6 +22,7 @@ export type GameEvent =
   | "lobby_state_sync"
   | "play_again_prompt"
   | "play_again_count_update"
+  | "play_again_player_update"
   | "play_again_result"
   | "play_again_response";
 
@@ -209,6 +210,12 @@ export type PlayAgainCountUpdatePayload = {
   needed_to_start: number;
 };
 
+export type PlayAgainPlayerUpdatePayload = {
+  player_id: string;
+  display_name: string;
+  response: "in" | "out";
+};
+
 export type PlayAgainResultPayload = {
   will_restart: boolean;
   reason: string;
@@ -238,6 +245,7 @@ export type EventPayloadMap = {
   submit_answer: any;
   play_again_prompt: PlayAgainPromptPayload;
   play_again_count_update: PlayAgainCountUpdatePayload;
+  play_again_player_update: PlayAgainPlayerUpdatePayload;
   play_again_result: PlayAgainResultPayload;
   play_again_response: { want_to_play: boolean };
 };

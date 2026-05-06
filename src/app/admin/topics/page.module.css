@@ -207,6 +207,21 @@
   font-weight: 600;
 }
 
+.categoryBadge {
+  display: inline-block;
+  background: linear-gradient(135deg, rgba(0,221,255,0.2) 0%, rgba(0,255,136,0.15) 100%);
+  border: 1px solid rgba(0,221,255,0.5);
+  color: #00ddff;
+  padding: 0.2rem 0.75rem;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-family: "Orbitron", sans-serif;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
 .topicActions {
   display: flex;
   gap: 0.5rem;

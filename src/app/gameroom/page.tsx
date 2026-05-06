@@ -243,7 +243,7 @@ export default function GameroomPage() {
                 </div>
               ) : (
                 <>
-                  {isShowcase && <OptInPanel onPlayAgainResponse={handlePlayAgainResponse} />}
+                  {isShowcase && <OptInPanel onPlayAgainResponse={handlePlayAgainResponse} currentUserId={user?.id} />}
                   {isRoundBreak && <AnswerReveal />}
                   {isRoundBreak || isShowcase ? (
                     <Leaderboard />

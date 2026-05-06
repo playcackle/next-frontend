@@ -1,7 +1,11 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { playersApi, type PlayerProfileStats } from "@/lib/api/players";
+import {
+  playersApi,
+  type PlayerPlaystyleProfile,
+  type PlayerProfileStats,
+} from "@/lib/api/players";
 import styles from "./home-user-stats.module.css";
 
 type Props = { userId: string };
@@ -12,31 +16,37 @@ type StatItem = {
   accent: "blue" | "pink" | "purple" | "green";
 };
 
-function buildStats(p: PlayerProfileStats): StatItem[] {
+const EMPTY_PLAYSTYLE: PlayerPlaystyleProfile = {
+  archetype: "All-Round Operator",
+  summary: "Play more games to shape your playstyle.",
+  dimensions: [],
+  top_traits: [],
+  total_accolades: 0,
+};
+
+function buildStats(
+  p: PlayerProfileStats,
+  playstyle: PlayerPlaystyleProfile,
+): StatItem[] {
   return [
     { label: "Total Score", value: p.total_score.toLocaleString(), accent: "pink" },
     { label: "Games Played", value: String(p.games_played), accent: "blue" },
-    { label: "Slots Snapped", value: String(p.total_slots_snapped), accent: "purple" },
     {
       label: "Accuracy",
       value: p.overall_accuracy !== null ? `${p.overall_accuracy.toFixed(1)}%` : "—",
       accent: "green",
     },
     {
-      label: "Score / Game",
-      value: p.average_score_per_game.toFixed(1),
-      accent: "blue",
-    },
-    {
-      label: "Slots / Game",
-      value: p.average_slots_per_game.toFixed(1),
-      accent: "pink",
+      label: "Total Accolades",
+      value: String(playstyle.total_accolades),
+      accent: "purple",
     },
   ];
 }
 
 export default function HomeUserStats({ userId }: Props) {
   const [profile, setProfile] = useState<PlayerProfileStats | null>(null);
+  const [playstyle, setPlaystyle] = useState<PlayerPlaystyleProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -44,8 +54,12 @@ export default function HomeUserStats({ userId }: Props) {
     try {
       setLoading(true);
       setError(null);
-      const data = await playersApi.getProfile(userId);
-      setProfile(data);
+      const [profileData, playstyleData] = await Promise.all([
+        playersApi.getProfile(userId),
+        playersApi.getPlaystyle(userId),
+      ]);
+      setProfile(profileData);
+      setPlaystyle(playstyleData);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to load stats");
     } finally {
@@ -60,7 +74,7 @@ export default function HomeUserStats({ userId }: Props) {
   if (loading) {
     return (
       <div className={styles.statsLoadingRow}>
-        {Array.from({ length: 6 }).map((_, i) => (
+        {Array.from({ length: 4 }).map((_, i) => (
           <div key={i} className={styles.statsSkeletonCard} />
         ))}
       </div>
@@ -78,7 +92,8 @@ export default function HomeUserStats({ userId }: Props) {
     );
   }
 
-  const stats = buildStats(profile);
+  const resolvedPlaystyle = playstyle ?? EMPTY_PLAYSTYLE;
+  const stats = buildStats(profile, resolvedPlaystyle);
 
   return (
     <div className={styles.statsGrid}>

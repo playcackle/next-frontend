@@ -15,6 +15,19 @@ import SlotBulkEdit from "../../components/SlotBulkEdit";
 import SlotImport from "../../components/SlotImport";
 import styles from "./page.module.css";
 
+const CATEGORIES = [
+  "Geography",
+  "Sports",
+  "Film & TV",
+  "Music",
+  "Food & Drink",
+  "Science & Nature",
+  "History & Politics",
+  "Tech & Gaming",
+  "Lifestyle",
+  "Pop Culture",
+] as const;
+
 export default function TopicDetailPage() {
   const router = useRouter();
   const params = useParams();
@@ -27,6 +40,7 @@ export default function TopicDetailPage() {
   const [topicName, setTopicName] = useState("");
   const [topicPrompt, setTopicPrompt] = useState("");
   const [topicExample, setTopicExample] = useState("");
+  const [topicCategory, setTopicCategory] = useState("");
   const [collections, setCollections] = useState<Collection[]>([]);
   const [showCreateSlot, setShowCreateSlot] = useState(false);
   const [showAIGenerate, setShowAIGenerate] = useState(false);
@@ -57,6 +71,7 @@ export default function TopicDetailPage() {
       setTopicName(topicData.name);
       setTopicPrompt(topicData.prompt || "");
       setTopicExample(topicData.example_text || "");
+      setTopicCategory(topicData.category || "");
       setCollections(collectionsData);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to load topic");
@@ -71,6 +86,7 @@ export default function TopicDetailPage() {
         name: topicName,
         prompt: topicPrompt || undefined,
         example_text: topicExample || undefined,
+        category: topicCategory || undefined,
       });
       setEditingMetadata(false);
       loadData();
@@ -209,6 +225,19 @@ export default function TopicDetailPage() {
                     placeholder="Optional example"
                   />
                 </div>
+                    <div className={styles.formField}>
+                  <label className={styles.formLabel}>Category</label>
+                  <select
+                    className={styles.select}
+                    value={topicCategory}
+                    onChange={(e) => setTopicCategory(e.target.value)}
+                  >
+                    <option value="">— No category —</option>
+                    {CATEGORIES.map((cat) => (
+                      <option key={cat} value={cat}>{cat}</option>
+                    ))}
+                  </select>
+                </div>
                 <div className={styles.editActions}>
                   <button
                     className={styles.cancelButton}
@@ -217,6 +246,7 @@ export default function TopicDetailPage() {
                       setTopicName(topic.name);
                       setTopicPrompt(topic.prompt || "");
                       setTopicExample(topic.example_text || "");
+                      setTopicCategory(topic.category || "");
                     }}
                   >
                     CANCEL
@@ -241,6 +271,11 @@ export default function TopicDetailPage() {
                   {topic.example_text && (
                     <p className={styles.topicExample}>
                       <strong>Example:</strong> {topic.example_text}
+                    </p>
+                  )}
+                  {topic.category && (
+                    <p className={styles.topicCategory}>
+                      <strong>Category:</strong> <span className={styles.categoryBadge}>{topic.category}</span>
                     </p>
                   )}
                   <p className={styles.topicCollections}>

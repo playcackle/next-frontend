@@ -192,6 +192,8 @@ export type PlayAgainState = {
   totalWaiting: number;
   neededToStart: number;
   userResponse: "pending" | "yes" | "no" | null;
+  // Individual player responses for display: playerId -> "in" | "out" | "pending"
+  playerResponses: Record<string, { displayName: string; response: "in" | "out" | "pending" }>;
 };
 
 const initPlayAgainState: PlayAgainState = {
@@ -203,6 +205,7 @@ const initPlayAgainState: PlayAgainState = {
   totalWaiting: 0,
   neededToStart: 0,
   userResponse: null,
+  playerResponses: {},
 };
 
 export const playAgainStateAtom = atom<PlayAgainState>(initPlayAgainState);

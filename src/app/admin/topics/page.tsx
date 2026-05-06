@@ -164,6 +164,9 @@ export default function TopicsPage() {
                 <span className={styles.slotCount}>
                   {topic.slot_count || 0} slots
                 </span>
+                {topic.category && (
+                  <span className={styles.categoryBadge}>{topic.category}</span>
+                )}
                 <div className={styles.topicActions}>
                   <button
                     className={styles.viewButton}

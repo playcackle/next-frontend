@@ -9,17 +9,46 @@
   z-index: 1;
 }
 
-/* ── Hero ────────────────────────────────────────────────── */
-.hero {
-  display: flex;
-  align-items: center;
-  gap: 1.75rem;
+/* ── Profile Card ────────────────────────────────────────── */
+.profileCard {
   background: rgba(0, 0, 0, 0.45);
   border: 1px solid rgba(0, 221, 255, 0.25);
   border-radius: 14px;
   padding: 1.75rem 2rem;
   margin-bottom: 2.5rem;
   box-shadow: 0 0 24px rgba(0, 221, 255, 0.08);
+}
+
+.profileCardHeader {
+  margin-bottom: 0.75rem;
+}
+
+.profileCardBody {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2.5rem;
+}
+
+.profileInfoColumn {
+  flex: 1 1 0;
+  min-width: 0;
+  max-width: 360px;
+  padding-top: 0;
+}
+
+.profileIdentity {
+  display: flex;
+  align-items: center;
+  gap: 1.1rem;
+  min-width: 0;
+}
+
+.playstyleIdentityBlock {
+  margin-top: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .avatar {
@@ -42,18 +71,21 @@
 .heroMeta {
   display: flex;
   flex-direction: column;
-  gap: 0.35rem;
+  gap: 0.5rem;
+  justify-content: center;
 }
 
 .playerName {
   font-family: var(--retro-font);
   font-size: 2rem;
   font-weight: 800;
-  letter-spacing: 3px;
+  letter-spacing: 2px;
   text-transform: uppercase;
   color: #fff;
   text-shadow: 0 0 8px rgba(0, 221, 255, 0.5);
-  margin: 0;
+  margin: 0 0 0.25rem;
+  line-height: 1.1;
+  overflow-wrap: anywhere;
 }
 
 .heroSub {
@@ -63,17 +95,38 @@
   letter-spacing: 0.5px;
 }
 
-.lastSeenBadge {
-  display: inline-block;
-  font-size: 0.75rem;
-  letter-spacing: 1px;
+.profileBadges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.2rem;
+}
+
+.heroCategoryMiniGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.5rem;
+}
+
+.heroCategoryMiniCard {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(0, 221, 255, 0.12);
+  border-radius: 10px;
+  padding: 0.65rem 0.75rem;
+}
+
+.heroCategoryMiniLabel {
+  color: #8a9cb0;
   text-transform: uppercase;
-  color: var(--neon-blue, #00ddff);
-  background: rgba(0, 221, 255, 0.08);
-  border: 1px solid rgba(0, 221, 255, 0.3);
-  border-radius: 20px;
-  padding: 0.2rem 0.65rem;
-  width: fit-content;
+  letter-spacing: 1px;
+  font-size: 0.68rem;
+  margin-bottom: 0.2rem;
+}
+
+.heroCategoryMiniValue {
+  color: #fff;
+  font-size: 0.92rem;
+  letter-spacing: 0.3px;
 }
 
 /* ── Sections ────────────────────────────────────────────── */
@@ -93,10 +146,217 @@
   border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
 
+/* ── Playstyle ───────────────────────────────────────────── */
+.playstyleTitle {
+  margin: 0 0 0.2rem;
+  font-family: var(--retro-font);
+  font-size: 1.45rem;
+  letter-spacing: 1.1px;
+  color: #ffe7fb;
+  text-shadow: 0 0 10px rgba(255, 0, 170, 0.28);
+  white-space: nowrap;
+}
+
+.playstyleSummary {
+  margin: 0;
+  color: #9fc7d8;
+  font-size: 0.78rem;
+  max-width: 22rem;
+  text-transform: uppercase;
+  letter-spacing: 0.9px;
+}
+
+.playstyleBadge {
+  display: inline-block;
+  color: #ffc300;
+  border: 1px solid rgba(255, 195, 0, 0.25);
+  background: rgba(255, 195, 0, 0.06);
+  border-radius: 999px;
+  padding: 0.32rem 0.72rem;
+  font-size: 0.74rem;
+  letter-spacing: 0.4px;
+}
+
+.radarWrap {
+  display: flex;
+  justify-content: center;
+  flex: 0 0 360px;
+}
+
+.radarChart {
+  width: 360px;
+  height: 320px;
+  overflow: visible;
+  filter: drop-shadow(0 0 18px rgba(0, 221, 255, 0.12));
+}
+
+.radarRing {
+  fill: rgba(255, 255, 255, 0.02);
+  stroke: rgba(255, 255, 255, 0.12);
+  stroke-width: 1;
+}
+
+.radarAxis {
+  stroke: rgba(0, 221, 255, 0.2);
+  stroke-width: 1;
+}
+
+.radarArea {
+  fill: rgba(255, 0, 170, 0.22);
+  stroke: rgba(0, 221, 255, 0.95);
+  stroke-width: 2;
+}
+
+.radarDot {
+  fill: #ffc300;
+  stroke: rgba(255, 255, 255, 0.9);
+  stroke-width: 1.5;
+}
+
+.radarLabel {
+  fill: #cdd6df;
+  font-size: 11px;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+}
+
+/* ── Spotlight & Accolades ──────────────────────────────── */
+.categorySpotlights {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.categorySpotlightItem {
+  background: rgba(0, 0, 0, 0.38);
+  border: 1px solid rgba(0, 221, 255, 0.14);
+  border-radius: 10px;
+  padding: 0.85rem 1rem;
+}
+
+.categorySpotlightLabel {
+  color: #8a9cb0;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-size: 0.7rem;
+  margin-bottom: 0.3rem;
+}
+
+.categorySpotlightValue {
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.accoladeStatsRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.85rem;
+}
+
+.accoladeStatChip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.8rem 1rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 195, 0, 0.22);
+  background: rgba(255, 195, 0, 0.06);
+  box-shadow: 0 0 14px rgba(255, 195, 0, 0.06);
+}
+
+.accoladeStatLabel {
+  color: #fff;
+  text-transform: capitalize;
+  letter-spacing: 0.4px;
+}
+
+.accoladeStatCount {
+  color: #ffc300;
+  font-family: var(--retro-font);
+}
+
+.emptyPanel {
+  background: rgba(0, 0, 0, 0.32);
+  border: 1px dashed rgba(255, 255, 255, 0.14);
+  border-radius: 12px;
+  padding: 1rem 1.1rem;
+  color: #9fc7d8;
+}
+
+.categoryPanel {
+  margin-top: 1rem;
+  background: rgba(0, 0, 0, 0.34);
+  border: 1px solid rgba(0, 221, 255, 0.12);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.categoryBar {
+  padding: 0.85rem 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.categoryBar:last-child {
+  border-bottom: none;
+}
+
+.categoryBarHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 0.5rem;
+}
+
+.categoryBarName {
+  color: #fff;
+  font-size: 0.92rem;
+  font-weight: 500;
+}
+
+.categoryBarStats {
+  color: #8a9cb0;
+  font-size: 0.74rem;
+}
+
+.categoryBarTrack {
+  position: relative;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 999px;
+  overflow: visible;
+}
+
+.categoryBarFill {
+  height: 100%;
+  background: linear-gradient(90deg, rgba(0, 221, 255, 0.6), rgba(255, 0, 170, 0.6));
+  border-radius: 999px;
+  min-width: 2px;
+  transition: width 0.4s ease;
+}
+
+.categoryBarLabel {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #ffc300;
+  font-family: var(--retro-font);
+  font-size: 0.78rem;
+  letter-spacing: 0.5px;
+}
+
 /* ── Stat Cards ──────────────────────────────────────────── */
 .statsGrid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+}
+
+.statsGridCompact {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
   gap: 1rem;
 }
 
@@ -158,7 +418,14 @@
   font-size: 2.25rem;
   font-weight: 800;
   line-height: 1;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.25rem;
+}
+
+.statComparison {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.7rem;
+  margin-bottom: 0.25rem;
+  letter-spacing: 0.3px;
 }
 
 .statLabel {
@@ -167,48 +434,6 @@
   text-transform: uppercase;
   letter-spacing: 1.5px;
   font-weight: 500;
-}
-
-/* ── Analytics Panel ─────────────────────────────────────── */
-.analyticsPanel {
-  background: rgba(0, 0, 0, 0.4);
-  border: 1px solid rgba(255, 195, 0, 0.2);
-  border-radius: 12px;
-  padding: 0.25rem 0;
-  box-shadow: 0 0 14px rgba(255, 195, 0, 0.06);
-  overflow: hidden;
-}
-
-.analyticRow {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0.9rem 1.5rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-  transition: background 0.15s ease;
-}
-
-.analyticRow:last-child {
-  border-bottom: none;
-}
-
-.analyticRow:hover {
-  background: rgba(255, 255, 255, 0.03);
-}
-
-.analyticLabel {
-  font-size: 0.9rem;
-  color: #cdd6df;
-  letter-spacing: 0.5px;
-}
-
-.analyticValue {
-  font-family: var(--retro-font);
-  font-size: 1rem;
-  font-weight: 700;
-  color: #ffc300;
-  text-shadow: 0 0 6px rgba(255, 195, 0, 0.4);
-  letter-spacing: 1px;
 }
 
 /* ── Loading & Error States ──────────────────────────────── */
@@ -275,27 +500,102 @@
 }
 
 /* ── Responsive ──────────────────────────────────────────── */
+.comparisonCard {
+  background: rgba(0, 0, 0, 0.38);
+  border: 1px solid rgba(0, 221, 255, 0.14);
+  border-radius: 10px;
+  padding: 1rem 1.25rem;
+  text-align: center;
+}
+
+.comparisonValue {
+  color: #ffc300;
+  font-family: var(--retro-font);
+  font-size: 1.25rem;
+  letter-spacing: 1px;
+  margin-bottom: 0.3rem;
+}
+
+.comparisonLabel {
+  color: #8a9cb0;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-size: 0.68rem;
+}
+
+.comparisonsGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.75rem;
+}
+
 @media (max-width: 600px) {
   .container {
     padding: 1.25rem 1rem 3rem;
   }
 
-  .hero {
+  .profileCard {
+    padding: 1.5rem 1.25rem;
+  }
+
+  .profileCardHeader {
+    text-align: center;
+    margin-bottom: 0.85rem;
+  }
+
+  .profileCardBody {
     flex-direction: column;
     text-align: center;
-    padding: 1.5rem 1.25rem;
     gap: 1rem;
+    align-items: center;
+  }
+
+  .profileInfoColumn {
+    padding-top: 0;
+  }
+
+  .profileIdentity {
+    flex-direction: column;
   }
 
   .heroMeta {
     align-items: center;
   }
 
+  .playstyleTitle {
+    white-space: normal;
+  }
+
   .playerName {
     font-size: 1.5rem;
   }
 
-  .statsGrid {
+  .profileBadges {
+    justify-content: center;
+  }
+
+  .heroCategoryMiniGrid {
+    width: 100%;
+  }
+
+  .playstyleIdentityBlock {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .radarWrap {
+    flex-basis: auto;
+    width: 100%;
+  }
+
+  .radarChart {
+    width: min(100%, 340px);
+    height: auto;
+  }
+
+  .statsGrid,
+  .statsGridCompact {
     grid-template-columns: repeat(2, 1fr);
   }
 

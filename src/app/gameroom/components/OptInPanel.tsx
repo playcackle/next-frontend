@@ -10,6 +10,7 @@ import styles from "./OptInPanel.module.css";
 interface OptInPanelProps {
   onPlayAgainResponse?: (wantToPlay: boolean) => void;
   disabled?: boolean;
+  currentUserId?: string | null;
 }
 
 /**
@@ -20,12 +21,12 @@ interface OptInPanelProps {
  * - In/Out buttons with Lucide icons
  * - Live count and timeout
  */
-export default function OptInPanel({ onPlayAgainResponse, disabled = false }: OptInPanelProps) {
+export default function OptInPanel({ onPlayAgainResponse, disabled = false, currentUserId }: OptInPanelProps) {
   const playAgainState = useAtomValue(playAgainStateAtom);
   const updatePlayAgainState = useSetAtom(updatePlayAgainStateAtom);
   const timeRemaining = useAtomValue(timeRemainingAtom);
 
-  const { confirmedCount, neededToStart, userResponse, playersWaiting } = playAgainState;
+  const { confirmedCount, neededToStart, userResponse, playersWaiting, playerResponses } = playAgainState;
 
   // Use playersWaiting for the total count (players needed to play)
   const totalPlayers = playersWaiting > 0 ? playersWaiting : 1;
@@ -34,12 +35,27 @@ export default function OptInPanel({ onPlayAgainResponse, disabled = false }: Op
   // Determine user status
   const userStatus = userResponse === "yes" ? "in" : userResponse === "no" ? "out" : "pending";
 
+  // Build player circles from playerResponses data
+  // If we have individual response data, use it; otherwise fall back to placeholder circles
+  const otherPlayerResponses = Object.entries(playerResponses).filter(([pid]) => pid !== currentUserId);
+  const otherPlayersCount = totalPlayers - 1;
+  const respondedCount = otherPlayerResponses.length;
+
   // Create player circles data (user's circle is first)
   const playerCircles = [
-    { status: userStatus, isUser: true },
-    ...Array(Math.max(0, totalPlayers - 1)).fill(null).map(() => ({
+    { status: userStatus, isUser: true, displayName: "You" },
+    ...Object.entries(playerResponses)
+      .filter(([pid]) => pid !== currentUserId)
+      .map(([pid, data]) => ({
+        status: data.response as "in" | "out" | "pending",
+        isUser: false,
+        displayName: data.displayName,
+      })),
+    // Fill remaining circles as pending if we have fewer responses than expected
+    ...Array(Math.max(0, otherPlayersCount - respondedCount)).fill(null).map(() => ({
       status: "pending" as const,
       isUser: false,
+      displayName: "?",
     })),
   ];
 
@@ -73,7 +89,7 @@ export default function OptInPanel({ onPlayAgainResponse, disabled = false }: Op
                 player.status === "out" ? styles.out :
                 styles.pending
               }`}
-              title={player.isUser ? "You" : `Player ${index + 1}`}
+              title={player.displayName}
             />
           ))}
         </div>

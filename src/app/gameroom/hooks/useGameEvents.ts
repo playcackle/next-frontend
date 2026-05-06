@@ -20,6 +20,7 @@ import {
   LobbyTickPayload,
   NewRoundStartedPayload,
   PlayAgainCountUpdatePayload,
+  PlayAgainPlayerUpdatePayload,
   PlayAgainPromptPayload,
   PlayAgainResultPayload,
   RoundOverPayload,
@@ -217,6 +218,7 @@ export const useGameEvents = (gameWsUrl: string, token: string) => {
           totalWaiting: data.players_waiting,
           neededToStart: Math.max(0, data.min_players),
           userResponse: null,
+          playerResponses: {}, // Reset individual responses when new prompt appears
         });
       }),
 
@@ -225,6 +227,19 @@ export const useGameEvents = (gameWsUrl: string, token: string) => {
           confirmedCount: data.confirmed_count,
           totalWaiting: data.total_waiting,
           neededToStart: data.needed_to_start,
+        });
+      }),
+
+      onEvent("play_again_player_update", (data: PlayAgainPlayerUpdatePayload) => {
+        // Update the individual player response so UI can show who opted in/out
+        updatePlayAgainState({
+          playerResponses: {
+            ...store.get(playAgainStateAtom).playerResponses,
+            [data.player_id]: {
+              displayName: data.display_name,
+              response: data.response,
+            },
+          },
         });
       }),
 

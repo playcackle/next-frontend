@@ -129,8 +129,53 @@
 
 .topicPrompt strong,
 .topicExample strong,
-.topicCollections strong {
+.topicCollections strong,
+.topicCategory strong {
   color: #00ffff;
+}
+
+.topicCategory {
+  color: #aaa;
+  font-size: 1rem;
+  margin: 0.25rem 0;
+}
+
+.categoryBadge {
+  display: inline-block;
+  background: linear-gradient(135deg, rgba(0,221,255,0.2) 0%, rgba(0,255,136,0.15) 100%);
+  border: 1px solid rgba(0,221,255,0.5);
+  color: #00ddff;
+  padding: 0.2rem 0.75rem;
+  border-radius: 12px;
+  font-size: 0.85rem;
+  font-family: "Orbitron", sans-serif;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.select {
+  background: rgba(20, 20, 40, 0.8);
+  border: 2px solid rgba(0, 221, 255, 0.4);
+  color: white;
+  padding: 0.75rem;
+  font-family: var(--retro-font);
+  font-size: 1rem;
+  border-radius: 4px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  width: 100%;
+}
+
+.select:focus {
+  outline: none;
+  border-color: var(--neon-blue);
+  box-shadow: 0 0 15px rgba(0, 221, 255, 0.4);
+}
+
+.select option {
+  background: #1a1a2e;
+  color: white;
 }
 
 .editMetadataButton {
