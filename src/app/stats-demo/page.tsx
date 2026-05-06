@@ -13,6 +13,7 @@ import { StreakDisplay } from "./components/StreakDisplay";
 import { ShareableStatCard } from "./components/ShareableStatCard";
 import { LiveLeaderboard } from "./components/LiveLeaderboard";
 import { InteractiveCharts } from "./components/InteractiveCharts";
+import { RetentionStats } from "./components/RetentionStats";
 
 // Mock data for demonstration
 const mockPlayerStats = {
@@ -64,7 +65,7 @@ const mockTimeline = [
   { date: "May 3", score: 450 },
 ];
 
-type TabType = "overview" | "categories" | "achievements" | "analysis" | "charts" | "social";
+type TabType = "overview" | "categories" | "achievements" | "analysis" | "charts" | "retention" | "social";
 
 export default function StatsDemoPage() {
   const [activeTab, setActiveTab] = useState<TabType>("overview");
@@ -121,6 +122,23 @@ export default function StatsDemoPage() {
           <line x1="12" y1="20" x2="12" y2="4" />
           <line x1="6" y1="20" x2="6" y2="14" />
           <line x1="2" y1="20" x2="22" y2="20" />
+        </svg>
+      ),
+    },
+    {
+      id: "retention",
+      label: "Retention",
+      icon: (
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <path d="M12 2v4" />
+          <path d="m16.2 7.8 2.9-2.9" />
+          <path d="M18 12h4" />
+          <path d="m16.2 16.2 2.9 2.9" />
+          <path d="M12 18v4" />
+          <path d="m4.9 19.1 2.9-2.9" />
+          <path d="M2 12h4" />
+          <path d="m4.9 4.9 2.9 2.9" />
+          <circle cx="12" cy="12" r="4" />
         </svg>
       ),
     },
@@ -223,6 +241,10 @@ export default function StatsDemoPage() {
 
         {activeTab === "charts" && (
           <InteractiveCharts />
+        )}
+
+        {activeTab === "retention" && (
+          <RetentionStats />
         )}
 
         {activeTab === "social" && (

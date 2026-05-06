@@ -1,0 +1,1165 @@
+.container {
+  background: linear-gradient(135deg, rgba(15, 15, 35, 0.95), rgba(25, 25, 55, 0.95));
+  border-radius: 20px;
+  border: 1px solid rgba(0, 255, 255, 0.2);
+  padding: 2rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.container::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #00ffff, #ff00ff, #00ffff);
+  background-size: 200% 100%;
+  animation: gradientShift 3s linear infinite;
+}
+
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 200% 50%; }
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, #00ffff, #ff00ff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin: 0 0 0.5rem;
+}
+
+.subtitle {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+/* Section Navigation */
+.sectionNav {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 2rem;
+  padding: 0.5rem;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 12px;
+  overflow-x: auto;
+}
+
+.sectionButton {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.25rem;
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+}
+
+.sectionButton:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+}
+
+.sectionButton.active {
+  background: linear-gradient(135deg, rgba(0, 255, 255, 0.2), rgba(255, 0, 255, 0.2));
+  color: white;
+  box-shadow: 0 0 20px rgba(0, 255, 255, 0.2);
+}
+
+.sectionIcon {
+  font-size: 1.1rem;
+}
+
+/* Streaks Section */
+.streaksSection {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.streakHero {
+  text-align: center;
+  padding: 2rem;
+  background: radial-gradient(circle at center, rgba(255, 100, 0, 0.15), transparent 70%);
+  border-radius: 16px;
+  border: 1px solid rgba(255, 100, 0, 0.3);
+}
+
+.streakFireContainer {
+  position: relative;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.fireIcon {
+  position: relative;
+  width: 80px;
+  height: 100px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+}
+
+.flame {
+  position: absolute;
+  bottom: 0;
+  width: 40px;
+  height: 60px;
+  background: linear-gradient(to top, #ff4500, #ff8c00, #ffd700);
+  border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+  animation: flicker 0.5s ease-in-out infinite alternate;
+  filter: blur(1px);
+}
+
+.flame:nth-child(1) {
+  transform: translateX(-15px) scale(0.7);
+  opacity: 0.8;
+}
+
+.flame:nth-child(2) {
+  transform: scale(1);
+  z-index: 1;
+}
+
+.flame:nth-child(3) {
+  transform: translateX(15px) scale(0.7);
+  opacity: 0.8;
+}
+
+@keyframes flicker {
+  0% { transform: scale(1) rotate(-2deg); }
+  100% { transform: scale(1.05) rotate(2deg); }
+}
+
+.streakNumber {
+  font-size: 4rem;
+  font-weight: 800;
+  color: white;
+  text-shadow: 0 0 30px rgba(255, 100, 0, 0.8);
+  margin-top: -20px;
+  position: relative;
+  z-index: 2;
+}
+
+.streakLabel {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #ff8c00;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-top: 0.5rem;
+}
+
+.streakMessage {
+  color: rgba(255, 255, 255, 0.8);
+  margin-top: 1rem;
+  font-size: 1rem;
+}
+
+.freezeIndicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  padding: 0.5rem 1rem;
+  background: rgba(100, 200, 255, 0.15);
+  border-radius: 20px;
+  color: #64c8ff;
+  font-size: 0.85rem;
+}
+
+.freezeIcon {
+  font-size: 1rem;
+}
+
+.streakStatsGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+
+.streakStatCard {
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 12px;
+  padding: 1.25rem;
+  text-align: center;
+}
+
+.streakStatValue {
+  font-size: 2rem;
+  font-weight: 700;
+  color: white;
+}
+
+.streakStatLabel {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.85rem;
+  margin-top: 0.25rem;
+}
+
+.streakProgress {
+  height: 6px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+  margin-top: 1rem;
+  overflow: hidden;
+}
+
+.streakProgressBar {
+  height: 100%;
+  background: linear-gradient(90deg, #ff8c00, #ff4500);
+  border-radius: 3px;
+  transition: width 1s ease;
+}
+
+.streakProgressLabel {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+.milestoneReward {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  color: #ffd700;
+  font-size: 0.9rem;
+}
+
+.rewardIcon {
+  animation: pulse 2s ease infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+
+/* Weekly Calendar */
+.weeklyCalendar {
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 12px;
+  padding: 1.25rem;
+}
+
+.calendarTitle {
+  color: white;
+  font-size: 1rem;
+  margin: 0 0 1rem;
+  text-align: center;
+}
+
+.calendarGrid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0.5rem;
+}
+
+.calendarDay {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.75rem 0.5rem;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.calendarDay.completed {
+  background: rgba(0, 255, 100, 0.2);
+  color: #00ff64;
+}
+
+.calendarDay.today {
+  background: rgba(255, 140, 0, 0.3);
+  color: #ff8c00;
+  box-shadow: 0 0 15px rgba(255, 140, 0, 0.4);
+}
+
+.calendarDay.upcoming {
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.dayLabel {
+  font-size: 0.7rem;
+  font-weight: 600;
+}
+
+.dayIcon {
+  font-size: 1rem;
+}
+
+/* Loss Aversion Card */
+.lossAversionCard {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background: linear-gradient(135deg, rgba(255, 50, 50, 0.15), rgba(255, 100, 50, 0.15));
+  border: 1px solid rgba(255, 100, 50, 0.3);
+  border-radius: 12px;
+  padding: 1.25rem;
+}
+
+.warningIcon {
+  font-size: 2rem;
+}
+
+.warningText {
+  flex: 1;
+}
+
+.warningText strong {
+  color: #ff6432;
+  display: block;
+  margin-bottom: 0.25rem;
+}
+
+.warningText p {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.85rem;
+  margin: 0;
+}
+
+.playNowButton {
+  padding: 0.75rem 1.5rem;
+  background: linear-gradient(135deg, #ff6432, #ff8c00);
+  border: none;
+  border-radius: 8px;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.playNowButton:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 20px rgba(255, 100, 50, 0.5);
+}
+
+/* Progress Section */
+.progressSection {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.levelCard {
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 16px;
+  padding: 1.5rem;
+}
+
+.levelBadge {
+  width: 80px;
+  height: 80px;
+  background: linear-gradient(135deg, #00ffff, #0088ff);
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 0 30px rgba(0, 255, 255, 0.4);
+}
+
+.levelNumber {
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: white;
+}
+
+.levelLabel {
+  font-size: 0.6rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.8);
+  letter-spacing: 1px;
+}
+
+.xpContainer {
+  flex: 1;
+}
+
+.xpHeader {
+  display: flex;
+  justify-content: space-between;
+  color: white;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.xpTarget {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.xpBar {
+  height: 16px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.xpFill {
+  height: 100%;
+  background: linear-gradient(90deg, #00ffff, #0088ff);
+  border-radius: 8px;
+  position: relative;
+  transition: width 1.5s ease;
+}
+
+.xpShimmer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+.xpRemaining {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.8rem;
+  margin-top: 0.5rem;
+}
+
+/* Rank Card */
+.rankCard {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 12px;
+  padding: 1.25rem;
+}
+
+.currentRank, .nextRank {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.rankIcon {
+  font-size: 1.5rem;
+}
+
+.rankName {
+  color: white;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.rankProgressContainer {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.rankProgressBar {
+  flex: 1;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.rankProgressFill {
+  height: 100%;
+  background: linear-gradient(90deg, #ffd700, #ffaa00);
+  border-radius: 4px;
+}
+
+.rankProgressLabel {
+  color: #ffd700;
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+/* Milestones */
+.milestonesCard {
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 12px;
+  padding: 1.25rem;
+}
+
+.milestonesTitle {
+  color: white;
+  margin: 0 0 1rem;
+}
+
+.milestonesGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.75rem;
+}
+
+.milestone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 1rem 0.5rem;
+  border-radius: 8px;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.milestone.unlocked {
+  background: rgba(0, 255, 100, 0.1);
+}
+
+.milestone.locked {
+  background: rgba(255, 255, 255, 0.05);
+  opacity: 0.6;
+}
+
+.milestoneIcon {
+  font-size: 1.5rem;
+}
+
+.milestoneName {
+  color: white;
+  font-size: 0.7rem;
+  font-weight: 500;
+}
+
+.milestoneProgress {
+  color: #00ffff;
+  font-size: 0.65rem;
+}
+
+/* Year Over Year */
+.yoyCard {
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 12px;
+  padding: 1.25rem;
+}
+
+.yoyTitle {
+  color: white;
+  margin: 0 0 1rem;
+}
+
+.yoyGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+
+.yoyStat {
+  text-align: center;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+}
+
+.yoyStatLabel {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.75rem;
+  margin-bottom: 0.25rem;
+}
+
+.yoyStatValue {
+  color: white;
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.yoyChange {
+  font-size: 0.75rem;
+  margin-top: 0.25rem;
+}
+
+.yoyChange.positive {
+  color: #00ff64;
+}
+
+.yoyChange.negative {
+  color: #ff4444;
+}
+
+/* Challenges Section */
+.challengesSection {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.challengeGroup {
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 12px;
+  padding: 1.25rem;
+}
+
+.challengeGroupHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.challengeGroupHeader h4 {
+  color: white;
+  margin: 0;
+}
+
+.resetTimer {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.8rem;
+}
+
+.challengeList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.challengeItem {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.challengeItem.completed {
+  background: rgba(0, 255, 100, 0.1);
+  border: 1px solid rgba(0, 255, 100, 0.3);
+}
+
+.challengeInfo {
+  flex: 1;
+}
+
+.challengeName {
+  color: white;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+}
+
+.challengeProgressBar {
+  height: 6px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.challengeProgressFill {
+  height: 100%;
+  background: linear-gradient(90deg, #00ffff, #00ff88);
+  border-radius: 3px;
+  transition: width 0.5s ease;
+}
+
+.challengeProgressText {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.75rem;
+  margin-top: 0.25rem;
+}
+
+.challengeReward {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.125rem;
+}
+
+.rewardAmount {
+  color: #ffd700;
+  font-weight: 700;
+  font-size: 1rem;
+}
+
+.rewardType {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.7rem;
+}
+
+.claimedBadge {
+  color: #00ff64;
+  font-size: 1.25rem;
+}
+
+/* Bonus Challenge */
+.bonusChallenge {
+  background: linear-gradient(135deg, rgba(255, 200, 0, 0.15), rgba(255, 100, 0, 0.15));
+  border: 1px solid rgba(255, 200, 0, 0.3);
+  border-radius: 12px;
+  padding: 1.25rem;
+  text-align: center;
+}
+
+.bonusHeader {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.bonusIcon {
+  font-size: 1.25rem;
+}
+
+.bonusTitle {
+  color: #ffd700;
+  font-weight: 700;
+  font-size: 0.85rem;
+  letter-spacing: 1px;
+}
+
+.bonusContent {
+  margin-bottom: 1rem;
+}
+
+.bonusName {
+  color: white;
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+
+.bonusReward {
+  color: #ffd700;
+  font-size: 0.9rem;
+}
+
+.bonusProgress {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.85rem;
+}
+
+.bonusProgressDots {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.dot.filled {
+  background: #ffd700;
+  box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+}
+
+/* Social Section */
+.socialSection {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.friendLeaderboard {
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 12px;
+  padding: 1.25rem;
+}
+
+.leaderboardTitle {
+  color: white;
+  margin: 0 0 1rem;
+}
+
+.leaderboardList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.leaderboardItem {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.leaderboardItem.youItem {
+  background: rgba(0, 255, 255, 0.1);
+  border: 1px solid rgba(0, 255, 255, 0.3);
+}
+
+.leaderboardRank {
+  color: rgba(255, 255, 255, 0.5);
+  font-weight: 700;
+  width: 30px;
+}
+
+.leaderboardAvatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #ff00ff, #00ffff);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 700;
+}
+
+.leaderboardInfo {
+  flex: 1;
+}
+
+.leaderboardName {
+  color: white;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.youBadge {
+  font-size: 0.65rem;
+  padding: 0.125rem 0.375rem;
+  background: rgba(0, 255, 255, 0.3);
+  border-radius: 4px;
+  color: #00ffff;
+}
+
+.leaderboardStats {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.75rem;
+}
+
+.leaderboardScore {
+  color: #ffd700;
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+.catchUpMessage {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  padding: 0.75rem;
+  background: rgba(0, 255, 255, 0.1);
+  border-radius: 8px;
+  color: #00ffff;
+  font-size: 0.9rem;
+}
+
+.catchUpIcon {
+  font-size: 1rem;
+}
+
+/* Social Stats */
+.socialStats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+.socialStatCard {
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 12px;
+  padding: 1.25rem;
+  text-align: center;
+}
+
+.socialStatIcon {
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.socialStatValue {
+  color: white;
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.socialStatLabel {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.75rem;
+  margin-top: 0.25rem;
+}
+
+/* Invite Card */
+.inviteCard {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background: linear-gradient(135deg, rgba(138, 43, 226, 0.2), rgba(0, 191, 255, 0.2));
+  border: 1px solid rgba(138, 43, 226, 0.3);
+  border-radius: 12px;
+  padding: 1.25rem;
+}
+
+.inviteIcon {
+  font-size: 2rem;
+}
+
+.inviteText {
+  flex: 1;
+}
+
+.inviteText strong {
+  color: white;
+  display: block;
+  margin-bottom: 0.25rem;
+}
+
+.inviteText p {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.85rem;
+  margin: 0;
+}
+
+.inviteButton {
+  padding: 0.75rem 1.5rem;
+  background: linear-gradient(135deg, #8a2be2, #00bfff);
+  border: none;
+  border-radius: 8px;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.inviteButton:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 20px rgba(138, 43, 226, 0.5);
+}
+
+/* Records Section */
+.recordsSection {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.personalBests {
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 12px;
+  padding: 1.25rem;
+}
+
+.bestsTitle {
+  color: white;
+  margin: 0 0 1rem;
+}
+
+.bestsGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+.bestCard {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  padding: 1rem;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.bestCard:hover {
+  background: rgba(255, 255, 255, 0.1);
+  transform: translateY(-2px);
+}
+
+.bestIcon {
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.bestValue {
+  color: white;
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.bestLabel {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.75rem;
+  margin-top: 0.25rem;
+}
+
+/* Near Misses */
+.nearMisses {
+  background: linear-gradient(135deg, rgba(255, 200, 0, 0.1), rgba(255, 100, 0, 0.1));
+  border: 1px solid rgba(255, 200, 0, 0.2);
+  border-radius: 12px;
+  padding: 1.25rem;
+}
+
+.nearMissTitle {
+  color: #ffd700;
+  margin: 0 0 0.25rem;
+}
+
+.nearMissSubtitle {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.85rem;
+  margin: 0 0 1rem;
+}
+
+.nearMissList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.nearMissItem {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+}
+
+.nearMissIcon {
+  font-size: 1.5rem;
+}
+
+.nearMissInfo {
+  flex: 1;
+}
+
+.nearMissInfo strong {
+  color: white;
+  display: block;
+  margin-bottom: 0.125rem;
+}
+
+.nearMissInfo span {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.8rem;
+}
+
+/* Comeback Stats */
+.comebackStats {
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 12px;
+  padding: 1.25rem;
+}
+
+.comebackTitle {
+  color: white;
+  margin: 0 0 1rem;
+}
+
+.comebackGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.comebackStat {
+  text-align: center;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+}
+
+.comebackValue {
+  color: #00ffff;
+  font-size: 1.75rem;
+  font-weight: 700;
+}
+
+.comebackLabel {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.75rem;
+  margin-top: 0.25rem;
+}
+
+.comebackMessage {
+  text-align: center;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.9rem;
+  padding: 0.75rem;
+  background: rgba(0, 255, 255, 0.1);
+  border-radius: 8px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .sectionNav {
+    flex-wrap: nowrap;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .sectionButton {
+    padding: 0.5rem 1rem;
+    font-size: 0.8rem;
+  }
+
+  .streakStatsGrid,
+  .yoyGrid,
+  .socialStats,
+  .bestsGrid,
+  .comebackGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .milestonesGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .levelCard {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .rankCard {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .lossAversionCard {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .inviteCard {
+    flex-direction: column;
+    text-align: center;
+  }
+}
