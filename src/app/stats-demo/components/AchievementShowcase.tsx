@@ -1,5 +1,7 @@
 "use client";
 
+import { Check, Flame, Gem, Heart, Lock, LockKeyhole, Medal, Star, Trophy } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 import { useState } from "react";
 import styles from "./AchievementShowcase.module.css";
 
@@ -15,11 +17,11 @@ type Props = {
   achievements: Achievement[];
 };
 
-const rarityConfig = {
-  common: { label: "Common", color: "blue", icon: "⭐" },
-  rare: { label: "Rare", color: "purple", icon: "💜" },
-  epic: { label: "Epic", color: "pink", icon: "🔥" },
-  legendary: { label: "Legendary", color: "green", icon: "💎" },
+const rarityConfig: Record<string, { label: string; color: string; icon: LucideIcon }> = {
+  common: { label: "Common", color: "blue", icon: Star },
+  rare: { label: "Rare", color: "purple", icon: Heart },
+  epic: { label: "Epic", color: "pink", icon: Flame },
+  legendary: { label: "Legendary", color: "green", icon: Gem },
 };
 
 export function AchievementShowcase({ achievements }: Props) {
@@ -40,7 +42,7 @@ export function AchievementShowcase({ achievements }: Props) {
     <div className={styles.container}>
       <div className={styles.header}>
         <h2 className={styles.sectionTitle}>
-          <span className={styles.titleIcon}>🏅</span>
+          <span className={styles.titleIcon}><Medal size={20} /></span>
           Achievements
         </h2>
         
@@ -96,7 +98,7 @@ export function AchievementShowcase({ achievements }: Props) {
               )}
             >
               <div className={styles.achievementIcon}>
-                {achievement.earned ? rarity.icon : "🔒"}
+                {achievement.earned ? <rarity.icon size={20} /> : <Lock size={20} />}
               </div>
               
               <div className={styles.achievementContent}>
@@ -121,9 +123,9 @@ export function AchievementShowcase({ achievements }: Props) {
         <div className={styles.detailPanel}>
           <div className={styles.detailHeader}>
             <span className={styles.detailIcon}>
-              {selectedAchievement.earned 
-                ? rarityConfig[selectedAchievement.rarity].icon 
-                : "🔒"
+              {selectedAchievement.earned
+                ? (() => { const Icon = rarityConfig[selectedAchievement.rarity].icon; return <Icon size={20} />; })()
+                : <Lock size={20} />
               }
             </span>
             <div>
@@ -139,12 +141,12 @@ export function AchievementShowcase({ achievements }: Props) {
           <div className={styles.detailStatus}>
             {selectedAchievement.earned ? (
               <div className={styles.earnedStatus}>
-                <span className={styles.statusIcon}>✓</span>
+                <span className={styles.statusIcon}><Check size={16} /></span>
                 <span>Achievement Unlocked!</span>
               </div>
             ) : (
               <div className={styles.lockedStatus}>
-                <span className={styles.statusIcon}>🔐</span>
+                <span className={styles.statusIcon}><LockKeyhole size={16} /></span>
                 <span>Keep playing to unlock</span>
               </div>
             )}
@@ -157,7 +159,7 @@ export function AchievementShowcase({ achievements }: Props) {
         <div className={styles.legendItems}>
           {Object.entries(rarityConfig).map(([key, value]) => (
             <div key={key} className={styles.legendItem}>
-              <span className={styles.legendIcon}>{value.icon}</span>
+              <span className={styles.legendIcon}><value.icon size={16} /></span>
               <span className={`${styles.legendLabel} ${styles[`text_${value.color}`]}`}>
                 {value.label}
               </span>

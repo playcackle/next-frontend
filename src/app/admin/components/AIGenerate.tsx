@@ -7,6 +7,7 @@ import {
   type TopicAnalysisResponse,
   type TopicGenerateResponse,
 } from "@/lib/api/admin";
+import { AlertTriangle, ArrowLeft, Bot, Rocket, Save, Search, Trash2, X } from "lucide-react";
 import React, { useState } from "react";
 import styles from "./AIGenerate.module.css";
 
@@ -45,7 +46,7 @@ export default function AIGenerate({
   topicName = "",
   onComplete,
   onClose,
-  title = "🤖 AI Generate Slots",
+  title = <><Bot size={16} /> AI Generate Slots</>,
 }: AIGenerateProps) {
   const [step, setStep] = useState<
     "input" | "analysing" | "analysed" | "generating" | "preview" | "saving"
@@ -211,7 +212,7 @@ export default function AIGenerate({
         <h3 className={styles.title}>{title}</h3>
         {onClose && (
           <button className={styles.closeButton} onClick={handleClose}>
-            ✕
+            <X size={16} />
           </button>
         )}
       </div>
@@ -219,7 +220,7 @@ export default function AIGenerate({
       {error && (
         <div className={styles.error}>
           {error}
-          <button onClick={() => setError(null)}>✕</button>
+          <button onClick={() => setError(null)}><X size={16} /></button>
         </div>
       )}
 
@@ -262,7 +263,7 @@ export default function AIGenerate({
             onClick={handleAnalyse}
             disabled={!name.trim() || !example.trim()}
           >
-            🔍 ANALYSE TOPIC
+            <Search size={16} /> ANALYSE TOPIC
           </button>
         </div>
       )}
@@ -297,7 +298,7 @@ export default function AIGenerate({
           {!analysis.is_suitable && (
             <div className={styles.estimateWarning}>
               <p style={{ margin: "0 0 0.5rem" }}>
-                ⚠️ This topic may not be suitable as-is. Consider narrowing:
+                <AlertTriangle size={16} /> This topic may not be suitable as-is. Consider narrowing:
               </p>
               <ul className={styles.suggestionsList}>
                 {analysis.suggestions.map((s, i) => (
@@ -389,14 +390,14 @@ export default function AIGenerate({
                 setStep("input");
               }}
             >
-              ← BACK
+              <ArrowLeft size={16} /> BACK
             </button>
             <button
               className={styles.submitButton}
               onClick={handleGenerate}
               disabled={!analysis.is_suitable}
             >
-              {analysis.is_suitable ? "🚀 GENERATE" : "⚠️ NOT SUITABLE"}
+              {analysis.is_suitable ? <><Rocket size={16} /> GENERATE</> : <><AlertTriangle size={16} /> NOT SUITABLE</>}
             </button>
           </div>
         </div>
@@ -481,7 +482,7 @@ export default function AIGenerate({
                   className={styles.deleteSlotButton}
                   onClick={() => handleDeleteSlot(index)}
                 >
-                  🗑️
+                  <Trash2 size={16} />
                 </button>
               </div>
             ))}
@@ -496,14 +497,14 @@ export default function AIGenerate({
                 setStep("analysed");
               }}
             >
-              ← BACK
+              <ArrowLeft size={16} /> BACK
             </button>
             <button
               className={styles.submitButton}
               onClick={handleSave}
               disabled={editedSlots.length === 0}
             >
-              💾 SAVE {editedSlots.length} SLOTS
+              <Save size={16} /> SAVE {editedSlots.length} SLOTS
             </button>
           </div>
         </div>

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { Metadata } from "next";
+import { ArrowLeft, ArrowRight } from "lucide-react";
 import styles from "./page.module.css";
 
 export const metadata: Metadata = {
@@ -110,10 +111,10 @@ export default function TermsPage() {
 
       <div className={styles.footer}>
         <Link href="/" className={styles.backLink}>
-          ← Back to home
+          <ArrowLeft size={16} /> Back to home
         </Link>
         <Link href="/privacy" className={styles.backLink}>
-          Privacy Policy →
+          Privacy Policy <ArrowRight size={16} />
         </Link>
       </div>
     </div>

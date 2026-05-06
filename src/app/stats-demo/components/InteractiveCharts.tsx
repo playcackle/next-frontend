@@ -1,5 +1,7 @@
 'use client';
 
+import { BarChart2 as BarChart2Icon, PieChart as PieChartIcon, Signal, Sparkles, Target, TrendingDown, TrendingUp } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 import { useState } from 'react';
 import {
   LineChart,
@@ -108,14 +110,14 @@ export function InteractiveCharts() {
   });
   const [dataMetric, setDataMetric] = useState<'score' | 'accuracy' | 'gamesPlayed'>('score');
 
-  const chartTypes: { id: ChartType; label: string; icon: string }[] = [
-    { id: 'composed', label: 'Composed', icon: '📊' },
-    { id: 'line', label: 'Line', icon: '📈' },
-    { id: 'area', label: 'Area', icon: '📉' },
-    { id: 'bar', label: 'Bar', icon: '📶' },
-    { id: 'pie', label: 'Pie', icon: '🥧' },
-    { id: 'radar', label: 'Radar', icon: '🎯' },
-    { id: 'scatter', label: 'Scatter', icon: '✨' },
+  const chartTypes: { id: ChartType; label: string; icon: LucideIcon }[] = [
+    { id: 'composed', label: 'Composed', icon: BarChart2Icon },
+    { id: 'line', label: 'Line', icon: TrendingUp },
+    { id: 'area', label: 'Area', icon: TrendingDown },
+    { id: 'bar', label: 'Bar', icon: Signal },
+    { id: 'pie', label: 'Pie', icon: PieChartIcon },
+    { id: 'radar', label: 'Radar', icon: Target },
+    { id: 'scatter', label: 'Scatter', icon: Sparkles },
   ];
 
   const CustomTooltip = ({ active, payload, label }: any) => {
@@ -275,7 +277,7 @@ export function InteractiveCharts() {
                 cx="50%"
                 cy="50%"
                 labelLine={false}
-                label={({ name, percent }) => `${name} (${(percent * 100).toFixed(0)}%)`}
+                label={({ name, percent }: { name?: string; percent?: number }) => `${name ?? ""} (${((percent ?? 0) * 100).toFixed(0)}%)`}
                 outerRadius={150}
                 innerRadius={60}
                 paddingAngle={5}
@@ -371,7 +373,7 @@ export function InteractiveCharts() {
             className={`${styles.chartTypeButton} ${activeChart === type.id ? styles.active : ''}`}
             onClick={() => setActiveChart(type.id)}
           >
-            <span className={styles.chartIcon}>{type.icon}</span>
+            <span className={styles.chartIcon}><type.icon size={16} /></span>
             <span className={styles.chartLabel}>{type.label}</span>
           </button>
         ))}

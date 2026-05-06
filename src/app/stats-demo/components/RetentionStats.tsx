@@ -1,6 +1,27 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import {
+  AlertTriangle,
+  Award,
+  BarChart2,
+  Check,
+  Crown,
+  Dumbbell,
+  Flame,
+  Gamepad2,
+  Gift,
+  Medal,
+  Snowflake,
+  Star,
+  Swords,
+  Target,
+  TrendingDown,
+  TrendingUp,
+  Trophy,
+  Users,
+  Zap,
+} from "lucide-react";
+import React, { useState, useEffect } from "react";
 import styles from "./RetentionStats.module.css";
 
 // Mock data for retention-focused stats
@@ -108,12 +129,12 @@ export function RetentionStats() {
 
   const easeOutCubic = (t: number) => 1 - Math.pow(1 - t, 3);
 
-  const sections = [
-    { id: "streaks", label: "Streaks", icon: "🔥" },
-    { id: "progress", label: "Progress", icon: "📈" },
-    { id: "challenges", label: "Challenges", icon: "🎯" },
-    { id: "social", label: "Friends", icon: "👥" },
-    { id: "records", label: "Records", icon: "🏆" },
+  const sections: { id: string; label: string; Icon: React.ElementType }[] = [
+    { id: "streaks", label: "Streaks", Icon: Flame },
+    { id: "progress", label: "Progress", Icon: TrendingUp },
+    { id: "challenges", label: "Challenges", Icon: Target },
+    { id: "social", label: "Friends", Icon: Users },
+    { id: "records", label: "Records", Icon: Trophy },
   ];
 
   return (
@@ -130,7 +151,7 @@ export function RetentionStats() {
             className={`${styles.sectionButton} ${activeSection === section.id ? styles.active : ""}`}
             onClick={() => setActiveSection(section.id as typeof activeSection)}
           >
-            <span className={styles.sectionIcon}>{section.icon}</span>
+            <span className={styles.sectionIcon}><section.Icon size={16} /></span>
             <span>{section.label}</span>
           </button>
         ))}
@@ -157,7 +178,7 @@ export function RetentionStats() {
               </div>
               {mockRetentionData.streakFreezes > 0 && (
                 <div className={styles.freezeIndicator}>
-                  <span className={styles.freezeIcon}>❄️</span>
+                  <span className={styles.freezeIcon}><Snowflake size={16} /></span>
                   <span>{mockRetentionData.streakFreezes} streak freezes available</span>
                 </div>
               )}
@@ -183,7 +204,7 @@ export function RetentionStats() {
                 <div className={styles.streakStatValue}>7</div>
                 <div className={styles.streakStatLabel}>Next Milestone</div>
                 <div className={styles.milestoneReward}>
-                  <span className={styles.rewardIcon}>🎁</span>
+                  <span className={styles.rewardIcon}><Gift size={16} /></span>
                   <span>+100 XP Bonus</span>
                 </div>
               </div>
@@ -200,7 +221,7 @@ export function RetentionStats() {
                   >
                     <span className={styles.dayLabel}>{day}</span>
                     <span className={styles.dayIcon}>
-                      {i < 5 ? "✓" : i === 5 ? "🔥" : "○"}
+                      {i < 5 ? <Check size={12} /> : i === 5 ? <Flame size={12} /> : "○"}
                     </span>
                   </div>
                 ))}
@@ -209,7 +230,7 @@ export function RetentionStats() {
 
             {/* Loss Aversion Message */}
             <div className={styles.lossAversionCard}>
-              <div className={styles.warningIcon}>⚠️</div>
+              <div className={styles.warningIcon}><AlertTriangle size={20} /></div>
               <div className={styles.warningText}>
                 <strong>Don&apos;t lose your streak!</strong>
                 <p>Missing tomorrow will reset your {mockRetentionData.currentStreak}-day streak. Play now to keep it alive!</p>
@@ -249,12 +270,12 @@ export function RetentionStats() {
             {/* Rank Progress */}
             <div className={styles.rankCard}>
               <div className={styles.currentRank}>
-                <div className={styles.rankIcon}>🥇</div>
+                <div className={styles.rankIcon}><Award size={20} /></div>
                 <div className={styles.rankName}>{mockRetentionData.progression.rank}</div>
               </div>
               <div className={styles.rankProgressContainer}>
                 <div className={styles.rankProgressBar}>
-                  <div 
+                  <div
                     className={styles.rankProgressFill}
                     style={{ width: `${mockRetentionData.progression.rankProgress}%` }}
                   />
@@ -262,7 +283,7 @@ export function RetentionStats() {
                 <div className={styles.rankProgressLabel}>{mockRetentionData.progression.rankProgress}%</div>
               </div>
               <div className={styles.nextRank}>
-                <div className={styles.rankIcon}>🏆</div>
+                <div className={styles.rankIcon}><Trophy size={20} /></div>
                 <div className={styles.rankName}>{mockRetentionData.progression.nextRank}</div>
               </div>
             </div>
@@ -277,15 +298,18 @@ export function RetentionStats() {
                     className={`${styles.milestone} ${milestone.unlocked ? styles.unlocked : styles.locked}`}
                   >
                     <div className={styles.milestoneIcon}>
-                      {milestone.unlocked ? (
-                        milestone.icon === "trophy" ? "🏆" :
-                        milestone.icon === "games" ? "🎮" :
-                        milestone.icon === "fire" ? "🔥" :
-                        milestone.icon === "star" ? "⭐" :
-                        milestone.icon === "crown" ? "👑" :
-                        milestone.icon === "flame" ? "🔥" :
-                        milestone.icon === "diamond" ? "💎" : "🏅"
-                      ) : "🔒"}
+                      {milestone.unlocked ? (() => {
+                        const iconMap: Record<string, React.ReactNode> = {
+                          trophy: <Trophy size={18} />,
+                          games: <Gamepad2 size={18} />,
+                          fire: <Flame size={18} />,
+                          star: <Star size={18} />,
+                          crown: <Crown size={18} />,
+                          flame: <Flame size={18} />,
+                          diamond: <Zap size={18} />,
+                        };
+                        return iconMap[milestone.icon] ?? <Medal size={18} />;
+                      })() : <Medal size={18} />}
                     </div>
                     <div className={styles.milestoneName}>{milestone.name}</div>
                     {!milestone.unlocked && milestone.progress && (
@@ -315,7 +339,7 @@ export function RetentionStats() {
                         {stat.current.toLocaleString()}{stat.suffix || ""}
                       </div>
                       <div className={`${styles.yoyChange} ${isPositive ? styles.positive : styles.negative}`}>
-                        {isPositive ? "↑" : "↓"} {Math.abs(Number(change))}% vs last year
+                        {isPositive ? <TrendingUp size={12} /> : <TrendingDown size={12} />} {Math.abs(Number(change))}% vs last year
                       </div>
                     </div>
                   );
@@ -468,7 +492,7 @@ export function RetentionStats() {
                 <div className={styles.socialStatLabel}>Friends Beaten Today</div>
               </div>
               <div className={styles.socialStatCard}>
-                <div className={styles.socialStatIcon}><BarChart3 size={20} /></div>
+                <div className={styles.socialStatIcon}><BarChart2 size={20} /></div>
                 <div className={styles.socialStatValue}>Top 15%</div>
                 <div className={styles.socialStatLabel}>Global Ranking</div>
               </div>

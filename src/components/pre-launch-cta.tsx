@@ -1,5 +1,6 @@
 "use client";
 
+import { MessageSquare } from "lucide-react";
 import styles from "./pre-launch-cta.module.css";
 
 const DISCORD_URL = process.env.NEXT_PUBLIC_DISCORD_URL ?? "https://discord.gg/ZFHaCs7ut6";
@@ -25,7 +26,7 @@ export default function PreLaunchCta() {
         className={styles.discordButton}
       >
         <div className={styles.buttonContent}>
-          <span className={styles.buttonIcon}>💬</span>
+          <span className={styles.buttonIcon}><MessageSquare size={16} /></span>
           <div className={styles.buttonTextContainer}>
             <span className={styles.buttonTitle}>JOIN THE DISCORD</span>
             <span className={styles.buttonSubtitle}>

@@ -14,7 +14,7 @@ import { ShareableStatCard } from "./components/ShareableStatCard";
 import { LiveLeaderboard } from "./components/LiveLeaderboard";
 import { InteractiveCharts } from "./components/InteractiveCharts";
 import { RetentionStats } from "./components/RetentionStats";
-import { Sparkles, Zap, Trophy } from "lucide-react";
+import { Sparkles, Star, Trophy, Zap } from "lucide-react";
 
 // Mock data for demonstration
 const mockPlayerStats = {
@@ -37,21 +37,21 @@ const mockPlayerStats = {
 };
 
 const mockCategoryStats = [
-  { name: "Movies & TV", score: 3420, gamesPlayed: 12, accuracy: 82.3, color: "pink" },
-  { name: "Music", score: 2890, gamesPlayed: 10, accuracy: 75.1, color: "blue" },
-  { name: "Science", score: 2150, gamesPlayed: 8, accuracy: 71.2, color: "purple" },
-  { name: "History", score: 1980, gamesPlayed: 7, accuracy: 68.9, color: "green" },
-  { name: "Sports", score: 1210, gamesPlayed: 6, accuracy: 65.4, color: "pink" },
-  { name: "Geography", score: 800, gamesPlayed: 4, accuracy: 62.1, color: "blue" },
+  { name: "Movies & TV", score: 3420, gamesPlayed: 12, accuracy: 82.3, color: "pink" as const },
+  { name: "Music", score: 2890, gamesPlayed: 10, accuracy: 75.1, color: "blue" as const },
+  { name: "Science", score: 2150, gamesPlayed: 8, accuracy: 71.2, color: "purple" as const },
+  { name: "History", score: 1980, gamesPlayed: 7, accuracy: 68.9, color: "green" as const },
+  { name: "Sports", score: 1210, gamesPlayed: 6, accuracy: 65.4, color: "pink" as const },
+  { name: "Geography", score: 800, gamesPlayed: 4, accuracy: 62.1, color: "blue" as const },
 ];
 
 const mockAchievements = [
-  { id: 1, title: "Speed Demon", description: "Snapped 5 slots in under 10 seconds", earned: true, rarity: "rare" },
-  { id: 2, title: "Perfect Round", description: "Got 100% accuracy in a round", earned: true, rarity: "epic" },
-  { id: 3, title: "Rare Hunter", description: "Claimed 10 rare slots", earned: true, rarity: "legendary" },
-  { id: 4, title: "Streak Master", description: "Won 5 games in a row", earned: false, rarity: "epic" },
-  { id: 5, title: "First Blood", description: "Be the first to snap in a round", earned: true, rarity: "common" },
-  { id: 6, title: "Knowledge King", description: "Score 500+ in a single game", earned: true, rarity: "rare" },
+  { id: 1, title: "Speed Demon", description: "Snapped 5 slots in under 10 seconds", earned: true, rarity: "rare" as const },
+  { id: 2, title: "Perfect Round", description: "Got 100% accuracy in a round", earned: true, rarity: "epic" as const },
+  { id: 3, title: "Rare Hunter", description: "Claimed 10 rare slots", earned: true, rarity: "legendary" as const },
+  { id: 4, title: "Streak Master", description: "Won 5 games in a row", earned: false, rarity: "epic" as const },
+  { id: 5, title: "First Blood", description: "Be the first to snap in a round", earned: true, rarity: "common" as const },
+  { id: 6, title: "Knowledge King", description: "Score 500+ in a single game", earned: true, rarity: "rare" as const },
 ];
 
 const mockTimeline = [

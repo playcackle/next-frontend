@@ -1,5 +1,6 @@
 "use client";
 
+import { AlertTriangle, ArrowLeft, CheckCircle, ClipboardList, Rocket, Search, Star, X } from "lucide-react";
 import { useState } from "react";
 import { generationApi, type Slot } from "@/lib/api/admin";
 import styles from "./SlotImport.module.css";
@@ -200,10 +201,10 @@ export default function SlotImport({
   return (
     <div className={styles.container}>
       <div className={styles.header}>
-        <h3 className={styles.title}>📋 Import Slots from JSON</h3>
+        <h3 className={styles.title}><ClipboardList size={16} /> Import Slots from JSON</h3>
         {onClose && (
           <button className={styles.closeButton} onClick={onClose}>
-            ✕
+            <X size={16} />
           </button>
         )}
       </div>
@@ -211,7 +212,7 @@ export default function SlotImport({
       {submitError && (
         <div className={styles.error}>
           {submitError}
-          <button onClick={() => setSubmitError(null)}>✕</button>
+          <button onClick={() => setSubmitError(null)}><X size={16} /></button>
         </div>
       )}
 
@@ -236,14 +237,14 @@ export default function SlotImport({
               rows={14}
               spellCheck={false}
             />
-            {parseError && <p className={styles.parseError}>⚠ {parseError}</p>}
+            {parseError && <p className={styles.parseError}><AlertTriangle size={14} /> {parseError}</p>}
           </div>
           <button
             className={styles.submitButton}
             onClick={handleParse}
             disabled={!jsonText.trim()}
           >
-            🔍 PARSE JSON
+            <Search size={16} /> PARSE JSON
           </button>
         </div>
       )}
@@ -300,14 +301,14 @@ export default function SlotImport({
                     checked={slot.is_rare}
                     onChange={(e) => handleEdit(i, "is_rare", e.target.checked)}
                   />
-                  ⭐
+                  <Star size={14} />
                 </label>
                 <button
                   className={styles.deleteButton}
                   onClick={() => handleDelete(i)}
                   title="Remove"
                 >
-                  ✕
+                  <X size={14} />
                 </button>
                 <div className={styles.aliasRow}>
                   <span className={styles.aliasLabel}>aliases:</span>
@@ -339,14 +340,14 @@ export default function SlotImport({
                 setStep("paste");
               }}
             >
-              ← BACK
+              <ArrowLeft size={16} /> BACK
             </button>
             <button
               className={styles.submitButton}
               onClick={handlePost}
               disabled={validCount === 0}
             >
-              🚀 POST {validCount} SLOTS
+              <Rocket size={16} /> POST {validCount} SLOTS
             </button>
           </div>
         </div>
@@ -363,7 +364,7 @@ export default function SlotImport({
       {/* Step 4: Done */}
       {step === "done" && (
         <div className={styles.done}>
-          <p className={styles.doneText}>✅ {created} slots created</p>
+          <p className={styles.doneText}><CheckCircle size={16} /> {created} slots created</p>
           <button
             className={styles.submitButton}
             onClick={() => {

@@ -1,5 +1,7 @@
 "use client";
 
+import { Dices, Flame, Gem, Lightbulb, Scale, Sparkles, Target, Zap, Brain } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 import { useState } from "react";
 import styles from "./PlayStyleAnalysis.module.css";
 
@@ -25,7 +27,7 @@ type Props = {
 
 type PlayStyle = {
   name: string;
-  icon: string;
+  icon: LucideIcon;
   description: string;
   traits: string[];
   color: "blue" | "pink" | "purple" | "green";
@@ -41,7 +43,7 @@ function determinePlayStyle(stats: Stats): PlayStyle {
   if (accuracy > 80 && speed > 70) {
     return {
       name: "Precision Striker",
-      icon: "🎯",
+      icon: Target,
       description: "You combine deadly accuracy with lightning-fast reflexes. A true elite player.",
       traits: ["High Accuracy", "Quick Reactions", "Calculated Risk"],
       color: "green",
@@ -51,7 +53,7 @@ function determinePlayStyle(stats: Stats): PlayStyle {
   if (speed > 80) {
     return {
       name: "Speed Demon",
-      icon: "⚡",
+      icon: Zap,
       description: "You live for the rush! First to answer, you thrive on quick-fire rounds.",
       traits: ["Fast Reflexes", "Aggressive", "Risk Taker"],
       color: "pink",
@@ -61,7 +63,7 @@ function determinePlayStyle(stats: Stats): PlayStyle {
   if (rareHunting > 60) {
     return {
       name: "Treasure Hunter",
-      icon: "💎",
+      icon: Gem,
       description: "You have a nose for the hidden gems. Rare answers are your specialty.",
       traits: ["Knowledge Deep-Diver", "Patient", "High Value Target"],
       color: "purple",
@@ -71,7 +73,7 @@ function determinePlayStyle(stats: Stats): PlayStyle {
   if (accuracy > 75) {
     return {
       name: "Methodical Master",
-      icon: "🧠",
+      icon: Brain,
       description: "Quality over quantity. You take your time and rarely miss.",
       traits: ["High Precision", "Strategic", "Reliable"],
       color: "blue",
@@ -81,7 +83,7 @@ function determinePlayStyle(stats: Stats): PlayStyle {
   if (volume > 70) {
     return {
       name: "Volume Virtuoso",
-      icon: "🔥",
+      icon: Flame,
       description: "You play the numbers game! More attempts means more points.",
       traits: ["High Activity", "Persistent", "Fearless"],
       color: "pink",
@@ -90,7 +92,7 @@ function determinePlayStyle(stats: Stats): PlayStyle {
 
   return {
     name: "Balanced Player",
-    icon: "⚖️",
+    icon: Scale,
     description: "You have a well-rounded approach with no major weaknesses.",
     traits: ["Versatile", "Adaptable", "Consistent"],
     color: "blue",
@@ -153,12 +155,12 @@ export function PlayStyleAnalysis({ stats, categories }: Props) {
   return (
     <div className={styles.container}>
       <h2 className={styles.sectionTitle}>
-        <span className={styles.titleIcon}>🔮</span>
+        <span className={styles.titleIcon}><Sparkles size={20} /></span>
         Play Style Analysis
       </h2>
 
       <div className={`${styles.styleCard} ${styles[`card_${playStyle.color}`]}`}>
-        <div className={styles.styleIcon}>{playStyle.icon}</div>
+        <div className={styles.styleIcon}><playStyle.icon size={24} /></div>
         <div className={styles.styleContent}>
           <h3 className={styles.styleName}>{playStyle.name}</h3>
           <p className={styles.styleDescription}>{playStyle.description}</p>
@@ -192,7 +194,7 @@ export function PlayStyleAnalysis({ stats, categories }: Props) {
           <ul className={styles.insightList}>
             {insights.map((insight, index) => (
               <li key={index} className={styles.insightItem}>
-                <span className={styles.insightIcon}>✨</span>
+                <span className={styles.insightIcon}><Sparkles size={14} /></span>
                 <span>{insight}</span>
               </li>
             ))}
@@ -201,7 +203,7 @@ export function PlayStyleAnalysis({ stats, categories }: Props) {
           <ul className={styles.tipList}>
             {tips.map((tip, index) => (
               <li key={index} className={styles.tipItem}>
-                <span className={styles.tipIcon}>💡</span>
+                <span className={styles.tipIcon}><Lightbulb size={14} /></span>
                 <span>{tip}</span>
               </li>
             ))}
@@ -210,7 +212,7 @@ export function PlayStyleAnalysis({ stats, categories }: Props) {
       </div>
 
       <div className={styles.funFact}>
-        <div className={styles.funFactIcon}>🎲</div>
+        <div className={styles.funFactIcon}><Dices size={20} /></div>
         <div className={styles.funFactContent}>
           <div className={styles.funFactLabel}>Random Fun Fact</div>
           <div className={styles.funFactText}>

@@ -1,5 +1,6 @@
 "use client";
 
+import { ArrowDown, ArrowUp, TrendingUp } from "lucide-react";
 import { useState } from "react";
 import styles from "./ScoreTimeline.module.css";
 
@@ -28,13 +29,13 @@ export function ScoreTimeline({ data }: Props) {
     <div className={styles.container}>
       <div className={styles.header}>
         <h2 className={styles.sectionTitle}>
-          <span className={styles.titleIcon}>📈</span>
+          <span className={styles.titleIcon}><TrendingUp size={20} /></span>
           Score History
         </h2>
-        
+
         <div className={styles.trendBadge}>
           <span className={`${styles.trendIcon} ${styles[`trend_${trend}`]}`}>
-            {trend === "up" ? "↑" : "↓"}
+            {trend === "up" ? <ArrowUp size={14} /> : <ArrowDown size={14} />}
           </span>
           <span className={`${styles.trendValue} ${styles[`trend_${trend}`]}`}>
             {trendPercent}%

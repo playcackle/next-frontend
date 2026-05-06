@@ -12,6 +12,7 @@ import {
   type PerformanceTier,
 } from "@/lib/performance-utils";
 import { useAtomValue, useSetAtom } from "jotai";
+import { Zap } from "lucide-react";
 import { useEffect, useState } from "react";
 import styles from "./performance-modal.module.css";
 
@@ -43,7 +44,7 @@ export function PerformanceModal() {
     <div className={styles.overlay}>
       <div className={styles.modal}>
         <div className={styles.header}>
-          <div className={styles.icon}>⚡</div>
+          <div className={styles.icon}><Zap size={24} /></div>
           <h2 className={styles.title}>Performance Settings</h2>
         </div>
 

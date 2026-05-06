@@ -2,7 +2,7 @@
 
 import { createClient } from "@/lib/supabase/client";
 import { Box, Button, Flex } from "@radix-ui/themes";
-import { AtSign, Lock, User } from "lucide-react";
+import { AlertTriangle, AtSign, Check, CheckCircle, Lock, User } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useMemo, useRef, useState } from "react";
@@ -187,7 +187,7 @@ export default function RegisterPage() {
               border: "1px solid #ff0055",
             }}
           >
-            ⚠️ {error}
+            <AlertTriangle size={16} /> {error}
           </div>
         )}
 
@@ -202,7 +202,7 @@ export default function RegisterPage() {
               border: "1px solid #00ff88",
             }}
           >
-            ✅ {success}
+            <CheckCircle size={16} /> {success}
           </div>
         )}
 
@@ -295,7 +295,7 @@ export default function RegisterPage() {
                     marginLeft: "8px",
                   }}
                 >
-                  ✓ Available
+                  <Check size={12} /> Available
                 </span>
               )}
             </div>

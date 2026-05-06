@@ -7,6 +7,7 @@ import {
   type Collection,
   type TopicDetail,
 } from "@/lib/api/admin";
+import { AlertTriangle, ArrowLeft, Bot, ClipboardList, Pencil, Star, Trash2, X } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import AIGenerate from "../../components/AIGenerate";
@@ -150,9 +151,9 @@ export default function TopicDetailPage() {
     return (
       <div className={styles.container}>
         <div className={styles.error}>
-          <p>⚠️ {error || "Topic not found"}</p>
+          <p><AlertTriangle size={16} /> {error || "Topic not found"}</p>
           <button onClick={() => router.push("/admin/collections")}>
-            ← BACK TO COLLECTIONS
+            <ArrowLeft size={16} /> BACK TO COLLECTIONS
           </button>
         </div>
       </div>
@@ -169,7 +170,7 @@ export default function TopicDetailPage() {
           </h1>
 
           <button className={styles.backButton} onClick={() => router.back()}>
-            ← BACK
+            <ArrowLeft size={16} /> BACK
           </button>
         </div>
 
@@ -251,7 +252,7 @@ export default function TopicDetailPage() {
                   className={styles.editMetadataButton}
                   onClick={() => setEditingMetadata(true)}
                 >
-                  ✏️ EDIT
+                  <Pencil size={16} /> EDIT
                 </button>
               </div>
             )}
@@ -278,7 +279,7 @@ export default function TopicDetailPage() {
                     setShowBulkEdit(false);
                   }}
                 >
-                  🤖 MORE SLOTS
+                  <Bot size={16} /> MORE SLOTS
                 </button>
                 <button
                   className={styles.createSlotButton}
@@ -296,7 +297,7 @@ export default function TopicDetailPage() {
                     setShowAIGenerate(false);
                   }}
                 >
-                  {showBulkEdit ? "✕ CANCEL" : "✏️ BULK EDIT"}
+                  {showBulkEdit ? <><X size={16} /> CANCEL</> : <><Pencil size={16} /> BULK EDIT</>}
                 </button>
                 <button
                   className={styles.createSlotButton}
@@ -312,7 +313,7 @@ export default function TopicDetailPage() {
                     setShowBulkEdit(false);
                   }}
                 >
-                  {showImport ? "✕ CANCEL" : "📋 IMPORT JSON"}
+                  {showImport ? <><X size={16} /> CANCEL</> : <><ClipboardList size={16} /> IMPORT JSON</>}
                 </button>
                 <button
                   className={styles.createSlotButton}
@@ -323,7 +324,7 @@ export default function TopicDetailPage() {
                     setShowBulkEdit(false);
                   }}
                 >
-                  {showCreateSlot ? "✕ CANCEL" : "+ NEW SLOT"}
+                  {showCreateSlot ? <><X size={16} /> CANCEL</> : "+ NEW SLOT"}
                 </button>
               </div>
             </div>
@@ -337,7 +338,7 @@ export default function TopicDetailPage() {
                   setShowAIGenerate(false);
                 }}
                 onClose={() => setShowAIGenerate(false)}
-                title="🤖 Generate More Slots"
+                title={<><Bot size={16} /> Generate More Slots</>}
               />
             )}
 
@@ -452,7 +453,7 @@ export default function TopicDetailPage() {
                           {slot.canonical_text}
                         </span>
                         {slot.is_rare && (
-                          <span className={styles.rareBadge}>⭐ RARE</span>
+                          <span className={styles.rareBadge}><Star size={14} /> RARE</span>
                         )}
                       </div>
                       <p className={styles.slotPrompt}>
@@ -472,13 +473,13 @@ export default function TopicDetailPage() {
                         className={styles.viewButton}
                         onClick={() => handleViewSlot(slot.id)}
                       >
-                        ✏️ EDIT
+                        <Pencil size={16} /> EDIT
                       </button>
                       <button
                         className={styles.deleteButton}
                         onClick={() => handleDeleteSlot(slot.id)}
                       >
-                        🗑️ DELETE
+                        <Trash2 size={16} /> DELETE
                       </button>
                     </div>
                   </div>

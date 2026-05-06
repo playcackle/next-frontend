@@ -1,5 +1,6 @@
 "use client";
 
+import { AlertTriangle, ArrowLeft, Eye, Pencil, X } from "lucide-react";
 import { useRouter, useParams } from "next/navigation";
 import { useState, useEffect } from "react";
 import {
@@ -109,9 +110,9 @@ export default function CollectionDetailPage() {
     return (
       <div className={styles.container}>
         <div className={styles.error}>
-          <p>⚠️ {error || "Collection not found"}</p>
+          <p><AlertTriangle size={16} /> {error || "Collection not found"}</p>
           <button onClick={() => router.push("/admin/collections")}>
-            ← BACK TO COLLECTIONS
+            <ArrowLeft size={16} /> BACK TO COLLECTIONS
           </button>
         </div>
       </div>
@@ -131,7 +132,7 @@ export default function CollectionDetailPage() {
             className={styles.backButton}
             onClick={() => router.push("/admin/collections")}
           >
-            ← BACK
+            <ArrowLeft size={16} /> BACK
           </button>
         </div>
 
@@ -193,7 +194,7 @@ export default function CollectionDetailPage() {
                   className={styles.editMetadataButton}
                   onClick={() => setEditingName(true)}
                 >
-                  ✏️ EDIT
+                  <Pencil size={16} /> EDIT
                 </button>
               </div>
             )}
@@ -265,14 +266,14 @@ export default function CollectionDetailPage() {
                           className={styles.viewButton}
                           onClick={() => handleViewTopic(topic.id)}
                         >
-                          👁️ VIEW
+                          <Eye size={16} /> VIEW
                         </button>
                         <button
                           type="button"
                           className={styles.removeButton}
                           onClick={() => handleRemoveTopic(topic.id)}
                         >
-                          ✕ REMOVE
+                          <X size={16} /> REMOVE
                         </button>
                       </div>
                     </div>

@@ -1,5 +1,6 @@
 "use client";
 
+import { AlertTriangle, ArrowLeft, Pencil, Star, X } from "lucide-react";
 import { useRouter, useParams } from "next/navigation";
 import { useState, useEffect } from "react";
 import {
@@ -114,8 +115,8 @@ export default function SlotDetailPage() {
     return (
       <div className={styles.container}>
         <div className={styles.error}>
-          <p>⚠️ {error || "Slot not found"}</p>
-          <button onClick={() => router.back()}>← BACK</button>
+          <p><AlertTriangle size={16} /> {error || "Slot not found"}</p>
+          <button onClick={() => router.back()}><ArrowLeft size={16} /> BACK</button>
         </div>
       </div>
     );
@@ -131,7 +132,7 @@ export default function SlotDetailPage() {
           </h1>
 
           <button className={styles.backButton} onClick={() => router.back()}>
-            ← BACK
+            <ArrowLeft size={16} /> BACK
           </button>
         </div>
 
@@ -208,7 +209,7 @@ export default function SlotDetailPage() {
                   <h2 className={styles.slotCanonical}>
                     {slot.canonical_text}
                     {slot.is_rare && (
-                      <span className={styles.rareBadge}>⭐ RARE</span>
+                      <span className={styles.rareBadge}><Star size={14} /> RARE</span>
                     )}
                   </h2>
                   <p className={styles.slotPrompt}>
@@ -224,7 +225,7 @@ export default function SlotDetailPage() {
                   className={styles.editMetadataButton}
                   onClick={() => setEditingSlot(true)}
                 >
-                  ✏️ EDIT
+                  <Pencil size={16} /> EDIT
                 </button>
               </div>
             )}
@@ -271,7 +272,7 @@ export default function SlotDetailPage() {
                         handleDeleteAlias(alias.id, alias.alias_text)
                       }
                     >
-                      ✕ DELETE
+                      <X size={14} /> DELETE
                     </button>
                   </div>
                 ))

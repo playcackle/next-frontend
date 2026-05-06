@@ -1,5 +1,6 @@
 "use client";
 
+import { AlertTriangle, ArrowLeft, CheckCircle, Pencil, RotateCcw, Save, Search, X } from "lucide-react";
 import { useState, useEffect } from "react";
 import { slotsApi, aliasesApi, type Slot, type SlotDetail } from "@/lib/api/admin";
 import styles from "./SlotBulkEdit.module.css";
@@ -293,10 +294,10 @@ export default function SlotBulkEdit({ existingSlots, onComplete, onClose }: Slo
   return (
     <div className={styles.container}>
       <div className={styles.header}>
-        <h3 className={styles.title}>✏️ Bulk Edit Slots as JSON</h3>
+        <h3 className={styles.title}><Pencil size={16} /> Bulk Edit Slots as JSON</h3>
         {onClose && (
           <button className={styles.closeButton} onClick={onClose}>
-            ✕
+            <X size={16} />
           </button>
         )}
       </div>
@@ -304,7 +305,7 @@ export default function SlotBulkEdit({ existingSlots, onComplete, onClose }: Slo
       {saveError && (
         <div className={styles.error}>
           {saveError}
-          <button onClick={() => setSaveError(null)}>✕</button>
+          <button onClick={() => setSaveError(null)}><X size={16} /></button>
         </div>
       )}
 
@@ -336,14 +337,14 @@ export default function SlotBulkEdit({ existingSlots, onComplete, onClose }: Slo
               rows={20}
               spellCheck={false}
             />
-            {parseError && <p className={styles.parseError}>⚠ {parseError}</p>}
+            {parseError && <p className={styles.parseError}><AlertTriangle size={14} /> {parseError}</p>}
           </div>
           <div className={styles.formActions}>
             <button className={styles.resetButton} onClick={resetToOriginal}>
-              ↺ RESET
+              <RotateCcw size={16} /> RESET
             </button>
             <button className={styles.submitButton} onClick={handleReview} disabled={!jsonText.trim()}>
-              🔍 REVIEW CHANGES
+              <Search size={16} /> REVIEW CHANGES
             </button>
           </div>
         </div>
@@ -389,14 +390,14 @@ export default function SlotBulkEdit({ existingSlots, onComplete, onClose }: Slo
 
           <div className={styles.reviewActions}>
             <button className={styles.cancelButton} onClick={() => setStep("edit")}>
-              ← BACK
+              <ArrowLeft size={16} /> BACK
             </button>
             <button
               className={styles.submitButton}
               onClick={handleSave}
               disabled={validDiffs.length === 0}
             >
-              💾 SAVE {validDiffs.length} SLOTS
+              <Save size={16} /> SAVE {validDiffs.length} SLOTS
             </button>
           </div>
         </div>
@@ -413,7 +414,7 @@ export default function SlotBulkEdit({ existingSlots, onComplete, onClose }: Slo
       {/* Step 4: Done */}
       {step === "done" && (
         <div className={styles.done}>
-          <p className={styles.doneText}>✅ {savedCount} slots updated</p>
+          <p className={styles.doneText}><CheckCircle size={16} /> {savedCount} slots updated</p>
           <button
             className={styles.submitButton}
             onClick={() => {

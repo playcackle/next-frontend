@@ -1,6 +1,7 @@
 "use client";
 
 import { Button, Dialog, Flex, Text } from "@radix-ui/themes";
+import { AlertTriangle, Home, RefreshCw, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import styles from "./error-modal.module.css";
@@ -65,7 +66,7 @@ export default function ErrorModal({
         {/* Error icon */}
         <Flex direction="column" align="center" gap="4">
           <div className={styles.errorIcon}>
-            <div className={styles.errorSymbol}>⚠</div>
+            <div className={styles.errorSymbol}><AlertTriangle size={24} /></div>
           </div>
 
           {/* Modal content */}
@@ -99,7 +100,7 @@ export default function ErrorModal({
                 onClick={handleRetry}
                 size="3"
               >
-                <span className={styles.buttonIcon}>🔄</span>
+                <span className={styles.buttonIcon}><RefreshCw size={16} /></span>
                 Retry
               </Button>
             )}
@@ -110,14 +111,14 @@ export default function ErrorModal({
                 onClick={handleNavigateHome}
                 size="3"
               >
-                <span className={styles.buttonIcon}>🏠</span>
+                <span className={styles.buttonIcon}><Home size={16} /></span>
                 Go Home
               </Button>
             )}
 
             <Dialog.Close>
               <Button className={styles.closeButton} size="3">
-                <span className={styles.buttonIcon}>✕</span>
+                <span className={styles.buttonIcon}><X size={16} /></span>
                 Close
               </Button>
             </Dialog.Close>

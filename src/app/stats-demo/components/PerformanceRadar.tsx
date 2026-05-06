@@ -1,5 +1,7 @@
 "use client";
 
+import { BarChart2, Gamepad2, Gem, Target, TrendingUp, Trophy, Zap } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 import { useState } from "react";
 import styles from "./PerformanceRadar.module.css";
 
@@ -21,7 +23,7 @@ type Skill = {
   value: number;
   maxValue: number;
   description: string;
-  icon: string;
+  icon: LucideIcon;
 };
 
 function buildSkills(stats: Stats): Skill[] {
@@ -31,42 +33,42 @@ function buildSkills(stats: Stats): Skill[] {
       value: stats.overall_accuracy ?? 0,
       maxValue: 100,
       description: "How often your answers are correct",
-      icon: "🎯",
+      icon: Target,
     },
     {
       name: "Speed",
       value: stats.average_claim_rank !== null ? Math.max(0, 100 - (stats.average_claim_rank - 1) * 20) : 50,
       maxValue: 100,
       description: "How quickly you snap answers",
-      icon: "⚡",
+      icon: Zap,
     },
     {
       name: "Rare Hunter",
       value: Math.min(100, (stats.rare_claims ?? 0) * 5),
       maxValue: 100,
       description: "Your ability to find rare answers",
-      icon: "💎",
+      icon: Gem,
     },
     {
       name: "Consistency",
       value: 100 - (stats.near_miss_rate ?? 0) * 2,
       maxValue: 100,
       description: "How consistent your performance is",
-      icon: "📊",
+      icon: BarChart2,
     },
     {
       name: "Scoring",
       value: Math.min(100, (stats.average_score_per_game / 400) * 100),
       maxValue: 100,
       description: "Your average score per game",
-      icon: "🏆",
+      icon: Trophy,
     },
     {
       name: "Volume",
       value: Math.min(100, (stats.average_slots_per_game / 25) * 100),
       maxValue: 100,
       description: "How many answers you snap per game",
-      icon: "📈",
+      icon: TrendingUp,
     },
   ];
 }
@@ -107,7 +109,7 @@ export function PerformanceRadar({ stats }: Props) {
   return (
     <div className={styles.container}>
       <h2 className={styles.sectionTitle}>
-        <span className={styles.titleIcon}>🎮</span>
+        <span className={styles.titleIcon}><Gamepad2 size={20} /></span>
         Skill Radar
       </h2>
 
@@ -177,21 +179,26 @@ export function PerformanceRadar({ stats }: Props) {
           {/* Labels */}
           {skills.map((skill, i) => {
             const labelPoint = getPoint(i, 120);
+            const IconComp = skill.icon;
             return (
-              <text
+              <foreignObject
                 key={skill.name}
-                x={labelPoint.x}
-                y={labelPoint.y}
-                textAnchor="middle"
-                dominantBaseline="middle"
-                className={`${styles.skillLabel} ${
-                  hoveredSkill === skill.name ? styles.skillLabelActive : ""
-                }`}
+                x={labelPoint.x - 10}
+                y={labelPoint.y - 10}
+                width={20}
+                height={20}
                 onMouseEnter={() => setHoveredSkill(skill.name)}
                 onMouseLeave={() => setHoveredSkill(null)}
               >
-                {skill.icon}
-              </text>
+                <span
+                  className={`${styles.skillLabel} ${
+                    hoveredSkill === skill.name ? styles.skillLabelActive : ""
+                  }`}
+                  style={{ display: "flex", alignItems: "center", justifyContent: "center", width: "100%", height: "100%" }}
+                >
+                  <IconComp size={14} />
+                </span>
+              </foreignObject>
             );
           })}
         </svg>
@@ -210,7 +217,7 @@ export function PerformanceRadar({ stats }: Props) {
               onMouseLeave={() => setHoveredSkill(null)}
             >
               <div className={styles.skillHeader}>
-                <span className={styles.skillIcon}>{skill.icon}</span>
+                <span className={styles.skillIcon}><skill.icon size={16} /></span>
                 <span className={styles.skillName}>{skill.name}</span>
                 <span className={`${styles.skillLevel} ${styles[`level_${level.color}`]}`}>
                   {level.level}
