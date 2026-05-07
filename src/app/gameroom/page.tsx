@@ -24,6 +24,7 @@ import { Flex } from "@radix-ui/themes";
 import AnswerReveal from "./components/AnswerReveal";
 import Leaderboard from "./components/LeaderBoard";
 import OptInPanel from "./components/OptInPanel";
+import WaitingPanel from "./components/WaitingPanel";
 import { useAnswerBubbles } from "./hooks/useAnswerBubbles";
 import { useChatSocket } from "./hooks/useChatWs";
 import { useGameActions } from "./hooks/useGameActions";
@@ -221,18 +222,7 @@ export default function GameroomPage() {
                 </div>
               </Flex>
               {isWaiting ? (
-                <div className={styles.waitingPanel}>
-                  <p className={styles.waitingTitle}>
-                    {missingPlayers === 0
-                      ? "LFG!!!1!!!!"
-                      : "Waiting for more idiots to arrive"}
-                  </p>
-                  {missingPlayers > 0 && (
-                    <p className={styles.waitingCount}>
-                      {missingPlayers} still missing
-                    </p>
-                  )}
-                </div>
+                <WaitingPanel currentUserId={user?.id ?? null} />
               ) : (
                 <>
                   {isShowcase && <OptInPanel onPlayAgainResponse={handlePlayAgainResponse} currentUserId={user?.id} />}

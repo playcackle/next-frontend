@@ -1,0 +1,371 @@
+/* ─── Panel shell ───────────────────────────────────────────────────────────── */
+.panel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  background-color: rgba(10, 10, 31, 0.85);
+  border: 1px solid rgba(183, 0, 255, 0.35);
+  box-shadow:
+    0 0 24px rgba(183, 0, 255, 0.2),
+    inset 0 0 40px rgba(0, 0, 0, 0.4);
+  border-radius: 8px;
+  padding: 1rem;
+  backdrop-filter: blur(6px);
+  overflow-y: auto;
+  max-height: 100%;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(183, 0, 255, 0.4) transparent;
+}
+
+.panel::-webkit-scrollbar {
+  width: 4px;
+}
+.panel::-webkit-scrollbar-thumb {
+  background: rgba(183, 0, 255, 0.4);
+  border-radius: 2px;
+}
+
+/* ─── Header ─────────────────────────────────────────────────────────────────── */
+.panelHeader {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.waitingTitle {
+  font-family: var(--retro-font);
+  font-size: 1rem;
+  color: var(--neon-purple);
+  text-shadow: 0 0 12px rgba(183, 0, 255, 0.9);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  text-align: center;
+}
+
+.waitingCount {
+  font-family: var(--retro-font-alt, monospace);
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.75);
+  text-align: center;
+}
+
+.missingNum {
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: var(--neon-pink);
+  text-shadow: 0 0 8px rgba(255, 0, 170, 0.7);
+}
+
+/* ─── Section labels ─────────────────────────────────────────────────────────── */
+.sectionLabel {
+  display: block;
+  font-family: var(--retro-font);
+  font-size: 0.65rem;
+  color: rgba(255, 255, 255, 0.5);
+  letter-spacing: 2px;
+  margin-bottom: 0.5rem;
+}
+
+/* ─── Roster ─────────────────────────────────────────────────────────────────── */
+.rosterSection {
+  display: flex;
+  flex-direction: column;
+}
+
+.roster {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+/* ─── Player card ────────────────────────────────────────────────────────────── */
+.playerCard {
+  background: rgba(20, 20, 45, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 6px;
+  padding: 0.6rem 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  animation: cardSlideIn 0.35s ease both;
+  transition: border-color 0.2s ease;
+}
+
+.playerCard:hover {
+  border-color: rgba(183, 0, 255, 0.3);
+}
+
+.selfCard {
+  border-color: rgba(0, 221, 255, 0.3);
+  box-shadow: 0 0 10px rgba(0, 221, 255, 0.1);
+}
+
+@keyframes cardSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ─── Card header ────────────────────────────────────────────────────────────── */
+.cardHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--retro-font);
+  font-size: 0.6rem;
+  font-weight: bold;
+  color: #000;
+  flex-shrink: 0;
+  letter-spacing: 0;
+}
+
+.playerMeta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  flex: 1;
+  min-width: 0;
+}
+
+.playerName {
+  font-family: var(--retro-font-alt, monospace);
+  font-size: 0.75rem;
+  font-weight: bold;
+  color: var(--white, #fff);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.youBadge {
+  font-family: var(--retro-font);
+  font-size: 0.5rem;
+  color: var(--neon-blue);
+  border: 1px solid var(--neon-blue);
+  border-radius: 2px;
+  padding: 0 3px;
+  letter-spacing: 1px;
+  text-shadow: 0 0 6px rgba(0, 221, 255, 0.7);
+  flex-shrink: 0;
+}
+
+.playerStats {
+  font-family: var(--retro-font);
+  font-size: 0.55rem;
+  color: rgba(255, 255, 255, 0.55);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.weakBadge {
+  font-family: var(--retro-font);
+  font-size: 0.5rem;
+  color: var(--neon-pink);
+  border: 1px solid rgba(255, 0, 170, 0.55);
+  border-radius: 3px;
+  padding: 2px 5px;
+  white-space: nowrap;
+  flex-shrink: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* ─── Taunt text ─────────────────────────────────────────────────────────────── */
+.taunt {
+  font-family: var(--retro-font);
+  font-size: 0.78rem;
+  color: rgba(255, 255, 255, 0);
+  line-height: 1.5;
+  border-left: 2px solid rgba(183, 0, 255, 0.76);
+  padding-left: 0.5rem;
+  margin-left: 0.1rem;
+  transition: color 0.4s ease;
+  letter-spacing: 0.3px;
+}
+
+.tauntVisible {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.scoreTaunt {
+  font-family: var(--retro-font);
+  font-size: 0.68rem;
+  color: rgba(255, 0, 170, 0.75);
+  line-height: 1.5;
+  border-left: 2px solid rgba(255, 0, 170, 0.75);
+  padding-left: 0.5rem;
+  margin-left: 0.1rem;
+  letter-spacing: 0.3px;
+}
+
+/* ─── Carousel ───────────────────────────────────────────────────────────────── */
+.carousel {
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 6px;
+  padding: 0.75rem;
+  background: rgba(0, 0, 0, 0.3);
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  min-height: 90px;
+}
+
+.carouselHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.carouselLabel {
+  font-family: var(--retro-font);
+  font-size: 0.6rem;
+  color: rgba(255, 255, 255, 0.25);
+  letter-spacing: 2px;
+}
+
+.carouselControls {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.carouselBtn {
+  background: none;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: rgba(255, 255, 255, 0.4);
+  font-family: var(--retro-font);
+  font-size: 0.65rem;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  padding: 0;
+}
+
+.carouselBtn:hover {
+  border-color: rgba(183, 0, 255, 0.5);
+  color: var(--neon-purple);
+}
+
+.carouselDots {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+
+.dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  transition: background 0.2s ease;
+}
+
+.dotActive {
+  background: var(--neon-purple);
+  box-shadow: 0 0 5px rgba(183, 0, 255, 0.7);
+}
+
+/* ─── Tip slide ──────────────────────────────────────────────────────────────── */
+.tipSlide {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.tipEnter {
+  animation: tipIn 0.3s ease both;
+}
+
+.tipExit {
+  animation: tipOut 0.3s ease both;
+}
+
+@keyframes tipIn {
+  from {
+    opacity: 0;
+    transform: translateX(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes tipOut {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+}
+
+.tipTag {
+  font-family: var(--retro-font);
+  font-size: 0.55rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  padding: 2px 6px;
+  border-radius: 3px;
+  align-self: flex-start;
+}
+
+.tipTag[data-color="purple"] {
+  color: var(--neon-purple);
+  border: 1px solid rgba(183, 0, 255, 0.4);
+  background: rgba(183, 0, 255, 0.08);
+}
+
+.tipTag[data-color="pink"] {
+  color: var(--neon-pink);
+  border: 1px solid rgba(255, 0, 170, 0.4);
+  background: rgba(255, 0, 170, 0.08);
+}
+
+.tipTag[data-color="blue"] {
+  color: var(--neon-blue);
+  border: 1px solid rgba(0, 221, 255, 0.4);
+  background: rgba(0, 221, 255, 0.08);
+}
+
+.tipTag[data-color="green"] {
+  color: var(--neon-green);
+  border: 1px solid rgba(0, 255, 102, 0.4);
+  background: rgba(0, 255, 102, 0.08);
+}
+
+.tipText {
+  font-family: var(--retro-font);
+  font-size: 0.68rem;
+  color: rgba(255, 255, 255, 0.6);
+  line-height: 1.6;
+  letter-spacing: 0.3px;
+}

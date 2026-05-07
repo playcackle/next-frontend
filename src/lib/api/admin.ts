@@ -9,6 +9,16 @@ const apiFetch = async (path: string, init?: RequestInit): Promise<Response> => 
   return res;
 };
 
+const parseErrorResponse = async (res: Response, fallback: string): Promise<never> => {
+  try {
+    const error = await res.json();
+    throw new Error(error.detail || fallback);
+  } catch (e) {
+    if (e instanceof Error && e.message !== fallback) throw e;
+    throw new Error(fallback);
+  }
+};
+
 // ============================================================================
 // Types
 // ============================================================================
@@ -800,10 +810,7 @@ export const hostSettingsApi = {
    */
   async get(lobbyId: string): Promise<HostSettings> {
     const res = await apiFetch(`/admin/lobbies/${lobbyId}/host/settings`);
-    if (!res.ok) {
-      const error = await res.json();
-      throw new Error(error.detail || 'Failed to fetch host settings');
-    }
+    if (!res.ok) await parseErrorResponse(res, 'Failed to fetch host settings');
     return res.json();
   },
 
@@ -816,10 +823,7 @@ export const hostSettingsApi = {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(updates),
     });
-    if (!res.ok) {
-      const error = await res.json();
-      throw new Error(error.detail || 'Failed to update host settings');
-    }
+    if (!res.ok) await parseErrorResponse(res, 'Failed to update host settings');
     return res.json();
   },
 };
@@ -831,10 +835,7 @@ export const hostSettingsApi = {
 export const fuzzyMatchConfigApi = {
   async get(lobbyId: string): Promise<FuzzyMatchConfig> {
     const res = await apiFetch(`/admin/lobbies/${lobbyId}/fuzzy-match-config`);
-    if (!res.ok) {
-      const error = await res.json();
-      throw new Error(error.detail || 'Failed to fetch fuzzy match config');
-    }
+    if (!res.ok) await parseErrorResponse(res, 'Failed to fetch fuzzy match config');
     const data: FuzzyMatchConfigResponse = await res.json();
     return data.config;
   },
@@ -845,10 +846,7 @@ export const fuzzyMatchConfigApi = {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(updates),
     });
-    if (!res.ok) {
-      const error = await res.json();
-      throw new Error(error.detail || 'Failed to update fuzzy match config');
-    }
+    if (!res.ok) await parseErrorResponse(res, 'Failed to update fuzzy match config');
     const data: FuzzyMatchConfigResponse = await res.json();
     return data.config;
   },

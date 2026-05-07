@@ -13,7 +13,6 @@ import {
   type HostSettings,
   type FuzzyMatchConfig,
 } from "@/lib/api/admin";
-import * as Slider from "@radix-ui/react-slider";
 import * as Select from "@radix-ui/react-select";
 import { ChevronDown } from "lucide-react";
 import styles from "./page.module.css";
@@ -841,34 +840,50 @@ function ParameterSlider({
   unit: string;
   description?: string;
 }) {
+  const [draft, setDraft] = useState(String(value));
+
+  // Keep draft in sync when value changes externally
+  useEffect(() => {
+    setDraft(String(value));
+  }, [value]);
+
+  const commit = () => {
+    const v = Number(draft);
+    if (!isNaN(v) && draft.trim() !== "") {
+      const clamped = Math.min(max, Math.max(min, v));
+      setDraft(String(clamped));
+      onChange(clamped);
+    } else {
+      setDraft(String(value));
+    }
+  };
+
   return (
     <div className={styles.parameterControl}>
       <div className={styles.parameterHeader}>
         <label className={styles.parameterLabel}>{label}</label>
-        <span className={styles.parameterValue}>
-          {value} {unit}
-        </span>
+        <span className={styles.parameterUnit}>{unit}</span>
       </div>
       {description && (
         <p className={styles.parameterDescription}>{description}</p>
       )}
-      <Slider.Root
-        className={styles.sliderRoot}
-        value={[value]}
-        onValueChange={([newValue]) => onChange(newValue)}
+      <input
+        type="number"
+        className={styles.parameterInput}
+        value={draft}
         min={min}
         max={max}
-        step={1}
-      >
-        <Slider.Track className={styles.sliderTrack}>
-          <Slider.Range className={styles.sliderRange} />
-        </Slider.Track>
-        <Slider.Thumb className={styles.sliderThumb} />
-      </Slider.Root>
-      <div className={styles.sliderLabels}>
-        <span>{min}</span>
-        <span>{max}</span>
-      </div>
+        onChange={(e) => {
+          const raw = e.target.value;
+          setDraft(raw);
+          const v = Number(raw);
+          if (!isNaN(v) && raw.trim() !== "") {
+            onChange(Math.min(max, Math.max(min, v)));
+          }
+        }}
+        onBlur={commit}
+        onKeyDown={(e) => e.key === "Enter" && commit()}
+      />
     </div>
   );
 }
