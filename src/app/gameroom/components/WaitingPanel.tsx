@@ -133,36 +133,6 @@ function generateTrashTalk(
   return taunts[Math.floor(Math.random() * taunts.length)];
 }
 
-// ─── Secondary taunt — accuracy, talks a lot knows nothing ────────────────────
-
-function buildAccuracyLine(
-  player: Score,
-  categoryStats: PlayerCategoryStatsResponse | null,
-  isCurrentUser: boolean,
-): string | null {
-  if (!categoryStats || categoryStats.categories.length === 0) return null;
-
-  const weakest = categoryStats.weakest_accuracy_category;
-  const weakestStat = categoryStats.categories.find(
-    (c) => c.category_name === weakest,
-  );
-  if (!weakestStat || !weakest) return null;
-
-  const { successful_snaps: snaps, total_submissions: subs, near_miss_rate: nearMiss } = weakestStat;
-  const name = isCurrentUser ? "You" : player.display_name;
-
-  const taunts: string[] = [
-    `${snaps} snaps out of ${subs} attempts in "${weakest}"${nearMiss != null ? ` · near-miss rate ${nearMiss}` : ""}. ${name} clearly talk a big game and know absolutely nothing.`,
-    `${subs} submissions. ${snaps} that actually counted. In "${weakest}"${nearMiss != null ? ` · near-miss rate ${nearMiss}` : ""}. ${name} have a lot of opinions for someone so consistently wrong.`,
-    `"${weakest}": ${subs} tries, ${snaps} hits${nearMiss != null ? `, near-miss ${nearMiss}` : ""}. Loud. Confident. Wrong. Classic ${name === "You" ? "you" : player.display_name}.`,
-    `${name} submitted ${subs} times in "${weakest}" and got ${snaps} right${nearMiss != null ? ` — near-miss rate ${nearMiss}` : ""}. The volume suggests knowledge. The results do not.`,
-    `In "${weakest}": ${snaps}/${subs}${nearMiss != null ? ` · near-miss ${nearMiss}` : ""}. ${name} type fast and know little. A dangerous combination.`,
-    `${subs} guesses, ${snaps} correct in "${weakest}"${nearMiss != null ? `, near-miss rate ${nearMiss}` : ""}. ${name} contribute quantity. Not quality. Never quality.`,
-  ];
-
-  return taunts[Math.floor(Math.random() * taunts.length)];
-}
-
 // ─── Avatar initials color ────────────────────────────────────────────────────
 
 const AVATAR_COLORS = [
@@ -193,7 +163,6 @@ function PlayerCard({ player, isCurrentUser, entryDelay }: PlayerCardProps) {
   const [categoryStats, setCategoryStats] =
     useState<PlayerCategoryStatsResponse | null>(null);
   const [taunt, setTaunt] = useState<string>("");
-  const [accuracyLine, setAccuracyLine] = useState<string | null>(null);
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
@@ -204,13 +173,11 @@ function PlayerCard({ player, isCurrentUser, entryDelay }: PlayerCardProps) {
         if (!cancelled) {
           setCategoryStats(stats);
           setTaunt(generateTrashTalk(player, stats, isCurrentUser));
-          setAccuracyLine(buildAccuracyLine(player, stats, isCurrentUser));
           setLoaded(true);
         }
       } catch {
         if (!cancelled) {
           setTaunt(generateTrashTalk(player, null, isCurrentUser));
-          setAccuracyLine(null);
           setLoaded(true);
         }
       }
@@ -266,9 +233,6 @@ function PlayerCard({ player, isCurrentUser, entryDelay }: PlayerCardProps) {
       <p className={`${styles.taunt} ${loaded ? styles.tauntVisible : ""}`}>
         {loaded ? taunt : "analyzing stats..."}
       </p>
-      {loaded && accuracyLine && (
-        <p className={styles.accuracyLine}>{accuracyLine}</p>
-      )}
     </div>
   );
 }
