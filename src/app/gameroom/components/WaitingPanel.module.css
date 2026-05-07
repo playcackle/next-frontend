@@ -205,13 +205,13 @@
 }
 
 .tauntVisible {
-  color: rgba(255, 255, 255, 0.55);
+  color: rgba(255, 255, 255, 0.85);
 }
 
 .scoreTaunt {
   font-family: var(--retro-font);
   font-size: 0.68rem;
-  color: rgba(255, 0, 170, 0.5);
+  color: rgba(255, 0, 170, 0.75);
   line-height: 1.5;
   border-left: 2px solid rgba(255, 0, 170, 0.75);
   padding-left: 0.5rem;
