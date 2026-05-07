@@ -63,7 +63,6 @@ function generateTrashTalk(
   categoryStats: PlayerCategoryStatsResponse | null,
   isCurrentUser: boolean,
 ): string {
-  debugger;
   const name = isCurrentUser ? "You" : player.display_name;
   const pronoun2 = isCurrentUser ? "you" : "they";
 
@@ -280,6 +279,97 @@ function PlayerCard({ player, isCurrentUser, entryDelay }: PlayerCardProps) {
   );
 }
 
+// ─── Player Carousel ──────────────────────────────────────────────────────────
+
+interface PlayerCarouselProps {
+  scores: Score[];
+  currentUserId: string | null;
+}
+
+function PlayerCarousel({ scores, currentUserId }: PlayerCarouselProps) {
+  const [index, setIndex] = useState(0);
+  const [exiting, setExiting] = useState(false);
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Clamp index if scores shrink
+  const safeIndex = Math.min(index, Math.max(0, scores.length - 1));
+
+  const advance = (dir: 1 | -1 = 1) => {
+    setExiting(true);
+    setTimeout(() => {
+      setIndex((i) => (i + dir + scores.length) % scores.length);
+      setExiting(false);
+    }, 300);
+  };
+
+  // Auto-advance at 4.5s, offset from tips carousel which runs at 6s
+  useEffect(() => {
+    if (scores.length <= 1) return;
+    const startDelay = setTimeout(() => {
+      intervalRef.current = setInterval(() => advance(1), 4500);
+    }, 2000); // 2s initial offset vs tips carousel
+    return () => {
+      clearTimeout(startDelay);
+      if (intervalRef.current) clearInterval(intervalRef.current);
+    };
+  }, [scores.length]);
+
+  if (scores.length === 0) return null;
+
+  const player = scores[safeIndex];
+  const isCurrentUser = player.player_id === currentUserId;
+
+  return (
+    <div className={styles.rosterSection}>
+      <div className={styles.rosterHeader}>
+        <span className={styles.sectionLabel}>// CURRENT SUSPECTS</span>
+        {scores.length > 1 && (
+          <div className={styles.carouselControls}>
+            <button
+              className={styles.carouselBtn}
+              onClick={() => {
+                if (intervalRef.current) clearInterval(intervalRef.current);
+                advance(-1);
+                intervalRef.current = setInterval(() => advance(1), 4500);
+              }}
+              aria-label="Previous player"
+            >
+              {"<"}
+            </button>
+            <span className={styles.carouselDots}>
+              {scores.map((_, i) => (
+                <span
+                  key={i}
+                  className={`${styles.dot} ${i === safeIndex ? styles.dotActive : ""}`}
+                />
+              ))}
+            </span>
+            <button
+              className={styles.carouselBtn}
+              onClick={() => {
+                if (intervalRef.current) clearInterval(intervalRef.current);
+                advance(1);
+                intervalRef.current = setInterval(() => advance(1), 4500);
+              }}
+              aria-label="Next player"
+            >
+              {">"}
+            </button>
+          </div>
+        )}
+      </div>
+      <div className={`${styles.playerSlide} ${exiting ? styles.tipExit : styles.tipEnter}`}>
+        <PlayerCard
+          key={player.player_id}
+          player={player}
+          isCurrentUser={isCurrentUser}
+          entryDelay={0}
+        />
+      </div>
+    </div>
+  );
+}
+
 // ─── Tip Carousel ─────────────────────────────────────────────────────────────
 
 function TipCarousel() {
@@ -376,21 +466,9 @@ export default function WaitingPanel({ currentUserId }: WaitingPanelProps) {
         </p>
       </div>
 
-      {/* Player roster */}
+      {/* Player carousel */}
       {scores.length > 0 && (
-        <div className={styles.rosterSection}>
-          <span className={styles.sectionLabel}>// CURRENT SUSPECTS</span>
-          <div className={styles.roster}>
-            {scores.map((player, i) => (
-              <PlayerCard
-                key={player.player_id}
-                player={player}
-                isCurrentUser={player.player_id === currentUserId}
-                entryDelay={i * 80}
-              />
-            ))}
-          </div>
-        </div>
+        <PlayerCarousel scores={scores} currentUserId={currentUserId} />
       )}
 
       {/* Tips carousel */}
