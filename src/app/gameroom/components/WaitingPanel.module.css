@@ -192,7 +192,7 @@
 /* ─── Taunt text ─────────────────────────────────────────────────────────────── */
 .taunt {
   font-family: var(--retro-font);
-  font-size: 0.65rem;
+  font-size: 0.78rem;
   color: rgba(255, 255, 255, 0.0);
   line-height: 1.5;
   border-left: 2px solid rgba(183, 0, 255, 0.3);
@@ -208,7 +208,7 @@
 
 .accuracyLine {
   font-family: var(--retro-font);
-  font-size: 0.58rem;
+  font-size: 0.7rem;
   color: rgba(255, 0, 170, 0.55);
   letter-spacing: 0.5px;
   padding-left: 0.65rem;
