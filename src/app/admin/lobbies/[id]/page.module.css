@@ -312,68 +312,34 @@
   font-size: 0.95rem;
 }
 
-.parameterValue {
-  color: #00ffff;
-  font-weight: 700;
-  font-size: 1.1rem;
-  text-shadow: 0 0 8px #00ffff;
-  font-family: "Orbitron", monospace;
+.parameterUnit {
+  color: #888;
+  font-size: 0.85rem;
 }
 
-/* ── Radix Slider Styling ─────────────────────────────────── */
-.sliderRoot {
-  position: relative;
-  display: flex;
-  align-items: center;
-  user-select: none;
-  touch-action: none;
+.parameterInput {
   width: 100%;
-  height: 20px;
-}
-
-.sliderTrack {
-  background: rgba(255, 255, 255, 0.1);
-  position: relative;
-  flex-grow: 1;
-  border-radius: 9999px;
-  height: 6px;
-}
-
-.sliderRange {
-  position: absolute;
-  background: linear-gradient(90deg, #00ffff, #ff00ff);
-  border-radius: 9999px;
-  height: 100%;
-  box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
-}
-
-.sliderThumb {
-  display: block;
-  width: 20px;
-  height: 20px;
-  background: white;
-  box-shadow: 0 0 15px rgba(0, 255, 255, 0.7);
-  border-radius: 50%;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.sliderThumb:hover {
-  transform: scale(1.2);
-  box-shadow: 0 0 20px rgba(0, 255, 255, 1);
-}
-
-.sliderThumb:focus {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(0, 255, 255, 0.3);
+  border-radius: 6px;
+  color: #00ffff;
+  font-family: "Orbitron", monospace;
+  font-size: 1rem;
+  font-weight: 700;
+  padding: 0.5rem 0.75rem;
+  text-shadow: 0 0 8px #00ffff;
   outline: none;
-  box-shadow: 0 0 25px rgba(0, 255, 255, 1);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
-.sliderLabels {
-  display: flex;
-  justify-content: space-between;
-  font-size: 0.75rem;
-  color: #666;
-  margin-top: 0.25rem;
+.parameterInput:focus {
+  border-color: #00ffff;
+  box-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+}
+
+.parameterInput::-webkit-inner-spin-button,
+.parameterInput::-webkit-outer-spin-button {
+  opacity: 0.4;
 }
 
 /* ── Action Buttons ───────────────────────────────────────── */

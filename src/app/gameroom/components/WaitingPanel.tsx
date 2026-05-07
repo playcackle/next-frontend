@@ -1,8 +1,8 @@
 "use client";
 
+import { PlayerCategoryStatsResponse, playersApi } from "@/lib/api/players";
 import { useAtomValue } from "jotai";
 import { useEffect, useRef, useState } from "react";
-import { playersApi, PlayerCategoryStatsResponse } from "@/lib/api/players";
 import {
   minPlayersNeededAtom,
   playerCountAtom,
@@ -63,6 +63,7 @@ function generateTrashTalk(
   categoryStats: PlayerCategoryStatsResponse | null,
   isCurrentUser: boolean,
 ): string {
+  debugger;
   const name = isCurrentUser ? "You" : player.display_name;
   const pronoun = isCurrentUser ? "your" : "their";
   const pronoun2 = isCurrentUser ? "you" : "they";
@@ -90,9 +91,8 @@ function generateTrashTalk(
   const taunts: string[] = [];
 
   if (weakest && weakestStat) {
-    const acc = weakestStat.accuracy != null
-      ? `${Math.round(weakestStat.accuracy * 100)}%`
-      : "unknown";
+    const acc =
+      weakestStat.accuracy != null ? `${weakestStat.accuracy}%` : "unknown";
     taunts.push(
       `${name} historically choke on "${weakest}" with a ${acc} accuracy. Prepare to watch ${pronoun2} suffer.`,
       `${pronoun.charAt(0).toUpperCase() + pronoun.slice(1)} worst category is "${weakest}". ${acc} accuracy. Just... embarrassing.`,
@@ -100,9 +100,7 @@ function generateTrashTalk(
   }
 
   if (bestCat && bestStat && bestStat !== weakestStat) {
-    const acc = bestStat.accuracy != null
-      ? `${Math.round(bestStat.accuracy * 100)}%`
-      : "decent";
+    const acc = bestStat.accuracy != null ? `${bestStat.accuracy}%` : "decent";
     taunts.push(
       `${name === "You" ? "Your" : `${player.display_name}'s`} only decent category is "${bestCat}" at ${acc}. One trick pony.`,
     );
@@ -137,13 +135,7 @@ function generateTrashTalk(
 
 // ─── Avatar initials color ────────────────────────────────────────────────────
 
-const AVATAR_COLORS = [
-  "#ff00aa",
-  "#b700ff",
-  "#00ddff",
-  "#00ff66",
-  "#ff6600",
-];
+const AVATAR_COLORS = ["#ff00aa", "#b700ff", "#00ddff", "#00ff66", "#ff6600"];
 
 function avatarColor(name: string): string {
   let hash = 0;
@@ -214,9 +206,7 @@ function PlayerCard({ player, isCurrentUser, entryDelay }: PlayerCardProps) {
         <div className={styles.playerMeta}>
           <span className={styles.playerName}>
             {player.display_name}
-            {isCurrentUser && (
-              <span className={styles.youBadge}>YOU</span>
-            )}
+            {isCurrentUser && <span className={styles.youBadge}>YOU</span>}
           </span>
           {categoryStats && (
             <span className={styles.playerStats}>
@@ -300,11 +290,10 @@ function TipCarousel() {
           </button>
         </div>
       </div>
-      <div className={`${styles.tipSlide} ${exiting ? styles.tipExit : styles.tipEnter}`}>
-        <span
-          className={styles.tipTag}
-          data-color={tip.color}
-        >
+      <div
+        className={`${styles.tipSlide} ${exiting ? styles.tipExit : styles.tipEnter}`}
+      >
+        <span className={styles.tipTag} data-color={tip.color}>
           {tip.tag}
         </span>
         <p className={styles.tipText}>{tip.text}</p>
@@ -334,8 +323,8 @@ export default function WaitingPanel({ currentUserId }: WaitingPanelProps) {
         </p>
         {missingPlayers > 0 && (
           <p className={styles.waitingCount}>
-            <span className={styles.missingNum}>{missingPlayers}</span>
-            {" "}still missing
+            <span className={styles.missingNum}>{missingPlayers}</span> still
+            missing
           </p>
         )}
       </div>
