@@ -39,7 +39,7 @@ LANGUAGE plpgsql
 SECURITY DEFINER SET search_path = ''
 AS $$
 BEGIN
-  INSERT INTO public.players (id, name, email, avatar_url)
+  INSERT INTO public.player (id, name, email, avatar_url, created_at)
   VALUES (
     NEW.id,
     COALESCE(
@@ -52,7 +52,8 @@ BEGIN
     COALESCE(
       NULLIF(NEW.raw_user_meta_data ->> 'picture', ''),
       NULLIF(NEW.raw_user_meta_data ->> 'avatar_url', '')
-    )
+    ),
+    NOW()
   );
   RETURN NEW;
 END;
