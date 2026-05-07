@@ -71,12 +71,19 @@
 .rosterSection {
   display: flex;
   flex-direction: column;
+  gap: 0.4rem;
 }
 
-.roster {
+.rosterHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.1rem;
+}
+
+.playerSlide {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
 }
 
 /* ─── Player card ────────────────────────────────────────────────────────────── */
@@ -84,10 +91,10 @@
   background: rgba(20, 20, 45, 0.75);
   border: 1px solid rgba(255, 255, 255, 0.07);
   border-radius: 6px;
-  padding: 0.6rem 0.75rem;
+  padding: 0.9rem 1rem;
   display: flex;
   flex-direction: column;
-  gap: 0.4rem;
+  gap: 0.55rem;
   animation: cardSlideIn 0.35s ease both;
   transition: border-color 0.2s ease;
 }
@@ -119,65 +126,6 @@
   gap: 0.6rem;
 }
 
-.avatar {
-  width: 28px;
-  height: 28px;
-  border-radius: 4px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: var(--retro-font);
-  font-size: 0.6rem;
-  font-weight: bold;
-  color: #000;
-  flex-shrink: 0;
-  letter-spacing: 0;
-}
-
-.playerMeta {
-  display: flex;
-  flex-direction: column;
-  gap: 0.1rem;
-  flex: 1;
-  min-width: 0;
-}
-
-.playerName {
-  font-family: var(--retro-font-alt, monospace);
-  font-size: 0.75rem;
-  font-weight: bold;
-  color: var(--white, #fff);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
-}
-
-.youBadge {
-  font-family: var(--retro-font);
-  font-size: 0.5rem;
-  color: var(--neon-blue);
-  border: 1px solid var(--neon-blue);
-  border-radius: 2px;
-  padding: 0 3px;
-  letter-spacing: 1px;
-  text-shadow: 0 0 6px rgba(0, 221, 255, 0.7);
-  flex-shrink: 0;
-}
-
-.playerStats {
-  font-family: var(--retro-font);
-  font-size: 0.55rem;
-  color: rgba(255, 255, 255, 0.55);
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
 .weakBadge {
   font-family: var(--retro-font);
   font-size: 0.5rem;
@@ -194,11 +142,11 @@
 /* ─── Taunt text ─────────────────────────────────────────────────────────────── */
 .taunt {
   font-family: var(--retro-font);
-  font-size: 0.78rem;
+  font-size: 0.9rem;
   color: rgba(255, 255, 255, 0);
-  line-height: 1.5;
+  line-height: 1.6;
   border-left: 2px solid rgba(183, 0, 255, 0.76);
-  padding-left: 0.5rem;
+  padding-left: 0.6rem;
   margin-left: 0.1rem;
   transition: color 0.4s ease;
   letter-spacing: 0.3px;
@@ -210,11 +158,11 @@
 
 .scoreTaunt {
   font-family: var(--retro-font);
-  font-size: 0.68rem;
+  font-size: 0.8rem;
   color: rgba(255, 0, 170, 0.75);
-  line-height: 1.5;
+  line-height: 1.6;
   border-left: 2px solid rgba(255, 0, 170, 0.75);
-  padding-left: 0.5rem;
+  padding-left: 0.6rem;
   margin-left: 0.1rem;
   letter-spacing: 0.3px;
 }
@@ -223,25 +171,18 @@
 .carousel {
   border: 1px solid rgba(255, 255, 255, 0.07);
   border-radius: 6px;
-  padding: 0.75rem;
+  padding: 1rem 1.1rem;
   background: rgba(0, 0, 0, 0.3);
   display: flex;
   flex-direction: column;
-  gap: 0.6rem;
-  min-height: 90px;
+  gap: 0.7rem;
+  min-height: 110px;
 }
 
 .carouselHeader {
   display: flex;
   align-items: center;
   justify-content: space-between;
-}
-
-.carouselLabel {
-  font-family: var(--retro-font);
-  font-size: 0.6rem;
-  color: rgba(255, 255, 255, 0.25);
-  letter-spacing: 2px;
 }
 
 .carouselControls {
@@ -364,8 +305,8 @@
 
 .tipText {
   font-family: var(--retro-font);
-  font-size: 0.68rem;
+  font-size: 0.82rem;
   color: rgba(255, 255, 255, 0.6);
-  line-height: 1.6;
+  line-height: 1.65;
   letter-spacing: 0.3px;
 }
