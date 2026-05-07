@@ -108,16 +108,10 @@ export const AnswerGrid: React.FC<AnswerGridProps> = ({ slots }) => {
         </div>
 
         <div className={styles.answerGridStatus}>
-          <p className={styles.answerGridStatusTitle}>
-            {foundCount === 0
-              ? roundPrompt
-              : foundCount === totalAnswers
-                ? "All answers found!"
-                : `${foundCount} answer${foundCount !== 1 ? "s" : ""} found`}
-          </p>
+          <p className={styles.answerGridStatusTitle}>{roundPrompt}</p>
           <p className={styles.answerGridStatusSub}>
             {remaining > 0
-              ? `${remaining} still to find — keep typing!`
+              ? `${remaining} of ${totalAnswers} still to find — keep typing!`
               : "Amazing round, you got them all!"}
           </p>
 
