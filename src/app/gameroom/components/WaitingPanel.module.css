@@ -192,7 +192,7 @@
 /* ─── Taunt text ─────────────────────────────────────────────────────────────── */
 .taunt {
   font-family: var(--retro-font);
-  font-size: 0.65rem;
+  font-size: 0.78rem;
   color: rgba(255, 255, 255, 0.0);
   line-height: 1.5;
   border-left: 2px solid rgba(183, 0, 255, 0.3);
@@ -204,6 +204,16 @@
 
 .tauntVisible {
   color: rgba(255, 255, 255, 0.55);
+}
+
+.accuracyLine {
+  font-family: var(--retro-font);
+  font-size: 0.7rem;
+  color: rgba(255, 0, 170, 0.55);
+  letter-spacing: 0.5px;
+  padding-left: 0.65rem;
+  margin-left: 0.1rem;
+  border-left: 2px solid rgba(255, 0, 170, 0.2);
 }
 
 /* ─── Carousel ───────────────────────────────────────────────────────────────── */

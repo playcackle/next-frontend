@@ -56,7 +56,7 @@ const TIPS = [
   },
 ];
 
-// ─── Trash talk generator ─────────────────────────────────────────────────────
+// ─── Primary taunt — weakest category, uses snaps + near_miss_rate ────────────
 
 function generateTrashTalk(
   player: Score,
@@ -65,70 +65,109 @@ function generateTrashTalk(
 ): string {
   debugger;
   const name = isCurrentUser ? "You" : player.display_name;
-  const pronoun = isCurrentUser ? "your" : "their";
   const pronoun2 = isCurrentUser ? "you" : "they";
 
   if (!categoryStats || categoryStats.categories.length === 0) {
     const fallbacks = [
-      `${name} have no category stats. A true blank slate. Or just bad at everything equally.`,
-      `No historical data for ${name === "You" ? "you" : player.display_name}. Fresh meat. Let's see how long that lasts.`,
-      `${name === "You" ? "You're" : `${player.display_name} is`} an unknown quantity. Statistically speaking, probably not great.`,
+      `${name} have no recorded history. Either brand new or too embarrassing to log.`,
+      `No stats found for ${name === "You" ? "you" : player.display_name}. The database has nothing. That tracks.`,
+      `${name === "You" ? "You're" : `${player.display_name} is`} statistically invisible. Not a flex.`,
+      `${name} have managed to play this game without leaving a trace. Impressive in the worst way.`,
     ];
     return fallbacks[Math.floor(Math.random() * fallbacks.length)];
   }
 
   const weakest = categoryStats.weakest_accuracy_category;
-  const bestCat = categoryStats.best_accuracy_category;
   const mostPlayed = categoryStats.most_played_category;
-
   const weakestStat = categoryStats.categories.find(
     (c) => c.category_name === weakest,
   );
-  const bestStat = categoryStats.categories.find(
-    (c) => c.category_name === bestCat,
-  );
 
-  const taunts: string[] = [];
-
-  if (weakest && weakestStat) {
-    const acc =
-      weakestStat.accuracy != null ? `${weakestStat.accuracy}%` : "unknown";
-    taunts.push(
-      `${name} historically choke on "${weakest}" with a ${acc} accuracy. Prepare to watch ${pronoun2} suffer.`,
-      `${pronoun.charAt(0).toUpperCase() + pronoun.slice(1)} worst category is "${weakest}". ${acc} accuracy. Just... embarrassing.`,
-    );
-  }
-
-  if (bestCat && bestStat && bestStat !== weakestStat) {
-    const acc = bestStat.accuracy != null ? `${bestStat.accuracy}%` : "decent";
-    taunts.push(
-      `${name === "You" ? "Your" : `${player.display_name}'s`} only decent category is "${bestCat}" at ${acc}. One trick pony.`,
-    );
-  }
-
-  if (mostPlayed && mostPlayed === weakest) {
-    taunts.push(
-      `${name} play "${mostPlayed}" the most — and ${pronoun2}'re still terrible at it. Respect for the commitment, I guess.`,
-    );
-  }
-
-  const totalGames = categoryStats.categories.reduce(
+  const totalRounds = categoryStats.categories.reduce(
     (sum, c) => sum + c.rounds_played,
     0,
   );
-  if (totalGames > 0 && totalGames < 5) {
+
+  if (!weakest || !weakestStat) {
+    if (totalRounds < 5) {
+      return `${name} have played ${totalRounds} round${totalRounds === 1 ? "" : "s"}. Not enough data to roast properly. Give it time.`;
+    }
+    return `${name} somehow have no clear weak spot. Suspiciously mediocre across the board.`;
+  }
+
+  const snaps = weakestStat.successful_snaps;
+  const nearMiss = weakestStat.near_miss_rate;
+  const n = name;
+  const dn = player.display_name;
+  const snap =
+    snaps === 0
+      ? "zero successful snaps"
+      : `only ${snaps} snap${snaps === 1 ? "" : "s"}`;
+  const nm =
+    nearMiss != null && nearMiss > 0 ? `, near-miss rate of ${nearMiss}` : "";
+  const pos = isCurrentUser ? "your" : `${dn}'s`;
+
+  const taunts: string[] = [
+    `${n} are genuinely terrible at "${weakest}" — ${snap}${nm}. Statistically, ${pronoun2} should just skip it.`,
+    `"${weakest}" is ${pos} graveyard. ${snap}${nm}. Keep showing up though.`,
+    `${n} see "${weakest}" on the board and something dies inside — ${snap}${nm}.`,
+    `${snap} in "${weakest}"${nm}. The data does not lie. ${n} might.`,
+    `In "${weakest}", ${n} have contributed ${snap}${nm}. Remarkable in how little that is.`,
+    `${snap}${nm} in "${weakest}". ${n} have had many chances. ${n} have wasted all of them.`,
+    `"${weakest}" has seen ${n} fail ${snap}${nm}. The category remembers. ${n} apparently do not.`,
+    `${n} enter "${weakest}" every time with the same energy and leave with ${snap}${nm}. The definition of insanity.`,
+    `${snap}${nm} — that is ${pos} entire "${weakest}" resume. It is a short resume.`,
+    `If "${weakest}" is on the board, look away from ${n}. ${snap}${nm}. It is not getting better.`,
+  ];
+
+  if (mostPlayed === weakest) {
     taunts.push(
-      `${name} have only played ${totalGames} round${totalGames === 1 ? "" : "s"}. A genuine newcomer. Bless.`,
-    );
-  } else if (totalGames >= 20 && weakest) {
-    taunts.push(
-      `${totalGames} rounds played and "${weakest}" is still ${pronoun} Achilles heel. At what point do ${pronoun2} just… not pick that category?`,
+      `"${weakest}" is ${pos} most played category. Also the worst one. ${snap}${nm}. Commitment to failure.`,
+      `${n} keep coming back to "${weakest}" despite ${snap}${nm}. That is not confidence, that is delusion.`,
+      `${n} have spent more time in "${weakest}" than anywhere else and have ${snap}${nm} to show for it. Inspiring.`,
     );
   }
 
-  if (taunts.length === 0) {
-    return `${name} look suspiciously average. Do not trust ${pronoun2}.`;
+  if (totalRounds >= 20) {
+    taunts.push(
+      `${totalRounds} rounds deep and "${weakest}" is still a disaster — ${snap}${nm}. Nothing is improving.`,
+      `After ${totalRounds} rounds, "${weakest}" still has ${n} beat with ${snap}${nm}. Some people just never learn.`,
+    );
   }
+
+  return taunts[Math.floor(Math.random() * taunts.length)];
+}
+
+// ─── Secondary taunt — accuracy, talks a lot knows nothing ────────────────────
+
+function buildAccuracyLine(
+  player: Score,
+  categoryStats: PlayerCategoryStatsResponse | null,
+  isCurrentUser: boolean,
+): string | null {
+  if (!categoryStats || categoryStats.categories.length === 0) return null;
+
+  const weakest = categoryStats.weakest_accuracy_category;
+  const weakestStat = categoryStats.categories.find(
+    (c) => c.category_name === weakest,
+  );
+  if (!weakestStat || !weakest) return null;
+
+  const {
+    successful_snaps: snaps,
+    total_submissions: subs,
+    near_miss_rate: nearMiss,
+  } = weakestStat;
+  const name = isCurrentUser ? "You" : player.display_name;
+
+  const taunts: string[] = [
+    `${snaps} snaps out of ${subs} attempts in "${weakest}"${nearMiss != null ? ` · near-miss rate ${nearMiss}` : ""}. ${name} clearly talk a big game and know absolutely nothing.`,
+    `${subs} submissions. ${snaps} that actually counted. In "${weakest}"${nearMiss != null ? ` · near-miss rate ${nearMiss}` : ""}. ${name} have a lot of opinions for someone so consistently wrong.`,
+    `"${weakest}": ${subs} tries, ${snaps} hits${nearMiss != null ? `, near-miss ${nearMiss}` : ""}. Loud. Confident. Wrong. Classic ${name === "You" ? "you" : player.display_name}.`,
+    `${name} submitted ${subs} times in "${weakest}" and got ${snaps} right${nearMiss != null ? ` — near-miss rate ${nearMiss}` : ""}. The volume suggests knowledge. The results do not.`,
+    `In "${weakest}": ${snaps}/${subs}${nearMiss != null ? ` · near-miss ${nearMiss}` : ""}. ${name} type fast and know little. A dangerous combination.`,
+    `${subs} guesses, ${snaps} correct in "${weakest}"${nearMiss != null ? `, near-miss rate ${nearMiss}` : ""}. ${name} contribute quantity. Not quality. Never quality.`,
+  ];
 
   return taunts[Math.floor(Math.random() * taunts.length)];
 }
@@ -157,6 +196,7 @@ function PlayerCard({ player, isCurrentUser, entryDelay }: PlayerCardProps) {
   const [categoryStats, setCategoryStats] =
     useState<PlayerCategoryStatsResponse | null>(null);
   const [taunt, setTaunt] = useState<string>("");
+  const [accuracyLine, setAccuracyLine] = useState<string | null>(null);
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
@@ -167,11 +207,13 @@ function PlayerCard({ player, isCurrentUser, entryDelay }: PlayerCardProps) {
         if (!cancelled) {
           setCategoryStats(stats);
           setTaunt(generateTrashTalk(player, stats, isCurrentUser));
+          setAccuracyLine(buildAccuracyLine(player, stats, isCurrentUser));
           setLoaded(true);
         }
       } catch {
         if (!cancelled) {
           setTaunt(generateTrashTalk(player, null, isCurrentUser));
+          setAccuracyLine(null);
           setLoaded(true);
         }
       }
@@ -225,6 +267,9 @@ function PlayerCard({ player, isCurrentUser, entryDelay }: PlayerCardProps) {
       <p className={`${styles.taunt} ${loaded ? styles.tauntVisible : ""}`}>
         {loaded ? taunt : "analyzing stats..."}
       </p>
+      {loaded && accuracyLine && (
+        <p className={styles.accuracyLine}>{accuracyLine}</p>
+      )}
     </div>
   );
 }
