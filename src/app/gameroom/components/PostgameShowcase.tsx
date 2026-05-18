@@ -20,120 +20,132 @@ import { scoresAtom, playerAccoladesAtom } from "../store/gameAtoms";
 import type { PlayerAccolade } from "../types/payloads";
 import styles from "./PostgameShowcase.module.css";
 
-const ACCOLADE_ICONS: Record<string, LucideIcon> = {
-  speed_demon: Zap,
-  first_blood: Crosshair,
-  precision: Target,
-  perfectionist: BadgeCheck,
-  machine_gun: Zap,
-  snapping_spree: Flame,
-  hot_streak: TrendingUp,
-  clutch_player: Timer,
-  sniper: Crosshair,
-  close_call: AlertCircle,
-};
+// ── Constants ────────────────────────────────────────────────────────────────
 
-// Human-readable labels and descriptions for each accolade type
-const ACCOLADE_META: Record<string, { title: string; description: string }> = {
+const COLORS = [
+  "var(--neon-pink)",
+  "var(--neon-green)",
+  "var(--neon-purple)",
+  "#00ddff",
+  "#ff6600",
+];
+
+interface AccoladeMeta {
+  title: string;
+  description: string;
+  icon: LucideIcon;
+}
+
+const ACCOLADE_LIST: Record<string, AccoladeMeta> = {
   speed_demon: {
     title: "Speed Demon",
     description: "Answered with blazing speed across multiple rounds.",
+    icon: Zap,
   },
   first_blood: {
     title: "First Blood",
     description: "First to snap an answer in the round.",
+    icon: Crosshair,
   },
   precision: {
     title: "Precision",
     description: "Consistently snapped correct answers without misses.",
+    icon: Target,
   },
   perfectionist: {
     title: "Perfectionist",
     description: "Flawless performance — no wrong answers submitted.",
+    icon: BadgeCheck,
   },
   machine_gun: {
     title: "Machine Gun",
     description: "Submitted the highest volume of answers.",
+    icon: Zap,
   },
   snapping_spree: {
     title: "Snapping Spree",
     description: "On an unstoppable snapping streak.",
+    icon: Flame,
   },
   hot_streak: {
     title: "Hot Streak",
     description: "Kept momentum going round after round.",
+    icon: TrendingUp,
   },
   clutch_player: {
     title: "Clutch Player",
     description: "Delivered when the pressure was highest.",
+    icon: Timer,
   },
   sniper: {
     title: "Sniper",
     description: "Locked on and never missed the target.",
+    icon: Crosshair,
   },
   close_call: {
     title: "Close Call",
     description: "Barely made it — but still got the snap.",
+    icon: AlertCircle,
   },
 };
 
-interface ShowcaseSlide {
-  accolade_type: string;
-  title: string;
-  description: string;
+// ── Types ────────────────────────────────────────────────────────────────────
+
+interface TopAccolade {
+  player_id: string;
   display_name: string;
-  count: number;
+  score: number;
+  top_accolade: string;
+  top_count: number;
+  color: string;
+  accolade: AccoladeMeta | undefined;
 }
+
+// ── Helper ───────────────────────────────────────────────────────────────────
+
+function getTopAccolades(players: PlayerAccolade[]): Array<TopAccolade> {
+  return players.map((player) => {
+    let topAccolade = "";
+    let topCount = 0;
+
+    for (const [accolade, count] of Object.entries(player.accolades_count)) {
+      if (count > topCount) {
+        topCount = count;
+        topAccolade = accolade;
+      }
+    }
+
+    return {
+      player_id: player.player_id,
+      display_name: player.display_name,
+      score: player.score,
+      top_accolade: topAccolade,
+      top_count: topCount,
+      color: COLORS[Math.floor(Math.random() * COLORS.length)],
+      accolade: ACCOLADE_LIST[topAccolade],
+    };
+  });
+}
+
+// ── Component ────────────────────────────────────────────────────────────────
 
 const AUTO_ADVANCE_MS = 3500;
 
 export default function PostgameShowcase() {
-  const scores = useAtomValue(scoresAtom);
   const playerAccolades = useAtomValue(playerAccoladesAtom);
 
   const [current, setCurrent] = useState(0);
   const [animating, setAnimating] = useState(false);
   const [direction, setDirection] = useState<"next" | "prev">("next");
 
-  // Build lookup map: player_id -> PlayerAccolades
-  const playerIdToAccolades = useMemo(() => {
-    const map = new Map<string, PlayerAccolade>();
-    playerAccolades.forEach((pa) => map.set(pa.player_id, pa));
-    return map;
-  }, [playerAccolades]);
-
-  // Cast scores to include rank
-  const rankedScores = scores as Array<{
-    player_id: string;
-    display_name: string;
-    score: number;
-    rank?: number;
-  }>;
-
-  // Build flat list of slides: one per (player, accolade_type) combination
-  const slides = useMemo<ShowcaseSlide[]>(() => {
-    const result: ShowcaseSlide[] = [];
-    rankedScores.forEach((player) => {
-      const pa = playerIdToAccolades.get(player.player_id);
-      if (!pa) return;
-      Object.entries(pa.accolades_count).forEach(([accolade_type, count]) => {
-        if (count <= 0) return;
-        const meta = ACCOLADE_META[accolade_type];
-        result.push({
-          accolade_type,
-          title: meta?.title ?? accolade_type,
-          description: meta?.description ?? "",
-          display_name: player.display_name,
-          count,
-        });
-      });
-    });
-    return result;
-  }, [rankedScores, playerIdToAccolades]);
+  const slides = useMemo<TopAccolade[]>(
+    () => getTopAccolades(playerAccolades).filter((s) => s.top_accolade !== ""),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [playerAccolades],
+  );
 
   const total = slides.length;
 
-  // Auto-advance
   useEffect(() => {
     if (total <= 1) return;
     const timer = setInterval(() => {
@@ -142,16 +154,6 @@ export default function PostgameShowcase() {
     return () => clearInterval(timer);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [current, total]);
-
-  const goTo = (index: number) => {
-    if (animating || index === current) return;
-    setDirection(index > current ? "next" : "prev");
-    setAnimating(true);
-    setTimeout(() => {
-      setCurrent(index);
-      setAnimating(false);
-    }, 300);
-  };
 
   const goNext = () => {
     if (animating || total <= 1) return;
@@ -173,13 +175,23 @@ export default function PostgameShowcase() {
     }, 300);
   };
 
+  const goTo = (index: number) => {
+    if (animating || index === current) return;
+    setDirection(index > current ? "next" : "prev");
+    setAnimating(true);
+    setTimeout(() => {
+      setCurrent(index);
+      setAnimating(false);
+    }, 300);
+  };
+
   if (total === 0) return null;
 
   const slide = slides[current];
-  const IconComponent = ACCOLADE_ICONS[slide.accolade_type] ?? Award;
+  const IconComponent = slide.accolade?.icon ?? Award;
 
   return (
-    <div className={styles.container}>
+    <div className={styles.showcase}>
       <p className={styles.label}>Postgame Awards</p>
 
       <div className={styles.carouselRow}>
@@ -194,16 +206,35 @@ export default function PostgameShowcase() {
         )}
 
         <div
-          className={`${styles.card} ${animating ? (direction === "next" ? styles.exitLeft : styles.exitRight) : styles.enter}`}
+          className={`${styles.card} ${
+            animating
+              ? direction === "next"
+                ? styles.exitLeft
+                : styles.exitRight
+              : styles.enter
+          }`}
         >
-          <div className={styles.iconWrapper}>
-            <IconComponent size={28} aria-hidden="true" />
+          <div
+            className={styles.iconWrapper}
+            style={
+              {
+                "--accent": slide.color,
+              } as React.CSSProperties
+            }
+          >
+            <IconComponent size={26} aria-hidden="true" />
           </div>
 
           <div className={styles.cardBody}>
-            <p className={styles.cardTitle}>{slide.title}</p>
-            <p className={styles.cardDescription}>{slide.description}</p>
-            <p className={styles.cardPlayer}>{slide.display_name}</p>
+            <p className={styles.cardTitle}>
+              {slide.accolade?.title ?? slide.top_accolade}
+            </p>
+            <p className={styles.cardDescription}>
+              {slide.accolade?.description ?? ""}
+            </p>
+            <p className={styles.cardPlayer} style={{ color: slide.color }}>
+              {slide.display_name}
+            </p>
           </div>
         </div>
 
