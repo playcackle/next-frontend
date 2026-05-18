@@ -181,7 +181,9 @@
 }
 
 .signOutButton:hover {
-  box-shadow: 0 0 15px rgba(255, 51, 102, 0.7), 0 0 25px rgba(255, 51, 102, 0.4);
+  box-shadow:
+    0 0 15px rgba(255, 51, 102, 0.7),
+    0 0 25px rgba(255, 51, 102, 0.4);
   transform: translateY(-2px) translateZ(0);
   background: linear-gradient(45deg, #ff1a4d, #ff5252);
 }
@@ -200,7 +202,11 @@
   font-size: 0.8rem;
   letter-spacing: 1px;
   padding: 0.5rem 1rem;
-  background: linear-gradient(45deg, var(--neon-purple, #7b2fff), var(--neon-blue));
+  background: linear-gradient(
+    45deg,
+    var(--neon-purple, #7b2fff),
+    var(--neon-blue)
+  );
   border-radius: 4px;
   border: none;
   font-family: var(--retro-font);
@@ -212,7 +218,9 @@
 }
 
 .discordButton:hover {
-  box-shadow: 0 0 14px rgba(123, 47, 255, 0.7), 0 0 24px rgba(0, 221, 255, 0.3);
+  box-shadow:
+    0 0 14px rgba(123, 47, 255, 0.7),
+    0 0 24px rgba(0, 221, 255, 0.3);
   transform: translateY(-2px) translateZ(0);
 }
 
@@ -252,4 +260,27 @@
   .signOutButton:hover {
     transform: none; /* Remove hover transforms on mobile */
   }
+}
+
+.howToPlayLink {
+  font-family: var(--retro-font);
+  font-size: 0.7rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: rgba(183, 0, 255, 0.8);
+  border: 1px solid rgba(183, 0, 255, 0.35);
+  border-radius: 4px;
+  padding: 0.4rem 1rem;
+  background: rgba(183, 0, 255, 0.05);
+  box-shadow: 0 0 8px rgba(183, 0, 255, 0.15);
+  transition:
+    background 0.2s ease,
+    box-shadow 0.2s ease,
+    color 0.2s ease;
+}
+
+.howToPlayLink:hover {
+  background: rgba(183, 0, 255, 0.12);
+  box-shadow: 0 0 18px rgba(183, 0, 255, 0.4);
+  color: rgba(183, 0, 255, 1);
 }

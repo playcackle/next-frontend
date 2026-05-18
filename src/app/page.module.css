@@ -38,26 +38,6 @@
   color: rgba(255, 255, 255, 0.45);
 }
 
-.howToPlayLink {
-  font-family: var(--retro-font);
-  font-size: 0.7rem;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  color: rgba(183, 0, 255, 0.8);
-  border: 1px solid rgba(183, 0, 255, 0.35);
-  border-radius: 4px;
-  padding: 0.4rem 1rem;
-  background: rgba(183, 0, 255, 0.05);
-  box-shadow: 0 0 8px rgba(183, 0, 255, 0.15);
-  transition: background 0.2s ease, box-shadow 0.2s ease, color 0.2s ease;
-}
-
-.howToPlayLink:hover {
-  background: rgba(183, 0, 255, 0.12);
-  box-shadow: 0 0 18px rgba(183, 0, 255, 0.4);
-  color: rgba(183, 0, 255, 1);
-}
-
 .neonText {
   color: #fff;
   text-shadow:

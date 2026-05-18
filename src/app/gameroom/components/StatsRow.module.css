@@ -7,7 +7,7 @@
   direction: row;
   justify-content: center;
   gap: clamp(0.5rem, 1vw, 1rem);
-  height: clamp(60px, 8vh, 95px);
+  height: clamp(60px, 10vh, 95px);
   flex-shrink: 0;
 }
 
