@@ -7,7 +7,7 @@
   direction: row;
   justify-content: center;
   gap: clamp(0.5rem, 1vw, 1rem);
-  height: clamp(60px, 10vh, 95px);
+  height: clamp(60px, 8vh, 95px);
   flex-shrink: 0;
 }
 
@@ -26,7 +26,6 @@
   height: 100%; /* Ensure full height */
   overflow: hidden; /* Prevent overflow */
   font-size: 0.8rem; /* Smaller font */
-  margin-bottom: 0.5rem; /* Reduced margin */
   color: var(--neon-blue);
   text-transform: uppercase;
   letter-spacing: 1px;
@@ -98,7 +97,7 @@
 /* ── Shared value/label classes ───────────────────────────── */
 
 .statsValue {
-  font-size: 1.5rem; /* Smaller font */
+  font-size: 1.3rem; /* Smaller font */
   font-weight: bold;
   color: white;
   text-shadow: 0 0 10px rgba(0, 221, 255, 0.7);
