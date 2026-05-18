@@ -218,33 +218,30 @@ export const useGameSocket = (baseUrl: string, token: string) => {
 
   // ==================== PUBLIC API ====================
 
-  // Send events to server (with debouncing to prevent spam)
+  // Send events to server immediately (no debounce — submissions are time-sensitive)
   const sendEvent = useCallback(
-    debounce(
-      <T extends GameEvent>(
-        event: T,
-        data: T extends "submit_answer"
-          ? string
-          : T extends "play_again_response"
-            ? { want_to_play: boolean }
-            : EventPayloadMap[T],
-      ) => {
-        const socket = socketRef.current;
-        if (!socket?.connected) {
-          console.warn(`Cannot send ${event}: socket not connected`);
-          return false;
-        }
+    <T extends GameEvent>(
+      event: T,
+      data: T extends "submit_answer"
+        ? string
+        : T extends "play_again_response"
+          ? { want_to_play: boolean }
+          : EventPayloadMap[T],
+    ) => {
+      const socket = socketRef.current;
+      if (!socket?.connected) {
+        console.warn(`Cannot send ${event}: socket not connected`);
+        return false;
+      }
 
-        try {
-          socket.emit(event, data);
-          return true;
-        } catch (error) {
-          debouncedErrorLog(`Error sending ${event}:`, error);
-          return false;
-        }
-      },
-      100,
-    ),
+      try {
+        socket.emit(event, data);
+        return true;
+      } catch (error) {
+        debouncedErrorLog(`Error sending ${event}:`, error);
+        return false;
+      }
+    },
     [debouncedErrorLog],
   );
 
