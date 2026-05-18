@@ -23,15 +23,19 @@ interface ConnectionBannerProps {
   onChatRetry?: () => void;
 }
 
-export default function ConnectionBanner({ onRetry, onChatRetry }: ConnectionBannerProps) {
+export default function ConnectionBanner({
+  onRetry,
+  onChatRetry,
+}: ConnectionBannerProps) {
   const gameStatus = useAtomValue(connectionStatusAtom);
   const chatStatus = useAtomValue(chatConnectionStatusAtom);
 
   const status: ConnectionStatus =
-    STATUS_RANK[gameStatus] >= STATUS_RANK[chatStatus] ? gameStatus : chatStatus;
+    STATUS_RANK[gameStatus] >= STATUS_RANK[chatStatus]
+      ? gameStatus
+      : chatStatus;
 
-  const isChatOnly =
-    STATUS_RANK[chatStatus] > STATUS_RANK[gameStatus];
+  const isChatOnly = STATUS_RANK[chatStatus] > STATUS_RANK[gameStatus];
 
   const [visible, setVisible] = useState(false);
   const [displayStatus, setDisplayStatus] = useState<ConnectionStatus>(status);
@@ -56,7 +60,7 @@ export default function ConnectionBanner({ onRetry, onChatRetry }: ConnectionBan
           setVisible(false);
           bannerWasShownRef.current = false;
           hideTimerRef.current = null;
-        }, 2000);
+        }, 500);
       } else {
         setVisible(false);
       }

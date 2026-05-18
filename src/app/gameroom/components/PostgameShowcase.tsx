@@ -1,28 +1,29 @@
 "use client";
 
+import { useAtomValue } from "jotai";
 import {
   AlertCircle,
   Award,
   BadgeCheck,
+  ChevronLeft,
+  ChevronRight,
   Crosshair,
   Flame,
+  Sword,
   Target,
   Timer,
   TrendingUp,
-  type LucideIcon,
   Zap,
-  ChevronLeft,
-  ChevronRight,
+  type LucideIcon,
 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
-import { useAtomValue } from "jotai";
-import { scoresAtom, playerAccoladesAtom } from "../store/gameAtoms";
+import { playerAccoladesAtom, scoresAtom } from "../store/gameAtoms";
 import type { PlayerAccolade } from "../types/payloads";
 import styles from "./PostgameShowcase.module.css";
 
 const ACCOLADE_ICONS: Record<string, LucideIcon> = {
   speed_demon: Zap,
-  first_blood: Crosshair,
+  first_blood: Sword,
   precision: Target,
   perfectionist: BadgeCheck,
   machine_gun: Zap,

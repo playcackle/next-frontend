@@ -6,16 +6,17 @@ import {
   BadgeCheck,
   Crosshair,
   Flame,
+  Sword,
   Target,
-  type LucideIcon,
   Timer,
   TrendingUp,
   Zap,
+  type LucideIcon,
 } from "lucide-react";
 
+import { useAtomValue } from "jotai";
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { useAtomValue } from "jotai";
 import { accoladesAtom, scoresAtom } from "../store/gameAtoms";
 import type { Accolade } from "../types/state";
 import styles from "./leaderboard.module.css";
@@ -24,19 +25,19 @@ import styles from "./leaderboard.module.css";
 const ACCOLADE_ICONS: Record<string, LucideIcon> = {
   // Speed-based
   speed_demon: Zap,
-  first_blood: Crosshair, // Crosshair for being first on target
-  
+  first_blood: Sword, // Crosshair for being first on target
+
   // Accuracy-based
   precision: Target, // Bullseye for precision
   perfectionist: BadgeCheck,
-  
+
   // Volume-based
   machine_gun: Zap, // Fast = Zap
   snapping_spree: Flame,
-  
+
   // Streak-based
   hot_streak: TrendingUp,
-  
+
   // Special achievements
   clutch_player: Timer,
   sniper: Crosshair, // Hunter/target shooter
