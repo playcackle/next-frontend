@@ -9,13 +9,14 @@
   overflow: hidden;
 }
 
-.label {
-  font-family: var(--retro-font);
-  font-size: clamp(0.55rem, 0.8vw, 0.7rem);
+.title {
+  font-size: clamp(0.8rem, 1.2vw, 1rem);
+  margin-bottom: clamp(0.25rem, 0.5vh, 0.5rem);
+  color: #fff;
+  text-shadow: 0 0 10px rgba(255, 0, 170, 0.7);
   text-transform: uppercase;
   letter-spacing: 2px;
-  color: rgba(255, 255, 255, 0.45);
-  margin: 0;
+  font-family: var(--retro-font);
 }
 
 /* ── Carousel row ────────────────────────────────────── */
@@ -143,7 +144,7 @@
 .cardDescription {
   font-family: var(--retro-font);
   font-size: clamp(0.55rem, 0.8vw, 0.7rem);
-  color: rgba(255, 255, 255, 0.6);
+  color: rgba(255, 255, 255, 0.8);
   margin: 0;
   line-height: 1.4;
   overflow: hidden;

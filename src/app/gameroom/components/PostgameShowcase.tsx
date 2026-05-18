@@ -1,22 +1,22 @@
 "use client";
 
+import { useAtomValue } from "jotai";
 import {
   AlertCircle,
   Award,
   BadgeCheck,
+  ChevronLeft,
+  ChevronRight,
   Crosshair,
   Flame,
   Target,
   Timer,
   TrendingUp,
-  type LucideIcon,
   Zap,
-  ChevronLeft,
-  ChevronRight,
+  type LucideIcon,
 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
-import { useAtomValue } from "jotai";
-import { scoresAtom, playerAccoladesAtom } from "../store/gameAtoms";
+import { playerAccoladesAtom } from "../store/gameAtoms";
 import type { PlayerAccolade } from "../types/payloads";
 import styles from "./PostgameShowcase.module.css";
 
@@ -192,7 +192,7 @@ export default function PostgameShowcase() {
 
   return (
     <div className={styles.showcase}>
-      <p className={styles.label}>Postgame Awards</p>
+      <p className={styles.title}>Postgame Awards</p>
 
       <div className={styles.carouselRow}>
         {total > 1 && (

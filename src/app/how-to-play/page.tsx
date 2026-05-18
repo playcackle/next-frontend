@@ -71,7 +71,7 @@ function TourStep() {
           <div className={`${styles.tourTail} ${styles.tourTailDownRight}`} />
         </div>
         <div className={styles.tourCallout}>
-          <span className={styles.tourCalloutNum}>6</span>
+          <span className={styles.tourCalloutNum}>2</span>
           <div className={styles.tourCalloutBody}>
             <strong className={styles.tourCalloutTitle}>Beat the clock</strong>
             <p>
@@ -83,12 +83,17 @@ function TourStep() {
           <div className={`${styles.tourTail} ${styles.tourTailDownCenter}`} />
         </div>
         <div className={styles.tourCallout}>
-          <span className={styles.tourCalloutNum}>5</span>
+          <span className={styles.tourCalloutNum}>3</span>
           <div className={styles.tourCalloutBody}>
-            <strong className={styles.tourCalloutTitle}>Leaderboard</strong>
+            <strong className={styles.tourCalloutTitle}>
+              Find the answers
+            </strong>
             <p>
-              Live scores update as answers are claimed. Bot Bob announces{" "}
-              <strong>accolades</strong> in the chat after the game.
+              Each round has a <strong>set number of answers</strong> to
+              uncover. Every correct answer{" "}
+              <strong>fills a slot on the board</strong>. Look for{" "}
+              <strong className={styles.tourPurple}>purple slots</strong> —
+              those answers are <strong>rare and worth extra points</strong>.
             </p>
           </div>
           <div className={`${styles.tourTail} ${styles.tourTailDownLeft}`} />
@@ -260,7 +265,7 @@ function TourStep() {
       {/* Bottom callouts - swapped box 2 and 4 */}
       <div className={styles.tourBottomRow}>
         <div className={styles.tourCallout}>
-          <span className={styles.tourCalloutNum}>3</span>
+          <span className={styles.tourCalloutNum}>4</span>
           <div className={styles.tourCalloutBody}>
             <strong className={styles.tourCalloutTitle}>Type fast</strong>
             <p>
@@ -273,7 +278,7 @@ function TourStep() {
           <div className={`${styles.tourTail} ${styles.tourTailUpRight}`} />
         </div>
         <div className={styles.tourCallout}>
-          <span className={styles.tourCalloutNum}>4</span>
+          <span className={styles.tourCalloutNum}>5</span>
           <div className={styles.tourCalloutBody}>
             <strong className={styles.tourCalloutTitle}>Hints</strong>
             <p>
@@ -286,17 +291,13 @@ function TourStep() {
           <div className={`${styles.tourTail} ${styles.tourTailUpCenter}`} />
         </div>
         <div className={styles.tourCallout}>
-          <span className={styles.tourCalloutNum}>2</span>
+          <span className={styles.tourCalloutNum}>6</span>
+
           <div className={styles.tourCalloutBody}>
-            <strong className={styles.tourCalloutTitle}>
-              Find the answers
-            </strong>
+            <strong className={styles.tourCalloutTitle}>Leaderboard</strong>
             <p>
-              Each round has a <strong>set number of answers</strong> to
-              uncover. Every correct answer{" "}
-              <strong>fills a slot on the board</strong>. Look for{" "}
-              <strong className={styles.tourPurple}>purple slots</strong> —
-              those answers are <strong>rare and worth extra points</strong>.
+              Live scores update as answers are claimed. Bot Bob announces{" "}
+              <strong>accolades</strong> in the chat after the game.
             </p>
           </div>
           <div className={`${styles.tourTail} ${styles.tourTailUpCenter}`} />
@@ -381,7 +382,10 @@ export default function HowToPlayPage() {
             BACK
           </button>
           {isLast ? (
-            <Link href="/" className={`${styles.navBtn} ${styles.navBtnPrimary}`}>
+            <Link
+              href="/"
+              className={`${styles.navBtn} ${styles.navBtnPrimary}`}
+            >
               {"LET'S GO"}
             </Link>
           ) : (
