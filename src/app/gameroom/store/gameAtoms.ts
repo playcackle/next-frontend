@@ -63,6 +63,7 @@ export const loadingAtom = atom((get) => get(gameStateAtom).loading);
 export const slotsAtom = atom((get) => get(gameStateAtom).slots);
 export const scoresAtom = atom((get) => get(gameStateAtom).scores);
 export const accoladesAtom = atom((get) => get(gameStateAtom).accolades);
+export const playerAccoladesAtom = atom((get) => get(gameStateAtom).playerAccolades);
 export const showCountDownAtom = atom(
   (get) => get(gameStateAtom).showCountDown,
 );

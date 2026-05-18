@@ -14,10 +14,10 @@ import {
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useAtomValue } from "jotai";
-import { accoladesAtom } from "../store/gameAtoms";
-import type { Accolade } from "../types/state";
+import { scoresAtom, playerAccoladesAtom } from "../store/gameAtoms";
+import type { PlayerAccolade } from "../types/payloads";
 import styles from "./PostgameShowcase.module.css";
 
 const ACCOLADE_ICONS: Record<string, LucideIcon> = {
@@ -33,21 +33,105 @@ const ACCOLADE_ICONS: Record<string, LucideIcon> = {
   close_call: AlertCircle,
 };
 
-const AUTO_ADVANCE_MS = 3500;
+// Human-readable labels and descriptions for each accolade type
+const ACCOLADE_META: Record<string, { title: string; description: string }> = {
+  speed_demon: {
+    title: "Speed Demon",
+    description: "Answered with blazing speed across multiple rounds.",
+  },
+  first_blood: {
+    title: "First Blood",
+    description: "First to snap an answer in the round.",
+  },
+  precision: {
+    title: "Precision",
+    description: "Consistently snapped correct answers without misses.",
+  },
+  perfectionist: {
+    title: "Perfectionist",
+    description: "Flawless performance — no wrong answers submitted.",
+  },
+  machine_gun: {
+    title: "Machine Gun",
+    description: "Submitted the highest volume of answers.",
+  },
+  snapping_spree: {
+    title: "Snapping Spree",
+    description: "On an unstoppable snapping streak.",
+  },
+  hot_streak: {
+    title: "Hot Streak",
+    description: "Kept momentum going round after round.",
+  },
+  clutch_player: {
+    title: "Clutch Player",
+    description: "Delivered when the pressure was highest.",
+  },
+  sniper: {
+    title: "Sniper",
+    description: "Locked on and never missed the target.",
+  },
+  close_call: {
+    title: "Close Call",
+    description: "Barely made it — but still got the snap.",
+  },
+};
 
-interface PostgameShowcaseProps {
-  accolades?: Accolade[];
+interface ShowcaseSlide {
+  accolade_type: string;
+  title: string;
+  description: string;
+  display_name: string;
+  count: number;
 }
 
-export default function PostgameShowcase({ accolades: propAccolades }: PostgameShowcaseProps) {
-  const atomAccolades = useAtomValue(accoladesAtom);
-  const accolades = propAccolades ?? atomAccolades;
+const AUTO_ADVANCE_MS = 3500;
+
+export default function PostgameShowcase() {
+  const scores = useAtomValue(scoresAtom);
+  const playerAccolades = useAtomValue(playerAccoladesAtom);
 
   const [current, setCurrent] = useState(0);
   const [animating, setAnimating] = useState(false);
   const [direction, setDirection] = useState<"next" | "prev">("next");
 
-  const total = accolades.length;
+  // Build lookup map: player_id -> PlayerAccolades
+  const playerIdToAccolades = useMemo(() => {
+    const map = new Map<string, PlayerAccolade>();
+    playerAccolades.forEach((pa) => map.set(pa.player_id, pa));
+    return map;
+  }, [playerAccolades]);
+
+  // Cast scores to include rank
+  const rankedScores = scores as Array<{
+    player_id: string;
+    display_name: string;
+    score: number;
+    rank?: number;
+  }>;
+
+  // Build flat list of slides: one per (player, accolade_type) combination
+  const slides = useMemo<ShowcaseSlide[]>(() => {
+    const result: ShowcaseSlide[] = [];
+    rankedScores.forEach((player) => {
+      const pa = playerIdToAccolades.get(player.player_id);
+      if (!pa) return;
+      Object.entries(pa.accolades_count).forEach(([accolade_type, count]) => {
+        if (count <= 0) return;
+        const meta = ACCOLADE_META[accolade_type];
+        result.push({
+          accolade_type,
+          title: meta?.title ?? accolade_type,
+          description: meta?.description ?? "",
+          display_name: player.display_name,
+          count,
+        });
+      });
+    });
+    return result;
+  }, [rankedScores, playerIdToAccolades]);
+
+  const total = slides.length;
 
   // Auto-advance
   useEffect(() => {
@@ -56,8 +140,18 @@ export default function PostgameShowcase({ accolades: propAccolades }: PostgameS
       goNext();
     }, AUTO_ADVANCE_MS);
     return () => clearInterval(timer);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [current, total]);
+
+  const goTo = (index: number) => {
+    if (animating || index === current) return;
+    setDirection(index > current ? "next" : "prev");
+    setAnimating(true);
+    setTimeout(() => {
+      setCurrent(index);
+      setAnimating(false);
+    }, 300);
+  };
 
   const goNext = () => {
     if (animating || total <= 1) return;
@@ -81,8 +175,8 @@ export default function PostgameShowcase({ accolades: propAccolades }: PostgameS
 
   if (total === 0) return null;
 
-  const accolade = accolades[current];
-  const IconComponent = ACCOLADE_ICONS[accolade.accolade_type] ?? Award;
+  const slide = slides[current];
+  const IconComponent = ACCOLADE_ICONS[slide.accolade_type] ?? Award;
 
   return (
     <div className={styles.container}>
@@ -107,9 +201,9 @@ export default function PostgameShowcase({ accolades: propAccolades }: PostgameS
           </div>
 
           <div className={styles.cardBody}>
-            <p className={styles.cardTitle}>{accolade.title}</p>
-            <p className={styles.cardDescription}>{accolade.description}</p>
-            <p className={styles.cardPlayer}>{accolade.player_display_name}</p>
+            <p className={styles.cardTitle}>{slide.title}</p>
+            <p className={styles.cardDescription}>{slide.description}</p>
+            <p className={styles.cardPlayer}>{slide.display_name}</p>
           </div>
         </div>
 
@@ -126,19 +220,11 @@ export default function PostgameShowcase({ accolades: propAccolades }: PostgameS
 
       {total > 1 && (
         <div className={styles.dots}>
-          {accolades.map((_, i) => (
+          {slides.map((_, i) => (
             <button
               key={i}
               className={`${styles.dot} ${i === current ? styles.dotActive : ""}`}
-              onClick={() => {
-                if (animating || i === current) return;
-                setDirection(i > current ? "next" : "prev");
-                setAnimating(true);
-                setTimeout(() => {
-                  setCurrent(i);
-                  setAnimating(false);
-                }, 300);
-              }}
+              onClick={() => goTo(i)}
               aria-label={`Go to award ${i + 1}`}
             />
           ))}
