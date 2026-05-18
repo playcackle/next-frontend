@@ -140,12 +140,8 @@ export const useGameSocket = (baseUrl: string, token: string) => {
         error: null,
         reconnectAttempts: 0,
       });
-      // After a mid-session drop+reconnect, the server may not auto-push
-      // lobby_state_sync (unlike initial connect). Requesting it here ensures
-      // loading clears and the client catches up on any missed state.
-      // Safe to do here because "reconnect" only fires on re-connections,
-      // not on the initial connect, so there's no race with fresh joins.
-      socket.emit("request_state_sync");
+      // The server already emits lobby_state_sync on the underlying "connect"
+      // event (which fires before "reconnect"), so no request_state_sync is needed.
     });
 
     socket.io.on("reconnect_failed", () => {

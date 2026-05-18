@@ -12,6 +12,7 @@ import {
   updatePlayAgainStateAtom,
 } from "../store/gameAtoms";
 import {
+  GameStartCancelledPayload,
   GameOverPayload,
   LobbySyncPayload,
   LobbyTickPayload,
@@ -54,6 +55,7 @@ export const useGameEvents = (gameWsUrl: string, token: string) => {
   //   2. Only set `loading: true` if the disconnection persists beyond the grace
   //      period — giving socket.io time to reconnect transparently.
   // ---------------------------------------------------------------------------
+  const prevLobbyIdRef = useRef<string | null>(null);
   const graceTimerRef = useRef<NodeJS.Timeout | null>(null);
   const hasReceivedFirstSync = useRef(false);
 
@@ -97,6 +99,14 @@ export const useGameEvents = (gameWsUrl: string, token: string) => {
     const cleanups = [
       onEvent("lobby_state_sync", (data: LobbySyncPayload) => {
         hasReceivedFirstSync.current = true;
+
+        // Clear room-scoped transient state when joining a different lobby
+        if (prevLobbyIdRef.current && prevLobbyIdRef.current !== data.lobby_id) {
+          clearRoundHints();
+          clearUnifiedMessages();
+        }
+        prevLobbyIdRef.current = data.lobby_id;
+
         updateGameState({
           roundNumber: data.round_number,
           roundExample: data.topic_example,
@@ -135,6 +145,8 @@ export const useGameEvents = (gameWsUrl: string, token: string) => {
           playerCount: data.player_count,
           timeRemaining: data.time_remaining_seconds ?? 0,
           scores: data.scores ?? [],
+          lobbyStatus: data.status,
+          isRoundBreak: data.status === "ROUND_BREAK",
         });
       }),
 
@@ -147,7 +159,10 @@ export const useGameEvents = (gameWsUrl: string, token: string) => {
           timeRemaining: data.break_duration_seconds ?? 0,
         });
         playSound("timeUp");
-        sendEvent("request_state_sync", undefined);
+      }),
+
+      onEvent("game_start_cancelled", () => {
+        updateGameState({ lobbyStatus: "WAITING", showCountDown: false });
       }),
 
       onEvent("round_starting_soon", () => {

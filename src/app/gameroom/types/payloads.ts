@@ -2,7 +2,7 @@
 // Base Types
 // ========================
 
-import { Accolade, FinalScore, PodiumPlayer, Score, Slot } from "./state";
+import { Accolade, FinalScore, LobbyStatus, PodiumPlayer, Score, Slot } from "./state";
 
 export type GameEvent =
   | "connection_success"
@@ -91,6 +91,7 @@ export type LobbySyncPayload = {
 };
 
 export type LobbyTickPayload = {
+  status: LobbyStatus;
   time_remaining_seconds: number | null;
   player_count: number;
   scores: Score[];
