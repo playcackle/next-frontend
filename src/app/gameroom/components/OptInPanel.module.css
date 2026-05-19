@@ -5,6 +5,7 @@
   justify-content: center;
   min-width: 0;
   overflow: hidden;
+  flex: 1;
 }
 
 .content {

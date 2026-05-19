@@ -7,6 +7,8 @@
   padding: clamp(0.5rem, 1vh, 0.75rem) clamp(0.5rem, 1vw, 0.75rem);
   min-width: 0;
   overflow: hidden;
+  flex: 1 0 33%;
+  justify-content: center;
 }
 
 .title {
@@ -143,13 +145,13 @@
 
 .cardDescription {
   font-family: var(--retro-font);
-  font-size: clamp(0.55rem, 0.8vw, 0.7rem);
-  color: rgba(255, 255, 255, 0.8);
+  font-size: clamp(0.6rem, 0.85vw, 0.75rem);
+  color: rgba(255, 255, 255, 0.75);
   margin: 0;
-  line-height: 1.4;
+  line-height: 1.5;
   overflow: hidden;
   display: -webkit-box;
-  -webkit-line-clamp: 2;
+  -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
 }
 
