@@ -8,7 +8,8 @@ export type LobbyJoinSuccess = {
   player_id: string;
   token: string;
   game_ws_url: string;
-  chat_ws_url: string;
+  /** Deprecated transitional alias; runtime uses game_ws_url. */
+  chat_ws_url?: string | null;
   // Not returned by the API — injected client-side from LobbyInfo when joining
   discord_invite_url?: string | null;
 };

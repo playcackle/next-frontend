@@ -5,7 +5,7 @@
  * - Uses socket.io's built-in reconnection for transparent mid-game reconnects
  * - Never triggers full loading screen on transient disconnects
  * - Exposes granular connectionStatus for UI overlay banners
- * - Requests state sync on reconnection so the client catches up
+ * - Relies on server-emitted state sync after connect/reconnect
  */
 
 import { captureException } from "@/lib/sentry";
@@ -213,8 +213,10 @@ export const useGameSocket = (baseUrl: string, token: string) => {
       socket.io.removeAllListeners();
       socket.disconnect();
       socketRef.current = null;
-      listenersRef.current.forEach((listeners) => listeners.clear());
-      listenersRef.current.clear();
+      // Do not clear listenersRef here. These are logical subscribers owned by
+      // useGameEvents/onEvent cleanup, not by a specific Socket.IO instance.
+      // Clearing them during socket re-initialization can leave the new socket
+      // connected with no app-level listeners for events such as unified_message.
     };
   }, [baseUrl, token, debouncedErrorLog]);
 

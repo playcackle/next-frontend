@@ -153,9 +153,6 @@ export default function GameroomPage() {
     }
   };
 
-  // Chat socket connection
-
-
   // Unified submission handler — returns false if the message could not be sent
   const handleUnifiedSubmit = (message: string, isAnswer: boolean): boolean => {
     if (isAnswer) {

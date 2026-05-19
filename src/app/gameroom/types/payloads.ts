@@ -176,23 +176,6 @@ export type SubmissionFeedbackPayload = {
 };
 
 // ========================
-// Chat Event Payloads
-// ========================
-
-export type ChatMessageData = {
-  player_id: string;
-  display_name: string;
-  text: string;
-  timestamp: string;
-};
-
-export type ChatEventPayloadMap = {
-  connection_success_chat: { message: string };
-  new_message: ChatMessageData;
-  message_error: { error: string };
-};
-
-// ========================
 // Play Again Opt-In Payloads
 // ========================
 
@@ -264,17 +247,4 @@ export type Message = {
   user: string;
   text: string;
   time: string;
-};
-
-// Payload for successful connection
-export type ConnectionSuccessChatPayload = {
-  message: string; // "Successfully connected to chat. Player ID: {player_id}"
-};
-
-// Payload for a new message
-export type ChatMessagePayload = {
-  player_id: string;
-  display_name: string;
-  text: string;
-  timestamp: string; // ISO datetime string
 };

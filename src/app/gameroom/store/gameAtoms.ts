@@ -1,9 +1,15 @@
 import { atom } from "jotai";
-import { ChatMessageData } from "../types/payloads";
 import { GameState } from "../types/state";
 
+type UnifiedMessageBase = {
+  player_id: string;
+  display_name: string;
+  text: string;
+  timestamp: string;
+};
+
 // Unified message type for combining chat and answer attempts
-export type UnifiedMessage = ChatMessageData & {
+export type UnifiedMessage = UnifiedMessageBase & {
   message_type:
     | "chat"
     | "bot_hint"
