@@ -25,7 +25,7 @@
   text-align: center;
   height: 100%; /* Ensure full height */
   overflow: hidden; /* Prevent overflow */
-  font-size: 0.8rem; /* Smaller font */
+  font-size: clamp(0.55rem, 1vw, 0.8rem);
   color: var(--neon-blue);
   text-transform: uppercase;
   letter-spacing: 1px;
@@ -97,11 +97,15 @@
 /* ── Shared value/label classes ───────────────────────────── */
 
 .statsValue {
-  font-size: 1.3rem; /* Smaller font */
+  font-size: clamp(0.75rem, 1.8vw, 1.3rem);
   font-weight: bold;
   color: white;
   text-shadow: 0 0 10px rgba(0, 221, 255, 0.7);
   font-family: var(--retro-font);
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .playersCount {
@@ -115,13 +119,17 @@
 
 /* Also used by page.tsx leaderboard — will be duplicated in gameroom.module.css until Plan 06 cleanup */
 .statsTitle {
-  font-size: 0.85rem;
+  font-size: clamp(0.55rem, 1vw, 0.85rem);
   color: rgba(255, 255, 255, 0.7);
   text-transform: uppercase;
   letter-spacing: 1px;
   font-family: var(--retro-font);
   margin: 0 0 0.15rem;
   font-weight: normal;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 /* ── Timer warning ────────────────────────────────────────── */
