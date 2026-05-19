@@ -5,6 +5,7 @@ import { joinGameroom, type LobbyJoinSuccess } from "../joinGameroom";
 // Mock fetch
 // ============================================================================
 const originalFetch = globalThis.fetch;
+let consoleSpy: ReturnType<typeof vi.spyOn>;
 
 function mockFetchOnce(response: {
   ok: boolean;
@@ -19,13 +20,14 @@ function mockFetchOnce(response: {
 }
 
 beforeEach(() => {
-  // Set required env var
   vi.stubEnv("NEXT_PUBLIC_LOBBY_MANAGER_URL", "http://localhost:8001");
+  consoleSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 });
 
 afterEach(() => {
   globalThis.fetch = originalFetch;
   vi.unstubAllEnvs();
+  consoleSpy.mockRestore();
 });
 
 // ============================================================================
