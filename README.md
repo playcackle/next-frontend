@@ -1,6 +1,6 @@
-# SnapScore Frontend
+# Cackle Frontend
 
-A Next.js-powered frontend for the SnapScore trivia gaming platform featuring real-time WebSocket communication, state management with Jotai, and a synthwave-inspired design.
+A Next.js-powered frontend for the Cackle trivia gaming platform featuring real-time WebSocket communication, state management with Jotai, and a synthwave-inspired design.
 
 ## 🚀 Quick Start
 
@@ -205,6 +205,4 @@ The included Docker setup provides:
 
 ## 📄 License
 
-This project is part of the SnapScore gaming platform.
-
-
+This project is part of the Cackle gaming platform.

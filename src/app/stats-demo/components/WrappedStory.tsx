@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
-import { Hand, ChevronRight, Share2, PartyPopper } from "lucide-react";
+import { ChevronRight, Hand, PartyPopper, Share2 } from "lucide-react";
+import { useCallback, useEffect, useState } from "react";
 import styles from "./WrappedStory.module.css";
 
 interface StorySlide {
@@ -29,7 +29,13 @@ interface WrappedStoryProps {
   onClose: () => void;
 }
 
-export function WrappedStory({ playerName, stats, topCategory, playStyle, onClose }: WrappedStoryProps) {
+export function WrappedStory({
+  playerName,
+  stats,
+  topCategory,
+  playStyle,
+  onClose,
+}: WrappedStoryProps) {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [animatedValue, setAnimatedValue] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
@@ -39,7 +45,7 @@ export function WrappedStory({ playerName, stats, topCategory, playStyle, onClos
       id: "intro",
       type: "intro",
       title: `Hey ${playerName}`,
-      subtitle: "Ready to see your SnapScore journey?",
+      subtitle: "Ready to see your Cackle journey?",
     },
     {
       id: "games",
@@ -71,7 +77,8 @@ export function WrappedStory({ playerName, stats, topCategory, playStyle, onClos
       title: "Accuracy",
       value: `${stats.overall_accuracy.toFixed(1)}%`,
       subtitle: "of your snaps were correct",
-      highlight: stats.overall_accuracy >= 75 ? "Sharpshooter!" : "Room to grow!",
+      highlight:
+        stats.overall_accuracy >= 75 ? "Sharpshooter!" : "Room to grow!",
     },
     {
       id: "category",
@@ -106,14 +113,14 @@ export function WrappedStory({ playerName, stats, topCategory, playStyle, onClos
 
   const goToNext = useCallback(() => {
     if (currentSlide < slides.length - 1) {
-      setCurrentSlide(prev => prev + 1);
+      setCurrentSlide((prev) => prev + 1);
       setAnimatedValue(0);
     }
   }, [currentSlide, slides.length]);
 
   const goToPrev = useCallback(() => {
     if (currentSlide > 0) {
-      setCurrentSlide(prev => prev - 1);
+      setCurrentSlide((prev) => prev - 1);
       setAnimatedValue(0);
     }
   }, [currentSlide]);
@@ -121,7 +128,7 @@ export function WrappedStory({ playerName, stats, topCategory, playStyle, onClos
   // Auto-advance timer
   useEffect(() => {
     if (isPaused) return;
-    
+
     const timer = setTimeout(() => {
       if (currentSlide < slides.length - 1) {
         goToNext();
@@ -174,13 +181,13 @@ export function WrappedStory({ playerName, stats, topCategory, playStyle, onClos
   };
 
   return (
-    <div 
+    <div
       className={styles.overlay}
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose();
       }}
     >
-      <div 
+      <div
         className={styles.storyContainer}
         style={{ background: getSlideGradient() }}
         onMouseEnter={() => setIsPaused(true)}
@@ -190,11 +197,16 @@ export function WrappedStory({ playerName, stats, topCategory, playStyle, onClos
         <div className={styles.progressContainer}>
           {slides.map((_, idx) => (
             <div key={idx} className={styles.progressBar}>
-              <div 
+              <div
                 className={styles.progressFill}
-                style={{ 
-                  width: idx < currentSlide ? "100%" : idx === currentSlide ? `${progress}%` : "0%",
-                  transition: idx === currentSlide ? "width 4s linear" : "none"
+                style={{
+                  width:
+                    idx < currentSlide
+                      ? "100%"
+                      : idx === currentSlide
+                        ? `${progress}%`
+                        : "0%",
+                  transition: idx === currentSlide ? "width 4s linear" : "none",
                 }}
               />
             </div>
@@ -203,30 +215,41 @@ export function WrappedStory({ playerName, stats, topCategory, playStyle, onClos
 
         {/* Close button */}
         <button className={styles.closeBtn} onClick={onClose}>
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <svg
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+          >
             <path d="M18 6L6 18M6 6l12 12" />
           </svg>
         </button>
 
         {/* Navigation zones */}
-        <button 
-          className={`${styles.navZone} ${styles.navLeft}`} 
+        <button
+          className={`${styles.navZone} ${styles.navLeft}`}
           onClick={goToPrev}
           disabled={currentSlide === 0}
           aria-label="Previous slide"
         />
-        <button 
-          className={`${styles.navZone} ${styles.navRight}`} 
+        <button
+          className={`${styles.navZone} ${styles.navRight}`}
           onClick={goToNext}
           disabled={currentSlide === slides.length - 1}
           aria-label="Next slide"
         />
 
         {/* Slide content */}
-        <div className={`${styles.slideContent} ${styles[`slide_${slide.type}`]}`}>
+        <div
+          className={`${styles.slideContent} ${styles[`slide_${slide.type}`]}`}
+        >
           {slide.type === "intro" && (
             <>
-              <div className={styles.introEmoji}><Hand size={48} /></div>
+              <div className={styles.introEmoji}>
+                <Hand size={48} />
+              </div>
               <h1 className={styles.introTitle}>{slide.title}</h1>
               <p className={styles.introSubtitle}>{slide.subtitle}</p>
               <div className={styles.swipeHint}>
@@ -240,10 +263,14 @@ export function WrappedStory({ playerName, stats, topCategory, playStyle, onClos
             <>
               <span className={styles.statLabel}>{slide.title}</span>
               <div className={styles.statValue}>
-                {typeof slide.value === "number" ? animatedValue.toLocaleString() : slide.value}
+                {typeof slide.value === "number"
+                  ? animatedValue.toLocaleString()
+                  : slide.value}
               </div>
               <span className={styles.statSubtitle}>{slide.subtitle}</span>
-              {slide.highlight && <div className={styles.highlight}>{slide.highlight}</div>}
+              {slide.highlight && (
+                <div className={styles.highlight}>{slide.highlight}</div>
+              )}
             </>
           )}
 
@@ -267,7 +294,9 @@ export function WrappedStory({ playerName, stats, topCategory, playStyle, onClos
 
           {slide.type === "outro" && (
             <>
-              <div className={styles.outroIcon}><PartyPopper size={48} /></div>
+              <div className={styles.outroIcon}>
+                <PartyPopper size={48} />
+              </div>
               <h1 className={styles.outroTitle}>{slide.title}</h1>
               <p className={styles.outroSubtitle}>{slide.subtitle}</p>
               <button className={styles.shareBtn}>

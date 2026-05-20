@@ -29,7 +29,7 @@ export function ShareableStatCard({
     // In a real app, this would use html2canvas or similar to capture the card
     // For demo, we'll copy stats to clipboard
     const statsText = `
-SnapScore Stats - ${playerName}
+Cackle Stats - ${playerName}
 Score: ${totalScore.toLocaleString()}
 Games: ${gamesPlayed}
 Accuracy: ${accuracy}%
@@ -37,7 +37,7 @@ Top Category: ${topCategory}
 Play Style: ${playStyle}
 Streak: ${streak} days
 
-Play at snapscore.app
+Play at Cackle.app
     `.trim();
 
     try {
@@ -104,26 +104,40 @@ Play at snapscore.app
 
         {/* Footer */}
         <div className={styles.footer}>
-          <span className={styles.url}>snapscore.app</span>
+          <span className={styles.url}>cackle.gg</span>
           <span className={styles.date}>{new Date().toLocaleDateString()}</span>
         </div>
       </div>
 
       {/* Share button */}
-      <button 
+      <button
         className={`${styles.shareButton} ${copied ? styles.copied : ""}`}
         onClick={handleShare}
       >
         {copied ? (
           <>
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+            >
               <path d="M20 6L9 17l-5-5" />
             </svg>
             Copied!
           </>
         ) : (
           <>
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+            >
               <circle cx="18" cy="5" r="3" />
               <circle cx="6" cy="12" r="3" />
               <circle cx="18" cy="19" r="3" />
