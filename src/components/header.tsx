@@ -44,7 +44,7 @@ export default function Header() {
       <div className={styles.auth}>
         {!inGameroom && (
           <Link href="/how-to-play" className={styles.howToPlayLink}>
-            How to Play (dummy)
+            How to Play
           </Link>
         )}
         {discordUrl && (
