@@ -278,11 +278,11 @@ function PlayerCarousel({ scores, currentUserId }: PlayerCarouselProps) {
     }, 300);
   };
 
-  // Auto-advance at 4.5s, offset from tips carousel which runs at 6s
+  // Auto-advance at 7s, offset from tips carousel which runs at 6s
   useEffect(() => {
     if (scores.length <= 1) return;
     const startDelay = setTimeout(() => {
-      intervalRef.current = setInterval(() => advance(1), 6500);
+      intervalRef.current = setInterval(() => advance(1), 700);
     }, 2000); // 2s initial offset vs tips carousel
     return () => {
       clearTimeout(startDelay);
@@ -306,7 +306,7 @@ function PlayerCarousel({ scores, currentUserId }: PlayerCarouselProps) {
               onClick={() => {
                 if (intervalRef.current) clearInterval(intervalRef.current);
                 advance(-1);
-                intervalRef.current = setInterval(() => advance(1), 4500);
+                intervalRef.current = setInterval(() => advance(1), 7000);
               }}
               aria-label="Previous player"
             >
@@ -325,7 +325,7 @@ function PlayerCarousel({ scores, currentUserId }: PlayerCarouselProps) {
               onClick={() => {
                 if (intervalRef.current) clearInterval(intervalRef.current);
                 advance(1);
-                intervalRef.current = setInterval(() => advance(1), 4500);
+                intervalRef.current = setInterval(() => advance(1), 6000);
               }}
               aria-label="Next player"
             >
@@ -364,7 +364,7 @@ function TipCarousel() {
   };
 
   useEffect(() => {
-    intervalRef.current = setInterval(() => advance(1), 6000);
+    intervalRef.current = setInterval(() => advance(1), 7000);
     return () => {
       if (intervalRef.current) clearInterval(intervalRef.current);
     };
@@ -382,7 +382,7 @@ function TipCarousel() {
             onClick={() => {
               if (intervalRef.current) clearInterval(intervalRef.current);
               advance(-1);
-              intervalRef.current = setInterval(() => advance(1), 6000);
+              intervalRef.current = setInterval(() => advance(1), 7000);
             }}
             aria-label="Previous tip"
           >
