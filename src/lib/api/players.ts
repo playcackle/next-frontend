@@ -4,7 +4,7 @@
 
 import { createClient } from "@/lib/supabase/client";
 
-const PLAYER_SERVICE_URL = import.meta.env.VITE_PLAYER_SERVICE_URL || "http://localhost:8004";
+const PLAYER_SERVICE_URL = (import.meta.env.VITE_PLAYER_SERVICE_URL || "http://localhost:8004").replace(/\/+$/, "");
 
 const apiFetch = async (path: string, init?: RequestInit): Promise<Response> => {
   const supabase = createClient();

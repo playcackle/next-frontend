@@ -4,9 +4,9 @@
 
 import { createClient } from "@/lib/supabase/client";
 
-const LOBBY_MANAGER_URL = import.meta.env.VITE_LOBBY_MANAGER_URL || "http://localhost:8001";
-const CONTENT_SERVICE_URL = import.meta.env.VITE_CONTENT_SERVICE_URL || "http://localhost:8003";
-const PLAYER_SERVICE_URL = import.meta.env.VITE_PLAYER_SERVICE_URL || "http://localhost:8004";
+const LOBBY_MANAGER_URL = (import.meta.env.VITE_LOBBY_MANAGER_URL || "http://localhost:8001").replace(/\/+$/, "");
+const CONTENT_SERVICE_URL = (import.meta.env.VITE_CONTENT_SERVICE_URL || "http://localhost:8003").replace(/\/+$/, "");
+const PLAYER_SERVICE_URL = (import.meta.env.VITE_PLAYER_SERVICE_URL || "http://localhost:8004").replace(/\/+$/, "");
 
 const CONTENT_PATHS = ["/collections", "/topics", "/slots", "/generate"];
 const PLAYER_PATHS = ["/players"];
