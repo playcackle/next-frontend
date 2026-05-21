@@ -39,7 +39,6 @@ describe("joinGameroom – success", () => {
       player_id: "p1",
       token: "tok-abc",
       game_ws_url: "ws://localhost:8000/game",
-      chat_ws_url: "ws://localhost:8000/game",
     };
 
     mockFetchOnce({ ok: true, json: async () => successData });
@@ -64,7 +63,6 @@ describe("joinGameroom – success", () => {
       player_id: "p2",
       token: "tok-def",
       game_ws_url: "ws://gameroom-2:8000/game",
-      chat_ws_url: "ws://gameroom-2:8000/game",
     };
 
     mockFetchOnce({ ok: true, json: async () => successData });
@@ -90,7 +88,6 @@ describe("joinGameroom – success", () => {
         player_id: "p1",
         token: "t",
         game_ws_url: "ws://a/game",
-        chat_ws_url: "ws://a/game",
       }),
     });
 
