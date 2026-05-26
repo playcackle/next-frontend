@@ -59,4 +59,7 @@ coverage/
 .cache/
 tmp/
 
+# Agent/tooling artifacts
 .agents/
+.claude/
+skills-lock.json

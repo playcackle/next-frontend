@@ -11,7 +11,8 @@
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
     "typecheck": "tsc --noEmit",
-    "validate": "npm run typecheck && npm run test"
+    "validate": "npm run typecheck && npm run test",
+    "start": "node server.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
@@ -35,6 +36,7 @@
     "react": "^19.2.6",
     "react-dom": "^19.2.6",
     "recharts": "^3.8.1",
+    "sirv": "3.0.2",
     "socket.io-client": "^4.8.1"
   },
   "devDependencies": {
