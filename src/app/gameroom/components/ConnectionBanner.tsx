@@ -1,6 +1,7 @@
 
 import { useAtomValue } from "jotai";
 import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import {
   connectionStatusAtom,
   type ConnectionStatus,
@@ -62,7 +63,12 @@ export default function ConnectionBanner({ onRetry }: ConnectionBannerProps) {
         ? styles.disconnected
         : styles.connected;
 
-  return (
+  if (typeof document === "undefined") return null;
+
+  // Portal to <body> so the banner escapes the <main> stacking context
+  // (main has z-index: 5), otherwise the header (z-index: 1500) paints over
+  // it and the banner becomes invisible and unclickable.
+  return createPortal(
     <div
       className={`${styles.banner} ${bannerClass}`}
       role="status"
@@ -85,6 +91,7 @@ export default function ConnectionBanner({ onRetry }: ConnectionBannerProps) {
         </>
       )}
       {displayStatus === "connected" && <span>Connected</span>}
-    </div>
+    </div>,
+    document.body,
   );
 }
