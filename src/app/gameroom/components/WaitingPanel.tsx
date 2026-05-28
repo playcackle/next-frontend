@@ -279,12 +279,17 @@ function PlayerCarousel({ scores, currentUserId }: PlayerCarouselProps) {
   // Auto-advance at 7s, offset from tips carousel which runs at 6s
   useEffect(() => {
     if (scores.length <= 1) return;
+    // Guard against a leftover interval (e.g. HMR or rapid re-render) running alongside this one.
+    if (intervalRef.current) clearInterval(intervalRef.current);
     const startDelay = setTimeout(() => {
       intervalRef.current = setInterval(() => advance(1), 7000);
     }, 2000); // 2s initial offset vs tips carousel
     return () => {
       clearTimeout(startDelay);
-      if (intervalRef.current) clearInterval(intervalRef.current);
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
+      }
     };
   }, [scores.length]);
 
